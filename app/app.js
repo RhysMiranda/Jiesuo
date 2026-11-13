@@ -1094,18 +1094,94 @@
     if (more) more.onclick = () => { wallShown += 30; renderWall(); };
   }
 
+  // ---- My words: everything learned, to revisit, with how firmly each is held
+  const LIB_KEY = "jiesuo-library-view-v1";
+  let libView = store.get(LIB_KEY) || "recent", libFilter = "", libOpen = new Set();
+  const LIB_VIEWS = [["recent", "Recent"], ["meaning", "By meaning"], ["level", "By level"], ["refresh", "Needs a refresh"]];
+
+  const memoryKey = () => `<span class="mem"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span> memory <span class="mem due"><i class="on"></i><i></i><i></i><i></i><i></i></span> ready for a refresh`;
+  /** Five segments filled by review box; amber when due again. Items only marked as known show none. */
+  function memoryBar(u) {
+    const m = JiesuoJourney.memoryOf(state.review.get(u), JiesuoJourney.dayKey());
+    if (m.strength === null) return "";
+    const filled = Math.max(1, Math.round(m.strength * 5));
+    const label = m.due ? "ready for a refresh" : filled >= 4 ? "held firmly" : filled >= 2 ? "getting there" : "new";
+    return `<span class="mem ${m.due ? "due" : ""}" role="img" aria-label="Memory: ${label}" title="Memory: ${label}">${[0, 1, 2, 3, 4].map((k) => `<i class="${k < filled ? "on" : ""}"></i>`).join("")}</span>`;
+  }
+
+  function libTile(u) {
+    const it = core.get(u);
+    if (it.kind === "g") return `<a class="lib-tile lib-gram" href="#i${u}"><span class="lib-form">${esc(it.form)}</span><span class="lib-mean">${esc(it.explanation.split(".")[0])}</span>${memoryBar(u)}</a>`;
+    const pic = picture(u, "pic-s");
+    return `<a class="lib-tile" href="#i${u}"><span class="zh lib-zh">${esc(disp(u))}</span><span class="lib-py">${esc(mainReading(it))}</span><span class="lib-mean">${pic}${esc(shortMeaning(it))}</span>${memoryBar(u)}</a>`;
+  }
+
+  function libMatches(u, q) {
+    if (!q) return true;
+    const it = core.get(u);
+    const plain = (s) => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    return disp(u).includes(q) || it.form.includes(q) || plain(it.pinyin).replace(/\s/g, "").includes(plain(q).replace(/\s/g, "")) || plain(it.gloss || it.explanation).includes(plain(q));
+  }
+
+  function drawLibrary() {
+    const box = document.getElementById("library");
+    if (!box) return;
+    const groups = JiesuoJourney.library(core, state, JiesuoJourney.dayKey(), libView, bands)
+      .map((g) => ({ ...g, units: g.units.filter((u) => libMatches(u, libFilter.trim())) })).filter((g) => g.units.length);
+    const weakest = (list) => [...list].sort((a, b) => {
+      const ra = state.review.get(a), rb = state.review.get(b);
+      return (ra ? ra[0] : 9) - (rb ? rb[0] : 9) || (ra ? ra[1] : "~").localeCompare(rb ? rb[1] : "~");
+    }).filter((u) => core.get(u).kind !== "g" && core.get(u).kind !== "p").slice(0, 10);
+    const head = (g) => {
+      if (!g.part) return `<h3>${esc(g.title)} <span class="soft small">${fmt(g.units.length)}</span></h3>`;
+      const pu = core.glyphUnit.get(g.part);
+      const meaning = pu !== undefined ? shortMeaning(core.get(pu)) : (core.partsData[g.part] || {}).d || "";
+      return `<h3 class="lib-part">${partPicture(g.part, "pic-m")}<span class="zh">${esc(g.part)}</span> <span>${esc(meaning.split(/[;,]/)[0])}</span> <span class="soft small">${fmt(g.units.length)}</span></h3>`;
+    };
+    box.innerHTML = groups.length ? groups.map((g) => {
+      const open = libOpen.has(g.key) || libFilter;
+      const shown = open ? g.units : g.units.slice(0, 24);
+      const practiseable = weakest(g.units);
+      return `<section class="stack lib-group">
+        <div class="lib-head">${head(g)}${practiseable.length ? `<button type="button" class="btn quiet small-btn" data-practise="${esc(g.key)}">Practise ${practiseable.length === 1 ? "it" : practiseable.length < g.units.length ? `${fmt(practiseable.length)} of these` : "these"}</button>` : ""}</div>
+        <div class="lib-tiles">${shown.map(libTile).join("")}</div>
+        ${shown.length < g.units.length ? `<button type="button" class="linkish" data-open="${esc(g.key)}">Show all ${fmt(g.units.length)}</button>` : ""}
+      </section>`;
+    }).join("") : `<p class="soft">${libFilter ? "Nothing you've learned matches that." : libView === "refresh" ? "Nothing needs a refresh. Everything you've practised is holding." : "Nothing here yet. Your first lesson adds to it."}</p>`;
+    box.querySelectorAll("[data-open]").forEach((b) => (b.onclick = () => { libOpen.add(b.dataset.open); drawLibrary(); }));
+    box.querySelectorAll("[data-practise]").forEach((b) => (b.onclick = () => {
+      const g = groups.find((x) => x.key === b.dataset.practise);
+      if (g) today.practise(weakest(g.units));
+    }));
+  }
+
   function renderMore() {
     const json = JSON.stringify(JiesuoCore.serialise(state, core), null, 1);
+    const count = { c: 0, w: 0, p: 0, g: 0 };
+    for (const u of state.known) { const it = core.get(u); if (it) count[it.kind]++; }
+    const due = JiesuoJourney.dueReviews(state.review, JiesuoJourney.dayKey(), 999).length;
     view.innerHTML = `
       <section class="stack">
-        <h1>Your progress</h1>
-        <p>You have marked <strong>${fmt(state.known.size)}</strong> items as known. They are kept in this browser only, with no account and no server.</p>
+        <h1>What you've learned</h1>
+        <div class="lib-stats">
+          <span><strong>${fmt(count.c)}</strong> characters</span><span><strong>${fmt(count.w)}</strong> words</span>
+          <span><strong>${fmt(count.p)}</strong> parts</span><span><strong>${fmt(count.g)}</strong> grammar</span>
+        </div>
+        <p class="row"><a href="#wall">Your reading wall ›</a>${due ? `<button type="button" class="btn primary small-btn" id="refresh-now">Refresh ${fmt(Math.min(10, due))} that need it</button>` : ""}</p>
         ${storageOk ? "" : `<p class="warn">This browser is blocking storage, so save a file before you close this page.</p>`}
       </section>
       <section class="stack">
-        <h2>Your reading wall</h2>
-        <p><a href="#wall">See every real sentence you can read in full ›</a></p>
+        <div class="choice" role="group" aria-label="Group by">${LIB_VIEWS.map(([k, label]) => `<button type="button" data-view="${k}" aria-pressed="${libView === k}">${label}</button>`).join("")}</div>
+        <div class="row lib-tools">
+          <input id="lib-q" type="search" placeholder="Find: 水, shui, water" aria-label="Find in what you've learned" value="${esc(libFilter)}" autocomplete="off" spellcheck="false">
+          <span class="mem-key soft small">${memoryKey()}</span>
+        </div>
       </section>
+      <div id="library" class="stack" style="gap:24px"></div>
+      <details class="whole">
+        <summary>Save, restore or move your progress</summary>
+        <div class="stack">
+        <p class="soft small">Your progress is kept in this browser only, with no account and no server.</p>
       <section class="stack">
         <h2>On another device</h2>
         <p class="soft small">Send your progress file to your phone, tablet or computer (by AirDrop, messages or email to yourself), then open Jiesuo there and choose <strong>Restore from a file</strong>. Nothing goes through a Jiesuo server.</p>
@@ -1132,6 +1208,8 @@
         <h2>Start over</h2>
         <div class="row" id="reset-row"><button type="button" class="btn danger" id="reset">Clear all progress</button></div>
       </section>
+        </div>
+      </details>
       <section class="credits">
         <h2>Where the data comes from</h2>
         <p>Dictionary: <a href="https://cc-cedict.org/wiki/" rel="noopener" target="_blank">CC-CEDICT</a>, CC BY-SA 4.0.</p>
@@ -1143,6 +1221,17 @@
         <p>Grammar explanations were written for Jiesuo, and their HSK levels are our own estimates.</p>
         <p><a href="licences/">Full licence texts and notices</a></p>
       </section>`;
+    view.querySelectorAll("[data-view]").forEach((b) => (b.onclick = () => {
+      libView = b.dataset.view; store.set(LIB_KEY, libView); libOpen = new Set();
+      view.querySelectorAll("[data-view]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      drawLibrary();
+    }));
+    const libQ = document.getElementById("lib-q");
+    let libTimer;
+    libQ.oninput = () => { clearTimeout(libTimer); libTimer = setTimeout(() => { libFilter = libQ.value; drawLibrary(); }, 120); };
+    const refreshNow = document.getElementById("refresh-now");
+    if (refreshNow) refreshNow.onclick = () => today.practise(JiesuoJourney.dueReviews(state.review, JiesuoJourney.dayKey(), 10));
+    drawLibrary();
     document.getElementById("share").onclick = async () => {
       const name = `jiesuo-progress-${new Date().toISOString().slice(0, 10)}.json`;
       const file = new File([JSON.stringify(JiesuoCore.serialise(state, core), null, 1)], name, { type: "application/json" });

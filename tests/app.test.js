@@ -476,3 +476,30 @@ test("progress keeps the weekly snapshots", () => {
   const back = deserialise(JSON.parse(JSON.stringify(serialise(st, core))), core);
   assert.deepStrictEqual(back.weeks, st.weeks);
 });
+
+// ---- My words: the library
+test("library: recent groups by when items were seen; marked-only items last", () => {
+  const core2 = core; core2.partsData = data.parts.parts;
+  const known = new Set(["好", "学生", "水", "河"].map(unit));
+  const seen = new Map([[unit("好"), "2026-11-13"], [unit("学生"), "2026-11-10"], [unit("水"), "2026-09-01"]]);
+  const g = J2.library(core2, { known, seen, review: new Map() }, "2026-11-13", "recent");
+  assert.deepStrictEqual(g.map((x) => x.title), ["Today", "This week", "Earlier", "Marked as known"]);
+  assert.deepStrictEqual(g[3].units.map((u) => core.get(u).form), ["河"]);
+});
+
+test("library: by meaning puts characters under the part that gives their meaning", () => {
+  core.partsData = data.parts.parts;
+  const known = new Set(["河", "海", "洗", "清", "好", "学生"].map(unit));
+  const g = J2.library(core, { known, seen: new Map(), review: new Map() }, "2026-11-13", "meaning");
+  assert.strictEqual(g[0].part, "氵");
+  assert.deepStrictEqual(new Set(g[0].units.map((u) => core.get(u).form)), new Set(["河", "海", "洗", "清"]));
+  assert.ok(g.some((x) => x.title === "Words" && x.units.includes(unit("学生"))));
+});
+
+test("library: needs a refresh lists due items first, then the least secure", () => {
+  const review = new Map([[unit("好"), [5, "2026-12-01"]], [unit("水"), [2, "2026-11-12"]], [unit("河"), [1, "2026-11-20"]]]);
+  const g = J2.library(core, { known: new Set(review.keys()), seen: new Map(), review }, "2026-11-13", "refresh");
+  assert.deepStrictEqual(g[0].units.map((u) => core.get(u).form), ["水", "河", "好"]);
+  assert.deepStrictEqual(J2.memoryOf([2, "2026-11-12"], "2026-11-13"), { strength: 2 / 6, due: true });
+  assert.deepStrictEqual(J2.memoryOf(undefined, "2026-11-13"), { strength: null, due: false });
+});

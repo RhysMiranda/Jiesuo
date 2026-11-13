@@ -58,6 +58,12 @@
       state.lesson = { day: today(), items, reviews, added: [], step: 0, before: { coverage: core.estimatedCoverage(state.known) } };
       save();
     }
+    /** A review round of chosen items (from My words): written from memory, pictures or meanings. */
+    function practise(units) {
+      state.lesson = { day: today(), items: [], reviews: units.slice(0, 10), added: [], step: 0, before: { coverage: core.estimatedCoverage(state.known) } };
+      save();
+      location.hash = "lesson";
+    }
     function newDictation() {
       const items = J.pickDictation(core, state.seen, state.review, today(), 10);
       state.lesson = { day: today(), type: "dictation", items, reviews: [], added: [], step: 0, results: {}, before: { coverage: core.estimatedCoverage(state.known) } };
@@ -174,7 +180,7 @@
         </section>
         ${l && l.finished ? "" : teaser}
         <section class="stack">${action}</section>
-        <section class="stack"><h2>Your journey</h2>${journeyPath()}${dictLine}${state.known.size ? `<p><a href="#wall">Your reading wall: every real sentence you can read in full ›</a></p>` : ""}</section>`;
+        <section class="stack"><h2>Your journey</h2>${journeyPath()}${dictLine}${state.known.size ? `<p class="row"><a href="#more">Everything you've learned ›</a><a href="#wall">Your reading wall ›</a></p>` : ""}</section>`;
       const start = view.querySelector("[data-start]");
       if (start) start.onclick = () => { if (!state.lesson) newLesson(3, true); location.hash = "lesson"; };
       const more = view.querySelector("[data-one-more]");
@@ -531,7 +537,7 @@
       </div>`;
     }
 
-    return { renderToday, renderLesson };
+    return { renderToday, renderLesson, practise };
   }
 
   window.JiesuoToday = { create };

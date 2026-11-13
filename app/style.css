@@ -575,3 +575,29 @@ mark.g-hit { background: var(--pen-wash); color: var(--pen); font-weight: 700; p
 .wall { gap: 10px; }
 .wall-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 10px 12px; background: var(--sheet); border: 1px solid var(--grid-faint); }
 .wall-item .sentence .line { font-size: 1.3rem; }
+
+/* My words: the library */
+.lib-stats { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.lib-stats strong { color: var(--pen); font-size: 1.5rem; }
+.lib-tools { gap: 10px 16px; }
+.lib-tools input { flex: 1 1 220px; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1.5px solid var(--grid); background: var(--sheet); }
+.lib-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; justify-content: space-between; }
+.lib-part { display: flex; gap: 6px; align-items: center; }
+.lib-part .zh { font-size: 1.4rem; }
+.lib-part .pic-m { width: 32px; height: 32px; }
+.lib-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.lib-tile { display: grid; justify-items: center; align-content: start; gap: 2px; padding: 8px 6px 10px; background: var(--sheet); border: 1.5px solid var(--grid); text-decoration: none; color: var(--ink); text-align: center; }
+.lib-tile:hover { border-color: var(--pen); }
+.lib-zh { font-size: 1.8rem; line-height: 1.15; color: var(--pen); }
+.lib-py { font-size: .9rem; color: var(--soft); }
+.lib-mean { display: flex; gap: 4px; align-items: center; justify-content: center; font-size: .85rem; line-height: 1.2; }
+.lib-mean .pic-s { width: 20px; height: 20px; }
+.lib-gram { grid-column: span 2; }
+.lib-gram .lib-form { font-weight: 700; color: var(--pen); }
+.mem { display: inline-flex; gap: 2px; margin-top: 4px; vertical-align: middle; }
+.mem i { width: 10px; height: 5px; background: var(--grid-faint); }
+.mem i.on { background: var(--pen); }
+.mem.due i.on { background: var(--amber); }
+.mem-key { display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.mem-key .mem { margin: 0; }
+@media (max-width: 640px) { .lib-tiles { grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); } .lib-zh { font-size: 1.6rem; } }

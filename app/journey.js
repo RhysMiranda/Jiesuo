@@ -171,7 +171,75 @@
     const any = gains.chars > 0 || gains.words > 0 || gains.written > 0 || gains.unlocked > 0;
     return any ? { action: "show", gains } : { action: "snapshot" };
   }
+  /**
+   * How firmly an item is held: its review box (1 to 6) as a strength, and whether it is due again.
+   * Items marked as known without reviews have no box (strength null).
+   */
+  function memoryOf(entry, today) {
+    if (!entry) return { strength: null, due: false };
+    return { strength: entry[0] / BOXES.length, due: entry[1] <= today };
+  }
+
+  /**
+   * Everything learned, grouped for revisiting. `by`: "recent" (today, this week, this month, earlier,
+   * marked as known), "meaning" (characters by the part that gives their meaning, then words),
+   * "level" (HSK band) or "refresh" (due or least secure first). Grammar is its own group in each.
+   */
+  function library(core, { known, seen, review }, today, by, bands = []) {
+    const units = [...known].filter((u) => u < core.n || core.get(u));
+    const kindRank = { c: 0, w: 1, p: 2, g: 3 };
+    const byKind = (a, b) => kindRank[core.get(a).kind] - kindRank[core.get(b).kind] || (core.get(b).freq || 0) - (core.get(a).freq || 0);
+    const groups = new Map();
+    const put = (key, title, u, extra = {}) => { if (!groups.has(key)) groups.set(key, { key, title, units: [], ...extra }); groups.get(key).units.push(u); };
+    if (by === "refresh") {
+      const scored = units.filter((u) => review.has(u)).map((u) => [u, review.get(u)]);
+      scored.sort((a, b) => (a[1][1] <= today) === (b[1][1] <= today) ? a[1][0] - b[1][0] || (a[1][1] < b[1][1] ? -1 : 1) : a[1][1] <= today ? -1 : 1);
+      return scored.length ? [{ key: "refresh", title: "Ready for a refresh", units: scored.map(([u]) => u) }] : [];
+    }
+    for (const u of units.sort(byKind)) {
+      const it = core.get(u);
+      if (it.kind === "g") { put("g", "Grammar", u); continue; }
+      if (by === "recent") {
+        const d = seen.get(u);
+        if (!d) put("z", "Marked as known", u);
+        else {
+          const ago = daysBetween(d, today);
+          if (ago <= 0) put("a", "Today", u);
+          else if (ago <= 7) put("b", "This week", u);
+          else if (ago <= 31) put("c", "This month", u);
+          else put("d", "Earlier", u);
+        }
+      } else if (by === "level") {
+        const b = bands[u] || 0;
+        put(b ? `l${b}` : "l9", b ? (b === 7 ? "HSK 7–9" : `HSK ${b}`) : "Beyond HSK", u);
+      } else {
+        if (it.kind === "w") { put("~w", "Words", u); continue; }
+        if (it.kind === "p") { put("~p", "Parts", u); continue; }
+        const rec = (core.partsData || {})[it.form] || {};
+        const part = ((rec.p || []).find(([, role]) => role === "semantic") || [null])[0];
+        if (part) put(`m${part}`, part, u, { part });
+        else put("~c", "Other characters", u);
+      }
+    }
+    let out = [...groups.values()];
+    if (by === "recent") {
+      const at = (k) => (k === "g" ? "zz" : k); // grammar after the dated groups
+      out.sort((a, b) => (at(a.key) < at(b.key) ? -1 : 1));
+      for (const g of out) if (g.key !== "z" && g.key !== "g") g.units.sort((a, b) => ((seen.get(b) || "") < (seen.get(a) || "") ? -1 : (seen.get(b) || "") > (seen.get(a) || "") ? 1 : byKind(a, b)));
+    } else if (by === "level") out.sort((a, b) => (a.key < b.key ? -1 : 1));
+    else {
+      // Meaning groups: the biggest first, then small ones gathered at the end.
+      const big = out.filter((g) => g.part && g.units.length >= 3).sort((a, b) => b.units.length - a.units.length);
+      const small = out.filter((g) => g.part && g.units.length < 3).flatMap((g) => g.units);
+      const rest = out.filter((g) => !g.part);
+      const other = rest.find((g) => g.key === "~c");
+      if (small.length) { if (other) other.units.unshift(...small); else rest.unshift({ key: "~c", title: "Other characters", units: small }); }
+      out = [...big, ...rest.sort((a, b) => (a.key < b.key ? -1 : 1))];
+    }
+    return out;
+  }
+
   const snapshot = (now, today) => ({ day: today, chars: now.chars, words: now.words, written: now.written, unlocked: now.unlocked, coverage: Math.round(now.coverage * 1e4) / 1e4 });
 
-  return { dayKey, addDays, daysBetween, BOXES, schedule, dueReviews, pickNew, unlockSentence, focusInfo, dictationDue, nextDictationIn, pickDictation, DICTATION_EVERY, MILESTONES, milestones, readableRows, weekRecap, snapshot };
+  return { dayKey, addDays, daysBetween, BOXES, schedule, dueReviews, pickNew, unlockSentence, focusInfo, dictationDue, nextDictationIn, pickDictation, DICTATION_EVERY, MILESTONES, milestones, readableRows, weekRecap, snapshot, memoryOf, library };
 });

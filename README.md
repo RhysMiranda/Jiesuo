@@ -68,8 +68,12 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
   right, each marked ready now or with what it still needs. Tap any square to move it to the middle.
   Starts on your next item; "See it on the map" on any word page opens it there. Below: everything
   ready to learn now, and the whole language as a grid.
-- **Progress:** save your progress to a file and restore it, or **Send to my other device** through the
-  phone's share sheet (AirDrop, messages, email to yourself). There is still no account or server.
+- **Progress: what you've learned.** Every character, word, part and grammar pattern you know, to revisit:
+  grouped by when you learned it, by meaning (characters gathered under 💧 氵 water, 👄 口 mouth…), by HSK
+  level, or by what needs a refresh. Each tile shows a five-step memory bar from your reviews (amber when it
+  is due again), and **Practise these** starts a review round of the ten least secure in any group. A find
+  box filters by character, pinyin or English. Below: save your progress to a file and restore it, or
+  **Send to my other device** through the phone's share sheet. There is still no account or server.
 - **简/繁:** switch script anywhere. Learning one form counts toward the other.
 - **Dictation every two weeks:** Today offers a dictation of up to 10 words from the fortnight. You hear
   each one (single characters as a teacher says them, 好，最好的好) and write it from memory; missed ones
