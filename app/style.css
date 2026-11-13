@@ -433,3 +433,61 @@ details.whole[open] summary { margin-bottom: 8px; }
 .dict-list .zh { font-size: 1.5rem; }
 .dict-list li.ok .zh { color: var(--pen); }
 .dict-done { padding: 12px 16px; background: var(--pen-wash); border-left: 4px solid var(--pen); }
+
+/* Read: guess the meaning */
+:root { --amber: #a85a00; --amber-wash: #fbecd6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --amber: #f2b062; --amber-wash: #3a2a12; } }
+:root[data-theme="dark"] { --amber: #f2b062; --amber-wash: #3a2a12; }
+.guess-box { padding: 16px; background: var(--sheet); border: 1.5px solid var(--grid); }
+.guess-box h3 { font-size: 1.1rem; }
+.sent-pick { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.sent-pick button { flex: none; min-height: 40px; padding: 4px 10px; border: 1px solid var(--grid); background: var(--paper); cursor: pointer; white-space: nowrap; }
+.sent-pick button[aria-pressed="true"] { border-color: var(--pen); background: var(--pen-wash); color: var(--pen); }
+.sent-pick .zh { font-size: 1.05rem; }
+.pick-done { color: var(--pen); font-weight: 700; }
+.guess-sentence { display: flex; gap: 10px; align-items: center; }
+.guess-sentence .zh { font-size: 1.7rem; line-height: 1.5; overflow-wrap: anywhere; }
+.guess-in { font-family: var(--ui); width: 100%; min-height: 64px; padding: 10px 12px; border: 1.5px solid var(--grid); background: var(--paper); resize: vertical; font-size: 1.1rem; }
+.guess-in:focus { border-color: var(--pen); outline: none; }
+.ghead { display: flex; gap: 14px; align-items: center; }
+.ghead.pop .score { animation: pop .6s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes pop { 0% { transform: scale(.6); } 100% { transform: scale(1); } }
+.gbar { display: flex; gap: 3px; height: 12px; }
+.gbar i { flex: 1; background: var(--amber-wash); border: 1px solid var(--amber); }
+.gbar i.got { background: var(--pen); border-color: var(--pen); }
+.your-guess { font-size: 1.1rem; }
+mark.g-hit { background: var(--pen-wash); color: var(--pen); font-weight: 700; padding: 0 2px; }
+.wcards { display: flex; flex-wrap: wrap; gap: 8px; }
+.wcard {
+  position: relative; display: grid; justify-items: center; align-content: start; gap: 1px; min-width: 76px; max-width: 150px;
+  padding: 8px 10px 10px; border: 1.5px solid var(--grid); background: var(--paper); text-decoration: none; color: var(--ink); text-align: center;
+}
+.wcard .w-zh { font-size: 1.7rem; line-height: 1.2; }
+.wcard .w-py { font-size: .9rem; color: var(--soft); }
+.wcard .w-mean { font-size: .92rem; line-height: 1.25; }
+.wcard .pic-s { width: 28px; height: 28px; }
+.wcard.is-got { border-color: var(--pen); background: var(--pen-wash); }
+.wcard.is-got .w-zh { color: var(--pen); }
+.wcard.is-missed { border-color: var(--amber); border-style: dashed; background: var(--amber-wash); }
+.wcard.is-glue { border-style: dotted; opacity: .8; min-width: 60px; }
+.wcard.is-glue .w-zh { font-size: 1.3rem; color: var(--soft); }
+.wcard.is-nodata { opacity: .7; }
+.w-mark { position: absolute; top: -9px; right: -7px; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--pen); color: var(--sheet); font-size: .8rem; font-weight: 700; }
+.w-tag { font-size: .75rem; letter-spacing: .04em; text-transform: uppercase; color: var(--soft); }
+.w-tag.new { color: var(--red); }
+.guess-box .key { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.guess-box .key i { display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: -1px; border: 1.5px solid var(--grid); }
+.guess-box .key .k-got { background: var(--pen-wash); border-color: var(--pen); }
+.guess-box .key .k-missed { background: var(--amber-wash); border: 1.5px dashed var(--amber); }
+.guess-box .key .k-glue { border-style: dotted; }
+.translation .en-line { font-size: 1.15rem; }
+.translation .sentence { border-left: 3px solid var(--grid); padding-left: 12px; }
+.btn.ext { text-decoration: none; }
+.learn-box { border-top: 1px solid var(--grid-faint); padding-top: 12px; }
+@media (max-width: 640px) {
+  .guess-box { padding: 12px; margin-inline: -4px; }
+  .wcard { min-width: 64px; padding: 6px 8px 8px; }
+  .wcard .w-zh { font-size: 1.5rem; }
+  .ghead .score { font-size: 2.2rem; }
+}
+.guess-box, .guess-box > *, .guess-box .row { min-width: 0; max-width: 100%; }

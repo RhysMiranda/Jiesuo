@@ -3,6 +3,7 @@
 One JSON file per licence, so the app ships an aggregation of separately licensed
 files, not one merged database (see LICENSES.md):
     dict.json       CC BY-SA 4.0   CC-CEDICT pinyin and glosses, wordfreq frequencies
+    senses.json     CC BY-SA 4.0   CC-CEDICT further senses, for checking a guess in Read
     parts.json      LGPL-3.0+      Make Me a Hanzi decompositions, hints, definitions
     sentences.json  CC BY 2.0 FR   Tatoeba sentences
     hsk.json        MIT            HSK bands (Pleco's list)
@@ -21,52 +22,11 @@ from .grammar import PATTERNS
 from .order import OUT, ROOT, Data, word_unit
 from . import sources as src
 from . import tatoeba_credits
+from .glosses import MAIN, match_senses, ranked_senses, reading_weights, short_gloss, tone_marks
 
 APP = ROOT / "app" / "data"
 PER_UNIT = 2  # example sentences kept per item
 PER_PATTERN = 3
-MARKS = {"a": "āáǎà", "e": "ēéěè", "i": "īíǐì", "o": "ōóǒò", "u": "ūúǔù", "ü": "ǖǘǚǜ"}
-
-
-def tone_syllable(syl):
-    m = re.fullmatch(r"([a-zA-Zü:]*?)([1-5])", syl)
-    if not m:
-        return syl.replace("u:", "ü")
-    body, tone = m.group(1).replace("u:", "ü").replace("v", "ü"), int(m.group(2))
-    if tone == 5:
-        return body
-    low = body.lower()
-    if "a" in low:
-        at = low.index("a")
-    elif "e" in low:
-        at = low.index("e")
-    elif "ou" in low:
-        at = low.index("o")
-    else:
-        spots = [i for i, c in enumerate(low) if c in MARKS]
-        if not spots:
-            return body
-        at = spots[-1]
-    return body[:at] + MARKS[low[at]][tone - 1] + body[at + 1:]
-
-
-def tone_marks(pinyin):
-    """'hai2, huan2' -> 'hái, huán'. Text already carrying marks passes through unchanged."""
-    return re.sub(r"[a-zA-Zü:]+[1-5]", lambda m: tone_syllable(m.group(0)), pinyin)
-
-
-def short_gloss(cedict_entries):
-    """Up to two senses, without classifier notes."""
-    common = [e for e in cedict_entries if not e["pinyin"][:1].isupper()] or cedict_entries
-    senses = []
-    for e in common:
-        for s in e["english"]:
-            if not s.startswith(("CL:", "variant of", "old variant", "surname ")) and s not in senses:
-                senses.append(re.sub(r"\s*\(?CL:[^)]*\)?", "", s).strip())
-    gloss = "; ".join(senses[:2])
-    if len(gloss) > 80:  # cut at a word, never mid-word
-        gloss = gloss[:80].rsplit(" ", 1)[0].rstrip(";,(") + "…"
-    return gloss
 
 
 def main():
@@ -95,8 +55,15 @@ def main():
         pinyin = tone_marks(", ".join(dict.fromkeys(e["pinyin"].lower() for e in entries if not e["pinyin"][:1].isupper()))
                             or ", ".join(dict.fromkeys(e["pinyin"].lower() for e in entries)))
         kind = "w" if u.startswith("w:") else ("c" if n["type"] == "character" else "p")
-        items.append([kind, form, pinyin, short_gloss(entries) if entries else "",
+        items.append([kind, form, pinyin, entries,
                       round(data.value.get(u, 0.0) * 1e6, 1), sorted(set(forms) - {form, hk}), hk if hk != form else ""])
+    # Meanings last, so a character's everyday reading can be ranked by the words that use it.
+    weights = reading_weights([[it[0], it[1], it[2], "", it[4]] for it in items])
+    extra = []
+    for it in items:
+        senses = (ranked_senses(it[3], weights.get(it[1]), MAIN.get(it[1])) if it[0] != "w" else ranked_senses(it[3])) if it[3] else []
+        it[3] = short_gloss(senses)
+        extra.append(match_senses(senses) if it[0] != "p" else "")
 
     parts = {}
     for u, n in nodes.items():
@@ -171,7 +138,8 @@ def main():
 
     APP.mkdir(parents=True, exist_ok=True)
     dump = lambda name, obj: (APP / name).write_text(json.dumps(obj, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf8")
-    dump("dict.json", {"licence": "CC BY-SA 4.0: CC-CEDICT, wordfreq", "items": items})
+    dump("dict.json", {"licence": "CC BY-SA 4.0: CC-CEDICT, wordfreq", "items": items, "main": MAIN})
+    dump("senses.json", {"licence": "CC BY-SA 4.0: CC-CEDICT. Further senses per dict.json item, for checking a guess", "senses": extra})
     dump("parts.json", {"licence": "LGPL-3.0-or-later: Make Me a Hanzi", "parts": parts})
     dump("sentences.json", {"licence": "CC BY 2.0 FR: Tatoeba. Row: id, simplified, traditional, English, items, author, English id, English author", "sentences": rows})
     dump("hsk.json", {"licence": "MIT: Pleco Inc., elkmovie/hsk30", "bands": hsk})

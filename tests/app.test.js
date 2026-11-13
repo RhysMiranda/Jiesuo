@@ -360,3 +360,67 @@ test("progress v2 keeps last-seen days and dictation results", () => {
   assert.deepStrictEqual(back.dictations, state.dictations);
   assert.strictEqual(deserialise({ app: "jiesuo", known: [] }, core).seen.size, 0);
 });
+
+// ---- Read: check an English guess against the sentence
+const G = require("../app/guess.js");
+const moreSenses = read("senses.json").senses;
+const sensesOf = (i) => [...(core.get(i).gloss || "").split(";"), ...(moreSenses[i] || "").split(";")].map((s) => s.trim()).filter(Boolean);
+const checkGuess = (zh, guess) => G.check(core.tokenise(zh), guess, sensesOf, (i) => core.get(i).form);
+const roles = (r) => r.parts.filter((p) => p.role !== "text").map((p) => `${p.text}:${p.role}`);
+
+test("meanings: everyday senses first, hand-checked main readings", () => {
+  assert.strictEqual(core.get(unit("家")).gloss, "home; family");
+  assert.strictEqual(core.get(unit("离")).gloss.split(";")[0], "to leave");
+  assert.strictEqual(core.readings(unit("都"))[0].reading, "dōu");
+  assert.match(core.get(unit("都")).gloss, /^all/);
+});
+
+test("guess: stems, pronouns and tenses meet the dictionary's wording", () => {
+  assert.strictEqual(G.stem("raining"), G.stem("rain"));
+  assert.strictEqual(G.stem("rained"), G.stem("rains"));
+  assert.strictEqual(G.stem("studied"), G.stem("study"));
+  assert.strictEqual(G.stem("making"), G.stem("make"));
+  assert.strictEqual(G.stem("made"), G.stem("make"));
+  assert.strictEqual(G.stem("me"), "i");
+  assert.deepStrictEqual(G.words("I'm fine, don't worry").map((w) => w.word), ["i", "am", "fine", "do", "not", "worry"]);
+});
+
+test("guess: a right guess gets every content word, grammar words are not scored", () => {
+  const r = checkGuess("我是学生。", "I am a student");
+  assert.deepStrictEqual(roles(r), ["我:got", "是:glue", "学生:got"]);
+  assert.deepStrictEqual([r.got, r.total], [2, 2]);
+  const rain = checkGuess("今天下雨了。", "It's raining today");
+  assert.deepStrictEqual([rain.got, rain.total], [2, 2]);
+  assert.ok(rain.guess.find((w) => w.word === "raining").used);
+});
+
+test("guess: a partial guess shows what was missed, with its meaning", () => {
+  const r = checkGuess("我喜欢吃苹果。", "I like bananas");
+  assert.deepStrictEqual(roles(r), ["我:got", "喜欢:got", "吃:missed", "苹果:missed"]);
+  assert.match(r.parts.find((p) => p.text === "苹果").meaning, /apple/);
+  assert.ok(!r.guess.find((w) => w.word === "bananas").used);
+  assert.strictEqual(G.verdict(r.got, r.total), "You're on the right track.");
+});
+
+test("guess: later senses count too (给 as give), and an empty guess gets nothing", () => {
+  assert.strictEqual(checkGuess("给我", "give me").got, 2);
+  assert.strictEqual(checkGuess("我是学生。", "").got, 0);
+});
+
+test("guess: text splits into sentences and finds exact Tatoeba matches", () => {
+  const han = (s) => /[一-鿿]/.test(s);
+  assert.deepStrictEqual(G.sentences("你好！我是学生。Hello\n他呢？", han), ["你好！", "我是学生。", "他呢？"]);
+  const rows = [[1, "我们走吧。", 0, "Let's go.", []], [2, "我很好", "我很好", "I'm fine.", []]];
+  assert.strictEqual(G.exactRow(rows, "我们走吧！", han)[3], "Let's go.");
+  assert.strictEqual(G.exactRow(rows, "我们走", han), null);
+});
+
+test("guess: irregular verbs and numbers written as digits", () => {
+  assert.strictEqual(G.stem("brought"), G.stem("bring"));
+  assert.strictEqual(checkGuess("一百", "100").got, 1);
+  assert.strictEqual(checkGuess("我带了雨伞", "I brought an umbrella").got, 3);
+});
+
+test("guess: let's counts as we", () => {
+  assert.strictEqual(checkGuess("我们试试看！", "Let's try it").got, 2);
+});

@@ -46,6 +46,11 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
   is done, Today offers a quick review round for them.
 - **Next:** the next 10 things to learn and why each matters. Choose fastest reading or HSK focus.
 - **Read:** paste Chinese text to see what you can read, and the smallest set of things to learn for the rest.
+  Then guess what each sentence means in English: **Check my guess** marks every word you got in blue and
+  every word you missed in amber, with its pinyin, meaning and picture under it, and a bar of how much you
+  understood. Words you missed or don't know yet go into your reviews with one tap. The whole sentence in
+  English comes from Tatoeba when it is one of ours, otherwise from your browser's own on-device translator
+  (recent desktop Chrome) or, only when you tap it, Google Translate in a new tab.
 - **Map:** one item in the middle, what it is built from on the left, and what it unlocks on the
   right, each marked ready now or with what it still needs. Tap any square to move it to the middle.
   Starts on your next item; "See it on the map" on any word page opens it there. Below: everything
@@ -69,6 +74,7 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
     python -m jiesuo.order              # writes data/order
     python -m jiesuo.evaluate           # scores held-out sentences
     python -m jiesuo.export_app         # writes app/data, one file per licence
+    python -m jiesuo.glosses            # refreshes meanings alone (needs only data/raw/cedict.json)
     python -m jiesuo.export_strokes     # writes app/strokes and app/data/stroke-parts.json
     python -m jiesuo.export_pictures    # writes app/pictures and app/data/pictures.json
     python scripts/phase1_report.py && python scripts/phase2_report.py
@@ -100,3 +106,8 @@ as CC BY 2.0 FR requires. To refresh the names alone: `python scripts/fetch_data
   words. Detection is about 92% precise, and finds about 65% of real uses. Pattern HSK levels are
   the author's estimates.
 - **The HSK word list is OCR** and not fully proofread.
+- **Guess checking matches words, not sense.** A guess counts a word as understood when it shares a
+  word with any of its dictionary meanings (after simple stemming), so a guess with the right words in
+  the wrong order scores well, and a correct paraphrase can miss ("earn" for 赚 "to make a profit").
+  Grammar words such as 的, 了 and 是 are not scored. The meaning shown under a missed character is its
+  first sense, which is not always the one the sentence uses (带 shows "band", not "to bring").

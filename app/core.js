@@ -264,7 +264,8 @@
       if (it.kind === "w" || list.length < 2) return list.map((reading) => ({ reading, example: null }));
       if (!readingIndex) readingIndex = buildReadingIndex();
       const use = readingIndex.get(it.form) || new Map();
-      const weight = (r) => (use.get(r) || { weight: 0 }).weight;
+      const main = (data.dict.main || {})[it.form];
+      const weight = (r) => (r === main ? Infinity : (use.get(r) || { weight: 0 }).weight);
       return list.map((reading, k) => ({ reading, w: weight(reading), k, example: (use.get(reading) || {}).example ?? null }))
         .sort((a, b) => b.w - a.w || a.k - b.k).map(({ reading, example }) => ({ reading, example }));
     }

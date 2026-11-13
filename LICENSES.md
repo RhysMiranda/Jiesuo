@@ -75,7 +75,7 @@ both pages. Owners can change on Tatoeba, so rerun the step before each data rel
 
 ## Open issues before a public release
 
-1. **Licence separation.** The app ships separate files in `app/data/`: `dict.json` (CC BY-SA 4.0),
+1. **Licence separation.** The app ships separate files in `app/data/`: `dict.json` and `senses.json` (CC BY-SA 4.0),
    `parts.json` (LGPL), `sentences.json` (CC BY 2.0 FR), `hsk.json` and `grammar.json` (MIT).
    `order.json` holds only computed positions, derived from several of these, and is the file a
    licensing reviewer should look at first. `data/graph/` mixes everything and stays git-ignored.

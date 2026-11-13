@@ -268,7 +268,7 @@
     view.innerHTML = `
       <section class="stack">
         <h1>Can I read this?</h1>
-        <label for="text" class="soft">Paste any Chinese text, Simplified or Traditional.${draft === null ? " This one is an example." : ""}</label>
+        <label for="text" class="soft">Paste any Chinese text, Simplified or Traditional. Then guess what it means and see how close you are.${draft === null ? " This one is an example." : ""}</label>
         <textarea id="text" lang="zh">${esc(text)}</textarea>
       </section>
       <div id="result" class="stack" style="gap:28px"></div>`;
@@ -276,7 +276,7 @@
     let timer;
     area.oninput = () => {
       clearTimeout(timer);
-      timer = setTimeout(() => { draft = area.value; store.set(DRAFT_KEY, draft); drawResult(draft); }, 150);
+      timer = setTimeout(() => { draft = area.value; store.set(DRAFT_KEY, draft); readPick = 0; drawResult(draft); }, 150);
     };
     drawResult(text);
   }
@@ -312,6 +312,7 @@
           ${r.tokens.some((t) => t.han && t.unit !== null && core.shownForm(t, state.script).alternatives.length) ? `<span><span class="zh">发<sup class="alt">?</sup></span> has more than one Traditional form; tap for the others</span>` : ""}
         </div>
       </section>
+      <section class="stack guess-box" id="guess" aria-label="Guess the meaning"></section>
       ${r.ladder.length ? `<section class="stack">
         <h2>Learn ${fmt(r.learn.length)} ${r.learn.length === 1 ? "item" : "items"} to read all of this</h2>
         <p class="soft small">The smallest set for this text, including the parts each word needs. Best value comes first; the figure is how much you could read after that step.</p>
@@ -326,6 +327,177 @@
       save();
       drawResult(text);
     };
+    drawGuess(text);
+  }
+
+  // ---- Read: guess what a sentence means, then see how close you were
+  const HAN_CHAR = (c) => /[㐀-䶿一-鿿\u{20000}-\u{3ffff}]/u.test(c);
+  const hasHan = (s) => Array.from(s).some(HAN_CHAR);
+  let readPick = 0, moreSenses = null, moreSensesTried = false;
+  const guesses = new Map(), checked = new Map(), translations = new Map();
+
+  async function loadMoreSenses() {
+    if (moreSenses || moreSensesTried) return moreSenses;
+    moreSensesTried = true;
+    try { moreSenses = (await fetchJson("senses.json")).senses; } catch (e) { moreSenses = null; moreSensesTried = false; }
+    return moreSenses;
+  }
+  const allSenses = (i) => [...(core.get(i).gloss || "").split(";"), ...((moreSenses && moreSenses[i]) || "").split(";")].map((s) => s.trim()).filter(Boolean);
+
+  function drawGuess(text) {
+    const box = document.getElementById("guess");
+    if (!box) return;
+    const list = JiesuoGuess.sentences(text, hasHan);
+    if (!list.length) { box.innerHTML = ""; return; }
+    if (readPick >= list.length) readPick = 0;
+    const s = list[readPick];
+    const lang = state.script === "t" ? "zh-HK" : "zh-Hans";
+    const shownLine = core.tokenise(s).map((t) => (t.han && t.unit !== null ? esc(core.shownForm(t, state.script).text) : esc(t.text))).join("");
+    box.innerHTML = `
+      <h2>What does it mean?</h2>
+      <p class="soft small">Read it, make a guess in English, and see how close you are. Every word you get right is one you can really read.</p>
+      ${list.length > 1 ? `<div class="sent-pick" role="group" aria-label="Choose a sentence">${list.map((x, k) => `<button type="button" data-pick="${k}" aria-pressed="${k === readPick}" lang="${lang}"><span class="soft small">${k + 1}</span> <span class="zh">${esc(Array.from(x).slice(0, 7).join(""))}${Array.from(x).length > 7 ? "…" : ""}</span>${checked.has(x) ? ` <span class="pick-done" aria-label="checked">✓</span>` : ""}</button>`).join("")}</div>` : ""}
+      <div class="guess-sentence"><p class="zh" lang="${lang}">${shownLine}</p>${sayButton(s)}</div>
+      <label class="sr-only" for="guess-in">Your guess in English</label>
+      <textarea id="guess-in" class="guess-in" rows="2" placeholder="What do you think it means? Any wording is fine." autocapitalize="sentences" spellcheck="true">${esc(guesses.get(s) || "")}</textarea>
+      <div class="row">
+        <button type="button" class="btn primary" data-check>Check my guess</button>
+        <button type="button" class="linkish" data-showme>Just show me</button>
+      </div>
+      <div id="guess-result" class="stack" aria-live="polite"></div>`;
+    box.querySelectorAll("[data-pick]").forEach((b) => (b.onclick = () => { readPick = +b.dataset.pick; drawGuess(text); }));
+    const input = box.querySelector("#guess-in");
+    input.oninput = () => guesses.set(s, input.value);
+    input.onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); run(false); } };
+    const run = async (showOnly) => {
+      const guess = showOnly ? "" : input.value.trim();
+      if (!showOnly && !guess) { input.focus(); input.placeholder = "Type a guess first, or tap Just show me."; return; }
+      await loadMoreSenses();
+      checked.set(s, { guess, showOnly });
+      drawGuessResult(s);
+      box.querySelectorAll("[data-pick]").forEach((b) => { if (+b.dataset.pick === readPick && !b.querySelector(".pick-done")) b.insertAdjacentHTML("beforeend", ` <span class="pick-done" aria-label="checked">✓</span>`); });
+    };
+    box.querySelector("[data-check]").onclick = () => run(false);
+    box.querySelector("[data-showme]").onclick = () => run(true);
+    if (checked.has(s)) drawGuessResult(s);
+  }
+
+  function drawGuessResult(s) {
+    const out = document.getElementById("guess-result");
+    if (!out) return;
+    const { guess, showOnly } = checked.get(s);
+    const tokens = core.tokenise(s);
+    const r = JiesuoGuess.check(tokens, guess, allSenses, (i) => core.get(i).form);
+    const lang = state.script === "t" ? "zh-HK" : "zh-Hans";
+    const words = r.parts.filter((p) => p.role !== "text");
+    // "new" marks only stand out when most words are known; for a beginner every card would carry one.
+    const content = words.filter((p) => p.unit != null && p.role !== "glue");
+    const fewNew = content.filter((p) => !state.known.has(p.unit)).length * 2 <= content.length;
+    const card = (p) => {
+      const t = tokens[p.k];
+      const shown = t.unit === null ? t.text : core.shownForm(t, state.script).text;
+      if (p.role === "nodata") return `<span class="wcard is-nodata"><span class="zh w-zh" lang="${lang}">${esc(shown)}</span><span class="w-mean soft">not in our data</span></span>`;
+      const it = core.get(p.unit);
+      const isNew = !state.known.has(p.unit);
+      const role = showOnly && p.role !== "glue" ? "shown" : p.role;
+      const mark = role === "got" ? `<span class="w-mark" aria-label="you got this">✓</span>` : "";
+      const tag = role === "glue" ? `<span class="w-tag">grammar</span>` : isNew && fewNew ? `<span class="w-tag new">new</span>` : "";
+      return `<a class="wcard is-${role}" href="#i${p.unit}">${mark}${picture(p.unit, "pic-s")}<span class="zh w-zh" lang="${lang}">${esc(shown)}</span><span class="w-py">${esc(mainReading(it))}</span><span class="w-mean">${esc(p.meaning)}</span>${tag}</a>`;
+    };
+    const pct = r.total ? Math.round((r.got / r.total) * 100) : 0;
+    const bar = r.total && !showOnly ? `<div class="gbar" role="img" aria-label="${r.got} of ${r.total} words understood">${words.filter((p) => p.role === "got" || p.role === "missed").map((p) => `<i class="${p.role}"></i>`).join("")}</div>` : "";
+    const head = showOnly
+      ? `<h3>Here it is, word by word.</h3>`
+      : `<div class="ghead"><span class="score">${pct}%</span><div><h3>${esc(JiesuoGuess.verdict(r.got, r.total))}</h3><p class="soft">You understood <strong>${fmt(r.got)} of ${fmt(r.total)}</strong> key ${r.total === 1 ? "word" : "words"}.</p></div></div>`;
+    const yours = !showOnly && guess ? `<p class="your-guess"><span class="soft small">Your guess</span><br>${r.guess.length ? highlightGuess(guess, r.guess) : esc(guess)}</p>` : "";
+    // What to learn: words the guess missed, and every word in the sentence not known yet.
+    const missed = [...words.filter((p) => p.unit != null && p.role === "missed"), ...words.filter((p) => p.unit != null && p.role !== "nodata" && !state.known.has(p.unit))].map((p) => p.unit);
+    const toLearn = [...new Set(showOnly ? words.filter((p) => p.unit != null && !state.known.has(p.unit)).map((p) => p.unit) : missed)];
+    const notInReview = toLearn.filter((i) => !inReview(i));
+    const learnBox = toLearn.length ? `
+      <section class="stack learn-box">
+        <h3>${showOnly ? "New to you here" : "Worth learning from this one"}</h3>
+        <div class="chips">${toLearn.map((i) => `${chip(i, state.known.has(i) ? "" : "need")}`).join("")}</div>
+        <div class="row">${notInReview.length ? `<button type="button" class="btn" data-add-all>+ Add ${notInReview.length === 1 ? "it" : `all ${fmt(notInReview.length)}`} to my reviews</button>` : `<span class="soft small">✓ All in your reviews. They come up in your next lesson.</span>`}</div>
+      </section>` : `<p class="yay">${showOnly ? "You know every word here." : "Nothing to add: you know every word here."}</p>`;
+    out.innerHTML = `
+      ${head}${bar}${yours}
+      <div class="wcards" lang="${lang}">${words.map(card).join("")}</div>
+      <div class="key small soft"><span><i class="k-got"></i>you got it</span><span><i class="k-missed"></i>missed</span><span><i class="k-glue"></i>grammar word, not scored</span></div>
+      <section class="stack translation" id="translation"></section>
+      ${learnBox}`;
+    const add = out.querySelector("[data-add-all]");
+    if (add) add.onclick = () => {
+      notInReview.forEach((i) => { state.review.set(i, [1, JiesuoJourney.dayKey()]); state.seen.set(i, JiesuoJourney.dayKey()); });
+      save();
+      showPlain(`Added ${notInReview.length === 1 ? disp(notInReview[0]) : `${notInReview.length} words`} to your reviews. ${notInReview.length === 1 ? "It comes" : "They come"} up in your next lesson.`);
+      drawGuessResult(s);
+    };
+    drawTranslation(s);
+    if (!showOnly && r.total && r.got === r.total) celebrate(out.querySelector(".ghead"));
+  }
+
+  /** The guess with the words that matched something drawn in pen ink. */
+  function highlightGuess(guess, matched) {
+    const used = new Set(matched.filter((w) => w.used).map((w) => w.word));
+    return guess.split(/(\s+)/).map((piece) => {
+      const bare = piece.toLowerCase().replace(/[^a-z0-9]/g, "");
+      return bare && used.has(bare) ? `<mark class="g-hit">${esc(piece)}</mark>` : esc(piece);
+    }).join("");
+  }
+
+  function celebrate(el) {
+    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    el.classList.remove("pop");
+    void el.offsetWidth;
+    el.classList.add("pop");
+  }
+
+  /** The whole sentence in English: a Tatoeba translation if it is one of ours, else on request. */
+  async function drawTranslation(s) {
+    const box = document.getElementById("translation");
+    if (!box) return;
+    const google = `https://translate.google.com/?sl=zh-CN&tl=en&op=translate&text=${encodeURIComponent(s)}`;
+    const googleLink = (label) => `<a class="btn quiet ext" href="${google}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
+    const canDevice = "Translator" in self;
+    const done = translations.get(s);
+    const offer = () => {
+      box.innerHTML = `<h3>The whole sentence</h3>
+        <div class="row">${canDevice ? `<button type="button" class="btn" data-translate>Translate on this device</button>${googleLink("Google Translate")}` : googleLink("Translate with Google")}</div>
+        <p class="soft small">${canDevice ? "On this device the sentence never leaves your phone or computer. Google Translate opens in a new tab with this sentence." : "Opens Google Translate in a new tab with this sentence. Nothing is sent until you tap."}</p>`;
+      const b = box.querySelector("[data-translate]");
+      if (b) b.onclick = () => deviceTranslate(s, box, googleLink);
+    };
+    if (done) { box.innerHTML = `<h3>The whole sentence</h3><p class="en-line">${esc(done)}</p><p class="soft small">Translated on this device by your browser. Machine translation can be wrong. ${`<a href="${google}" target="_blank" rel="noopener noreferrer">Compare with Google ↗</a>`}</p>`; return; }
+    offer();
+    try {
+      const rows = await loadSentenceRows();
+      const row = JiesuoGuess.exactRow(rows, s, HAN_CHAR);
+      if (row && document.getElementById("translation") === box) {
+        box.innerHTML = `<h3>The whole sentence</h3>${sentenceHtml(row)}`;
+      }
+    } catch (e) { /* offline before the sentences were saved: the buttons stay */ }
+  }
+
+  async function deviceTranslate(s, box, googleLink) {
+    const status = (msg) => { const p = box.querySelector(".soft.small"); if (p) p.textContent = msg; };
+    // Some browsers expose the API but never answer, so each step has a time limit.
+    const within = (p, ms) => Promise.race([p, new Promise((_, no) => setTimeout(() => no(new Error("timeout")), ms))]);
+    const button = box.querySelector("[data-translate]");
+    if (button) button.disabled = true;
+    try {
+      const opts = { sourceLanguage: "zh", targetLanguage: "en" };
+      status("Checking this browser's translator…");
+      const avail = await within(self.Translator.availability(opts), 5000);
+      if (avail === "unavailable") throw new Error("unavailable");
+      status(avail === "available" ? "Translating…" : "Downloading the Chinese to English model once. This can take a minute…");
+      const t = await within(self.Translator.create({ ...opts, monitor(m) { m.addEventListener("downloadprogress", (e) => status(`Downloading the translation model: ${Math.round((e.loaded || 0) * 100)}%`)); } }), avail === "available" ? 15000 : 300000);
+      const en = await within(t.translate(s), 20000);
+      translations.set(s, en);
+      if (document.getElementById("translation") === box) drawTranslation(s);
+    } catch (e) {
+      box.innerHTML = `<h3>The whole sentence</h3><p class="soft small">This browser can't translate Chinese on the device.</p><div class="row">${googleLink("Translate with Google")}</div>`;
+    }
   }
 
   // ---- My map: one item in the middle, what it is made of, and what it unlocks
