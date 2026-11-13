@@ -64,32 +64,52 @@ class Model:
         return out
 
 
-def greedy(model, lookahead=0.0):
-    """Density greedy: take the target whose unknown closure has the best value per item."""
+def greedy(model, lookahead=0.0, bundles=(), bonus=0.0):
+    """Density greedy: take the target whose unknown closure has the best value per item.
+
+    Targets are single units and, optionally, `bundles`: sets of units, one per training
+    sentence. Finishing a bundle earns `bonus` / len(bundles) on top of its token value, so
+    with bonus > 0 the order also prefers items that complete whole sentences. A sentence
+    with one unknown word left is cheap to finish, so it is taken early.
+    """
     worth = lambda u: model.value.get(u, 0.0) + lookahead * model.future.get(u, 0.0)
-    targets = [u for u in set(model.value) | set(model.future) if worth(u) > 0]
-    remaining = {t: set(model.closure(t)) for t in targets}
-    gain = {t: sum(worth(u) for u in remaining[t]) for t in targets}
+    cache = {}
+
+    def closure_set(u):
+        if u not in cache:
+            cache[u] = frozenset(model.closure(u))
+        return cache[u]
+
+    remaining, extra = {}, {}
+    for u in set(model.value) | set(model.future):
+        if worth(u) > 0:
+            remaining[("u", u)] = set(closure_set(u))
+    per_bundle = bonus / len(bundles) if bundles else 0.0
+    for k, units in enumerate(bundles):
+        remaining[("s", k)] = set().union(*(closure_set(u) for u in units))
+        extra[("s", k)] = per_bundle
+    gain = {t: sum(worth(u) for u in r) + extra.get(t, 0.0) for t, r in remaining.items()}
     used_by = defaultdict(list)
     for t, members in remaining.items():
         for u in members:
             used_by[u].append(t)
-    heap = [(-gain[t] / len(remaining[t]), t, len(remaining[t])) for t in targets]
+    heap = [(-gain[t] / len(r), t, len(r)) for t, r in remaining.items() if r]
     heapq.heapify(heap)
     known, order = set(), []
     while heap:
         _, t, size = heapq.heappop(heap)
-        if t in known or size != len(remaining[t]):
-            continue  # stale entry
-        for u in model.closure(t, known):
-            known.add(u)
-            order.append(u)
-            for other in used_by[u]:
-                if u in remaining[other]:
-                    remaining[other].discard(u)
-                    gain[other] -= worth(u)
-                    if remaining[other] and other not in known:
-                        heapq.heappush(heap, (-gain[other] / len(remaining[other]), other, len(remaining[other])))
+        if size != len(remaining[t]) or not remaining[t]:
+            continue  # stale entry, or already finished by other targets
+        for unit in sorted(remaining[t]):
+            for u in model.closure(unit, known):
+                known.add(u)
+                order.append(u)
+                for other in used_by[u]:
+                    if u in remaining[other]:
+                        remaining[other].discard(u)
+                        gain[other] -= worth(u)
+                        if remaining[other]:
+                            heapq.heappush(heap, (-gain[other] / len(remaining[other]), other, len(remaining[other])))
     return order
 
 
@@ -181,16 +201,33 @@ class Data:
                     order.append(u)
         return order + [u for u in rest if u not in known]
 
-    def orders(self, mode=PRIMARY_MODE, lookahead=0.0):
-        m = self.model(mode)
-        unlock = greedy(m, lookahead)
-        # Words with no frequency data have no value to chase; they go last, by HSK band.
-        known = set(unlock)
+    def sentence_bundles(self, keep=None):
+        """Units each training sentence in the graph needs. keep(text) filters sentences."""
+        need = defaultdict(set)
+        for a, b, kind, _ in self.edges:
+            if kind in ("word_sentence", "char_sentence"):
+                need[b].add(word_unit(a[2:]))
+        ids = sorted(s for s in need if keep is None or keep(self.nodes[s]["text"]))
+        return [frozenset(need[s]) for s in ids]
+
+    def complete(self, model, order):
+        """Words with no frequency data have no value to chase; they go last, by HSK band."""
+        known = set(order)
         for t in self.hsk_targets():
-            for u in m.closure(t, known):
+            for u in model.closure(t, known):
                 known.add(u)
-                unlock.append(u)
+                order.append(u)
+        return order
+
+    def orders(self, mode=PRIMARY_MODE, lookahead=0.0, bonus=None):
+        """All orders for one prerequisite mode. bonus=None leaves out the sentence-aware order."""
+        m = self.model(mode)
+        unlock = self.complete(m, greedy(m, lookahead))
+        extra = {}
+        if bonus is not None:
+            extra["sentences"] = self.complete(m, greedy(m, lookahead, self.sentence_bundles(), bonus))
         return {
+            **extra,
             "hsk_focus": self.hsk_focus(m, unlock),
             "unlock": unlock,
             "frequency": from_targets(m, self.frequency_targets()),
