@@ -25,9 +25,13 @@
   let core, order, bands, sentences = null;
   if (window.JiesuoWriter) JiesuoWriter.loadStrokeParts(); // small, and gives "built from" its stroke order
   try {
-    const [dict, parts, grammar, ord, hsk] = await Promise.all(["dict.json", "parts.json", "grammar.json", "order.json", "hsk.json"].map(fetchJson));
+    const [dict, parts, grammar, ord, hsk, pics] = await Promise.all(["dict.json", "parts.json", "grammar.json", "order.json", "hsk.json"].map(fetchJson)
+      .concat(fetchJson("pictures.json").catch(() => ({ pictures: {} }))));
     core = JiesuoCore.createCore({ dict, parts, grammar });
     core.partsData = parts.parts;
+    // Word pictures (OpenMoji, CC BY-SA 4.0), keyed by unit.
+    core.pictures = new Map();
+    for (const it of core.items) { const code = pics.pictures[(it.kind === "w" ? "w:" : "h:") + it.form]; if (code && it.kind !== "p") core.pictures.set(it.i, code); }
     order = ord;
     bands = hsk.bands;
   } catch (e) {
@@ -35,7 +39,7 @@
     return;
   }
 
-  const freshJourney = () => ({ review: new Map(), days: new Set(), milestones: {}, stats: { written: 0, unlocked: 0 }, lesson: null });
+  const freshJourney = () => ({ review: new Map(), days: new Set(), milestones: {}, stats: { written: 0, unlocked: 0 }, lesson: null, seen: new Map(), dictations: [] });
   const state = { known: new Set(), tradSeen: new Set(), script: "s", focus: "unlock", ...freshJourney() };
   try {
     const saved = store.get(STORE_KEY);
@@ -102,9 +106,11 @@
   const chip = (i, cls = "") => {
     const it = core.get(i);
     const label = it.kind === "g" ? esc(it.form) : `<span class="zh">${esc(disp(i))}</span>`;
-    return `<a class="chip ${cls}" href="#i${i}">${label}${it.pinyin ? `<span class="soft">${esc(firstReading(it.pinyin))}</span>` : ""}</a>`;
+    return `<a class="chip ${cls}" href="#i${i}">${label}${it.pinyin ? `<span class="soft">${esc(mainReading(it))}</span>` : ""}</a>`;
   };
   const firstReading = (p) => p.split(",")[0];
+  /** A word's picture, if it has one. Decorative: the meaning is always written next to it. */
+  const picture = (i, cls = "") => (core.pictures.has(i) ? `<img class="pic ${cls}" src="pictures/${core.pictures.get(i)}.svg" alt="" loading="lazy" draggable="false">` : "");
 
   // ---- Audio: the browser's own Mandarin voice, where one exists. zh-HK voices speak Cantonese, so they are skipped.
   let voice = null;
@@ -130,7 +136,7 @@
     } catch (e) { /* audio is optional */ }
   }
   const SPEAKER = `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
-  const sayButton = (text) => `<button type="button" class="say" data-say="${esc(text)}" aria-label="Hear it" title="Hear it"${voice ? "" : " hidden"}>${SPEAKER}</button>`;
+  const sayButton = (text, small = false) => `<button type="button" class="say${small ? " say-s" : ""}" data-say="${esc(text)}" aria-label="Hear ${esc(text)}" title="Hear ${esc(text)}"${voice ? "" : " hidden"}>${SPEAKER}</button>`;
   const backButton = () => `<button type="button" class="back" data-back>‹ Back</button>`;
   view.addEventListener("click", (e) => {
     const say = e.target.closest("[data-say]");
@@ -139,6 +145,25 @@
   });
   const glossOf = (it) => it.gloss || (core.partsData[it.form] || {}).d || "";
   const pinyinOf = (it) => it.pinyin || (core.partsData[it.form] || {}).y || "";
+  /** The reading most words use (好 -> hǎo), for display wherever one reading is shown. */
+  const mainReading = (it) => { const r = it.kind !== "w" && it.i < core.n ? core.readings(it.i) : []; return r.length ? r[0].reading : firstReading(pinyinOf(it)); };
+  /**
+   * Pinyin with audio that matches it. One reading: the speaker says the item. Several: the main
+   * reading's speaker says a word that uses it ("hǎo, as in 最好"), and each other reading is listed
+   * with its own example word and speaker, since a voice reading the character alone picks a reading itself.
+   */
+  function readingBlock(i, big = true) {
+    const it = core.get(i);
+    const cls = big ? "pinyin-big" : "pinyin";
+    const rs = it.kind === "w" ? [] : core.readings(i);
+    if (rs.length < 2) return `<span class="say-row"><span class="${cls}">${esc(mainReading(it))}</span>${it.kind !== "p" ? sayButton(it.form) : ""}</span>`;
+    const ex = (r) => (r.example === null ? null : core.get(r.example));
+    const [main, ...rest] = rs;
+    const asIn = ex(main) ? ` <span class="soft small">as in <a class="zh" href="#i${main.example}">${esc(disp(main.example))}</a></span>` : "";
+    const alt = (r) => `<span class="reading-alt"><span class="pinyin">${esc(r.reading)}</span>${ex(r) ? ` <a class="zh" href="#i${r.example}">${esc(disp(r.example))}</a>${sayButton(ex(r).form, true)}` : ""}</span>`;
+    return `<span class="say-row"><span class="${cls}">${esc(main.reading)}</span>${sayButton(ex(main) ? ex(main).form : it.form)}${asIn}</span>
+      <span class="also"><span class="soft small">Also read</span> ${rest.map(alt).join("")}</span>`;
+  }
 
   function perWords(freq) {
     if (!freq) return "";
@@ -232,7 +257,7 @@
     }
     return `<article class="item">${cells(i, it.form.length > 2 ? "ge-m" : "", fr.has(i) ? "is-frontier" : "")}<div class="text">
       <span class="kind">${KIND[it.kind]}</span>
-      <span><span class="pinyin">${esc(pinyinOf(it))}</span>${glossOf(it) ? ` ${esc(glossOf(it))}` : ""}</span>
+      <span><span class="pinyin">${esc(mainReading(it))}</span>${glossOf(it) ? ` ${esc(it.kind === "p" ? shortMeaning(it) : glossOf(it))}` : ""}</span>
       <p class="why">${why(i)}</p></div>${tick}</article>`;
   }
 
@@ -320,23 +345,25 @@
     view.innerHTML = `
       <section class="stack">
         <h1>My map</h1>
-        <p>${known ? `You know ${fmt(known)} of ${fmt(seq.length)} items. ` : `Nothing is lit yet. `}<strong>${fmt(frList.length)}</strong> ${frList.length === 1 ? "item is" : "items are"} ready to learn now: you already know everything they need.</p>
+        <p class="soft">${known ? "See how what you know fits together, and what it opens up next." : "Every character is built from smaller parts. Start anywhere and follow the lines."} Tap any square to move it to the middle.</p>
       </section>
       <section class="stack" id="focus-map" aria-label="What it is made of and what it unlocks"></section>
       <section class="stack">
-        <h2>Ready to learn now</h2>
-        <p class="soft small">Tap one to see what it unlocks.</p>
-        <div class="chips">${frList.slice(0, 30).map((i) => mapChip(i, "need")).join("")}</div>
+        <h2>Good next steps</h2>
+        <div class="chips">${frList.filter((i) => i < core.n).slice(0, 8).map((i) => mapChip(i, "need")).join("")}</div>
       </section>
-      <section class="stack">
-        <h2>The whole language</h2>
-        <p class="soft small">Every square is one item, in learning order. Tap one to see it on the map.</p>
-        <canvas class="field" id="field" aria-label="Grid of all items, showing which are known and which are ready to learn"></canvas>
-        <div class="key"><span><i class="k-known"></i>Known</span><span><i class="k-front"></i>Ready to learn</span><span><i></i>Further off</span></div>
-        <div id="peek"></div>
-      </section>`;
+      <details class="whole" id="whole">
+        <summary>See the whole language</summary>
+        <div class="stack">
+          <p class="soft small">${known ? `You know ${fmt(known)} of ${fmt(seq.length)} items. ` : ""}Every square is one item, in learning order. Tap one to see it on the map.</p>
+          <canvas class="field" id="field" aria-label="Grid of all items, showing which are known and which are ready to learn"></canvas>
+          <div class="key"><span><i class="k-known"></i>Known</span><span><i class="k-front"></i>Ready to learn</span><span><i></i>Further off</span></div>
+          <div id="peek"></div>
+        </div>
+      </details>`;
     drawFocus(focus);
-    drawField(seq, new Set(frList));
+    const whole = document.getElementById("whole");
+    whole.ontoggle = () => { if (whole.open) drawField(seq, new Set(frList)); };
   }
 
   /** A chip that moves the map's centre rather than opening the page. */
@@ -372,7 +399,7 @@
       const href = g.kind === "g" ? `#i${u}` : `#m${u}`;
       return `<a class="fm-node" href="${href}" data-u="${u}" data-state="${s}">${inner}${note ? `<span class="fm-note">${note}</span>` : ""}</a>`;
     };
-    const shown = mapShowAll ? info.unlocks.slice(0, 60) : info.unlocks.slice(0, 8);
+    const shown = mapShowAll ? info.unlocks.slice(0, 60) : info.unlocks.slice(0, 5);
     const unlockNote = (x) => {
       if (x.state === "known") return "known";
       if (x.ready) return info.state === "known" ? "ready to learn" : `ready once you learn ${esc(form)}`;
@@ -393,11 +420,11 @@
         <svg class="fm-lines" aria-hidden="true"></svg>
         <div class="fm-col fm-left">
           <span class="fm-head">${it.kind === "w" ? "Made of" : "Built from"}</span>
-          ${info.parts.map((p) => node(p.u, p.state, esc(firstReading(pinyinOf(core.get(p.u))) || ""))).join("") || `<span class="soft small fm-empty">a basic shape</span>`}
+          ${info.parts.map((p) => node(p.u, p.state, esc(mainReading(core.get(p.u)) || ""))).join("") || `<span class="soft small fm-empty">a basic shape</span>`}
         </div>
         <div class="fm-centre" data-centre>
           <span class="word fm-big">${Array.from(form).map((c) => `<span class="ge ${Array.from(form).length > 2 ? "ge-m" : ""} ${stateCls(info.state)}"><b>${esc(c)}</b></span>`).join("")}</span>
-          <span class="pinyin">${esc(firstReading(pinyinOf(it)))}</span>
+          <span class="pinyin">${esc(mainReading(it))}</span>
           <span class="small fm-gloss">${esc(shortMeaning(it))}</span>
         </div>
         <div class="fm-col fm-right">
@@ -408,9 +435,10 @@
             : `<button type="button" class="linkish" data-showall>Show ${info.unlocks.length > 60 ? "more" : `all ${fmt(info.unlocks.length)}`}</button>`) : ""}
         </div>
       </div>
+      <div class="key fm-key"><span><i class="k-known"></i>You know it</span><span><i class="k-ready"></i>Ready to learn</span><span><i></i>Later</span></div>
       <p class="fm-status">${status}</p>
       <p>${summary}</p>
-      <div class="row"><a class="btn" href="#i${i}">Open <span class="zh">${esc(form)}</span></a>${it.kind !== "p" ? sayButton(it.form) : ""}</div>`;
+      <div class="row"><a class="btn" href="#i${i}">Open <span class="zh">${esc(form)}</span></a></div>`;
     const all = box.querySelector("[data-showall]");
     if (all) all.onclick = () => { mapShowAll = true; drawFocus(i); };
     drawFocusLines(info);
@@ -524,8 +552,8 @@
             <div class="word">${Array.from(disp(i)).map((c) => `<span class="ge ${it.form.length > 2 ? "" : "ge-xl"} ${known ? "is-known" : ""}"><b>${esc(c)}</b></span>`).join("")}</div>
             <div class="text">
               <span class="soft">${KIND[it.kind]}${bands[i] ? `, HSK ${bands[i] === 7 ? "7–9" : bands[i]}` : ""}</span>
-              <span class="say-row"><span class="pinyin-big">${esc(pinyinOf(it))}</span>${it.kind !== "p" ? sayButton(it.form) : ""}</span>
-              <span>${esc(glossOf(it) || "No dictionary entry for this one.")}</span>
+              ${readingBlock(i)}
+              <span class="meaning-row">${picture(i, "pic-m")}<span>${esc(glossOf(it) || "No dictionary entry for this one.")}</span></span>
               ${forms.length > 1 ? `<span class="small soft">Also written <span class="zh">${forms.filter((f) => f !== disp(i)).map(esc).join(", ")}</span></span>` : ""}
             </div>
           </section>
@@ -638,6 +666,7 @@
       showPlain(`Took ${disp(i)} out of your reviews.`);
     } else {
       state.review.set(i, [1, JiesuoJourney.dayKey()]);
+      state.seen.set(i, JiesuoJourney.dayKey());
       showPlain(`Added ${disp(i)}. It comes up in your next lesson.`);
     }
     save();
@@ -687,7 +716,7 @@
       return `<article class="result">
         <a class="result-main" href="#i${i}">
           <span class="zh result-form ${state.known.has(i) ? "tok-known" : ""}">${esc(disp(i))}</span>${other ? `<span class="zh soft small">${esc(other)}</span>` : ""}
-          <span class="result-text"><span class="pinyin">${esc(pinyinOf(it))}</span> <span class="soft small">${KIND[it.kind]}${state.known.has(i) ? " · known" : ""}</span><br><span>${esc(glossOf(it))}</span></span>
+          <span class="result-text">${picture(i, "pic-s")}<span class="pinyin">${esc(pinyinOf(it))}</span> <span class="soft small">${KIND[it.kind]}${state.known.has(i) ? " · known" : ""}</span><br><span>${esc(glossOf(it))}</span></span>
         </a>
         ${reviewButton(i, "small-btn")}
       </article>`;
@@ -731,6 +760,7 @@
         <p>Character parts: <a href="https://github.com/skishore/makemeahanzi" rel="noopener" target="_blank">Make Me a Hanzi</a>, LGPL-3.0-or-later. Derived from Unihan and CJKlib.</p>
         <p>Sentences: <a href="https://tatoeba.org" rel="noopener" target="_blank">Tatoeba</a>, <a href="https://creativecommons.org/licenses/by/2.0/fr/deed.en" rel="noopener" target="_blank">CC BY 2.0 FR</a>. Each example names its author and translator and links to its page.</p>
         <p>HSK lists: <a href="https://github.com/elkmovie/hsk30" rel="noopener" target="_blank">elkmovie/hsk30</a>, MIT, Pleco Inc. Script conversion: <a href="https://github.com/BYVoid/OpenCC" rel="noopener" target="_blank">OpenCC</a>, Apache-2.0. Word splitting while building the data: <a href="https://github.com/fxsjy/jieba" rel="noopener" target="_blank">jieba</a>, MIT.</p>
+        <p>Pictures: all emojis designed by <a href="https://openmoji.org/" rel="noopener" target="_blank">OpenMoji</a>, the open-source emoji and icon project. License: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank">CC BY-SA 4.0</a>.</p>
         <p>Grammar explanations were written for Jiesuo, and their HSK levels are our own estimates.</p>
         <p><a href="licences/">Full licence texts and notices</a></p>
       </section>`;
@@ -794,8 +824,8 @@
 
   // ---- Routing: a plain #name, the only hash form every host preserves
   const today = JiesuoToday.create({
-    core, state, save, view, esc, fmt, disp, sayButton, glossOf, pinyinOf, knowsGlyph: (f) => knowsGlyph(f), learn,
-    bands, loadSentences, loadSentenceRows, sentenceHtml: (s) => sentenceHtml(s), currentOrder: () => currentOrder(),
+    core, state, save, view, esc, fmt, disp, sayButton, readingBlock, picture, glossOf, pinyinOf: mainReading, knowsGlyph: (f) => knowsGlyph(f), learn,
+    bands, loadSentences, loadSentenceRows, sentenceHtml: (s) => sentenceHtml(s), currentOrder: () => currentOrder(), speak, canSpeak, SPEAKER,
   });
 
   function route() {

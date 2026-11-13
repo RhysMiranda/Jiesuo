@@ -73,6 +73,35 @@
     return { u: i, state: stateOf(i), needs: hard.filter((p) => !known.has(p)), parts, unlocks, readyCount, laterCount: unlocks.length - readyCount };
   }
 
+  // ---- Dictation every two weeks: hear words from the fortnight and write them from memory.
+  const DICTATION_EVERY = 14, DICTATION_MIN = 5;
+  /** Words and characters (not parts) learned or reviewed in the last 14 days. seen: Map unit -> day. */
+  function dictationPool(core, seen, today) {
+    const from = addDays(today, -DICTATION_EVERY);
+    return [...seen].filter(([u, day]) => day >= from && u < core.n && core.get(u).kind !== "p");
+  }
+  /** The day the next dictation is counted from: the last dictation, else the first day of learning. */
+  function dictationAnchor({ days, dictations }) {
+    if (dictations && dictations.length) return dictations[dictations.length - 1].day;
+    const sorted = [...(days || [])].sort();
+    return sorted[0] || null;
+  }
+  /** Days until the next dictation (0 = today), or null before the first lesson. */
+  function nextDictationIn(core, st, today) {
+    const anchor = dictationAnchor(st);
+    return anchor ? Math.max(0, DICTATION_EVERY - daysBetween(anchor, today)) : null;
+  }
+  function dictationDue(core, st, today) {
+    return nextDictationIn(core, st, today) === 0 && dictationPool(core, st.seen || new Map(), today).length >= DICTATION_MIN;
+  }
+  /** Up to k items from the fortnight: least secure first (lowest review box), then most recent. */
+  function pickDictation(core, seen, review, today, k = 10) {
+    const box = (u) => (review.get(u) || [0])[0];
+    return dictationPool(core, seen, today)
+      .sort((a, b) => box(a[0]) - box(b[0]) || (a[1] < b[1] ? 1 : a[1] > b[1] ? -1 : 0) || a[0] - b[0])
+      .slice(0, k).map(([u]) => u);
+  }
+
   // The journey path. Counts say how far away they are; flags are firsts.
   const MILESTONES = [
     { key: "first-char", label: "Your first character", field: "chars", target: 1 },
@@ -105,5 +134,5 @@
     });
   }
 
-  return { dayKey, addDays, daysBetween, BOXES, schedule, dueReviews, pickNew, unlockSentence, focusInfo, MILESTONES, milestones };
+  return { dayKey, addDays, daysBetween, BOXES, schedule, dueReviews, pickNew, unlockSentence, focusInfo, dictationDue, nextDictationIn, pickDictation, DICTATION_EVERY, MILESTONES, milestones };
 });

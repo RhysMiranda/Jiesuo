@@ -142,5 +142,11 @@
   "member": null,
   "sha256": "3a5e90c0957524a89e48203febcd4492ca4393678abaa7e5b4d70f3ff32b386d",
   "bytes": 6901
+ },
+ "emojibase_en.json": {
+  "url": "https://registry.npmjs.org/emojibase-data/-/emojibase-data-16.0.3.tgz",
+  "member": "package/en/data.json",
+  "sha256": "8cbf636f6b28476065e847360691ca8a6767ed328d3223f9eead4e5c09e61f04",
+  "bytes": 735588
  }
 }

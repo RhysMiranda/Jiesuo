@@ -52,6 +52,11 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
   ready to learn now, and the whole language as a grid.
 - **Progress:** save your progress to a file and restore it.
 - **简/繁:** switch script anywhere. Learning one form counts toward the other.
+- **Dictation every two weeks:** Today offers a dictation of up to 10 words from the fortnight. You hear
+  each one (single characters as a teacher says them, 好，最好的好) and write it from memory; missed ones
+  come back in your reviews. Without a Chinese voice on the device it shows the pinyin instead.
+- **Pictures:** about 480 concrete words (马, 学校, 苹果, 下雨…) have a picture beside their meaning, from
+  OpenMoji, and reviews ask "which picture is it?" for them. Abstract words have none.
 - **Audio:** a speaker button uses the device's own Mandarin voice, and is hidden when there is none.
 
 ## Rebuilding the data
@@ -65,6 +70,7 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
     python -m jiesuo.evaluate           # scores held-out sentences
     python -m jiesuo.export_app         # writes app/data, one file per licence
     python -m jiesuo.export_strokes     # writes app/strokes and app/data/stroke-parts.json
+    python -m jiesuo.export_pictures    # writes app/pictures and app/data/pictures.json
     python scripts/phase1_report.py && python scripts/phase2_report.py
     python scripts/segmentation_check.py      # word splitting against UD
     python scripts/grammar_audit.py score     # grammar detection, from the labelled sample

@@ -10,7 +10,9 @@
   --pen: #1f3fb5;
   --pen-wash: #dfe5f8;
   --red: #c02c26;
-  --zh: "LXGW WenKai TC", "Kaiti SC", "STKaiti", "KaiTi", "BiauKai", "Noto Serif CJK SC", "Noto Serif SC", serif;
+  /* Simplified mode uses the mainland-standard WenKai, so 真 and 骨 look as in a mainland textbook and
+     match the stroke data; Traditional mode switches to the TC cut (Hong Kong and Taiwan forms). */
+  --zh: "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "Noto Serif CJK SC", "Noto Serif SC", serif;
   --ui: "Alegreya Sans", "Gill Sans", "Trebuchet MS", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
@@ -23,6 +25,7 @@
   --paper: #101c1e; --sheet: #162528; --ink: #e7efe9; --soft: #a3b6b1; --grid: #3d6157; --grid-faint: #24393a;
   --pen: #9db0ff; --pen-wash: #22305f; --red: #ff9486; color-scheme: dark;
 }
+:root[lang="zh-HK"] { --zh: "LXGW WenKai TC", "Kaiti TC", "BiauKai", "DFKai-SB", "Noto Serif CJK TC", "Noto Serif TC", serif; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
@@ -387,3 +390,46 @@ pre.export { max-height: 160px; overflow: auto; background: var(--sheet); border
 @media (prefers-reduced-motion: no-preference) {
   .item.just-known .ge { transition: background-color .2s; }
 }
+
+/* Readings: the main one large, the others each with a word that uses it */
+.also { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; }
+.reading-alt { display: inline-flex; gap: 4px; align-items: center; }
+.reading-alt .zh { font-size: 1.15rem; text-decoration: none; }
+.say.say-s { width: 36px; height: 36px; }
+.say.say-s svg { width: 18px; height: 18px; }
+.say-row .soft a { text-decoration: none; }
+
+/* Map: calmer extras */
+.key .k-ready { background: var(--sheet); border: 2px dashed var(--pen); }
+.fm-key { font-size: .88rem; }
+details.whole { border-top: 1px solid var(--grid-faint); padding-top: 12px; }
+details.whole summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--pen); font-weight: 500; }
+details.whole[open] summary { margin-bottom: 8px; }
+
+/* Word pictures (OpenMoji): beside the meaning, never instead of it */
+.pic { display: inline-block; flex: none; object-fit: contain; }
+.pic-s { width: 32px; height: 32px; }
+.pic-m { width: 56px; height: 56px; }
+.pic-l { width: 88px; height: 88px; }
+.meaning-row { display: flex; gap: 10px; align-items: center; }
+.result-text .pic-s { float: right; margin-left: 8px; }
+.options-pic { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.option-pic { display: grid; place-items: center; min-height: 112px; padding: 10px; }
+.option-pic img { width: 84px; height: 84px; }
+.option-pic.right { background: var(--pen-wash); }
+
+/* Dictation */
+.dictation-card {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: start;
+  padding: 16px; background: var(--pen-wash); border: 1.5px solid var(--pen);
+}
+.dictation-card .ge { --size: 64px; color: var(--pen); }
+.dict-prompt { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.dict-play { display: inline-flex; gap: 8px; align-items: center; }
+.dict-hint { flex-basis: 100%; }
+.dict-answer { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.dict-answer .ge { --size: 56px; }
+.dict-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.dict-list .zh { font-size: 1.5rem; }
+.dict-list li.ok .zh { color: var(--pen); }
+.dict-done { padding: 12px 16px; background: var(--pen-wash); border-left: 4px solid var(--pen); }

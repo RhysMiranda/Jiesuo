@@ -45,6 +45,8 @@ SOURCES = {
         "tatoeba-sentence-pairs-in-mandarin-chinese-english-0.20260520.0.tgz",
         "package/sentences.json",
     ),
+    # Unicode CLDR emoji names, used only at build time to suggest a picture for a word (MIT).
+    "emojibase_en.json": (f"{NPM}/emojibase-data/-/emojibase-data-16.0.3.tgz", "package/en/data.json"),
     # Tatoeba's own exports, for author names (CC BY 2.0 FR needs them). Refreshed
     # weekly upstream, so the hashes in the manifest record the copy actually used.
     "tatoeba/cmn_sentences_detailed.tsv.bz2": (f"{TATOEBA}/per_language/cmn/cmn_sentences_detailed.tsv.bz2", None),

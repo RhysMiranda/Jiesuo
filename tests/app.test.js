@@ -306,3 +306,57 @@ test("focus map: a word is made of its characters, and states follow what is kno
   assert.strictEqual(J.focusInfo(core, unit("学生"), all).state, "known");
   assert.strictEqual(J.focusInfo(core, unit("学生"), new Set([...all].filter((u) => u !== unit("学生")))).state, "ready");
 });
+
+// ---- Readings: the main one first, each other one with a word that uses it (for audio)
+test("readings: main reading comes from how words use the character", () => {
+  const r = (f) => core.readings(unit(f));
+  assert.strictEqual(r("好")[0].reading, "hǎo");
+  assert.strictEqual(r("的")[0].reading, "de");
+  assert.strictEqual(r("了")[0].reading, "le");
+  const hao4 = r("好").find((x) => x.reading === "hào");
+  assert.ok(hao4 && hao4.example !== null, "hào has an example word");
+  assert.ok(core.get(hao4.example).form.includes("好"));
+  assert.ok(core.get(hao4.example).pinyin.includes("hào"));
+  assert.deepStrictEqual(r("你好").map((x) => x.reading), ["nǐ hǎo"]);
+  assert.strictEqual(r("你")[0].reading, "nǐ");
+});
+
+// ---- Dictation every two weeks, on words from that fortnight
+test("dictation: due 14 days after the first lesson, then 14 days after each dictation", () => {
+  const t = "2026-11-30";
+  const seen = new Map(["学生", "老师", "学校", "朋友", "中国", "你好"].map((f, k) => [unit(f), J.addDays(t, -k)]));
+  const base = { days: new Set(["2026-11-16"]), dictations: [], seen };
+  assert.strictEqual(J.dictationDue(core, base, t), true);
+  assert.strictEqual(J.dictationDue(core, { ...base, days: new Set(["2026-11-20"]) }, t), false);
+  assert.strictEqual(J.dictationDue(core, { ...base, dictations: [{ day: "2026-11-17", total: 10, right: 9 }] }, t), false);
+  assert.strictEqual(J.dictationDue(core, { ...base, dictations: [{ day: "2026-11-16", total: 10, right: 9 }] }, t), true);
+  assert.strictEqual(J.nextDictationIn(core, { ...base, days: new Set(["2026-11-20"]) }, t), 4);
+});
+
+test("dictation: needs at least 5 words from the last 14 days", () => {
+  const t = "2026-11-30";
+  const few = new Map([[unit("学生"), t], [unit("老师"), t], [unit("学校"), "2026-11-01"]]);
+  assert.strictEqual(J.dictationDue(core, { days: new Set(["2026-11-01"]), dictations: [], seen: few }, t), false);
+});
+
+test("dictation: picks up to 10 words and characters from the fortnight, least secure first, never parts", () => {
+  const t = "2026-11-30";
+  const forms = ["学生", "老师", "学校", "朋友", "中国", "你好", "我", "是", "人", "大", "小", "好"];
+  const seen = new Map(forms.map((f) => [unit(f), J.addDays(t, -3)]));
+  seen.set(unit("谢谢"), J.addDays(t, -20));
+  seen.set(unit("亻"), t);
+  const review = new Map([[unit("学生"), [5, t]], [unit("老师"), [1, t]]]);
+  const pick = J.pickDictation(core, seen, review, t);
+  assert.strictEqual(pick.length, 10);
+  assert.ok(!pick.includes(unit("谢谢")), "older than two weeks");
+  assert.ok(!pick.includes(unit("亻")), "parts are not dictated");
+  assert.ok(pick.indexOf(unit("老师")) < pick.indexOf(unit("学生")) || !pick.includes(unit("学生")), "weaker first");
+});
+
+test("progress v2 keeps last-seen days and dictation results", () => {
+  const state = { known: new Set(), tradSeen: new Set(), script: "s", focus: "unlock", seen: new Map([[unit("学生"), "2026-11-20"]]), dictations: [{ day: "2026-11-20", total: 10, right: 8 }] };
+  const back = deserialise(JSON.parse(JSON.stringify(serialise(state, core))), core);
+  assert.deepStrictEqual([...back.seen], [...state.seen]);
+  assert.deepStrictEqual(back.dictations, state.dictations);
+  assert.strictEqual(deserialise({ app: "jiesuo", known: [] }, core).seen.size, 0);
+});

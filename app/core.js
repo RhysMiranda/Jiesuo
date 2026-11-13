@@ -233,6 +233,42 @@
         .slice(0, limit).map(([i]) => i);
     }
 
+    // ---- Readings. A character's main reading is the one its words use most (weighted by word
+    // frequency), with the first dictionary reading getting the character's own frequency as well.
+    // Every other reading gets a common word that uses it, so audio can say that word.
+    let readingIndex = null;
+    function buildReadingIndex() {
+      const idx = new Map();
+      for (const it of items) {
+        if (it.kind !== "w" || !it.pinyin || /^[A-Z]/.test(it.pinyin)) continue;
+        const chars = Array.from(it.form);
+        const syl = it.pinyin.split(",")[0].trim().toLowerCase().split(/\s+/);
+        if (syl.length !== chars.length) continue;
+        chars.forEach((c, k) => {
+          if (!idx.has(c)) idx.set(c, new Map());
+          const m = idx.get(c), w = Math.max(it.freq, FLOOR);
+          const e = m.get(syl[k]) || { weight: 0, example: null, best: -1 };
+          e.weight += w;
+          if (it.freq > e.best) { e.best = it.freq; e.example = it.i; }
+          m.set(syl[k], e);
+        });
+      }
+      return idx;
+    }
+    /** [{reading, example}] with the main reading first; example is a word unit or null. */
+    function readings(i) {
+      const it = i < n ? items[i] : null;
+      if (!it) return [];
+      const rec = (data.parts.parts || {})[it.form] || {};
+      const list = [...new Set((it.pinyin || rec.y || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean))];
+      if (it.kind === "w" || list.length < 2) return list.map((reading) => ({ reading, example: null }));
+      if (!readingIndex) readingIndex = buildReadingIndex();
+      const use = readingIndex.get(it.form) || new Map();
+      const weight = (r) => (use.get(r) || { weight: 0 }).weight;
+      return list.map((reading, k) => ({ reading, w: weight(reading), k, example: (use.get(reading) || {}).example ?? null }))
+        .sort((a, b) => b.w - a.w || a.k - b.k).map(({ reading, example }) => ({ reading, example }));
+    }
+
     /** Share of everyday text covered by known units, estimated from word frequencies. */
     function estimatedCoverage(known) {
       let s = 0;
@@ -240,7 +276,7 @@
       return totalFreq ? s / totalFreq : 0;
     }
 
-    return { items, patterns, get, n, prereq, softParts, children, closure, next, frontier, tokenise, segmentRun, analyse, spotPatterns, estimatedCoverage, shownForm, search, lookup, glyphUnit, wordUnit };
+    return { items, patterns, get, n, prereq, softParts, children, closure, next, frontier, tokenise, segmentRun, analyse, spotPatterns, estimatedCoverage, shownForm, search, readings, lookup, glyphUnit, wordUnit };
   }
 
   // ---- Pinyin for search. Tones: 1-4, and 5 for neutral. ü is written v.
@@ -328,6 +364,7 @@
       known: [...state.known].map(id).sort(), traditionalToo: [...(state.tradSeen || [])].map(id).sort(), script: state.script, focus: state.focus,
       review: Object.fromEntries([...(state.review || new Map())].map(([u, e]) => [id(u), e])),
       days: [...(state.days || [])].sort(), milestones: state.milestones || {}, stats: state.stats || { written: 0, unlocked: 0 }, lesson,
+      seen: Object.fromEntries([...(state.seen || new Map())].map(([u, d]) => [id(u), d])), dictations: state.dictations || [],
     };
   }
 
@@ -342,9 +379,12 @@
     const l = obj.lesson;
     const lesson = l && l.day ? { ...l, items: pick(l.items), reviews: pick(l.reviews), added: pick(l.added) } : null;
     const stats = { written: 0, unlocked: 0, ...(obj.stats || {}) };
+    const seen = new Map();
+    for (const [k, d] of Object.entries(obj.seen || {})) if (ids.has(k) && typeof d === "string") seen.set(ids.get(k), d);
     return {
       known: new Set(pick(obj.known)), tradSeen: new Set(pick(obj.traditionalToo)), script: obj.script === "t" ? "t" : "s", focus: obj.focus === "hsk" ? "hsk" : "unlock",
       review, days: new Set(obj.days || []), milestones: { ...(obj.milestones || {}) }, stats, lesson,
+      seen, dictations: Array.isArray(obj.dictations) ? obj.dictations.filter((d) => d && d.day) : [],
       skipped: obj.known.length - pick(obj.known).length,
     };
   }

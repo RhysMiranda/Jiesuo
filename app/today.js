@@ -6,7 +6,7 @@
   const J = window.JiesuoJourney;
 
   function create(ctx) {
-    const { core, state, save, view, esc, fmt, disp, sayButton, glossOf, pinyinOf, knowsGlyph, learn } = ctx;
+    const { core, state, save, view, esc, fmt, disp, sayButton, picture, glossOf, pinyinOf, knowsGlyph, learn } = ctx;
     const W = () => window.JiesuoWriter;
     const short = (g) => (g || "").split(";")[0].trim();
     const KIND = { p: "part", c: "character", w: "word" };
@@ -47,6 +47,7 @@
       if (!navigator.onLine || !W()) return;
       const next = J.pickNew(core, ctx.currentOrder(), state.known, 9);
       next.flatMap((u) => Array.from(disp(u))).forEach((c) => W().loadStrokes(c));
+      next.filter((u) => core.pictures.has(u)).forEach((u) => fetch(`pictures/${core.pictures.get(u)}.svg`).catch(() => {}));
       W().loadStrokeParts();
     }
 
@@ -57,7 +58,13 @@
       state.lesson = { day: today(), items, reviews, added: [], step: 0, before: { coverage: core.estimatedCoverage(state.known) } };
       save();
     }
+    function newDictation() {
+      const items = J.pickDictation(core, state.seen, state.review, today(), 10);
+      state.lesson = { day: today(), type: "dictation", items, reviews: [], added: [], step: 0, results: {}, before: { coverage: core.estimatedCoverage(state.known) } };
+      save();
+    }
     function steps(l) {
+      if (l.type === "dictation") return [...l.items.map((u) => ({ t: "dictate", u })), { t: "dictfinish" }];
       const out = [];
       for (const u of l.items) out.push({ t: "meet", u }, { t: "write", u });
       for (const u of l.reviews) out.push({ t: "review", u });
@@ -95,7 +102,7 @@
 
       let headline, lead;
       if (l && l.finished) { headline = "You unlocked something today."; lead = "Here's what you did, and what's next."; }
-      else if (l) { headline = "Your lesson is waiting where you left it."; lead = ""; }
+      else if (l) { headline = l.type === "dictation" ? "Your dictation is waiting where you left it." : "Your lesson is waiting where you left it."; lead = ""; }
       else if (away >= 2) { headline = "Welcome back. Something new is ready for you."; lead = "Pick up right where you were. You remember more than you think."; }
       else if (!state.days.size) { headline = "Your first thing to unlock"; lead = "Every lesson is a few new things, how they are built, and writing them yourself."; }
       else if (doneToday) { headline = "There's always one more to unlock."; lead = "You've finished today's lesson. Keep going if you're enjoying it."; }
@@ -107,7 +114,7 @@
           <div class="teaser-text">
             <span class="soft">Next ${KIND[core.get(first).kind]}</span>
             <span class="pinyin-big">${esc(pinyinOf(core.get(first)))}</span>
-            <span>${esc(short(glossOf(core.get(first))))}</span>
+            <span class="meaning-row">${picture(first, "pic-s")}<span>${esc(short(glossOf(core.get(first))))}</span></span>
             ${builtLine(first)}
           </div>
         </section>`;
@@ -124,7 +131,23 @@
         action = `<p class="soft">${what}</p><div class="row"><button type="button" class="btn primary big" data-start>${l ? `Continue (${l.step + 1} of ${steps(l).length})` : "Start today's lesson"}</button></div>`;
       }
 
+      const lastDict = state.dictations[state.dictations.length - 1];
+      const dictNow = (!l || l.finished) && J.dictationDue(core, state, t);
+      const dictIn = J.nextDictationIn(core, state, t);
+      const dictCard = dictNow ? `
+        <section class="dictation-card" aria-label="Dictation">
+          <span class="ge"><b>听</b></span>
+          <div class="stack">
+            <strong>Dictation day</strong>
+            <p>Two weeks of learning. Hear the words from this fortnight and write them from memory. About 5 minutes.</p>
+            <div class="row"><button type="button" class="btn primary big" data-dictation>Start dictation</button></div>
+          </div>
+        </section>`
+        : lastDict && lastDict.day === t ? `<p class="dict-done">Dictation done: <strong>${fmt(lastDict.right)} of ${fmt(lastDict.total)}</strong> written from memory. The next one is in two weeks.</p>` : "";
+      const dictLine = !dictNow && dictIn !== null && state.days.size
+        ? `<p class="soft small">${dictIn > 0 ? `Next dictation in ${dictIn} ${dictIn === 1 ? "day" : "days"}.` : "Dictation is ready once you have learned a few more words this fortnight."}</p>` : "";
       view.innerHTML = `
+        ${dictCard}
         <section class="today-hero">
           <p class="soft">${greeting()}${state.days.size || !doneToday ? ` · day ${fmt(dayNo)} of learning` : ""}</p>
           <h1>${headline}</h1>
@@ -132,13 +155,15 @@
         </section>
         ${l && l.finished ? "" : teaser}
         <section class="stack">${action}</section>
-        <section class="stack"><h2>Your journey</h2>${journeyPath()}</section>`;
+        <section class="stack"><h2>Your journey</h2>${journeyPath()}${dictLine}</section>`;
       const start = view.querySelector("[data-start]");
       if (start) start.onclick = () => { if (!state.lesson) newLesson(3, true); location.hash = "lesson"; };
       const more = view.querySelector("[data-one-more]");
       if (more) more.onclick = () => { newLesson(1, false); location.hash = "lesson"; };
       const rev = view.querySelector("[data-review-only]");
       if (rev) rev.onclick = () => { newLesson(0, true, 10); location.hash = "lesson"; };
+      const dict = view.querySelector("[data-dictation]");
+      if (dict) dict.onclick = () => { newDictation(); location.hash = "lesson"; };
       prefetchStrokes();
     }
 
@@ -175,7 +200,7 @@
         <div class="lesson-body" id="step"></div>`;
       view.querySelector("[data-leave]").onclick = () => { location.hash = "today"; };
       const box = document.getElementById("step");
-      ({ meet: stepMeet, write: stepWrite, review: stepReview, finish: stepFinish })[s.t](box, s.u);
+      ({ meet: stepMeet, write: stepWrite, review: stepReview, finish: stepFinish, dictate: stepDictate, dictfinish: stepDictFinish })[s.t](box, s.u);
     }
 
     function stepMeet(box, u) {
@@ -184,8 +209,8 @@
         <p class="soft">New ${KIND[it.kind]}</p>
         <div class="meet-glyph" id="meet-glyph">${it.kind === "w" ? squares(u, "slide") : ""}</div>
         <div class="stack meet-text">
-          <span class="say-row"><span class="pinyin-big">${esc(pinyinOf(it))}</span>${it.kind !== "p" ? sayButton(it.form) : ""}</span>
-          <span class="meaning">${esc(glossOf(it) || "")}</span>
+          ${ctx.readingBlock(u)}
+          <span class="meaning-row">${picture(u, "pic-l")}<span class="meaning">${esc(glossOf(it) || "")}</span></span>
           ${builtLine(u, { lead: it.kind === "w" ? "Made of" : "Built from" })}
         </div>
         <div class="stack" id="meet-use"></div>
@@ -221,7 +246,7 @@
       const isWord = it.kind === "w";
       box.innerHTML = `
         <p class="soft">${isWord ? "Write the word, one character at a time" : "Watch, then trace it yourself"}</p>
-        <div class="write-head"><span class="zh big-form">${esc(disp(u))}</span><span><span class="pinyin">${esc(pinyinOf(it))}</span> ${esc(short(glossOf(it)))}</span></div>
+        <div class="write-head"><span class="zh big-form">${esc(disp(u))}</span>${picture(u, "pic-s")}<span><span class="pinyin">${esc(pinyinOf(it))}</span> ${esc(short(glossOf(it)))}</span></div>
         <div id="lesson-write"></div>
         <div class="row lesson-actions">
           <button type="button" class="btn primary big" data-next hidden>Continue</button>
@@ -230,6 +255,7 @@
       const next = box.querySelector("[data-next]"), skip = box.querySelector("[data-skip]");
       const done = (wrote) => {
         const l = state.lesson;
+        state.seen.set(u, today());
         if (!l.added.includes(u)) {
           learn(u).forEach((x) => { if (!l.added.includes(x)) l.added.push(x); });
           state.review.set(u, J.schedule(undefined, true, today()));
@@ -261,6 +287,7 @@
       if (!document.body.contains(box)) return;
       const finish = (correct, answerHtml) => {
         state.review.set(u, J.schedule(state.review.get(u), correct, today()));
+        state.seen.set(u, today());
         state.lesson.reviewed = (state.lesson.reviewed || 0) + 1;
         if (correct) state.lesson.remembered = (state.lesson.remembered || 0) + 1;
         if (correct && canWrite) state.stats.written++;
@@ -273,7 +300,8 @@
       if (canWrite) {
         box.innerHTML = `
           <p class="soft">Remember this one?</p>
-          <div class="write-head"><span><span class="pinyin-big">${esc(pinyinOf(it))}</span><br>${esc(short(glossOf(it)))}</span>${it.kind !== "p" ? sayButton(it.form) : ""}</div>
+          <div class="write-head"><span><span class="pinyin-big">${esc(pinyinOf(it))}</span><br>${esc(short(glossOf(it)))}</span>${it.kind !== "p" && core.readings(u).length < 2 ? sayButton(it.form) : ""}</div>
+          ${picture(u, "pic-m")}
           <p>Write it from memory.</p>
           <div id="lesson-write"></div>
           <div data-result></div>
@@ -286,19 +314,36 @@
           onDone: ({ mistakes, skipped }) => { if (answered) return; answered = true; box.querySelector("[data-show]").hidden = true; reveal(!skipped && mistakes <= 2); },
         });
       } else {
-        // Meaning check: four choices from the same kind of item, no penalty for a miss.
-        const same = (x) => x !== u && x < core.n && core.get(x).kind === it.kind && glossOf(core.get(x));
-        const pool = [...state.known].filter(same);
-        const extra = ctx.currentOrder().filter(same).slice(0, 40);
+        // Four choices, no penalty for a miss. Words with a picture are asked as "which picture?",
+        // with other pictured words (known ones first) as the other choices; the rest by meaning.
         const shuffle = (a) => a.map((x) => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map((p) => p[1]);
-        const right = short(glossOf(it));
-        const wrong = [...new Set(shuffle(pool.length >= 3 ? pool : extra).map((x) => short(glossOf(core.get(x)))))].filter((g) => g && g !== right).slice(0, 3);
+        const code = core.pictures.get(u);
+        const others = (pool) => [...new Set(shuffle(pool).map((x) => core.pictures.get(x)))].filter((c) => c && c !== code);
+        let byPicture = false, right, wrong;
+        if (code) {
+          const pictured = (x) => x !== u && core.pictures.has(x);
+          wrong = others([...state.known].filter(pictured));
+          if (wrong.length < 3) wrong = [...wrong, ...others([...core.pictures.keys()].filter(pictured))].filter((c, k, a) => a.indexOf(c) === k);
+          wrong = wrong.slice(0, 3);
+          byPicture = wrong.length === 3;
+          right = code;
+        }
+        if (!byPicture) {
+          const same = (x) => x !== u && x < core.n && core.get(x).kind === it.kind && glossOf(core.get(x));
+          const pool = [...state.known].filter(same);
+          const extra = ctx.currentOrder().filter(same).slice(0, 40);
+          right = short(glossOf(it));
+          wrong = [...new Set(shuffle(pool.length >= 3 ? pool : extra).map((x) => short(glossOf(core.get(x)))))].filter((g) => g && g !== right).slice(0, 3);
+        }
         const options = shuffle([right, ...wrong]);
+        const optionHtml = (o, k) => byPicture
+          ? `<button type="button" class="option option-pic" data-opt="${esc(o)}" aria-label="Picture ${k + 1}"><img src="pictures/${esc(o)}.svg" alt=""></button>`
+          : `<button type="button" class="option" data-opt="${esc(o)}">${esc(o)}</button>`;
         box.innerHTML = `
           <p class="soft">Remember this one?</p>
           <div class="meet-glyph">${squares(u)}</div>
-          <p>What does it mean?</p>
-          <div class="options">${options.map((o) => `<button type="button" class="option" data-opt="${esc(o)}">${esc(o)}</button>`).join("")}</div>
+          <p>${byPicture ? "Which picture is it?" : "What does it mean?"}</p>
+          <div class="options${byPicture ? " options-pic" : ""}">${options.map(optionHtml).join("")}</div>
           <div data-result></div>
           <div class="row lesson-actions"><button type="button" class="btn primary big" data-next hidden>Continue</button></div>`;
         let answered = false;
@@ -307,7 +352,8 @@
           answered = true;
           const ok = b.dataset.opt === right;
           box.querySelectorAll("[data-opt]").forEach((o) => { o.disabled = true; if (o.dataset.opt === right) o.classList.add("right"); else if (o === b) o.classList.add("chosen"); });
-          finish(ok, `<p class="${ok ? "yay" : ""}">${ok ? "Yes, that's it." : `It means “${esc(right)}”. You'll see it again soon.`} <span class="soft">${esc(pinyinOf(it))}</span></p>`);
+          const meaning = short(glossOf(it));
+          finish(ok, `<p class="${ok ? "yay" : ""}">${ok ? `Yes, that's it: ${esc(meaning)}.` : `It means “${esc(meaning)}”. You'll see it again soon.`} <span class="soft">${esc(pinyinOf(it))}</span></p>`);
         }));
       }
       box.querySelector("[data-next]").onclick = advance;
@@ -372,6 +418,87 @@
       // Reuse the credit and translation lines from the standard sentence block.
       const tail = html.replace(/^<div class="sentence"><p class="line"[^>]*>.*?<\/p>/, "").replace(/<\/div>$/, "");
       return `<div class="sentence"><p class="line ink-line" lang="${state.script === "t" ? "zh-HK" : "zh-Hans"}">${line}</p>${tail}</div>`;
+    }
+
+    // ---- Dictation: hear it, write it from memory
+    /** What the voice says. A single character is said the way teachers dictate: "好，最好的好". */
+    function dictationText(u) {
+      const it = core.get(u);
+      if (it.kind === "w") return it.form;
+      const ex = core.readings(u)[0];
+      return ex && ex.example !== null ? `${it.form}，${core.get(ex.example).form}的${it.form}` : it.form;
+    }
+
+    function stepDictate(box, u) {
+      const l = state.lesson, it = core.get(u);
+      const glyphs = Array.from(disp(u));
+      const voice = ctx.canSpeak();
+      const k = l.items.indexOf(u);
+      box.innerHTML = `
+        <p class="soft">Dictation · ${k + 1} of ${l.items.length}</p>
+        <div class="dict-prompt">
+          ${voice ? `<button type="button" class="btn big dict-play" data-play>${ctx.SPEAKER} Play again</button>
+            <button type="button" class="linkish" data-hint>Hint</button>`
+            : `<p class="soft small">This device has no Chinese voice, so here is the word to write.</p>`}
+          <p class="dict-hint" ${voice ? "hidden" : ""}><span class="pinyin-big">${esc(pinyinOf(it))}</span> ${esc(short(glossOf(it)))}</p>
+        </div>
+        <p>Write ${glyphs.length > 1 ? `the ${glyphs.length} characters` : "it"} from memory.</p>
+        <div id="lesson-write"></div>
+        <div data-result></div>
+        <div class="row lesson-actions"><button type="button" class="btn primary big" data-next hidden>Continue</button><button type="button" class="linkish" data-show>Show me</button></div>`;
+      let hinted = !voice, answered = false;
+      const say = () => ctx.speak(dictationText(u));
+      if (voice) {
+        say();
+        box.querySelector("[data-play]").onclick = say;
+        box.querySelector("[data-hint]").onclick = (e) => { hinted = true; e.target.hidden = true; box.querySelector(".dict-hint").hidden = false; };
+      }
+      const reveal = (outcome) => {
+        if (answered) return;
+        answered = true;
+        l.results[u] = outcome;
+        if (outcome !== "skip") state.review.set(u, J.schedule(state.review.get(u), outcome === "ok", today()));
+        state.seen.set(u, today());
+        save();
+        const msg = outcome === "ok" ? (hinted && voice ? "Written from memory, with a hint." : "Written from memory.")
+          : outcome === "skip" ? "Writing practice isn't available for this one, so it doesn't count."
+          : "Here it is. It comes back in your reviews tomorrow, so it sticks.";
+        box.querySelector("[data-show]").hidden = true;
+        box.querySelector("[data-result]").innerHTML = `<div class="dict-answer">${squares(u, outcome === "ok" ? "" : "")}${picture(u, "pic-m")}<p><span class="${outcome === "ok" ? "yay" : ""}">${msg}</span><br><span class="pinyin">${esc(pinyinOf(it))}</span> ${esc(short(glossOf(it)))}</p></div>`;
+        const next = box.querySelector("[data-next]");
+        next.hidden = false;
+        next.focus({ preventScroll: true });
+      };
+      box.querySelector("[data-show]").onclick = () => reveal("miss");
+      box.querySelector("[data-next]").onclick = advance;
+      if (!W()) { reveal("skip"); return; }
+      W().writePanel(document.getElementById("lesson-write"), glyphs, {
+        isKnown: knowsGlyph, modes: ["memory"], start: "memory",
+        onDone: ({ mistakes, skipped }) => reveal(skipped ? "skip" : mistakes <= 2 * glyphs.length ? "ok" : "miss"),
+      });
+    }
+
+    function stepDictFinish(box) {
+      const l = state.lesson;
+      const counted = l.items.filter((u) => l.results[u] && l.results[u] !== "skip");
+      const right = counted.filter((u) => l.results[u] === "ok").length;
+      if (!l.finished) {
+        state.dictations.push({ day: today(), total: counted.length, right });
+        l.finished = true;
+        save();
+      }
+      const all = counted.length && right === counted.length;
+      const headline = all ? "Every one. Your hand remembers." : right >= counted.length * 0.7 ? "A strong fortnight." : "Good practice. These will stick.";
+      box.innerHTML = `
+        <section class="finish">
+          <p class="soft">Dictation complete</p>
+          <h1>${headline}</h1>
+          <p class="big-number"><strong>${fmt(right)}</strong> of ${fmt(counted.length)} written from memory.</p>
+          <ul class="dict-list">${l.items.map((u) => `<li class="${l.results[u] === "ok" ? "ok" : ""}"><span class="zh">${esc(disp(u))}</span> <span class="soft small">${l.results[u] === "ok" ? "✓" : l.results[u] === "skip" ? "not counted" : "back in reviews tomorrow"}</span></li>`).join("")}</ul>
+          <p class="soft">The next dictation is in two weeks.</p>
+        </section>
+        <div class="row lesson-actions"><button type="button" class="btn primary big" data-done>Done</button></div>`;
+      box.querySelector("[data-done]").onclick = () => { state.lesson = null; save(); location.hash = "today"; };
     }
 
     function finishSummary(l) {

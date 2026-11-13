@@ -1,0 +1,84 @@
+# Words whose first English meaning matches an emoji name in the wrong sense, or too loosely to help.
+# One form per line; text after # is the reason. Read by jiesuo/export_pictures.py.
+连	# "even; continuously", not a chain link
+历	# history, experience
+座	# mostly a measure word
+望	# to look, to hope
+飞	# to fly, not the insect
+规	# rule
+环	# loop, not a jewellery ring
+采	# to pick (gather), not a pickaxe
+负	# to bear (a burden)
+承	# to bear, to undertake
+宗	# clan, school of thought
+汉	# the Han people
+卫	# to guard, hygiene
+守	# to guard (verb)
+键	# keyboard key
+连结	# to link (verb)
+连接	# to connect (verb)
+相连	# to be joined
+明星	# celebrity
+判断	# to judge (decide)
+判定	# to judge (decide)
+评判	# to judge (assess)
+裁判	# referee, not a judge
+观看	# to watch, not a wristwatch
+收看	# to watch (TV)
+训练	# to train (practise)
+培育	# to rear, to breed
+反映	# to reflect (report)
+档	# file, gear
+土耳其	# Turkey, the country
+服装	# clothing in general
+屯	# village, to station troops
+负担	# burden
+承受	# to bear, to endure
+耐	# to endure
+忍	# to endure
+忍受	# to endure
+岸	# shore, not a money bank
+贝尔	# Bell, a name
+煮	# to boil (verb), not a chef
+烹调	# to cook (verb)
+煮饭	# to cook rice (verb)
+做菜	# to cook (verb)
+妖	# demon
+函	# letter, correspondence
+主播	# news anchor
+守护	# to protect
+卫队	# guards (unit)
+看守	# to watch over
+妮	# used in names
+姬	# princess, used in names
+妞	# girl (slang)
+轰炸	# to bomb (verb)
+麦克	# Mike, a name
+机动	# motorised, flexible
+英尺	# foot (length)
+火力	# firepower
+解雇	# to fire (dismiss)
+人身	# the person (legal)
+人称	# grammatical person
+庵	# nunnery
+门户	# portal, door (figurative)
+驻地	# garrison
+钓鱼	# to fish (verb)
+铃声	# ringtone
+瀑	# waterfall, not a shower
+阵雨	# rain shower, not a bathroom shower
+摇晃	# to rock, to shake
+椎	# vertebra
+掐	# to pinch
+窍	# opening (figurative)
+窦	# sinus, hole
+昏昏沉沉	# drowsy
+鼠标	# computer mouse, not the animal
+击球	# to hit a ball, not the animal
+扶梯	# escalator
+席位	# seat in parliament
+报社	# newspaper office
+厂家	# manufacturer
+驾驶员	# driver
+儿	# mostly a suffix
+站	# mostly "to stand"
