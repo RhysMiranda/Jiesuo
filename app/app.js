@@ -225,11 +225,12 @@
     const reading = r.tokens.map((t) => {
       if (!t.han) return esc(t.text);
       if (t.unit === null) return `<span class="tok-outside">${esc(t.text)}</span>`;
-      const shown = state.script === "t" ? core.items[t.unit].hk || t.text : core.items[t.unit].form;
+      const shown = core.shownForm(t, state.script);
       const known = state.known.has(t.unit);
       const via = known && t.text !== core.items[t.unit].form && !state.tradSeen.has(t.unit);
       const cls = !known ? "tok-unknown" : via ? "tok-via" : "tok-known";
-      return `<a class="${cls}" href="#i${t.unit}">${esc(shown)}</a>`;
+      const alt = shown.alternatives.length ? ` title="Could also be ${esc(shown.alternatives.join(" or "))}"` : "";
+      return `<a class="${cls}" href="#i${t.unit}"${alt}>${esc(shown.text)}${shown.alternatives.length ? `<sup class="alt">?</sup>` : ""}</a>`;
     }).join("");
     const grammar = r.patterns;
     out.innerHTML = `

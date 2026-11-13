@@ -1,0 +1,12 @@
+{
+ "ud_hk": {
+  "jieba_f1": 0.8276,
+  "app_f1": 0.8242,
+  "app_vs_jieba_f1": 0.862
+ },
+ "ud_wiki_news": {
+  "jieba_f1": 0.7945,
+  "app_f1": 0.7367,
+  "app_vs_jieba_f1": 0.7809
+ }
+}

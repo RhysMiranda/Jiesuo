@@ -123,6 +123,21 @@ test("HSK focus finishes band 1 words before band 2 words", () => {
   assert.ok(lastOne < firstTwo);
 });
 
+test("Read keeps the Traditional form the person typed (regression: 髮 was shown as 發)", () => {
+  const shown = (text, script) => core.tokenise(text).filter((t) => t.han).map((t) => core.shownForm(t, script).text).join("");
+  assert.strictEqual(shown("我剪了髮。", "t").includes("髮"), true);
+  assert.strictEqual(shown("頭髮", "t"), "頭髮");
+  assert.strictEqual(shown("頭髮", "s"), "头发");
+  assert.strictEqual(shown("头发", "t"), "頭髮");
+});
+
+test("a lone Simplified character with several Traditional forms lists the others", () => {
+  const t = core.tokenise("发").find((x) => x.han);
+  const r = core.shownForm(t, "t");
+  assert.strictEqual(r.text, "發");
+  assert.ok(r.alternatives.includes("髮"));
+});
+
 test("Traditional display uses the Hong Kong form and leaves shared glyphs alone", () => {
   assert.strictEqual(core.get(unit("后")).hk, "後");
   assert.strictEqual(core.get(unit("才")).hk, "");

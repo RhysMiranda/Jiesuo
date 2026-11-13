@@ -170,6 +170,18 @@
       return { tokens, total: han.length, readable, outside, unknownTokens: han.length - readable - outside, ladder, learn, count, patterns: spotPatterns(tokens) };
     }
 
+    /**
+     * How Read shows a token. Simplified mode shows the Simplified form. Traditional mode keeps
+     * what the person typed, so a pasted 髮 stays 髮. Simplified input is converted word by word,
+     * and a lone character with several Traditional forms (发: 發 or 髮) lists the others.
+     */
+    function shownForm(token, script) {
+      const it = items[token.unit];
+      if (script !== "t") return { text: it.form, alternatives: [] };
+      if (token.text !== it.form) return { text: token.text, alternatives: [] };
+      return { text: it.hk || it.form, alternatives: it.others.filter((f) => f !== it.hk) };
+    }
+
     /** Share of everyday text covered by known units, estimated from word frequencies. */
     function estimatedCoverage(known) {
       let s = 0;
@@ -177,7 +189,7 @@
       return totalFreq ? s / totalFreq : 0;
     }
 
-    return { items, patterns, get, n, prereq, softParts, children, closure, next, frontier, tokenise, segmentRun, analyse, spotPatterns, estimatedCoverage, lookup, glyphUnit, wordUnit };
+    return { items, patterns, get, n, prereq, softParts, children, closure, next, frontier, tokenise, segmentRun, analyse, spotPatterns, estimatedCoverage, shownForm, lookup, glyphUnit, wordUnit };
   }
 
   function compileLiteral(spec) {
