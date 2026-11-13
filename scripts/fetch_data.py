@@ -55,6 +55,10 @@ SOURCES = {
 EVAL_ONLY = {
     "eval_only_subtlex_chr.json": (f"{NPM}/subtlex-ch-chr/-/subtlex-ch-chr-0.0.0.tgz", "package/SUBTLEX-CH-CHR.json"),
     "eval_only_subtlex_wf.json": (f"{NPM}/subtlex-ch-wf/-/subtlex-ch-wf-0.0.0.tgz", "package/SUBTLEX-CH-WF.json"),
+    # Second test corpora (Universal Dependencies, CC BY-SA). Evaluation only, never shipped.
+    "eval_only_ud_gsdsimp_test.conllu": (f"{GH}/UniversalDependencies/UD_Chinese-GSDSimp/master/zh_gsdsimp-ud-test.conllu", None),
+    "eval_only_ud_hk_test.conllu": (f"{GH}/UniversalDependencies/UD_Chinese-HK/master/zh_hk-ud-test.conllu", None),
+    "eval_only_ud_pud_test.conllu": (f"{GH}/UniversalDependencies/UD_Chinese-PUD/master/zh_pud-ud-test.conllu", None),
 }
 
 

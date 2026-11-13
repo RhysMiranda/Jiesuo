@@ -149,6 +149,16 @@ def test_detectors(key, text, expected):
     assert bool(rx.search(line)) is expected, line
 
 
+def test_back_off_can_use_single_characters():
+    assert bg.back_off("桌上", {"上"}, {"桌", "上"}) == ["桌", "上"]
+
+
+def test_everyday_words_below_the_frequency_cutoff_are_included(graph):
+    nodes, _ = graph
+    for w in ("橙子", "抽屉", "胡萝卜", "洋葱"):
+        assert f"w:{w}" in nodes, w
+
+
 def test_back_off_uses_longest_known_words():
     assert bg.back_off("学生们", {"学生", "们", "学", "生"}) == ["学生", "们"]
     assert bg.back_off("学生们", {"学"}) is None

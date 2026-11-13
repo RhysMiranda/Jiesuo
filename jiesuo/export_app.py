@@ -120,7 +120,7 @@ def main():
     pos = {u: i for i, u in enumerate(units)}
     words_of = defaultdict(list)
     for a, b, kind, _ in edges:
-        if kind == "word_sentence":
+        if kind in ("word_sentence", "char_sentence"):
             words_of[b].append(word_unit(a[2:]))
     hardness = {s: max(pos.get(w, 10**6) for w in ws) for s, ws in words_of.items()}
     sentences = {u: n for u, n in nodes.items() if n["type"] == "sentence" and 4 <= len(src.HAN_CHAR.findall(n["text"])) <= 24}

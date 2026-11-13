@@ -89,32 +89,22 @@
   "sha256": "b420cb4e8255c4d6345221c699db593177f2324f3db5d8c5f8d059612c13b15f",
   "bytes": 16297902
  },
- "tatoeba/cmn_sentences_detailed.tsv.bz2": {
-  "url": "https://downloads.tatoeba.org/exports/per_language/cmn/cmn_sentences_detailed.tsv.bz2",
+ "eval_only_ud_gsdsimp_test.conllu": {
+  "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_Chinese-GSDSimp/master/zh_gsdsimp-ud-test.conllu",
   "member": null,
-  "sha256": "df15b916580d97db21a4f28c4f49f47aad7755025bc969b81762bcde6a47ea6a",
-  "bytes": 1728683,
-  "downloaded": "2026-11-13"
+  "sha256": "5af5c5b74afb334f2d4f6e95e32764a22569c809726edaa2be59761616452f0b",
+  "bytes": 1136615
  },
- "tatoeba/cmn-eng_links.tsv.bz2": {
-  "url": "https://downloads.tatoeba.org/exports/per_language/cmn/cmn-eng_links.tsv.bz2",
+ "eval_only_ud_hk_test.conllu": {
+  "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_Chinese-HK/master/zh_hk-ud-test.conllu",
   "member": null,
-  "sha256": "0a773c2b8557626f30e27c764487fc271190b676e34280b2c9b4de17cfc71bde",
-  "bytes": 482181,
-  "downloaded": "2026-11-13"
+  "sha256": "a71ff348dd1e45c2cd525ed537a78d6c4b6c5edc15a19641bedc0a8465de820e",
+  "bytes": 942232
  },
- "tatoeba/eng_sentences_detailed.tsv.bz2": {
-  "url": "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_detailed.tsv.bz2",
+ "eval_only_ud_pud_test.conllu": {
+  "url": "https://raw.githubusercontent.com/UniversalDependencies/UD_Chinese-PUD/master/zh_pud-ud-test.conllu",
   "member": null,
-  "sha256": "afec98e4c44a72f8fc709ce4d672fd3ab7f9ca731402f5d35e384b0b21b207c5",
-  "bytes": 34983679,
-  "downloaded": "2026-11-13"
- },
- "tatoeba/sentences_CC0.tar.bz2": {
-  "url": "https://downloads.tatoeba.org/exports/sentences_CC0.tar.bz2",
-  "member": null,
-  "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
-  "bytes": 7963537,
-  "downloaded": "2026-11-13"
+  "sha256": "38ad4f76224567a275f3492a87a9b7ed91690b8f0959ee4eabac0ae022d6cf41",
+  "bytes": 2199916
  }
 }

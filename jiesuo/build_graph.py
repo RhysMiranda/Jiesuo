@@ -38,6 +38,7 @@ N_CHARS, N_WORDS = 3500, 10000
 HSK_FORCED_MAX = 6  # keep bands 1-6 in the graph so Phase 2 can run an HSK order
 HOLDOUT_MOD = 10  # 1 in 10 sentences is held out
 MAX_SENTENCE_CHARS = 40
+SENTENCE_WORD_MIN = 2  # a word must appear in this many training sentences to be added
 
 S2HK, T2S = opencc.OpenCC("s2hk"), opencc.OpenCC("t2s")
 
@@ -137,12 +138,16 @@ def segment(text):
     return [(p.word, p.flag) for p in jieba.posseg.cut(text, HMM=False)]
 
 
-def back_off(token, vocab):
-    """Split an out-of-vocabulary token into the longest known words, greedily."""
+def back_off(token, vocab, chars=()):
+    """Split an out-of-vocabulary token into the longest known words, greedily.
+
+    With `chars`, a single character that is not a word can still be a piece (桌上 -> 桌 + 上).
+    Returns None if some character is in neither set.
+    """
     out, i = [], 0
     while i < len(token):
         for j in range(len(token), i, -1):
-            if token[i:j] in vocab:
+            if token[i:j] in vocab or (j == i + 1 and token[i] in chars):
                 out.append(token[i:j])
                 i = j
                 break
@@ -224,9 +229,9 @@ def break_cycles(g, stats):
     stats["cycle_edges_removed"] = [f"{a}->{b}" for a, b in removed]
 
 
-def add_sentences(g, tatoeba, vocab, stats):
-    detectors = [(p.key, compile_detector(p.detect)) for p in PATTERNS]
-    held, seen_text = [], set()
+def split_sentences(tatoeba, stats):
+    """Filter, deduplicate and hold out Tatoeba sentences, and segment the training ones once."""
+    held, train, seen_text = [], [], set()
     counts = Counter()
     for sid, (text, english) in sorted(tatoeba.items(), key=lambda kv: int(kv[0])):
         simp = T2S.convert(text)
@@ -245,7 +250,30 @@ def add_sentences(g, tatoeba, vocab, stats):
             held.append({"id": sid, "text": simp, "original": text, "en": english})
             counts["held_out"] += 1
             continue
-        tagged = segment(simp)
+        train.append((sid, simp, text, english, segment(simp)))
+    stats["sentences"] = counts
+    return train, held
+
+
+def sentence_words(train, cedict, chars, already, stats):
+    """Everyday words the frequency list misses (橙子, 抽屉): dictionary words, not names,
+    made of graph characters, seen in at least SENTENCE_WORD_MIN training sentences.
+    Held-out sentences are never looked at."""
+    seen = Counter()
+    for *_, tagged in train:
+        for w in {tok for tok, _ in tagged}:
+            if len(w) > 1 and w not in already and src.is_han(w) and w in cedict and all(c in chars for c in w):
+                seen[w] += 1
+    names = lambda w: all(e["pinyin"][:1].isupper() for e in cedict[w])
+    extra = sorted(w for w, k in seen.items() if k >= SENTENCE_WORD_MIN and not names(w))
+    stats["words_added_from_training_sentences"] = len(extra)
+    return extra
+
+
+def add_sentences(g, train, vocab, chars, stats):
+    detectors = [(p.key, compile_detector(p.detect)) for p in PATTERNS]
+    counts = stats["sentences"]
+    for sid, simp, text, english, tagged in train:
         needed, ok = [], True
         for tok, _ in tagged:
             if not src.is_han(tok):
@@ -254,7 +282,7 @@ def add_sentences(g, tatoeba, vocab, stats):
             if tok in vocab:
                 needed.append(tok)
                 continue
-            parts = back_off(tok, vocab)
+            parts = back_off(tok, vocab, chars)
             if parts is None:
                 ok = False
                 counts["tokens_unresolvable"] += 1
@@ -267,14 +295,16 @@ def add_sentences(g, tatoeba, vocab, stats):
         nid = f"s:{sid}"
         g.add_node(nid, type="sentence", text=simp, original=text, en=english, script="T" if simp != text else "S")
         for w in set(needed):
-            g.add_edge(f"w:{w}", nid, "word_sentence")
+            if w in vocab:
+                g.add_edge(f"w:{w}", nid, "word_sentence")
+            else:  # a character that is not a word on its own
+                g.add_edge(f"h:{w}", nid, "char_sentence")
         line = " ".join(f"{w}/{f}" for w, f in tagged) + " "
         for key, rx in detectors:
             if rx.search(line):
                 g.add_edge(f"g:{key}", nid, "pattern_sentence")
         counts["kept"] += 1
     stats["sentences"] = dict(counts)
-    return held
 
 
 def build():
@@ -297,7 +327,10 @@ def build():
             stats["chars_skipped_as_traditional"] += 1
     top_set = set(top_chars)
 
+    jieba.setLogLevel(60)
+    train, held = split_sentences(src.load_tatoeba(), stats)
     words = select_words(ranked_w, cedict, hsk_w, stats)
+    words += sentence_words(train, cedict, top_set, set(words), stats)
     word_set = set(words)
 
     # Traditional forms of every word.
@@ -382,9 +415,9 @@ def build():
         for w in p.requires:
             g.add_edge(f"w:{w}", f"g:{p.key}", "word_pattern")
 
-    # Sentences last. Keep jieba's own dictionary so segmentation stays independent of our choices.
-    jieba.setLogLevel(60)
-    held = add_sentences(g, src.load_tatoeba(), word_set, stats)
+    # Sentences last. jieba keeps its own dictionary, so segmentation stays independent of our choices.
+    chars = {n["form"] for n in g.nodes.values() if n.get("type") == "character" and n.get("script") != "T"}
+    add_sentences(g, train, word_set, chars, stats)
 
     break_cycles(g, stats)
     return g, held, stats
