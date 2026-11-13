@@ -82,3 +82,4 @@
 驾驶员	# driver
 儿	# mostly a suffix
 站	# mostly "to stand"
+伺	# to watch (wait on), not a wristwatch

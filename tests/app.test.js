@@ -163,8 +163,13 @@ test("import rejects a file that is not progress, and skips unknown IDs", () => 
 
 test("data stays under the size target", () => {
   const dir = path.join(__dirname, "../app/data");
-  const total = fs.readdirSync(dir).reduce((s, f) => s + fs.statSync(path.join(dir, f)).size, 0);
-  assert.ok(total < 5e6, `${total} bytes`);
+  const size = (f) => fs.statSync(path.join(dir, f)).size;
+  const total = fs.readdirSync(dir).reduce((s, f) => s + size(f), 0);
+  // Sentences, extra meanings and the handwriting index load only when a screen needs them.
+  const onDemand = new Set(["sentences.json", "senses.json", "handwriting.json"]);
+  const atStart = fs.readdirSync(dir).filter((f) => !onDemand.has(f)).reduce((s, f) => s + size(f), 0);
+  assert.ok(atStart < 2.5e6, `${atStart} bytes loaded at start`);
+  assert.ok(total < 5.5e6, `${total} bytes`);
 });
 
 // ---- Journey: spaced review, new items, the unlock sentence, milestones, progress v2
@@ -423,4 +428,51 @@ test("guess: irregular verbs and numbers written as digits", () => {
 
 test("guess: let's counts as we", () => {
   assert.strictEqual(checkGuess("我们试试看！", "Let's try it").got, 2);
+});
+
+// ---- Sound families
+test("sound family: 清 shares 青 with characters that still sound alike", () => {
+  const f = core.soundFamily(unit("清"));
+  assert.strictEqual(f.sound, "青");
+  assert.strictEqual(f.soundReading, "qīng");
+  assert.strictEqual(f.members[0].form, "清");
+  const forms = f.members.map((m) => m.form);
+  for (const c of ["请", "情", "晴"]) assert.ok(forms.includes(c), c);
+  assert.strictEqual(f.members.find((m) => m.form === "清").match, "same");
+  assert.strictEqual(f.members.find((m) => m.form === "请").match, "tone");
+  assert.strictEqual(f.members.find((m) => m.form === "清").meaningPart, "氵");
+});
+
+test("sound family: a sound part's own page lists what is built on it; words have none", () => {
+  const f = core.soundFamily(unit("方"));
+  assert.ok(f.members.some((m) => m.form === "房"));
+  assert.strictEqual(core.soundFamily(unit("学生")), null);
+});
+
+// ---- Reading wall and the weekly look back
+const J2 = require("../app/journey.js");
+test("reading wall: only sentences readable in full, newest first", () => {
+  const known = new Set(["我", "是", "学生", "你", "好", "你好"].map(unit));
+  const rows = [[1, "我是学生。", 0, "I am a student.", []], [2, "你好！", 0, "Hello!", []], [3, "我是老师。", 0, "I am a teacher.", []], [4, "我是丂。", 0, "", []]];
+  const seen = new Map([[unit("你好"), "2026-11-10"], [unit("学生"), "2026-11-12"]]);
+  const got = J2.readableRows(core, rows, known, seen);
+  assert.deepStrictEqual(got.map((x) => x.row[0]), [1, 2]);
+  assert.strictEqual(got[0].day, "2026-11-12");
+});
+
+test("weekly look back: snapshot first, show gains after a week, quiet weeks pass silently", () => {
+  const now = { chars: 10, words: 5, written: 20, unlocked: 2, coverage: 0.2 };
+  assert.strictEqual(J2.weekRecap([], now, "2026-11-13").action, "snapshot");
+  const weeks = [J2.snapshot({ chars: 4, words: 1, written: 5, unlocked: 0, coverage: 0.15 }, "2026-11-01")];
+  assert.strictEqual(J2.weekRecap(weeks, now, "2026-11-06").action, "none");
+  const r = J2.weekRecap(weeks, now, "2026-11-08");
+  assert.strictEqual(r.action, "show");
+  assert.deepStrictEqual([r.gains.chars, r.gains.words, r.gains.unlocked], [6, 4, 2]);
+  assert.strictEqual(J2.weekRecap([J2.snapshot(now, "2026-11-01")], now, "2026-11-09").action, "snapshot");
+});
+
+test("progress keeps the weekly snapshots", () => {
+  const st = { known: new Set([unit("好")]), tradSeen: new Set(), script: "s", focus: "unlock", review: new Map(), days: new Set(), milestones: {}, stats: { written: 0, unlocked: 0 }, lesson: null, seen: new Map(), dictations: [], weeks: [{ day: "2026-11-01", chars: 1, words: 0, written: 0, unlocked: 0, coverage: 0.01 }] };
+  const back = deserialise(JSON.parse(JSON.stringify(serialise(st, core))), core);
+  assert.deepStrictEqual(back.weeks, st.weeks);
 });

@@ -134,5 +134,44 @@
     });
   }
 
-  return { dayKey, addDays, daysBetween, BOXES, schedule, dueReviews, pickNew, unlockSentence, focusInfo, dictationDue, nextDictationIn, pickDictation, DICTATION_EVERY, MILESTONES, milestones };
+  /**
+   * Example sentences readable in full with what is known. `cache` (a Map) keeps each sentence's
+   * units between calls, so only the first call tokenises. A sentence with a word outside our data
+   * is never readable. Newest first: the day its last item was learned or reviewed, then shortest.
+   */
+  function readableRows(core, rows, known, seen, cache = new Map()) {
+    const out = [];
+    for (const row of rows) {
+      let units = cache.get(row[0]);
+      if (units === undefined) {
+        const toks = core.tokenise(row[1]).filter((t) => t.han);
+        units = toks.some((t) => t.unit === null) ? null : [...new Set(toks.map((t) => t.unit))];
+        cache.set(row[0], units);
+      }
+      if (units && units.length && units.every((u) => known.has(u))) {
+        const day = units.reduce((d, u) => { const s = seen && seen.get(u); return s && s > d ? s : d; }, "");
+        out.push({ row, day });
+      }
+    }
+    return out.sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : a.row[1].length - b.row[1].length));
+  }
+
+  /**
+   * A look back once a week. With no snapshot yet, or a week with nothing new, take a snapshot quietly
+   * (a quiet week is never mentioned). Otherwise show the week's gains.
+   */
+  function weekRecap(weeks, now, today) {
+    const last = weeks && weeks[weeks.length - 1];
+    if (!last) return { action: "snapshot" };
+    if (daysBetween(last.day, today) < 7) return { action: "none" };
+    const gains = {
+      chars: now.chars - last.chars, words: now.words - last.words, written: now.written - last.written,
+      unlocked: now.unlocked - last.unlocked, coverage: now.coverage - last.coverage, since: last.day,
+    };
+    const any = gains.chars > 0 || gains.words > 0 || gains.written > 0 || gains.unlocked > 0;
+    return any ? { action: "show", gains } : { action: "snapshot" };
+  }
+  const snapshot = (now, today) => ({ day: today, chars: now.chars, words: now.words, written: now.written, unlocked: now.unlocked, coverage: Math.round(now.coverage * 1e4) / 1e4 });
+
+  return { dayKey, addDays, daysBetween, BOXES, schedule, dueReviews, pickNew, unlockSentence, focusInfo, dictationDue, nextDictationIn, pickDictation, DICTATION_EVERY, MILESTONES, milestones, readableRows, weekRecap, snapshot };
 });

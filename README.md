@@ -37,11 +37,22 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
 - **Today:** the home screen. A short daily lesson: meet a few new things and see each one put
   together from parts you know, hear it, write it stroke by stroke, review earlier ones, and finish
   on a real sentence you can now read in full. A journey path shows milestones reached and the next one.
-  No streaks to lose: missed days are never mentioned.
+  No streaks to lose: missed days are never mentioned. Once a week, **Your week** shows only what you
+  gained (characters, words, sentences, how much more everyday text you can read); a quiet week passes silently.
+- **Sound families:** most characters are a meaning part plus a sound part. A character page shows its
+  family (清 晴 请 情 all take 青 qīng), marks which still sound the same, rhyme or have drifted, and shows
+  each member's meaning part as a picture (💧 water, 💬 speech, ❤️ heart). Lessons mention the family of
+  each new character, and which members you already know.
+- **Say it:** on every word page and after a Read check, record yourself. Your pitch is drawn over each
+  tone's shape, syllable by syllable, with the regular tone changes (你好 ní hǎo) taken into account. This
+  runs on the device. **Check the words too** uses the browser's speech recognition, only when tapped,
+  and says that the audio goes to the browser maker.
+- **Reading wall:** every real Tatoeba sentence you can read in full, newest first, with audio.
 - **Write it:** on every character page, watch the stroke order, trace it, or write from memory.
   Strokes you already know from a part are drawn in blue. Mistakes get a hint, never a penalty.
 - **Search** (magnifier, or press `/`): one box for characters in either script, pinyin with or
-  without tones (`nihao`, `ni3hao`, `nǐ hǎo`, `lv4`), or English. **+ Add to my reviews** on a result
+  without tones (`nihao`, `ni3hao`, `nǐ hǎo`, `lv4`), or English. **✍ Write a character** to find one
+  you can't type: draw it and pick it from the closest matches. **+ Add to my reviews** on a result
   or any word page puts it into your next lesson's reviews, like adding a flashcard; once today's lesson
   is done, Today offers a quick review round for them.
 - **Next:** the next 10 things to learn and why each matters. Choose fastest reading or HSK focus.
@@ -50,18 +61,22 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
   every word you missed in amber, with its pinyin, meaning and picture under it, and a bar of how much you
   understood. Words you missed or don't know yet go into your reviews with one tap. The whole sentence in
   English comes from Tatoeba when it is one of ours, otherwise from your browser's own on-device translator
-  (recent desktop Chrome) or, only when you tap it, Google Translate in a new tab.
+  (recent desktop Chrome) or, only when you tap it, Google Translate in a new tab. With a translation, each
+  word shows the sense the sentence uses. **I meant that** accepts your own wording for a word from then on,
+  and **Listen first** hides the text until you have guessed from the audio.
 - **Map:** one item in the middle, what it is built from on the left, and what it unlocks on the
   right, each marked ready now or with what it still needs. Tap any square to move it to the middle.
   Starts on your next item; "See it on the map" on any word page opens it there. Below: everything
   ready to learn now, and the whole language as a grid.
-- **Progress:** save your progress to a file and restore it.
+- **Progress:** save your progress to a file and restore it, or **Send to my other device** through the
+  phone's share sheet (AirDrop, messages, email to yourself). There is still no account or server.
 - **简/繁:** switch script anywhere. Learning one form counts toward the other.
 - **Dictation every two weeks:** Today offers a dictation of up to 10 words from the fortnight. You hear
   each one (single characters as a teacher says them, 好，最好的好) and write it from memory; missed ones
   come back in your reviews. Without a Chinese voice on the device it shows the pinyin instead.
-- **Pictures:** about 480 concrete words (马, 学校, 苹果, 下雨…) have a picture beside their meaning, from
-  OpenMoji, and reviews ask "which picture is it?" for them. Abstract words have none.
+- **Pictures:** about 610 words (马, 学校, 苹果, 下雨, and actions such as 吃, 写, 听) have a picture beside
+  their meaning, from OpenMoji, and reviews ask "which picture is it?" for them. 72 meaning parts (氵, 扌,
+  讠…) have one too, shown wherever a part gives a character its meaning. Abstract words have none.
 - **Audio:** a speaker button uses the device's own Mandarin voice, and is hidden when there is none.
 
 ## Rebuilding the data
@@ -77,10 +92,11 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
     python -m jiesuo.glosses            # refreshes meanings alone (needs only data/raw/cedict.json)
     python -m jiesuo.export_strokes     # writes app/strokes and app/data/stroke-parts.json
     python -m jiesuo.export_pictures    # writes app/pictures and app/data/pictures.json
+    python -m jiesuo.export_handwriting # writes app/data/handwriting.json (after export_strokes)
     python scripts/phase1_report.py && python scripts/phase2_report.py
     python scripts/segmentation_check.py      # word splitting against UD
     python scripts/grammar_audit.py score     # grammar detection, from the labelled sample
-    pytest && node --test tests/app.test.js
+    pytest && node --test tests/app.test.js tests/tone.test.js tests/handwriting.test.js
 
 ## Licences
 
@@ -106,6 +122,11 @@ as CC BY 2.0 FR requires. To refresh the names alone: `python scripts/fetch_data
   words. Detection is about 92% precise, and finds about 65% of real uses. Pattern HSK levels are
   the author's estimates.
 - **The HSK word list is OCR** and not fully proofread.
+- **The tone check is a guide.** It tracks pitch and compares each syllable's shape with the four tones.
+  It is tested on synthetic voices only, splits syllables by pauses and length (so fast, joined-up speech
+  can be split wrongly), and noise, a cold or a whisper confuse it. Neutral tones are not scored.
+- **Handwriting search** compares stroke start, middle and end points with the 3,500 characters the app
+  teaches. Very messy writing, or a character outside that set, will not be found.
 - **Guess checking matches words, not sense.** A guess counts a word as understood when it shares a
   word with any of its dictionary meanings (after simple stemming), so a guess with the right words in
   the wrong order scores well, and a correct paraphrase can miss ("earn" for 赚 "to make a profit").

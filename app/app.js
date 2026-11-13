@@ -32,6 +32,8 @@
     // Word pictures (OpenMoji, CC BY-SA 4.0), keyed by unit.
     core.pictures = new Map();
     for (const it of core.items) { const code = pics.pictures[(it.kind === "w" ? "w:" : "h:") + it.form]; if (code && it.kind !== "p") core.pictures.set(it.i, code); }
+    // Meaning parts (氵 water, 扌 hand), keyed by the part as written.
+    core.partPictures = new Map(Object.entries(pics.pictures).filter(([k]) => k.startsWith("m:")).map(([k, v]) => [k.slice(2), v]));
     order = ord;
     bands = hsk.bands;
   } catch (e) {
@@ -39,7 +41,7 @@
     return;
   }
 
-  const freshJourney = () => ({ review: new Map(), days: new Set(), milestones: {}, stats: { written: 0, unlocked: 0 }, lesson: null, seen: new Map(), dictations: [] });
+  const freshJourney = () => ({ review: new Map(), days: new Set(), milestones: {}, stats: { written: 0, unlocked: 0 }, lesson: null, seen: new Map(), dictations: [], weeks: [] });
   const state = { known: new Set(), tradSeen: new Set(), script: "s", focus: "unlock", ...freshJourney() };
   try {
     const saved = store.get(STORE_KEY);
@@ -110,6 +112,7 @@
   };
   const firstReading = (p) => p.split(",")[0];
   /** A word's picture, if it has one. Decorative: the meaning is always written next to it. */
+  const partPicture = (form, cls = "pic-s") => (form && core.partPictures.has(form) ? `<img class="pic ${cls}" src="pictures/${core.partPictures.get(form)}.svg" alt="" loading="lazy" draggable="false">` : "");
   const picture = (i, cls = "") => (core.pictures.has(i) ? `<img class="pic ${cls}" src="pictures/${core.pictures.get(i)}.svg" alt="" loading="lazy" draggable="false">` : "");
 
   // ---- Audio: the browser's own Mandarin voice, where one exists. zh-HK voices speak Cantonese, so they are skipped.
@@ -335,6 +338,13 @@
   const hasHan = (s) => Array.from(s).some(HAN_CHAR);
   let readPick = 0, moreSenses = null, moreSensesTried = false;
   const guesses = new Map(), checked = new Map(), translations = new Map();
+  // English for the whole sentence (Tatoeba or the device translator), used to pick each word's sense here.
+  const contextEn = new Map();
+  // Paraphrases the learner said they meant ("earn" for 赚): unit -> extra English words. Kept on this device.
+  const ACCEPT_KEY = "jiesuo-meant-v1", LISTEN_KEY = "jiesuo-listen-first-v1";
+  let accepted = {};
+  try { accepted = JSON.parse(store.get(ACCEPT_KEY) || "{}") || {}; } catch (e) { accepted = {}; }
+  let listenFirst = store.get(LISTEN_KEY) === "1";
 
   async function loadMoreSenses() {
     if (moreSenses || moreSensesTried) return moreSenses;
@@ -342,7 +352,7 @@
     try { moreSenses = (await fetchJson("senses.json")).senses; } catch (e) { moreSenses = null; moreSensesTried = false; }
     return moreSenses;
   }
-  const allSenses = (i) => [...(core.get(i).gloss || "").split(";"), ...((moreSenses && moreSenses[i]) || "").split(";")].map((s) => s.trim()).filter(Boolean);
+  const allSenses = (i) => [...(core.get(i).gloss || "").split(";"), ...((moreSenses && moreSenses[i]) || "").split(";"), ...(accepted[i] || [])].map((s) => s.trim()).filter(Boolean);
 
   function drawGuess(text) {
     const box = document.getElementById("guess");
@@ -357,7 +367,10 @@
       <h2>What does it mean?</h2>
       <p class="soft small">Read it, make a guess in English, and see how close you are. Every word you get right is one you can really read.</p>
       ${list.length > 1 ? `<div class="sent-pick" role="group" aria-label="Choose a sentence">${list.map((x, k) => `<button type="button" data-pick="${k}" aria-pressed="${k === readPick}" lang="${lang}"><span class="soft small">${k + 1}</span> <span class="zh">${esc(Array.from(x).slice(0, 7).join(""))}${Array.from(x).length > 7 ? "…" : ""}</span>${checked.has(x) ? ` <span class="pick-done" aria-label="checked">✓</span>` : ""}</button>`).join("")}</div>` : ""}
-      <div class="guess-sentence"><p class="zh" lang="${lang}">${shownLine}</p>${sayButton(s)}</div>
+      ${canSpeak() ? `<div class="row listen-row"><button type="button" class="btn quiet small-btn" data-listen aria-pressed="${listenFirst}">🎧 Listen first</button><span class="soft small">${listenFirst ? "Hear it, guess, then see the text." : "Practise understanding by ear."}</span></div>` : ""}
+      ${listenFirst && canSpeak() && !checked.has(s)
+        ? `<div class="guess-sentence listen-only"><button type="button" class="btn big" data-play>${SPEAKER} Play the sentence</button><span class="soft small">The Chinese appears once you check.</span></div>`
+        : `<div class="guess-sentence"><p class="zh" lang="${lang}">${shownLine}</p>${sayButton(s)}</div>`}
       <label class="sr-only" for="guess-in">Your guess in English</label>
       <textarea id="guess-in" class="guess-in" rows="2" placeholder="What do you think it means? Any wording is fine." autocapitalize="sentences" spellcheck="true">${esc(guesses.get(s) || "")}</textarea>
       <div class="row">
@@ -366,6 +379,15 @@
       </div>
       <div id="guess-result" class="stack" aria-live="polite"></div>`;
     box.querySelectorAll("[data-pick]").forEach((b) => (b.onclick = () => { readPick = +b.dataset.pick; drawGuess(text); }));
+    const listen = box.querySelector("[data-listen]");
+    if (listen) listen.onclick = () => {
+      listenFirst = !listenFirst;
+      store.set(LISTEN_KEY, listenFirst ? "1" : "0");
+      drawGuess(text);
+      if (listenFirst && !checked.has(s)) speak(s);
+    };
+    const play = box.querySelector("[data-play]");
+    if (play) play.onclick = () => speak(s);
     const input = box.querySelector("#guess-in");
     input.oninput = () => guesses.set(s, input.value);
     input.onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); run(false); } };
@@ -373,7 +395,9 @@
       const guess = showOnly ? "" : input.value.trim();
       if (!showOnly && !guess) { input.focus(); input.placeholder = "Type a guess first, or tap Just show me."; return; }
       await loadMoreSenses();
+      const wasHidden = !!box.querySelector(".listen-only");
       checked.set(s, { guess, showOnly });
+      if (wasHidden) { drawGuess(text); return; } // shows the text, then the result
       drawGuessResult(s);
       box.querySelectorAll("[data-pick]").forEach((b) => { if (+b.dataset.pick === readPick && !b.querySelector(".pick-done")) b.insertAdjacentHTML("beforeend", ` <span class="pick-done" aria-label="checked">✓</span>`); });
     };
@@ -387,12 +411,18 @@
     if (!out) return;
     const { guess, showOnly } = checked.get(s);
     const tokens = core.tokenise(s);
-    const r = JiesuoGuess.check(tokens, guess, allSenses, (i) => core.get(i).form);
+    const formOf = (i) => core.get(i).form;
+    const r = JiesuoGuess.check(tokens, guess, allSenses, formOf);
+    // With an English translation to hand, each word shows the sense the sentence uses (带 "to bring", not "band").
+    const inContext = contextEn.has(s) ? JiesuoGuess.check(tokens, contextEn.get(s), allSenses, formOf).parts : null;
+    const meaningOf = (p) => (p.role !== "got" && inContext && inContext[p.k].meaning && (inContext[p.k].role === "got" || inContext[p.k].got) ? inContext[p.k].meaning : p.meaning);
     const lang = state.script === "t" ? "zh-HK" : "zh-Hans";
     const words = r.parts.filter((p) => p.role !== "text");
     // "new" marks only stand out when most words are known; for a beginner every card would carry one.
     const content = words.filter((p) => p.unit != null && p.role !== "glue");
     const fewNew = content.filter((p) => !state.known.has(p.unit)).length * 2 <= content.length;
+    // Guess words that matched nothing: candidates for "I meant that" on a missed word.
+    const unusedWords = r.guess.filter((w) => !w.used && !JiesuoGuess.STOP.has(w.word) && w.word.length > 2).map((w) => w.word);
     const card = (p) => {
       const t = tokens[p.k];
       const shown = t.unit === null ? t.text : core.shownForm(t, state.script).text;
@@ -402,7 +432,11 @@
       const role = showOnly && p.role !== "glue" ? "shown" : p.role;
       const mark = role === "got" ? `<span class="w-mark" aria-label="you got this">✓</span>` : "";
       const tag = role === "glue" ? `<span class="w-tag">grammar</span>` : isNew && fewNew ? `<span class="w-tag new">new</span>` : "";
-      return `<a class="wcard is-${role}" href="#i${p.unit}">${mark}${picture(p.unit, "pic-s")}<span class="zh w-zh" lang="${lang}">${esc(shown)}</span><span class="w-py">${esc(mainReading(it))}</span><span class="w-mean">${esc(p.meaning)}</span>${tag}</a>`;
+      const inner = `${mark}${picture(p.unit, "pic-s")}<span class="zh w-zh" lang="${lang}">${esc(shown)}</span><span class="w-py">${esc(mainReading(it))}</span><span class="w-mean">${esc(meaningOf(p))}</span>${tag}`;
+      if (role === "missed" && unusedWords.length) {
+        return `<div class="wcard is-missed"><a class="w-link" href="#i${p.unit}">${inner}</a><button type="button" class="w-meant" data-meant="${p.unit}">I meant that</button></div>`;
+      }
+      return `<a class="wcard is-${role}" href="#i${p.unit}">${inner}</a>`;
     };
     const pct = r.total ? Math.round((r.got / r.total) * 100) : 0;
     const bar = r.total && !showOnly ? `<div class="gbar" role="img" aria-label="${r.got} of ${r.total} words understood">${words.filter((p) => p.role === "got" || p.role === "missed").map((p) => `<i class="${p.role}"></i>`).join("")}</div>` : "";
@@ -424,8 +458,19 @@
       ${head}${bar}${yours}
       <div class="wcards" lang="${lang}">${words.map(card).join("")}</div>
       <div class="key small soft"><span><i class="k-got"></i>you got it</span><span><i class="k-missed"></i>missed</span><span><i class="k-glue"></i>grammar word, not scored</span></div>
+      ${inContext ? `<p class="soft small">Meanings are the ones this sentence uses, matched to its translation.</p>` : ""}
+      ${!showOnly && unusedWords.length && r.got < r.total ? `<p class="soft small">Said it another way? Tap <strong>I meant that</strong> under a word, and it counts from now on.</p>` : ""}
       <section class="stack translation" id="translation"></section>
+      <section class="stack"><h3>Say it yourself</h3><div id="say-read"></div></section>
       ${learnBox}`;
+    sayPanel(document.getElementById("say-read"), s.replace(/[^\p{Script=Han}]/gu, ""));
+    out.querySelectorAll("[data-meant]").forEach((b) => (b.onclick = () => {
+      const u = +b.dataset.meant;
+      accepted[u] = [...new Set([...(accepted[u] || []), ...unusedWords])].slice(-12);
+      store.set(ACCEPT_KEY, JSON.stringify(accepted));
+      showPlain(`Counted. "${unusedWords.slice(0, 2).join(", ")}" now counts for ${disp(u)}.`);
+      drawGuessResult(s);
+    }));
     const add = out.querySelector("[data-add-all]");
     if (add) add.onclick = () => {
       notInReview.forEach((i) => { state.review.set(i, [1, JiesuoJourney.dayKey()]); state.seen.set(i, JiesuoJourney.dayKey()); });
@@ -474,6 +519,7 @@
       const rows = await loadSentenceRows();
       const row = JiesuoGuess.exactRow(rows, s, HAN_CHAR);
       if (row && document.getElementById("translation") === box) {
+        if (row[3] && !contextEn.has(s)) { contextEn.set(s, row[3]); drawGuessResult(s); return; }
         box.innerHTML = `<h3>The whole sentence</h3>${sentenceHtml(row)}`;
       }
     } catch (e) { /* offline before the sentences were saved: the buttons stay */ }
@@ -494,7 +540,8 @@
       const t = await within(self.Translator.create({ ...opts, monitor(m) { m.addEventListener("downloadprogress", (e) => status(`Downloading the translation model: ${Math.round((e.loaded || 0) * 100)}%`)); } }), avail === "available" ? 15000 : 300000);
       const en = await within(t.translate(s), 20000);
       translations.set(s, en);
-      if (document.getElementById("translation") === box) drawTranslation(s);
+      contextEn.set(s, en);
+      if (document.getElementById("translation") === box) drawGuessResult(s);
     } catch (e) {
       box.innerHTML = `<h3>The whole sentence</h3><p class="soft small">This browser can't translate Chinese on the device.</p><div class="row">${googleLink("Translate with Google")}</div>`;
     }
@@ -714,7 +761,8 @@
       const u = core.glyphUnit.get(part);
       const g = u === undefined ? `<span class="ge ge-m"><b>${esc(part)}</b></span>` : `<a class="ge ge-m ${state.known.has(u) ? "is-known" : ""}" href="#i${u}"><b>${esc(state.script === "t" ? part : part)}</b></a>`;
       const u2 = u === undefined ? null : core.get(u);
-      return `<div class="part">${g}<div><strong>${esc(ROLE[role] || "part of the shape")}</strong>${u2 && glossOf(u2) ? `<br><span class="soft small">${esc(pinyinOf(u2))} ${esc(glossOf(u2))}</span>` : ""}</div></div>`;
+      const pic = role === "semantic" || role === "both" ? partPicture(part, "pic-s part-pic") : "";
+      return `<div class="part">${g}<div><strong>${esc(ROLE[role] || "part of the shape")}</strong>${pic}${u2 && glossOf(u2) ? `<br><span class="soft small">${esc(pinyinOf(u2))} ${esc(glossOf(u2))}</span>` : ""}</div></div>`;
     }).join("");
     view.innerHTML = `
       ${backButton()}
@@ -740,9 +788,11 @@
             <p class="why soft">${why(i)}</p>
           </section>
           <section class="stack" id="write"></section>
+          ${it.kind !== "p" ? `<section class="stack"><h2>Say it</h2><div id="say-panel"></div></section>` : ""}
         </div>
         <div class="col-b">
           ${rec.h || partRows ? `<section class="stack"><h2>How it is built</h2><div id="built"></div>${rec.h ? `<p class="zh" style="font-family:var(--ui)">${esc(rec.h)}</p>` : ""}<div class="part-list">${partRows}</div></section>` : ""}
+          ${familyHtml(i)}
           ${glyphs.length ? `<section class="stack"><h2>Characters in this word</h2><div class="chips">${glyphs.map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div></section>` : ""}
           <section class="stack" id="example"><h2>Example</h2><p class="soft small">Loading a sentence…</p></section>
           ${words.length ? `<section class="stack"><h2>Words using it</h2><div class="chips">${words.slice(0, 24).map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div>${words.length > 24 ? `<p class="soft small">And ${fmt(words.length - 24)} more.</p>` : ""}</section>` : ""}
@@ -756,6 +806,66 @@
     if (t) t.onchange = () => { t.checked ? state.tradSeen.add(i) : state.tradSeen.delete(i); save(); };
     drawExample(i, it);
     drawWriting(i, it);
+    sayPanel(document.getElementById("say-panel"), disp(i));
+  }
+
+  // ---- Sound families: characters that share a sound part, and how close they still sound
+  const MATCH = { same: "same sound", tone: "same sound, other tone", rhyme: "rhymes", drift: "sound has drifted" };
+  function familyHtml(i) {
+    const f = core.soundFamily(i);
+    if (!f) return "";
+    const it = core.get(i);
+    const self = f.members.find((m) => m.i === i);
+    // Rare members (氰 "cyanogen") only crowd out useful ones, so they show only when the family is small.
+    const all = f.members.filter((m) => m.i !== i);
+    const common = all.filter((m) => core.get(m.i).freq >= 0.5 || state.known.has(m.i));
+    const others = common.length >= 3 ? common : all;
+    const close = f.members.filter((m) => m.match === "same" || m.match === "tone").length;
+    const sound = f.soundUnit !== null ? `<a class="zh fam-sound" href="#i${f.soundUnit}">${esc(disp(f.soundUnit))}</a>` : `<span class="zh fam-sound">${esc(f.sound)}</span>`;
+    const lead = self
+      ? `<span class="zh">${esc(disp(i))}</span> takes its sound from ${sound} <span class="pinyin">${esc(f.soundReading)}</span>${self.meaningPart ? ` and its meaning from ${partPicture(self.meaningPart, "pic-s")}<span class="zh">${esc(self.meaningPart)}</span>` : ""}. These characters share that sound part:`
+      : `<span class="zh">${esc(disp(i))}</span> <span class="pinyin">${esc(f.soundReading)}</span> lends its sound to these characters:`;
+    const card = (m) => `<a class="fam-card is-${m.match}${state.known.has(m.i) ? " is-known" : ""}${m.i === i ? " is-self" : ""}" href="#i${m.i}">
+        <span class="zh fam-zh">${esc(disp(m.i))}</span><span class="fam-py">${esc(m.reading)}</span>
+        <span class="fam-mean">${m.meaningPart ? partPicture(m.meaningPart, "pic-s") : ""}${esc(shortMeaning(core.get(m.i)))}</span></a>`;
+    const shown = (self ? [self, ...others] : others).slice(0, 12);
+    return `<section class="stack family">
+      <h2>Sound family</h2>
+      <p>${lead}</p>
+      <div class="fam-cards">${shown.map(card).join("")}</div>
+      <p class="soft small">${fmt(close)} of ${fmt(f.members.length)} still sound like <span class="pinyin">${esc(f.soundReading.normalize("NFD").replace(/[\u0300-\u036f]/g, "").normalize("NFC"))}</span>. Seeing ${sound} in a new character is a good first guess at how to say it.${f.members.length > 12 ? ` Showing 12 of ${fmt(f.members.length)}.` : ""}</p>
+      <div class="key small soft"><span><i class="k-same"></i>same sound</span><span><i class="k-tone"></i>other tone</span><span><i class="k-rhyme"></i>rhymes</span><span><i class="k-drift"></i>drifted</span></div>
+    </section>`;
+  }
+
+  /** One line for a lesson: the family a new character belongs to, and which members are known already. */
+  function familyLine(i) {
+    const f = core.soundFamily(i);
+    if (!f) return "";
+    const others = f.members.filter((m) => m.i !== i && (m.match === "same" || m.match === "tone"));
+    if (!others.length) return "";
+    const known = others.filter((m) => state.known.has(m.i));
+    const list = (known.length ? known : others).slice(0, 4).map((m) => `<a class="zh ${state.known.has(m.i) ? "tok-known" : ""}" href="#i${m.i}">${esc(disp(m.i))}</a>`).join(" ");
+    const sound = f.soundUnit !== null ? disp(f.soundUnit) : f.sound;
+    return `<p class="family-line"><span class="fam-badge">Sound family</span> <span class="zh">${esc(sound)}</span> <span class="pinyin">${esc(f.soundReading)}</span>: ${known.length ? `you already know ${list}, which sound alike.` : `${list} sound alike too.`}</p>`;
+  }
+
+  // ---- Speaking: one {ch, pinyin} per syllable, for the tone check
+  function sayUnits(text) {
+    const out = [];
+    for (const t of core.tokenise(text)) {
+      if (!t.han) continue;
+      const chars = Array.from(t.unit === null ? t.text : core.shownForm(t, state.script).text);
+      const it = t.unit === null ? null : core.get(t.unit);
+      const reading = !it ? "" : it.kind === "w" ? firstReading(it.pinyin || "") : mainReading(it);
+      const syl = reading.split(/\s+/).filter(Boolean);
+      chars.forEach((ch, k) => out.push({ ch, pinyin: syl.length === chars.length ? syl[k] : "" }));
+    }
+    return out;
+  }
+  function sayPanel(el, text) {
+    if (!el || !window.JiesuoSpeak) return;
+    JiesuoSpeak.panel(el, { text, units: sayUnits(text), say: canSpeak() ? speak : null });
   }
 
   /** Is this written glyph (a character or part, either script) one the learner knows? */
@@ -851,6 +961,8 @@
         <h1 class="sr-only">Search</h1>
         <input id="q" type="search" lang="zh" placeholder="好, hao3, nihao or good" aria-label="Search by characters, pinyin or English"
           autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" value="${esc(lastQuery)}">
+        <div class="row"><button type="button" class="btn quiet small-btn" id="pen" aria-pressed="false" aria-controls="pad-box">✍ Write a character</button><span class="soft small">Don't know how to type it? Draw it.</span></div>
+        <div id="pad-box" hidden></div>
       </section>
       <section id="results" class="stack" aria-live="polite"></section>`;
     const input = document.getElementById("q");
@@ -865,9 +977,69 @@
       toggleReview(+b.dataset.review);
       b.outerHTML = reviewButton(+b.dataset.review, "small-btn");
     };
+    const pen = document.getElementById("pen"), padBox = document.getElementById("pad-box");
+    pen.onclick = () => {
+      const open = padBox.hidden;
+      padBox.hidden = !open;
+      pen.setAttribute("aria-pressed", String(open));
+      if (open && !padBox.firstChild) openPad(padBox, (ch) => { input.value += ch; lastQuery = input.value; store.set(SEARCH_KEY, lastQuery); drawResults(); });
+    };
     drawResults();
     input.focus({ preventScroll: true });
     if (lastQuery) input.select();
+  }
+
+  // ---- Write to search: draw a character, pick it from the closest matches
+  let handIndex = null;
+  async function loadHand() {
+    if (!handIndex) handIndex = JiesuoHandwriting.load(await fetchJson("handwriting.json"));
+    return handIndex;
+  }
+  function openPad(box, onPick) {
+    box.innerHTML = `
+      <div class="pad-wrap">
+        <canvas class="pad" width="600" height="600" aria-label="Drawing area: write a character with your finger or mouse"></canvas>
+        <div class="pad-side">
+          <div class="pad-picks" aria-live="polite"><span class="soft small">Write one character, stroke by stroke. Matches appear here.</span></div>
+          <div class="row"><button type="button" class="btn quiet small-btn" data-undo>Undo stroke</button><button type="button" class="btn quiet small-btn" data-clear>Clear</button></div>
+        </div>
+      </div>`;
+    const canvas = box.querySelector("canvas"), g = canvas.getContext("2d");
+    const picks = box.querySelector(".pad-picks");
+    let strokes = [], current = null, timer = null;
+    const ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#1b2a2e";
+    const redraw = () => {
+      g.clearRect(0, 0, 600, 600);
+      g.strokeStyle = ink; g.lineWidth = 16; g.lineCap = "round"; g.lineJoin = "round";
+      for (const s of [...strokes, ...(current ? [current] : [])]) {
+        g.beginPath();
+        s.forEach(([x, y], k) => (k ? g.lineTo(x, y) : g.moveTo(x, y)));
+        if (s.length === 1) g.lineTo(s[0][0] + 0.1, s[0][1]);
+        g.stroke();
+      }
+    };
+    const at = (e) => { const r = canvas.getBoundingClientRect(); return [((e.clientX - r.left) / r.width) * 600, ((e.clientY - r.top) / r.height) * 600]; };
+    const match = () => {
+      clearTimeout(timer);
+      if (!strokes.length) { picks.innerHTML = `<span class="soft small">Write one character, stroke by stroke. Matches appear here.</span>`; return; }
+      timer = setTimeout(async () => {
+        try {
+          const found = JiesuoHandwriting.recognise(await loadHand(), strokes, 10);
+          picks.innerHTML = found.map((f) => `<button type="button" class="pick zh" data-ch="${esc(f.ch)}">${esc(state.script === "t" ? (core.get(core.lookup.get(f.ch)) || {}).hk || f.ch : f.ch)}</button>`).join("")
+            || `<span class="soft small">No match yet. Keep writing.</span>`;
+          picks.querySelectorAll("[data-ch]").forEach((b) => (b.onclick = () => { onPick(b.dataset.ch); strokes = []; redraw(); match(); }));
+        } catch (e) {
+          picks.innerHTML = `<span class="soft small">Handwriting search downloads the first time you're online.</span>`;
+        }
+      }, 120);
+    };
+    canvas.onpointerdown = (e) => { e.preventDefault(); canvas.setPointerCapture(e.pointerId); current = [at(e)]; redraw(); };
+    canvas.onpointermove = (e) => { if (!current) return; current.push(at(e)); redraw(); };
+    const end = () => { if (!current) return; strokes.push(current); current = null; redraw(); match(); };
+    canvas.onpointerup = end; canvas.onpointercancel = end;
+    box.querySelector("[data-undo]").onclick = () => { strokes.pop(); redraw(); match(); };
+    box.querySelector("[data-clear]").onclick = () => { strokes = []; redraw(); match(); };
+    loadHand().catch(() => {});
   }
 
   function drawResults() {
@@ -896,6 +1068,32 @@
   }
 
   // ---- Progress and credits
+  // ---- Reading wall: every example sentence readable in full, newest first
+  const wallCache = new Map();
+  let wallShown = 30;
+  async function renderWall() {
+    view.innerHTML = `${backButton()}<section class="stack"><h1>Your reading wall</h1><p class="soft">Loading the sentences…</p></section>`;
+    let rows;
+    try { rows = await loadSentenceRows(); } catch (e) {
+      view.innerHTML = `${backButton()}<section class="stack"><h1>Your reading wall</h1><p class="soft">The sentences download the first time you're online.</p></section>`;
+      return;
+    }
+    if (location.hash !== "#wall") return;
+    const list = JiesuoJourney.readableRows(core, rows, state.known, state.seen, wallCache);
+    const latest = list.length && list[0].day ? list.filter((x) => x.day === list[0].day).length : 0;
+    view.innerHTML = `
+      ${backButton()}
+      <section class="stack">
+        <h1>Your reading wall</h1>
+        ${list.length ? `<p class="wall-count"><strong>${fmt(list.length)}</strong> real ${list.length === 1 ? "sentence" : "sentences"} you can read in full, written by people on Tatoeba.${latest ? ` The newest ${latest === 1 ? "one" : fmt(latest)} opened up on ${esc(new Date(list[0].day + "T12:00").toLocaleDateString("en", { month: "long", day: "numeric" }))}.` : ""}</p>`
+          : `<p>Your first full sentence appears here after a few lessons. Every word you learn brings it closer.</p><div class="row"><a class="btn primary" href="#today">Go to today's lesson</a></div>`}
+      </section>
+      <section class="stack wall">${list.slice(0, wallShown).map((x) => `<div class="wall-item">${sentenceHtml(x.row)}${sayButton(x.row[1], true)}</div>`).join("")}</section>
+      ${list.length > wallShown ? `<div class="row"><button type="button" class="btn" id="wall-more">Show ${fmt(Math.min(30, list.length - wallShown))} more</button></div>` : ""}`;
+    const more = document.getElementById("wall-more");
+    if (more) more.onclick = () => { wallShown += 30; renderWall(); };
+  }
+
   function renderMore() {
     const json = JSON.stringify(JiesuoCore.serialise(state, core), null, 1);
     view.innerHTML = `
@@ -903,6 +1101,15 @@
         <h1>Your progress</h1>
         <p>You have marked <strong>${fmt(state.known.size)}</strong> items as known. They are kept in this browser only, with no account and no server.</p>
         ${storageOk ? "" : `<p class="warn">This browser is blocking storage, so save a file before you close this page.</p>`}
+      </section>
+      <section class="stack">
+        <h2>Your reading wall</h2>
+        <p><a href="#wall">See every real sentence you can read in full ›</a></p>
+      </section>
+      <section class="stack">
+        <h2>On another device</h2>
+        <p class="soft small">Send your progress file to your phone, tablet or computer (by AirDrop, messages or email to yourself), then open Jiesuo there and choose <strong>Restore from a file</strong>. Nothing goes through a Jiesuo server.</p>
+        <div class="row"><button type="button" class="btn primary" id="share">Send to my other device</button></div>
       </section>
       <section class="stack">
         <h2>Save to a file</h2>
@@ -936,6 +1143,16 @@
         <p>Grammar explanations were written for Jiesuo, and their HSK levels are our own estimates.</p>
         <p><a href="licences/">Full licence texts and notices</a></p>
       </section>`;
+    document.getElementById("share").onclick = async () => {
+      const name = `jiesuo-progress-${new Date().toISOString().slice(0, 10)}.json`;
+      const file = new File([JSON.stringify(JiesuoCore.serialise(state, core), null, 1)], name, { type: "application/json" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: "Jiesuo progress" }); return; }
+        catch (e) { if (e && e.name === "AbortError") return; }
+      }
+      document.getElementById("download").click();
+      showPlain("This browser can't share files, so the file was downloaded instead. Send it to your other device yourself.");
+    };
     document.getElementById("download").onclick = () => {
       const blob = new Blob([JSON.stringify(JiesuoCore.serialise(state, core), null, 1)], { type: "application/json" });
       const a = document.createElement("a");
@@ -997,15 +1214,15 @@
   // ---- Routing: a plain #name, the only hash form every host preserves
   const today = JiesuoToday.create({
     core, state, save, view, esc, fmt, disp, sayButton, readingBlock, picture, glossOf, pinyinOf: mainReading, knowsGlyph: (f) => knowsGlyph(f), learn,
-    bands, loadSentences, loadSentenceRows, sentenceHtml: (s) => sentenceHtml(s), currentOrder: () => currentOrder(), speak, canSpeak, SPEAKER,
+    bands, loadSentences, loadSentenceRows, sentenceHtml: (s) => sentenceHtml(s), currentOrder: () => currentOrder(), speak, canSpeak, SPEAKER, familyLine, partPicture,
   });
 
   function route() {
     const h = (location.hash || "#" + HOME).slice(1);
     const m = /^i(\d+)$/.exec(h);
     const onMap = /^m(\d+)$/.exec(h);
-    const tab = m ? null : onMap ? "map" : ["today", "lesson", "search", "next", "read", "map", "more"].includes(h) ? h : HOME;
-    const lit = tab === "lesson" ? "today" : tab;
+    const tab = m ? null : onMap ? "map" : ["today", "lesson", "search", "next", "read", "map", "more", "wall"].includes(h) ? h : HOME;
+    const lit = tab === "lesson" ? "today" : tab === "wall" ? "more" : tab;
     document.querySelectorAll(".tabs a, .search-btn").forEach((a) => a.dataset.tab === lit ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
     document.documentElement.lang = state.script === "t" ? "zh-HK" : "zh-Hans";
     document.getElementById("script-s").setAttribute("aria-pressed", state.script === "s");
@@ -1014,7 +1231,7 @@
     if (tab !== "lesson") document.body.classList.remove("in-lesson");
     if (m) renderItem(+m[1]);
     else if (onMap) renderMap(+onMap[1]);
-    else ({ today: today.renderToday, lesson: today.renderLesson, search: renderSearch, next: renderNext, read: renderRead, map: renderMap, more: renderMore })[tab]();
+    else ({ today: today.renderToday, lesson: today.renderLesson, search: renderSearch, next: renderNext, read: renderRead, map: renderMap, more: renderMore, wall: renderWall })[tab]();
   }
   // "/" opens search from anywhere on desktop, as in many dictionaries.
   document.addEventListener("keydown", (e) => {

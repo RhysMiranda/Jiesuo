@@ -6,7 +6,9 @@ data/pictures/exclude.txt (飞 "to fly" is not the insect), plus the everyday wo
 data/pictures/add.tsv that the name match misses. Pictures are OpenMoji 17.0.0 SVGs
 (CC BY-SA 4.0), downloaded once into data/raw/openmoji/ and copied to app/pictures/.
 
-Writes app/data/pictures.json: {"licence": ..., "pictures": {"w:学校": "1F3EB", "h:马": "1F40E"}}.
+Meaning parts get pictures too, from data/pictures/parts.tsv (氵 water, 扌 hand), keyed "m:氵".
+
+Writes app/data/pictures.json: {"licence": ..., "pictures": {"w:学校": "1F3EB", "h:马": "1F40E", "m:氵": "1F4A7"}}.
 Only emoji groups that show things are used: people, animals and nature, food, places,
 activities, objects, and faces. Flags and symbols are left out.
 """
@@ -82,8 +84,10 @@ def main():
             chosen[key] = add[form]
         elif first_meaning(gloss) in names:
             chosen[key] = names[first_meaning(gloss)]
+    for form, emoji in ((row[0], row[1].strip()) for row in read_list(SRC / "parts.tsv")):
+        chosen["m:" + form] = emoji
     known_forms = {x[1] for x in items}
-    missing = [f for f in add if f not in known_forms]
+    missing = [f for f in add if f not in known_forms and f not in exclude]
     if missing:
         print("add.tsv forms not in the dictionary:", missing)
     OUT.mkdir(parents=True, exist_ok=True)
@@ -100,7 +104,7 @@ def main():
     INDEX.write_text(json.dumps({"licence": "Word-to-picture list: MIT, Jiesuo. Pictures in pictures/: OpenMoji 17.0.0, CC BY-SA 4.0",
                                  "pictures": pictures}, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf8")
     size = sum(f.stat().st_size for f in OUT.glob("*.svg"))
-    print(f"{len(pictures)} words with pictures, {len(list(OUT.glob('*.svg')))} files, {size / 1e6:.2f} MB; no OpenMoji file for {skipped}")
+    print(f"{sum(not k.startswith('m:') for k in pictures)} words and {sum(k.startswith('m:') for k in pictures)} meaning parts with pictures, {len(list(OUT.glob('*.svg')))} files, {size / 1e6:.2f} MB; no OpenMoji file for {skipped}")
 
 
 if __name__ == "__main__":

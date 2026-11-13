@@ -270,6 +270,47 @@
         .sort((a, b) => b.w - a.w || a.k - b.k).map(({ reading, example }) => ({ reading, example }));
     }
 
+    /**
+     * A character's sound family: the characters that share its sound part (清 晴 请 情 all use 青 qīng).
+     * For a character that is itself a sound part (青), the family is the characters built on it.
+     * Each member says how close its reading still is: "same" syllable, "tone" (same but a different
+     * tone), "rhyme" (same final), or "drift". Same-sounding members first, then by frequency.
+     */
+    let soundIndex = null;
+    function soundFamily(i) {
+      const it = i < n ? items[i] : null;
+      if (!it || it.kind === "w") return null;
+      const parts = data.parts.parts || {};
+      if (!soundIndex) {
+        soundIndex = new Map();
+        for (const [form, rec] of Object.entries(parts)) {
+          if (!glyphUnit.has(form) || items[glyphUnit.get(form)].kind === "p") continue;
+          for (const [part, role] of rec.p || []) {
+            if (role !== "phonetic" && role !== "both") continue;
+            if (!soundIndex.has(part)) soundIndex.set(part, []);
+            soundIndex.get(part).push(glyphUnit.get(form));
+          }
+        }
+      }
+      const own = ((parts[it.form] || {}).p || []).find(([, role]) => role === "phonetic" || role === "both");
+      const sound = own ? own[0] : soundIndex.has(it.form) ? it.form : null;
+      if (!sound) return null;
+      const list = soundIndex.get(sound) || [];
+      if (list.length + (own ? 0 : 1) < 2) return null;
+      const soundUnit = glyphUnit.has(sound) ? glyphUnit.get(sound) : null;
+      const readingOf = (u) => { const r = readings(u); return r.length ? r[0].reading : ""; };
+      const soundReading = soundUnit !== null ? readingOf(soundUnit) : String((parts[sound] || {}).y || "").split(",")[0].trim();
+      const members = list.map((u) => {
+        const rec = parts[items[u].form] || {};
+        const meaning = ((rec.p || []).find(([, role]) => role === "semantic") || [null])[0];
+        const reading = readingOf(u);
+        return { i: u, form: items[u].form, reading, meaningPart: meaning, match: soundMatch(reading, soundReading) };
+      });
+      const rank = { same: 0, tone: 1, rhyme: 2, drift: 3 };
+      members.sort((a, b) => (a.i === i ? -1 : b.i === i ? 1 : 0) || rank[a.match] - rank[b.match] || items[b.i].freq - items[a.i].freq);
+      return { sound, soundUnit, soundReading, members };
+    }
+
     /** Share of everyday text covered by known units, estimated from word frequencies. */
     function estimatedCoverage(known) {
       let s = 0;
@@ -277,7 +318,16 @@
       return totalFreq ? s / totalFreq : 0;
     }
 
-    return { items, patterns, get, n, prereq, softParts, children, closure, next, frontier, tokenise, segmentRun, analyse, spotPatterns, estimatedCoverage, shownForm, search, readings, lookup, glyphUnit, wordUnit };
+    return { items, patterns, get, n, prereq, softParts, children, closure, next, frontier, tokenise, segmentRun, analyse, spotPatterns, estimatedCoverage, shownForm, search, readings, soundFamily, lookup, glyphUnit, wordUnit };
+  }
+
+  /** How close two readings are: "same", "tone" (same syllable, other tone), "rhyme" (same final) or "drift". */
+  function soundMatch(a, b) {
+    const [x] = syllables(a || ""), [y] = syllables(b || "");
+    if (!x || !y) return "drift";
+    if (x[0] === y[0]) return x[1] === y[1] ? "same" : "tone";
+    const final = (s) => s.replace(/^(zh|ch|sh|[bpmfdtnlgkhjqxrzcsyw])/, "");
+    return final(x[0]) && final(x[0]) === final(y[0]) ? "rhyme" : "drift";
   }
 
   // ---- Pinyin for search. Tones: 1-4, and 5 for neutral. ü is written v.
@@ -366,6 +416,7 @@
       review: Object.fromEntries([...(state.review || new Map())].map(([u, e]) => [id(u), e])),
       days: [...(state.days || [])].sort(), milestones: state.milestones || {}, stats: state.stats || { written: 0, unlocked: 0 }, lesson,
       seen: Object.fromEntries([...(state.seen || new Map())].map(([u, d]) => [id(u), d])), dictations: state.dictations || [],
+      weeks: state.weeks || [],
     };
   }
 
@@ -386,6 +437,7 @@
       known: new Set(pick(obj.known)), tradSeen: new Set(pick(obj.traditionalToo)), script: obj.script === "t" ? "t" : "s", focus: obj.focus === "hsk" ? "hsk" : "unlock",
       review, days: new Set(obj.days || []), milestones: { ...(obj.milestones || {}) }, stats, lesson,
       seen, dictations: Array.isArray(obj.dictations) ? obj.dictations.filter((d) => d && d.day) : [],
+      weeks: Array.isArray(obj.weeks) ? obj.weeks.filter((w) => w && typeof w.day === "string") : [],
       skipped: obj.known.length - pick(obj.known).length,
     };
   }

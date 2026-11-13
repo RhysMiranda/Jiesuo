@@ -146,7 +146,26 @@
         : lastDict && lastDict.day === t ? `<p class="dict-done">Dictation done: <strong>${fmt(lastDict.right)} of ${fmt(lastDict.total)}</strong> written from memory. The next one is in two weeks.</p>` : "";
       const dictLine = !dictNow && dictIn !== null && state.days.size
         ? `<p class="soft small">${dictIn > 0 ? `Next dictation in ${dictIn} ${dictIn === 1 ? "day" : "days"}.` : "Dictation is ready once you have learned a few more words this fortnight."}</p>` : "";
+      // Once a week: what changed since the last look back. Only good news; quiet weeks pass silently.
+      const now = statsNow();
+      const recap = J.weekRecap(state.weeks, now, t);
+      if (recap.action === "snapshot") { state.weeks.push(J.snapshot(now, t)); state.weeks = state.weeks.slice(-60); save(); }
+      const g = recap.gains;
+      const weekCard = recap.action === "show" ? `
+        <section class="week-card" aria-label="Your week">
+          <p class="soft">Since ${esc(new Date(g.since + "T12:00").toLocaleDateString("en", { month: "long", day: "numeric" }))}</p>
+          <h2>Your week</h2>
+          <ul class="week-gains">
+            ${g.chars > 0 ? `<li><strong>+${fmt(g.chars)}</strong> ${g.chars === 1 ? "character" : "characters"}</li>` : ""}
+            ${g.words > 0 ? `<li><strong>+${fmt(g.words)}</strong> ${g.words === 1 ? "word" : "words"}</li>` : ""}
+            ${g.written > 0 ? `<li><strong>${fmt(g.written)}</strong> written by hand</li>` : ""}
+            ${g.unlocked > 0 ? `<li><strong>${fmt(g.unlocked)}</strong> new ${g.unlocked === 1 ? "sentence" : "sentences"} you can read</li>` : ""}
+          </ul>
+          ${g.coverage >= 0.001 ? `<p>You can now read about <strong>${(g.coverage * 100).toFixed(1)}%</strong> more of everyday Chinese than a week ago.</p>` : ""}
+          <div class="row"><button type="button" class="btn primary" data-week>On to next week</button><a class="btn quiet" href="#wall">See what you can read</a></div>
+        </section>` : "";
       view.innerHTML = `
+        ${weekCard}
         ${dictCard}
         <section class="today-hero">
           <p class="soft">${greeting()}${state.days.size || !doneToday ? ` · day ${fmt(dayNo)} of learning` : ""}</p>
@@ -155,13 +174,15 @@
         </section>
         ${l && l.finished ? "" : teaser}
         <section class="stack">${action}</section>
-        <section class="stack"><h2>Your journey</h2>${journeyPath()}${dictLine}</section>`;
+        <section class="stack"><h2>Your journey</h2>${journeyPath()}${dictLine}${state.known.size ? `<p><a href="#wall">Your reading wall: every real sentence you can read in full ›</a></p>` : ""}</section>`;
       const start = view.querySelector("[data-start]");
       if (start) start.onclick = () => { if (!state.lesson) newLesson(3, true); location.hash = "lesson"; };
       const more = view.querySelector("[data-one-more]");
       if (more) more.onclick = () => { newLesson(1, false); location.hash = "lesson"; };
       const rev = view.querySelector("[data-review-only]");
       if (rev) rev.onclick = () => { newLesson(0, true, 10); location.hash = "lesson"; };
+      const wk = view.querySelector("[data-week]");
+      if (wk) wk.onclick = () => { state.weeks.push(J.snapshot(statsNow(), today())); save(); renderToday(); };
       const dict = view.querySelector("[data-dictation]");
       if (dict) dict.onclick = () => { newDictation(); location.hash = "lesson"; };
       prefetchStrokes();
@@ -212,6 +233,7 @@
           ${ctx.readingBlock(u)}
           <span class="meaning-row">${picture(u, "pic-l")}<span class="meaning">${esc(glossOf(it) || "")}</span></span>
           ${builtLine(u, { lead: it.kind === "w" ? "Made of" : "Built from" })}
+          ${it.kind !== "w" && ctx.familyLine ? ctx.familyLine(u) : ""}
         </div>
         <div class="stack" id="meet-use"></div>
         <div class="row lesson-actions"><button type="button" class="btn primary big" data-next>Now write it</button></div>`;

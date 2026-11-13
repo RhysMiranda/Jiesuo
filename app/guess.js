@@ -117,12 +117,12 @@
   function verdict(got, total) {
     if (!total) return "";
     const f = got / total;
-    if (f === 1) return "You understood every word.";
+    if (f === 1) return "Spot on!";
     if (f >= 0.75) return "You got the gist.";
     if (f >= 0.4) return "You're on the right track.";
     if (got) return "A start. Here is what it says.";
     return "Here is what it says, word by word.";
   }
 
-  return { check, words, stem, senseKeys, sentences, exactRow, verdict, tidy, GLUE };
+  return { check, words, stem, senseKeys, sentences, exactRow, verdict, tidy, GLUE, STOP };
 });
