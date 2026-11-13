@@ -1,19 +1,37 @@
 # Publishes app/ to GitHub Pages. Enable Pages with source "GitHub Actions" in the repo settings.
+#
+# Build and deploy are separate jobs, so if the deploy step fails, "Re-run failed jobs" retries
+# only the deploy with the same upload. Re-running the build as well would upload the site a
+# second time in the same run, and deploy-pages then stops with "Multiple artifacts named
+# github-pages". For a clean start, use "Run workflow" on the Actions tab instead.
 name: Deploy app
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
   pages: write
   id-token: write
+# One deploy at a time; a newer push waits rather than cancelling one already deploying.
+concurrency:
+  group: pages
+  cancel-in-progress: false
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment: github-pages
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: app
-      - uses: actions/deploy-pages@v4
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
