@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Jiesuo 解锁</title>
+<meta name="description" content="Learn Mandarin in the order that lets you read real Chinese soonest. Works offline.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Jiesuo">
+<meta name="theme-color" content="#f0f5ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101c1e" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@400;500;700&family=LXGW+WenKai+TC:wght@400;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#next" aria-label="Jiesuo home"><span class="ge ge-s"><b>解</b></span><span class="ge ge-s"><b>锁</b></span></a>
+  <nav class="tabs" aria-label="Screens">
+    <a href="#next" data-tab="next"><span class="zh">学</span>Next</a>
+    <a href="#read" data-tab="read"><span class="zh">读</span>Read</a>
+    <a href="#map" data-tab="map"><span class="zh">图</span>Map</a>
+    <a href="#more" data-tab="more"><span class="zh">存</span>Progress</a>
+  </nav>
+  <div class="seg" role="group" aria-label="Writing system">
+    <button id="script-s" type="button" class="zh" aria-pressed="true" title="Simplified">简</button>
+    <button id="script-t" type="button" class="zh" aria-pressed="false" title="Traditional">繁</button>
+  </div>
+</header>
+<p id="storage-warning" class="warn" hidden>This browser is blocking storage, so progress disappears when you close the page. Use Progress to save a file first.</p>
+<main id="view" tabindex="-1"><p class="loading">Opening the exercise book…</p></main>
+<div id="toast" class="toast" role="status" hidden></div>
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

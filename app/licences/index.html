@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jiesuo licences</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  body { padding: 24px 16px 48px; }
+  main { max-width: 680px; margin: 0 auto; display: grid; gap: 28px; }
+  section { display: grid; gap: 8px; }
+  ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <p><a href="../">← Back to Jiesuo</a></p>
+    <h1>Licences</h1>
+    <p>The app is made of separately licensed files. Each data file in <code>data/</code> carries its own licence,
+      and these are the full texts and notices that come with them. Source code and the scripts that build
+      every data file are in the project's repository.</p>
+  </section>
+
+  <section>
+    <h2>App code</h2>
+    <p><code>index.html</code>, <code>app.js</code>, <code>core.js</code>, <code>style.css</code>, <code>sw.js</code>
+      and <code>data/grammar.json</code>: MIT. <a href="Jiesuo-LICENSE.txt">Licence text</a>.</p>
+  </section>
+
+  <section>
+    <h2>Character parts: <code>data/parts.json</code></h2>
+    <p>Modified from <code>dictionary.txt</code> in <a href="https://github.com/skishore/makemeahanzi">Make Me a Hanzi</a>
+      (derived from Unihan and CJKlib), under the GNU Lesser General Public License, version 3 or later.
+      We kept decompositions, hints, definitions and component roles, and reshaped them into JSON.
+      <code>parts.json</code> is itself the modified data, in a plain readable format.</p>
+    <ul>
+      <li><a href="makemeahanzi-COPYING.txt">Make Me a Hanzi notice</a></li>
+      <li><a href="LGPL-3.0.txt">GNU LGPL version 3</a></li>
+      <li><a href="GPL-3.0.txt">GNU GPL version 3</a>, which the LGPL builds on</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Dictionary and frequencies: <code>data/dict.json</code></h2>
+    <p>Pinyin, English glosses and Traditional forms from <a href="https://cc-cedict.org/wiki/">CC-CEDICT</a>, and
+      frequency ranks from <a href="https://github.com/rspeer/wordfreq">wordfreq</a> by Robyn Speer (which includes
+      SUBTLEX-CH by Cai and Brysbaert 2010, freely available data, OpenSubtitles and Google Books Ngrams).
+      Both under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>, and this file is shared
+      under the same licence. Changes: entries limited to the items Jiesuo teaches, glosses shortened to their first two
+      senses, pinyin written with tone marks, frequencies given as a weight per million words, and Hong Kong
+      Traditional forms added with OpenCC.</p>
+  </section>
+
+  <section>
+    <h2>Example sentences: <code>data/sentences.json</code></h2>
+    <p>From <a href="https://tatoeba.org">Tatoeba</a>, under
+      <a href="https://creativecommons.org/licenses/by/2.0/fr/deed.en">CC BY 2.0 FR</a> (some English sentences are CC0).
+      Each row names the author of the Chinese sentence and of its English translation, with their Tatoeba IDs,
+      and the app shows both under every example. Changes: Traditional forms added with OpenCC.</p>
+  </section>
+
+  <section>
+    <h2>HSK levels: <code>data/hsk.json</code></h2>
+    <p>From <a href="https://github.com/elkmovie/hsk30">elkmovie/hsk30</a>, MIT, Copyright (c) 2021 Pleco Inc.
+      <a href="hsk30-LICENSE.txt">Licence text</a>.</p>
+  </section>
+
+  <section>
+    <h2>Learning order: <code>data/order.json</code></h2>
+    <p>Positions computed by Jiesuo from the sources above. It contains numbers only, no text from them.</p>
+  </section>
+
+  <section>
+    <h2>Tools used to build the data</h2>
+    <ul>
+      <li><a href="https://github.com/BYVoid/OpenCC">OpenCC</a>, Simplified and Traditional conversion: Apache-2.0. <a href="OpenCC-LICENSE.txt">Licence text</a>.</li>
+      <li><a href="https://github.com/fxsjy/jieba">jieba</a>, word splitting: MIT, Copyright (c) 2013 Sun Junyi. <a href="jieba-LICENSE.txt">Licence text</a>.</li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "Jiesuo 解锁",
+  "short_name": "Jiesuo",
+  "description": "Learn Mandarin in the order that lets you read real Chinese soonest. Works offline.",
+  "lang": "en",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f0f5ee",
+  "theme_color": "#f0f5ee",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

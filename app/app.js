@@ -1,0 +1,623 @@
+/* Jiesuo screens. All logic that can be tested without a browser lives in core.js. */
+(async function () {
+  "use strict";
+  const STORE_KEY = "jiesuo-progress-v1";
+  const DRAFT_KEY = "jiesuo-draft-v1";
+  const SAMPLE = "我家离学校不远，所以我每天走路去上课。今天下雨了，虽然我带了雨伞，但是衣服还是湿了。到了学校以后，老师说明天有考试，大家都有点紧张。";
+  const view = document.getElementById("view");
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmt = (n) => Number(n).toLocaleString("en");
+
+  // Storage may throw (private windows, blocked site data). The app works without it.
+  let storageOk = true;
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch (e) { storageOk = false; return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); storageOk = true; } catch (e) { storageOk = false; } },
+  };
+
+  async function fetchJson(name) {
+    const r = await fetch("data/" + name);
+    if (!r.ok) throw new Error(name + " returned " + r.status);
+    return r.json();
+  }
+
+  let core, order, bands, sentences = null;
+  try {
+    const [dict, parts, grammar, ord, hsk] = await Promise.all(["dict.json", "parts.json", "grammar.json", "order.json", "hsk.json"].map(fetchJson));
+    core = JiesuoCore.createCore({ dict, parts, grammar });
+    core.partsData = parts.parts;
+    order = ord;
+    bands = hsk.bands;
+  } catch (e) {
+    view.innerHTML = `<p class="warn">The word data did not load (${esc(e.message)}). Serve this folder over http and reload; it cannot open from a file:// address.</p>`;
+    return;
+  }
+
+  const state = { known: new Set(), tradSeen: new Set(), script: "s", focus: "unlock" };
+  try {
+    const saved = store.get(STORE_KEY);
+    if (saved) Object.assign(state, JiesuoCore.deserialise(JSON.parse(saved), core));
+  } catch (e) { /* a damaged save starts fresh */ }
+  let undo = null;
+
+  function save() {
+    state.savedAt = new Date().toISOString();
+    store.set(STORE_KEY, JSON.stringify(JiesuoCore.serialise(state, core)));
+    document.getElementById("storage-warning").hidden = storageOk;
+  }
+
+  function snapshot(label) {
+    const before = { known: new Set(state.known), tradSeen: new Set(state.tradSeen) };
+    undo = () => { state.known = before.known; state.tradSeen = before.tradSeen; save(); route(); };
+    showToast(label);
+  }
+
+  let toastTimer;
+  function showToast(text) {
+    const t = document.getElementById("toast");
+    t.innerHTML = `<span>${esc(text)}</span>` + (undo ? `<button type="button" id="undo">Undo</button>` : "");
+    t.hidden = false;
+    const b = document.getElementById("undo");
+    if (b) b.onclick = () => { const u = undo; undo = null; t.hidden = true; u && u(); };
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { t.hidden = true; }, 6000);
+  }
+
+  /** Knowing an item implies its prerequisites. Forgetting one also forgets what was built on it. */
+  function markKnown(i) {
+    const added = core.closure(i, state.known);
+    snapshot(added.length > 1 ? `Marked ${disp(i)} and ${added.length - 1} ${added.length === 2 ? "part" : "parts"} as known` : `Marked ${disp(i)} as known`);
+    added.forEach((u) => state.known.add(u));
+    save();
+  }
+  function markUnknown(i) {
+    snapshot(`Marked ${disp(i)} as not known`);
+    const stack = [i];
+    while (stack.length) {
+      const u = stack.pop();
+      if (!state.known.delete(u)) continue;
+      core.children[u].forEach((c) => stack.push(c));
+    }
+    save();
+  }
+
+  // Display helpers
+  const disp = (i) => { const it = core.get(i); return state.script === "t" && it.hk ? it.hk : it.form; };
+  const KIND = { p: "Part", c: "Character", w: "Word", g: "Grammar" };
+  const stateClass = (i, fr) => (state.known.has(i) ? "is-known" : fr && fr.has(i) ? "is-frontier" : "");
+  function cells(i, size = "", extra = "") {
+    const form = Array.from(disp(i));
+    return `<a class="word" href="#i${i}" aria-label="${esc(disp(i))}">` + form.map((c) => `<span class="ge ${size} ${extra}"><b>${esc(c)}</b></span>`).join("") + "</a>";
+  }
+  const chip = (i, cls = "") => {
+    const it = core.get(i);
+    const label = it.kind === "g" ? esc(it.form) : `<span class="zh">${esc(disp(i))}</span>`;
+    return `<a class="chip ${cls}" href="#i${i}">${label}${it.pinyin ? `<span class="soft">${esc(firstReading(it.pinyin))}</span>` : ""}</a>`;
+  };
+  const firstReading = (p) => p.split(",")[0];
+  const glossOf = (it) => it.gloss || (core.partsData[it.form] || {}).d || "";
+  const pinyinOf = (it) => it.pinyin || (core.partsData[it.form] || {}).y || "";
+
+  function perWords(freq) {
+    if (!freq) return "";
+    const k = 1e6 / freq;
+    if (k < 1.5) return "";
+    const nice = k < 100 ? Math.round(k) : k < 1000 ? Math.round(k / 10) * 10 : k < 10000 ? Math.round(k / 100) * 100 : Math.round(k / 1000) * 1000;
+    return `About 1 in ${fmt(nice)} words you will read.`;
+  }
+
+  /** "Why it matters" for an item, from the graph. */
+  function why(i) {
+    const it = core.get(i);
+    const kids = core.children[i];
+    const chars = kids.filter((c) => c < core.n && core.get(c).kind !== "w");
+    const words = kids.filter((c) => c < core.n && core.get(c).kind === "w");
+    const grammar = kids.filter((c) => c >= core.n);
+    const bits = [];
+    if (it.kind === "g") {
+      return `Seen in ${fmt(it.count)} example ${it.count === 1 ? "sentence" : "sentences"}. HSK ${it.level}, by our estimate.`;
+    }
+    const unlocks = [];
+    if (words.length) unlocks.push(`${fmt(words.length)} ${words.length === 1 ? "word" : "words"}`);
+    if (chars.length) unlocks.push(`${fmt(chars.length)} ${chars.length === 1 ? "character" : "characters"}`);
+    if (unlocks.length) bits.push(`Unlocks ${unlocks.join(" and ")}.`);
+    const f = perWords(it.freq);
+    if (f) bits.push(f);
+    if (grammar.length) bits.push(`Needed for ${grammar.length} grammar ${grammar.length === 1 ? "pattern" : "patterns"}.`);
+    const finishes = kids.filter((c) => !state.known.has(c) && core.prereq[c].every((p) => p === i || state.known.has(p))).sort((a, b) => core.get(b).freq - core.get(a).freq).slice(0, 2);
+    if (finishes.length && it.kind !== "w") bits.push(`Next you can learn ${finishes.map((c) => `<span class="zh">${esc(disp(c))}</span>`).join(", ")}.`);
+    return bits.join(" ") || "Needed to build later items.";
+  }
+
+  const currentOrder = () => (state.focus === "hsk" ? order.hsk : order.unlock);
+
+  // ---- What next
+  function renderNext() {
+    const seq = currentOrder();
+    const list = core.next(seq, state.known, 10);
+    const known = [...state.known].filter((i) => i < core.n).length;
+    const cov = core.estimatedCoverage(state.known);
+    const fr = new Set(core.frontier(seq, state.known));
+    view.innerHTML = `
+      <section class="intro">
+        <h1>${known ? `You know ${fmt(known)} ${known === 1 ? "item" : "items"}` : "Start here: the next 10 things to learn"}</h1>
+        <p class="soft">${known ? `That covers roughly ${(cov * 100).toFixed(0)}% of the words in everyday Chinese text, by frequency. Paste real text into Read for a true figure.` : "Each one is chosen to open up the most real Chinese for the least effort. Tick what you know already and the list moves on."}</p>
+      </section>
+      <section class="stack">
+        <div class="choice" role="group" aria-label="Learning order">
+          <button type="button" id="focus-unlock" aria-pressed="${state.focus === "unlock"}">Fastest reading</button>
+          <button type="button" id="focus-hsk" aria-pressed="${state.focus === "hsk"}">HSK focus</button>
+        </div>
+        <p class="soft small">${state.focus === "hsk" ? "Finishes each HSK level in turn, starting with the lowest. In our tests it lets you read more whole sentences, and slightly fewer individual words, for the same effort." : "Picks whatever adds the most readable words next, whatever its HSK level."}</p>
+        ${state.focus === "hsk" ? bandBars() : ""}
+      </section>
+      ${known < 50 ? `<section class="stack"><h2>Already studying?</h2>
+        <div class="row"><span>Mark everything up to</span>${[1, 2, 3].map((b) => `<button type="button" class="btn quiet" data-bulk="${b}">HSK ${b}</button>`).join("")}</div></section>` : ""}
+      <section aria-label="Next items">
+        ${list.map((i) => itemRow(i, fr)).join("") || `<p>You have marked everything as known.</p>`}
+      </section>`;
+    document.getElementById("focus-unlock").onclick = () => setFocus("unlock");
+    document.getElementById("focus-hsk").onclick = () => setFocus("hsk");
+    view.querySelectorAll("[data-bulk]").forEach((b) => (b.onclick = () => bulk(+b.dataset.bulk)));
+    view.querySelectorAll("[data-tick]").forEach((b) => (b.onclick = () => { markKnown(+b.dataset.tick); renderNext(); }));
+  }
+
+  function setFocus(f) { state.focus = f; save(); renderNext(); }
+
+  function bandBars() {
+    const rows = [];
+    for (let b = 1; b <= 6; b++) {
+      const members = core.items.filter((it) => bands[it.i] === b && it.kind !== "p");
+      const have = members.filter((it) => state.known.has(it.i)).length;
+      rows.push(`<div class="band"><span>HSK ${b}</span><span class="bar"><i style="width:${members.length ? (have / members.length) * 100 : 0}%"></i></span><span class="count">${fmt(have)} of ${fmt(members.length)}</span></div>`);
+    }
+    return `<div class="bands" aria-label="Progress by HSK level">${rows.join("")}</div>`;
+  }
+
+  function bulk(level) {
+    snapshot(level === 1 ? "Marked HSK 1 as known" : `Marked HSK 1 to ${level} as known`);
+    core.items.forEach((it) => { if (bands[it.i] && bands[it.i] <= level) core.closure(it.i, state.known).forEach((u) => state.known.add(u)); });
+    core.patterns.forEach((p) => { if (p.level <= level) core.closure(p.i, state.known).forEach((u) => state.known.add(u)); });
+    save();
+    renderNext();
+  }
+
+  function itemRow(i, fr) {
+    const it = core.get(i);
+    const tick = `<button type="button" class="tick" data-tick="${i}" aria-label="I know ${esc(disp(i))}" title="I know this">✓</button>`;
+    if (it.kind === "g") {
+      return `<article class="item"><div class="pattern-cell"><span class="kind">Grammar</span><a class="pattern-form" href="#i${i}">${esc(it.form)}</a><p>${esc(it.explanation)}</p><p class="why">${why(i)}</p></div>${tick}</article>`;
+    }
+    return `<article class="item">${cells(i, it.form.length > 2 ? "ge-m" : "", fr.has(i) ? "is-frontier" : "")}<div class="text">
+      <span class="kind">${KIND[it.kind]}</span>
+      <span><span class="pinyin">${esc(pinyinOf(it))}</span>${glossOf(it) ? ` ${esc(glossOf(it))}` : ""}</span>
+      <p class="why">${why(i)}</p></div>${tick}</article>`;
+  }
+
+  // ---- Can I read this?
+  let draft = store.get(DRAFT_KEY);
+  function renderRead() {
+    const text = draft === null ? SAMPLE : draft;
+    view.innerHTML = `
+      <section class="stack">
+        <h1>Can I read this?</h1>
+        <label for="text" class="soft">Paste any Chinese text, Simplified or Traditional.${draft === null ? " This one is an example." : ""}</label>
+        <textarea id="text" lang="zh">${esc(text)}</textarea>
+      </section>
+      <div id="result" class="stack" style="gap:28px"></div>`;
+    const area = document.getElementById("text");
+    let timer;
+    area.oninput = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { draft = area.value; store.set(DRAFT_KEY, draft); drawResult(draft); }, 150);
+    };
+    drawResult(text);
+  }
+
+  function drawResult(text) {
+    const out = document.getElementById("result");
+    const r = core.analyse(text, state.known);
+    if (!r.total) {
+      out.innerHTML = `<p class="soft">No Chinese characters found. Paste some text above to see what you can read.</p>`;
+      return;
+    }
+    const pct = (x) => `${Math.round((x / r.total) * 100)}%`;
+    const reading = r.tokens.map((t) => {
+      if (!t.han) return esc(t.text);
+      if (t.unit === null) return `<span class="tok-outside">${esc(t.text)}</span>`;
+      const shown = state.script === "t" ? core.items[t.unit].hk || t.text : core.items[t.unit].form;
+      const known = state.known.has(t.unit);
+      const via = known && t.text !== core.items[t.unit].form && !state.tradSeen.has(t.unit);
+      const cls = !known ? "tok-unknown" : via ? "tok-via" : "tok-known";
+      return `<a class="${cls}" href="#i${t.unit}">${esc(shown)}</a>`;
+    }).join("");
+    const grammar = r.patterns;
+    out.innerHTML = `
+      <section class="stack">
+        <div class="row" style="align-items:baseline;gap:12px"><span class="score">${pct(r.readable)}</span><span>readable now: ${fmt(r.readable)} of ${fmt(r.total)} words</span></div>
+        <div class="reading" lang="${state.script === "t" ? "zh-HK" : "zh-Hans"}">${reading}</div>
+        <div class="legend">
+          <span><span class="zh tok-known">知</span> known</span>
+          <span><span class="zh tok-unknown">生</span> not known yet</span>
+          <span><span class="zh tok-via">學</span> known in the other script</span>
+          ${r.outside ? `<span><span class="zh tok-outside">罕</span> not in our data (${fmt(r.outside)})</span>` : ""}
+        </div>
+      </section>
+      ${r.ladder.length ? `<section class="stack">
+        <h2>Learn ${fmt(r.learn.length)} ${r.learn.length === 1 ? "item" : "items"} to read all of this</h2>
+        <p class="soft small">The smallest set for this text, including the parts each word needs. Best value comes first; the figure is how much you could read after that step.</p>
+        <ol class="ladder">${r.ladder.map((s) => `<li><div class="chips">${s.items.map((i) => chip(i, i === s.target ? "" : "need")).join("")}</div><span class="pct">${pct(s.reached)}</span></li>`).join("")}</ol>
+        <div class="row"><button type="button" class="btn" id="learn-all">Mark all ${fmt(r.learn.length)} as known</button></div>
+      </section>` : `<section><h2>You can read all of this${r.outside ? ", apart from the characters we have no data for" : ""}.</h2></section>`}
+      ${grammar.length ? `<section class="stack"><h2>Grammar spotted</h2><div class="chips">${grammar.map((i) => chip(i, state.known.has(i) ? "" : "need")).join("")}</div><p class="soft small">Only patterns made of fixed words can be spotted here, so this list is incomplete. Grammar does not affect the percentage.</p></section>` : ""}`;
+    const all = document.getElementById("learn-all");
+    if (all) all.onclick = () => {
+      snapshot(`Marked ${r.learn.length} items as known`);
+      r.learn.forEach((i) => state.known.add(i));
+      save();
+      drawResult(text);
+    };
+  }
+
+  // ---- My map
+  function renderMap() {
+    const seq = currentOrder();
+    const frList = core.frontier(seq, state.known);
+    const known = state.known.size;
+    view.innerHTML = `
+      <section class="stack">
+        <h1>My map</h1>
+        <p>${known ? `You know ${fmt(known)} of ${fmt(seq.length)} items. ` : `Nothing is lit yet. `}<strong>${fmt(frList.length)}</strong> ${frList.length === 1 ? "item is" : "items are"} one step away: you already have everything they need.</p>
+      </section>
+      <section class="stack">
+        <h2>What you know, and what it opens up</h2>
+        <p class="soft small">A sample of the closest next steps, with the items that lead to them.</p>
+        <div class="scroll-x" id="graph"></div>
+        <div class="key"><span><i class="k-known"></i>Known</span><span><i style="background:var(--sheet);border:2px dashed var(--pen)"></i>One step away</span></div>
+      </section>
+      <section class="stack">
+        <h2>Closest next steps</h2>
+        <div class="chips">${frList.slice(0, 30).map((i) => chip(i, "need")).join("")}</div>
+      </section>
+      <section class="stack">
+        <h2>The whole language</h2>
+        <p class="soft small">Every square is one item, in learning order. Tap one to open it.</p>
+        <canvas class="field" id="field" aria-label="Grid of all items, showing which are known and which are one step away"></canvas>
+        <div class="key"><span><i class="k-known"></i>Known</span><span><i class="k-front"></i>One step away</span><span><i></i>Further off</span></div>
+        <div id="peek"></div>
+      </section>`;
+    drawGraph(frList);
+    drawField(seq, new Set(frList));
+  }
+
+  function drawGraph(frList) {
+    // A readable sample: a few frontier items of each kind, plus the known items that lead to them.
+    const take = (kind, k) => frList.filter((i) => i < core.n && core.get(i).kind === kind).slice(0, k);
+    const fr = [...take("w", 7), ...take("c", 6), ...take("p", 3)];
+    const nodes = new Set(fr);
+    fr.forEach((i) => core.prereq[i].forEach((p) => nodes.add(p)));
+    const columns = { p: [], c: [], w: [] };
+    [...nodes].sort((a, b) => a - b).forEach((i) => columns[core.get(i).kind].push(i));
+    // Sit each item level with what it leads to, which keeps edges from crossing the whole map.
+    const rowOf = new Map();
+    columns.w.forEach((i, r) => rowOf.set(i, r));
+    for (const k of ["c", "p"]) {
+      const score = (i) => {
+        const rows = core.children[i].filter((c) => rowOf.has(c)).map((c) => rowOf.get(c));
+        return rows.length ? rows.reduce((a, b) => a + b, 0) / rows.length : 1e6 + i;
+      };
+      const scored = new Map(columns[k].map((i) => [i, score(i)]));
+      columns[k].sort((a, b) => scored.get(a) - scored.get(b));
+      columns[k].forEach((i, r) => rowOf.set(i, r));
+    }
+    const names = { p: "Parts", c: "Characters", w: "Words" };
+    const present = Object.keys(columns).filter((k) => columns[k].length);
+    const boxH = 44, gap = 10, top = 30, colW = 118;
+    const width = Math.max(320, present.length * colW);
+    const step = width / present.length;
+    const pos = new Map();
+    let maxRows = 0;
+    present.forEach((k, c) => {
+      maxRows = Math.max(maxRows, columns[k].length);
+      columns[k].forEach((i, r) => pos.set(i, { x: c * step + 6, y: top + r * (boxH + gap), w: Math.min(step - 22, 24 * Math.max(Array.from(disp(i)).length, 2) + 14) }));
+    });
+    const height = top + maxRows * (boxH + gap);
+    let edges = "";
+    for (const i of nodes) {
+      for (const p of core.prereq[i]) {
+        if (!nodes.has(p)) continue;
+        const a = pos.get(p), b = pos.get(i);
+        if (a.x === b.x) continue;
+        const x1 = a.x + a.w, y1 = a.y + boxH / 2, x2 = b.x, y2 = b.y + boxH / 2;
+        edges += `<path class="edge ${state.known.has(i) ? "lit" : ""}" d="M${x1} ${y1}C${x1 + 26} ${y1} ${x2 - 26} ${y2} ${x2} ${y2}"/>`;
+      }
+    }
+    const boxes = [...nodes].map((i) => {
+      const a = pos.get(i);
+      const cls = state.known.has(i) ? "n-known" : "n-frontier";
+      const text = disp(i);
+      return `<a href="#i${i}" class="${cls}" aria-label="${esc(text)}"><rect class="box" x="${a.x}" y="${a.y}" width="${a.w}" height="${boxH}"/><text x="${a.x + a.w / 2}" y="${a.y + 31}" text-anchor="middle" font-size="24">${esc(text)}</text></a>`;
+    }).join("");
+    const heads = present.map((k, c) => `<text class="col" x="${c * step + 6}" y="16">${names[k]}</text>`).join("");
+    document.getElementById("graph").innerHTML = `<svg class="graph" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="Known items and the items they lead to">${heads}${edges}${boxes}</svg>`;
+  }
+
+  function drawField(seq, fr) {
+    const canvas = document.getElementById("field");
+    const css = getComputedStyle(document.documentElement);
+    const col = (n) => css.getPropertyValue(n).trim();
+    const rows = [["Parts", (i) => i < core.n && core.get(i).kind === "p"], ["Characters", (i) => i < core.n && core.get(i).kind === "c"], ["Words", (i) => i < core.n && core.get(i).kind === "w"], ["Grammar", (i) => i >= core.n]];
+    const W = canvas.clientWidth || 340, cell = W < 500 ? 4 : 6, pitch = cell + 1, perRow = Math.floor(W / pitch);
+    let y = 0;
+    const layout = [];
+    const heads = [];
+    for (const [name, test] of rows) {
+      const members = seq.filter(test);
+      heads.push([name, members.length, y + 16]);
+      y += 24;
+      members.forEach((i, k) => layout.push({ i, x: (k % perRow) * pitch, y: y + Math.floor(k / perRow) * pitch }));
+      y += Math.ceil(members.length / perRow) * pitch + 12;
+    }
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = y * dpr;
+    canvas.style.height = y + "px";
+    const c = canvas.getContext("2d");
+    c.scale(dpr, dpr);
+    const pen = col("--pen"), faint = col("--grid-faint"), near = col("--grid");
+    c.font = `700 15px ${col("--ui")}`;
+    c.fillStyle = col("--soft");
+    heads.forEach(([name, count, hy]) => c.fillText(`${name} (${fmt(count)})`, 0, hy));
+    for (const n of layout) {
+      c.fillStyle = state.known.has(n.i) ? pen : fr.has(n.i) ? near : faint;
+      c.fillRect(n.x, n.y, cell, cell);
+    }
+    canvas.onclick = (e) => {
+      const b = canvas.getBoundingClientRect();
+      const x = e.clientX - b.left, yy = e.clientY - b.top;
+      let best = null, d = 200;
+      for (const n of layout) {
+        const dd = (n.x + cell / 2 - x) ** 2 + (n.y + cell / 2 - yy) ** 2;
+        if (dd < d) { d = dd; best = n.i; }
+      }
+      if (best !== null) document.getElementById("peek").innerHTML = chip(best, state.known.has(best) ? "" : "need") + (core.get(best).gloss ? ` <span class="soft small">${esc(core.get(best).gloss)}</span>` : "");
+    };
+  }
+
+  // ---- Item page
+  async function loadSentences() {
+    if (sentences) return sentences;
+    const j = await fetchJson("sentences.json");
+    sentences = new Map();
+    for (const s of j.sentences) for (const u of s[4]) { if (!sentences.has(u)) sentences.set(u, []); sentences.get(u).push(s); }
+    return sentences;
+  }
+
+  const ROLE = { semantic: "gives the meaning", phonetic: "gives the sound", both: "gives the meaning and the sound", meaning: "part of the idea", form: "part of the shape", no_etymology: "part of the shape", unmatched: "part of the shape" };
+
+  function renderItem(i) {
+    const it = core.get(i);
+    if (!it) { location.hash = "next"; return; }
+    if (it.kind === "g") return renderPattern(it);
+    const known = state.known.has(i);
+    const rec = (state.script === "t" && it.hk && core.partsData[it.hk]) || core.partsData[it.form] || {};
+    const forms = [it.form, it.hk, ...it.others].filter((f, k, all) => f && all.indexOf(f) === k);
+    const kids = core.children[i];
+    const words = kids.filter((c) => c < core.n && core.get(c).kind === "w").sort((a, b) => core.get(b).freq - core.get(a).freq);
+    const chars = kids.filter((c) => c < core.n && core.get(c).kind !== "w");
+    const patterns = kids.filter((c) => c >= core.n);
+    const missing = core.closure(i, state.known).filter((u) => u !== i);
+    const glyphs = it.kind === "w" ? core.prereq[i] : [];
+    const partRows = (rec.p || []).map(([part, role]) => {
+      const u = core.glyphUnit.get(part);
+      const g = u === undefined ? `<span class="ge ge-m"><b>${esc(part)}</b></span>` : `<a class="ge ge-m ${state.known.has(u) ? "is-known" : ""}" href="#i${u}"><b>${esc(state.script === "t" ? part : part)}</b></a>`;
+      const u2 = u === undefined ? null : core.get(u);
+      return `<div class="part">${g}<div><strong>${esc(ROLE[role] || "part of the shape")}</strong>${u2 && glossOf(u2) ? `<br><span class="soft small">${esc(pinyinOf(u2))} ${esc(glossOf(u2))}</span>` : ""}</div></div>`;
+    }).join("");
+    view.innerHTML = `
+      <section class="head">
+        <div class="word">${Array.from(disp(i)).map((c) => `<span class="ge ${it.form.length > 2 ? "" : "ge-xl"} ${known ? "is-known" : ""}"><b>${esc(c)}</b></span>`).join("")}</div>
+        <div class="text">
+          <span class="soft">${KIND[it.kind]}${bands[i] ? `, HSK ${bands[i] === 7 ? "7–9" : bands[i]}` : ""}</span>
+          <span class="pinyin-big">${esc(pinyinOf(it))}</span>
+          <span>${esc(glossOf(it) || "No dictionary entry for this one.")}</span>
+          ${forms.length > 1 ? `<span class="small soft">Also written <span class="zh">${forms.filter((f) => f !== disp(i)).map(esc).join(", ")}</span></span>` : ""}
+        </div>
+      </section>
+      <section class="stack">
+        <div class="row">
+          <button type="button" class="btn ${known ? "quiet" : "primary"}" id="toggle-known">${known ? "Mark as not known" : "I know this"}</button>
+        </div>
+        ${missing.length && !known ? `<p class="small soft">Marking this also marks ${missing.length} ${missing.length === 1 ? "item" : "items"} it needs.</p>` : ""}
+        ${(it.hk || it.others.length) && known ? `<label class="check"><input type="checkbox" id="trad-too" ${state.tradSeen.has(i) ? "checked" : ""}> I can read the other script's form too</label>` : ""}
+        <p class="why soft">${why(i)}</p>
+      </section>
+      ${rec.h || partRows ? `<section class="stack"><h2>How it is built</h2>${rec.h ? `<p class="zh" style="font-family:var(--ui)">${esc(rec.h)}</p>` : ""}<div class="part-list">${partRows}</div></section>` : ""}
+      ${glyphs.length ? `<section class="stack"><h2>Characters in this word</h2><div class="chips">${glyphs.map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div></section>` : ""}
+      <section class="stack" id="example"><h2>Example</h2><p class="soft small">Loading a sentence…</p></section>
+      ${words.length ? `<section class="stack"><h2>Words using it</h2><div class="chips">${words.slice(0, 24).map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div>${words.length > 24 ? `<p class="soft small">And ${fmt(words.length - 24)} more.</p>` : ""}</section>` : ""}
+      ${chars.length ? `<section class="stack"><h2>Characters built from it</h2><div class="chips">${chars.slice(0, 24).map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div>${chars.length > 24 ? `<p class="soft small">And ${fmt(chars.length - 24)} more.</p>` : ""}</section>` : ""}
+      ${patterns.length ? `<section class="stack"><h2>Grammar that needs it</h2><div class="chips">${patterns.map((c) => chip(c)).join("")}</div></section>` : ""}`;
+    document.getElementById("toggle-known").onclick = () => { known ? markUnknown(i) : markKnown(i); renderItem(i); };
+    const t = document.getElementById("trad-too");
+    if (t) t.onchange = () => { t.checked ? state.tradSeen.add(i) : state.tradSeen.delete(i); save(); };
+    drawExample(i, it);
+  }
+
+  function sentenceHtml(s) {
+    const text = state.script === "t" ? s[2] || s[1] : s[1];
+    const line = core.tokenise(text).map((t) => {
+      if (!t.han || t.unit === null) return esc(t.text);
+      return `<a class="${state.known.has(t.unit) ? "tok-known" : "tok-unknown"}" href="#i${t.unit}">${esc(t.text)}</a>`;
+    }).join("");
+    // Row: id, simplified, traditional, English, items, author, English id, English author (CC BY 2.0 FR).
+    const link = (id, label) => `<a href="https://tatoeba.org/sentences/show/${esc(id)}" rel="noopener" target="_blank">${label}</a>`;
+    const english = s[3] ? `<p>${esc(s[3])}</p>` : "";
+    const enCredit = s[6] ? `, English ${link(s[6], `#${esc(s[6])}`)}${s[7] ? ` by ${esc(s[7])}` : " (CC0)"}` : "";
+    return `<div class="sentence"><p class="line" lang="${state.script === "t" ? "zh-HK" : "zh-Hans"}">${line}</p>${english}<p class="small soft">Tatoeba ${link(s[0], `#${esc(s[0])}`)} by ${esc(s[5])}${enCredit}. CC BY 2.0 FR.</p></div>`;
+  }
+
+  async function drawExample(i, it) {
+    const box = document.getElementById("example");
+    try {
+      const map = await loadSentences();
+      const box2 = document.getElementById("example");
+      if (!box2 || box2 !== box) return;
+      const list = map.get(i) || [];
+      if (!list.length) {
+        box.innerHTML = it.kind === "p" ? "" : `<h2>Example</h2><p class="soft small">No short example sentence for this one yet.</p>`;
+        return;
+      }
+      const unknownCount = (s) => core.tokenise(s[1]).filter((t) => t.han && t.unit !== null && !state.known.has(t.unit)).length;
+      const best = [...list].sort((a, b) => unknownCount(a) - unknownCount(b))[0];
+      box.innerHTML = `<h2>Example</h2>${sentenceHtml(best)}`;
+    } catch (e) {
+      box.innerHTML = `<h2>Example</h2><p class="soft small">Example sentences did not load. Reload to try again.</p>`;
+    }
+  }
+
+  async function renderPattern(p) {
+    const known = state.known.has(p.i);
+    view.innerHTML = `
+      <section class="stack">
+        <span class="soft">Grammar, HSK ${p.level} by our estimate</span>
+        <h1 class="zh">${esc(p.form)}</h1>
+        <p>${esc(p.explanation)}</p>
+      </section>
+      <section class="stack"><div class="row"><button type="button" class="btn ${known ? "quiet" : "primary"}" id="toggle-known">${known ? "Mark as not known" : "I know this"}</button></div></section>
+      <section class="stack"><h2>Words it needs</h2><div class="chips">${p.requires.map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div></section>
+      <section class="stack" id="example"><h2>Examples</h2><p class="soft small">Loading sentences…</p></section>`;
+    document.getElementById("toggle-known").onclick = () => { known ? markUnknown(p.i) : markKnown(p.i); renderPattern(p); };
+    const box = document.getElementById("example");
+    try {
+      const map = await loadSentences();
+      if (document.getElementById("example") !== box) return;
+      const list = map.get(p.i) || [];
+      box.innerHTML = `<h2>Examples</h2>` + (list.map(sentenceHtml).join("") || `<p class="soft small">No short example for this pattern yet.</p>`) + `<p class="soft small">Examples are found automatically and can occasionally be wrong.</p>`;
+    } catch (e) {
+      box.innerHTML = `<h2>Examples</h2><p class="soft small">Example sentences did not load. Reload to try again.</p>`;
+    }
+  }
+
+  // ---- Progress and credits
+  function renderMore() {
+    const json = JSON.stringify(JiesuoCore.serialise(state, core), null, 1);
+    view.innerHTML = `
+      <section class="stack">
+        <h1>Your progress</h1>
+        <p>You have marked <strong>${fmt(state.known.size)}</strong> items as known. They are kept in this browser only, with no account and no server.</p>
+        ${storageOk ? "" : `<p class="warn">This browser is blocking storage, so save a file before you close this page.</p>`}
+      </section>
+      <section class="stack">
+        <h2>Save to a file</h2>
+        <div class="row">
+          <button type="button" class="btn primary" id="download">Download progress file</button>
+          <button type="button" class="btn" id="copy">Copy as text</button>
+        </div>
+        <pre class="export" id="export-text">${esc(json)}</pre>
+      </section>
+      <section class="stack">
+        <h2>Restore from a file</h2>
+        <label class="btn quiet" for="import-file" style="width:fit-content;display:inline-flex;align-items:center">Choose progress file</label>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+        <label for="import-text" class="soft small">Or paste the text of one:</label>
+        <textarea id="import-text" style="min-height:72px;font:400 .9rem/1.4 var(--ui)"></textarea>
+        <div class="row"><button type="button" class="btn" id="import-go">Restore pasted text</button></div>
+        <p id="import-msg" role="status"></p>
+      </section>
+      <section class="stack">
+        <h2>Start over</h2>
+        <div class="row" id="reset-row"><button type="button" class="btn danger" id="reset">Clear all progress</button></div>
+      </section>
+      <section class="credits">
+        <h2>Where the data comes from</h2>
+        <p>Dictionary: <a href="https://cc-cedict.org/wiki/" rel="noopener" target="_blank">CC-CEDICT</a>, CC BY-SA 4.0.</p>
+        <p>Frequencies: <a href="https://github.com/rspeer/wordfreq" rel="noopener" target="_blank">wordfreq</a> by Robyn Speer, CC BY-SA 4.0, which includes SUBTLEX-CH by Cai and Brysbaert (2010, freely available data), OpenSubtitles and Google Books Ngrams.</p>
+        <p>Character parts: <a href="https://github.com/skishore/makemeahanzi" rel="noopener" target="_blank">Make Me a Hanzi</a>, LGPL-3.0-or-later. Derived from Unihan and CJKlib.</p>
+        <p>Sentences: <a href="https://tatoeba.org" rel="noopener" target="_blank">Tatoeba</a>, <a href="https://creativecommons.org/licenses/by/2.0/fr/deed.en" rel="noopener" target="_blank">CC BY 2.0 FR</a>. Each example names its author and translator and links to its page.</p>
+        <p>HSK lists: <a href="https://github.com/elkmovie/hsk30" rel="noopener" target="_blank">elkmovie/hsk30</a>, MIT, Pleco Inc. Script conversion: <a href="https://github.com/BYVoid/OpenCC" rel="noopener" target="_blank">OpenCC</a>, Apache-2.0. Word splitting while building the data: <a href="https://github.com/fxsjy/jieba" rel="noopener" target="_blank">jieba</a>, MIT.</p>
+        <p>Grammar explanations were written for Jiesuo, and their HSK levels are our own estimates.</p>
+        <p><a href="licences/">Full licence texts and notices</a></p>
+      </section>`;
+    document.getElementById("download").onclick = () => {
+      const blob = new Blob([JSON.stringify(JiesuoCore.serialise(state, core), null, 1)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `jiesuo-progress-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+      showPlain("Download started. If nothing arrives, use Copy as text.");
+    };
+    document.getElementById("copy").onclick = async () => {
+      try { await navigator.clipboard.writeText(json); showPlain("Copied."); }
+      catch (e) {
+        const r = document.createRange(); r.selectNodeContents(document.getElementById("export-text"));
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        showPlain("Selected the text. Copy it with your device's copy command.");
+      }
+    };
+    const restore = (text) => {
+      const msg = document.getElementById("import-msg");
+      try {
+        const got = JiesuoCore.deserialise(JSON.parse(text), core);
+        undo = null;
+        const before = { known: new Set(state.known), tradSeen: new Set(state.tradSeen) };
+        Object.assign(state, got);
+        undo = () => { state.known = before.known; state.tradSeen = before.tradSeen; save(); route(); };
+        save();
+        renderMore();
+        showToast(`Restored ${got.known.size} items` + (got.skipped ? `, skipped ${got.skipped} we no longer have` : ""));
+      } catch (e) {
+        msg.textContent = e instanceof SyntaxError ? "That text is not valid JSON. Check that you copied the whole file." : e.message;
+      }
+    };
+    document.getElementById("import-go").onclick = () => restore(document.getElementById("import-text").value);
+    document.getElementById("import-file").onchange = (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => restore(r.result);
+      r.onerror = () => { document.getElementById("import-msg").textContent = "That file could not be read. Try choosing it again."; };
+      r.readAsText(f);
+    };
+    document.getElementById("reset").onclick = () => {
+      const row = document.getElementById("reset-row");
+      row.innerHTML = `<span>Clear ${fmt(state.known.size)} items?</span><button type="button" class="btn danger" id="reset-yes">Yes, clear all</button><button type="button" class="btn quiet" id="reset-no">Keep them</button>`;
+      document.getElementById("reset-no").onclick = renderMore;
+      document.getElementById("reset-yes").onclick = () => {
+        snapshot("Cleared all progress");
+        state.known = new Set(); state.tradSeen = new Set();
+        save();
+        renderMore();
+      };
+    };
+  }
+  function showPlain(text) { undo = null; showToast(text); }
+
+  // ---- Routing: a plain #name, the only hash form every host preserves
+  function route() {
+    const h = (location.hash || "#next").slice(1);
+    const m = /^i(\d+)$/.exec(h);
+    const tab = m ? null : ["next", "read", "map", "more"].includes(h) ? h : "next";
+    document.querySelectorAll(".tabs a").forEach((a) => a.dataset.tab === tab ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+    document.documentElement.lang = state.script === "t" ? "zh-HK" : "zh-Hans";
+    document.getElementById("script-s").setAttribute("aria-pressed", state.script === "s");
+    document.getElementById("script-t").setAttribute("aria-pressed", state.script === "t");
+    if (m) renderItem(+m[1]);
+    else ({ next: renderNext, read: renderRead, map: renderMap, more: renderMore })[tab]();
+  }
+  function setScript(s) { state.script = s; save(); route(); }
+  document.getElementById("script-s").onclick = () => setScript("s");
+  document.getElementById("script-t").onclick = () => setScript("t");
+  window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
+  store.set("jiesuo-test", "1");
+  document.getElementById("storage-warning").hidden = storageOk;
+  route();
+
+  // Offline support where the host allows service workers (GitHub Pages does).
+  try {
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) navigator.serviceWorker.register("sw.js").catch(() => {});
+  } catch (e) { /* offline caching is optional */ }
+})();

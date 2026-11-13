@@ -1,0 +1,120 @@
+{
+ "mmh_dictionary.txt": {
+  "url": "https://raw.githubusercontent.com/skishore/makemeahanzi/master/dictionary.txt",
+  "member": null,
+  "sha256": "744bb05d5b0742e9ee35c37791f94d56a173349b3367569e7ca11e510364d203",
+  "bytes": 2570140
+ },
+ "mmh_COPYING.txt": {
+  "url": "https://raw.githubusercontent.com/skishore/makemeahanzi/master/COPYING",
+  "member": null,
+  "sha256": "26fa6b699b32401de4b75a4af574c2e0a99b3df6cb12df9313d257ee4634359c",
+  "bytes": 1016
+ },
+ "hsk30_wordlist.txt": {
+  "url": "https://raw.githubusercontent.com/elkmovie/hsk30/main/wordlist.txt",
+  "member": null,
+  "sha256": "4a8cfdc3a8fa85ced837c71aa187454c4d0ee36a1f70765655a93acb6a463af3",
+  "bytes": 127807
+ },
+ "hsk30_charlist.txt": {
+  "url": "https://raw.githubusercontent.com/elkmovie/hsk30/main/charlist.txt",
+  "member": null,
+  "sha256": "63dc1900d81ab76f358ca3ed169a7c4a2f8f2faaeeed6c394d13a5642ccfb7a4",
+  "bytes": 33092
+ },
+ "hsk30_LICENSE.txt": {
+  "url": "https://raw.githubusercontent.com/elkmovie/hsk30/main/LICENSE",
+  "member": null,
+  "sha256": "0b7db28172d3d93f53f5f8b0daccb3449e52003600b9566d8547f5a5ebfe7239",
+  "bytes": 1067
+ },
+ "opencc_STCharacters.txt": {
+  "url": "https://raw.githubusercontent.com/BYVoid/OpenCC/master/data/dictionary/STCharacters.txt",
+  "member": null,
+  "sha256": "a0ca1601c70648cf48b33c3c6210ccbecc5c7eead4b4c3daf76587ba2c03582b",
+  "bytes": 36026
+ },
+ "opencc_TSCharacters.txt": {
+  "url": "https://raw.githubusercontent.com/BYVoid/OpenCC/master/data/dictionary/TSCharacters.txt",
+  "member": null,
+  "sha256": "9ff46a7d30e5765375eb13d33f2b03a34d298913caf2b120380679f33ae1642d",
+  "bytes": 104520
+ },
+ "opencc_HKVariants.txt": {
+  "url": "https://raw.githubusercontent.com/BYVoid/OpenCC/master/data/dictionary/HKVariants.txt",
+  "member": null,
+  "sha256": "e5cd4345303224587102f2c9e4d2b67d2b7e349c6ce9152e4a118f4656cf7302",
+  "bytes": 1001
+ },
+ "opencc_LICENSE.txt": {
+  "url": "https://raw.githubusercontent.com/BYVoid/OpenCC/master/LICENSE",
+  "member": null,
+  "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308",
+  "bytes": 9165
+ },
+ "jieba_LICENSE.txt": {
+  "url": "https://raw.githubusercontent.com/fxsjy/jieba/master/LICENSE",
+  "member": null,
+  "sha256": "18ba0984839f85853b29fadaf992f7dba8fd0ca0fbeae34de2b8735222dc7a37",
+  "bytes": 1075
+ },
+ "cedict.json": {
+  "url": "https://registry.npmjs.org/cedict-json/-/cedict-json-1.3.20251213.tgz",
+  "member": "package/cedict.json",
+  "sha256": "dc89df06ab949a7da7d61de3531ebfa80366b02255e42ab04c1039de08ed6d08",
+  "bytes": 16527854
+ },
+ "cedict_LICENSE.txt": {
+  "url": "https://registry.npmjs.org/cedict-json/-/cedict-json-1.3.20251213.tgz",
+  "member": "package/LICENSE",
+  "sha256": "87a816969906840bf7af8d4d01cdfad4741b18946365e1f286007935509f2edb",
+  "bytes": 20139
+ },
+ "tatoeba_cmn_eng.json": {
+  "url": "https://registry.npmjs.org/tatoeba-sentence-pairs-in-mandarin-chinese-english/-/tatoeba-sentence-pairs-in-mandarin-chinese-english-0.20260520.0.tgz",
+  "member": "package/sentences.json",
+  "sha256": "f9f4f040d74223cf6fce2767a2db517208d3eba72227e7750e2f41c0354846d5",
+  "bytes": 7272601
+ },
+ "eval_only_subtlex_chr.json": {
+  "url": "https://registry.npmjs.org/subtlex-ch-chr/-/subtlex-ch-chr-0.0.0.tgz",
+  "member": "package/SUBTLEX-CH-CHR.json",
+  "sha256": "ad132a3e4ba6f3eb8c127426687626f9e816fb408ebf0b365ed0bee2abb79e6a",
+  "bytes": 1077407
+ },
+ "eval_only_subtlex_wf.json": {
+  "url": "https://registry.npmjs.org/subtlex-ch-wf/-/subtlex-ch-wf-0.0.0.tgz",
+  "member": "package/SUBTLEX-CH-WF.json",
+  "sha256": "b420cb4e8255c4d6345221c699db593177f2324f3db5d8c5f8d059612c13b15f",
+  "bytes": 16297902
+ },
+ "tatoeba/cmn_sentences_detailed.tsv.bz2": {
+  "url": "https://downloads.tatoeba.org/exports/per_language/cmn/cmn_sentences_detailed.tsv.bz2",
+  "member": null,
+  "sha256": "df15b916580d97db21a4f28c4f49f47aad7755025bc969b81762bcde6a47ea6a",
+  "bytes": 1728683,
+  "downloaded": "2026-11-13"
+ },
+ "tatoeba/cmn-eng_links.tsv.bz2": {
+  "url": "https://downloads.tatoeba.org/exports/per_language/cmn/cmn-eng_links.tsv.bz2",
+  "member": null,
+  "sha256": "0a773c2b8557626f30e27c764487fc271190b676e34280b2c9b4de17cfc71bde",
+  "bytes": 482181,
+  "downloaded": "2026-11-13"
+ },
+ "tatoeba/eng_sentences_detailed.tsv.bz2": {
+  "url": "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_detailed.tsv.bz2",
+  "member": null,
+  "sha256": "afec98e4c44a72f8fc709ce4d672fd3ab7f9ca731402f5d35e384b0b21b207c5",
+  "bytes": 34983679,
+  "downloaded": "2026-11-13"
+ },
+ "tatoeba/sentences_CC0.tar.bz2": {
+  "url": "https://downloads.tatoeba.org/exports/sentences_CC0.tar.bz2",
+  "member": null,
+  "sha256": "7e4251d06edd949db9e47cc360b472873da6c054af5dc4b9d2c9e06d024cd710",
+  "bytes": 7963537,
+  "downloaded": "2026-11-13"
+ }
+}
