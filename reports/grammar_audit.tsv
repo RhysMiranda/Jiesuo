@@ -1,0 +1,401 @@
+sample	pattern	form	sentence_id	sentence	label
+precision	he-and	A 和 B	s:13894727	我和丈夫周日要去四季演艺中心，去看国家芭蕾舞团表演的芭蕾舞剧《卡门》。	1
+precision	bei-passive	A 被 B + verb	s:783007	他被控告杀人罪。	1
+precision	demonstrative	这/那 + measure + noun	s:1992349	这个连小孩都能读。	1
+precision	number-measure	number + measure + noun	s:5958725	他是一家海滨餐厅的服务员。	1
+precision	ba-disposal	subject + 把 + object + verb + result	s:891720	她把她的手套留在车上了。	1
+precision	xiang-yiyang	像…一样	s:919182	我们就像兄弟一样。	1
+precision	de-possessive	A 的 B	s:1235428	他们在高山顶上建了自己的小城镇在那里过着宁静的生活。	1
+precision	zai-place-verb	在 + place + verb	s:827180	您在英国从事中医行业多长时间了？	1
+precision	demonstrative	这/那 + measure + noun	s:336236	看那个房子。	1
+precision	de-possessive	A 的 B	s:751207	我将他的缺席视为没有兴趣。	1
+precision	clock-time	number + 点	s:13164927	我每天早上六点起床。	1
+precision	ruguo-dehua	如果…的话	s:422986	你现在出门的话，肯定会堵车的。	1
+precision	clock-time	number + 点	s:9981362	在英国，银行开放在早上九点。	1
+precision	de-possessive	A 的 B	s:895865	她穿那件红色的衣服很好看。	1
+precision	ma-question	statement + 吗?	s:1659816	您会告诉我吗？	1
+precision	bu-negation	不 + verb/adjective	s:2368464	她不困。	1
+precision	ma-question	statement + 吗?	s:10362605	你知道书架背后藏著一条秘密通道吗？	1
+precision	zai-location	subject + 在 + place	s:1785947	他们不得不整天呆在家里。	0
+precision	ba-suggest	sentence + 吧	s:839832	去吃饭吧。	1
+precision	ma-question	statement + 吗?	s:13598245	你自己能做到吗？	1
+precision	zai-place-verb	在 + place + verb	s:10361416	我喜欢在这儿工作。	1
+precision	shi-link	A 是 B	s:8589274	你的影响力是什么？	1
+precision	le-change	sentence + 了	s:8883779	我们真的得加紧步伐了。	1
+precision	cai-late	才 + verb	s:373400	昨天我写信写到很晚才去睡觉。	1
+precision	you-have	A 有 B	s:10699400	我有糖尿病。	1
+precision	shei	谁	s:1933280	桌子上的书是谁的？	1
+precision	mei-negation	没(有) + verb	s:8501525	我没有告诉任何人你做了什么。	1
+precision	le-completed	verb + 了	s:757604	他走出了房间。	1
+precision	demonstrative	这/那 + measure + noun	s:406618	我这个学期的成绩很差。	1
+precision	gen-yiqi	和/跟 + person + 一起 + verb	s:892908	我喜欢和你在一起。	1
+precision	de-possessive	A 的 B	s:1468430	我问他是否知道她的住址。	1
+precision	number-measure	number + measure + noun	s:334031	我等我的一个朋友等了一小时。	1
+precision	yiqian-yihou	… 以前/以后	s:13788188	那是以前的照片。	0
+precision	shei	谁	s:13550597	这块蛋糕是谁做的？	1
+precision	le-completed	verb + 了	s:13552167	奥列格去了洗手间，丽玛在那里。	1
+precision	shei	谁	s:4147294	谁告诉你我和汤姆在交往的？	1
+precision	ma-question	statement + 吗?	s:587563	你可以代我去吗？	1
+precision	zai-progressive	在 + verb	s:895801	他们都在寻找这个走失的孩子。	1
+precision	clock-time	number + 点	s:5401617	你可以保管这个行李直到下午三点吗？	1
+precision	zai-place-verb	在 + place + verb	s:9049730	我习惯在马桶上看书。	1
+precision	time-first	time + subject + verb	s:13201775	现在走！	1
+precision	shi-link	A 是 B	s:13189734	这是我的脚踏车。	1
+precision	number-measure	number + measure + noun	s:13252270	你怎么一个人在这里啊？	1
+precision	yao-want	要 + verb	s:887719	他要抚养一大家人。	1
+precision	de-possessive	A 的 B	s:796917	个人自由是民主的精髓。	1
+precision	le-completed	verb + 了	s:833797	我们尽了一切努力来帮助他。	1
+precision	le-completed	verb + 了	s:344180	昨天我帮了我爸爸。	1
+precision	bu-negation	不 + verb/adjective	s:10320389	我不想要你告诉她。	1
+precision	a-not-a	verb + 不 + verb?	s:5543500	我们不知道他来不来。	1
+precision	dui-toward	对 + person/thing + …	s:6150879	那对我没有用处。	1
+precision	gei-for	给 + person + verb	s:13671134	他给我们看了一些照片。	1
+precision	de-shihou	… 的时候	s:504427	他在十一岁的时候开始学英文。	1
+precision	de-possessive	A 的 B	s:2635816	我的早餐总是咖啡和土司。	1
+precision	yidian-ye-bu	一点儿也不…	s:764167	我一点也不羡慕你的生活。	1
+precision	number-measure	number + measure + noun	s:848415	他送她一个洋娃娃。	1
+precision	dou-all	plural + 都 + verb	s:10560138	玛丽，不管是多快的活儿，妳都不应该不用菜板切菜。	0
+precision	zai-place-verb	在 + place + verb	s:679836	火车在今天下午一点半出发。	0
+precision	keyi	可以 + verb	s:834585	我可以吃这个柳橙吗？	1
+precision	result-complement	verb + 完/到/见/懂/好	s:2338681	我要在这里呆到后天。	1
+precision	ma-question	statement + 吗?	s:785910	我能用信用卡支付吗？	1
+precision	le-change	sentence + 了	s:349912	我不会讲英语，更不用说德语了。	0
+precision	jiao-name	叫 + name	s:10983905	艾米莉有一个叫梅兰妮的朋友。	1
+precision	shi-link	A 是 B	s:13670887	我问他是谁。	1
+precision	ma-question	statement + 吗?	s:9987081	他说错了，不是吗？	1
+precision	de-possessive	A 的 B	s:678181	这三个漂亮的女孩都是我的侄女。	1
+precision	de-possessive	A 的 B	s:6068355	汤姆是个大方的人。	1
+precision	zai-progressive	在 + verb	s:333193	她一整晚都在哭。	1
+precision	dui-toward	对 + person/thing + …	s:358446	他的话对我来说没有任何意义。	1
+precision	le-change	sentence + 了	s:5580901	她不来了。	1
+precision	zai-location	subject + 在 + place	s:917928	我不知道他在那里。	1
+precision	shi-link	A 是 B	s:870064	您此行的目的是什么？	1
+precision	de-possessive	A 的 B	s:10512909	那就是我生他的气的原因。	1
+precision	demonstrative	这/那 + measure + noun	s:778980	这个网站看起来不错。	1
+precision	bei-passive	A 被 B + verb	s:801995	我的手表昨天被偷了。	1
+precision	ba-disposal	subject + 把 + object + verb + result	s:686618	他把问题从脑子里排除了。	1
+precision	guo-experience	verb + 过	s:882170	我看见他游过了河。	0
+precision	shenme	什么	s:838586	什么时候开始登机？	1
+precision	demonstrative	这/那 + measure + noun	s:4831157	那个四年计划必须获得批准。	1
+precision	zhe-state	verb + 着	s:13907647	无论你平时怎么大大咧咧的，起码试着稍微礼貌一点吧。	0
+precision	huozhe-or	A 或者 B	s:1577133	他们经常在一块儿，去看歌剧或者浏览画廊。	1
+precision	you-exist	place + 有 + thing	s:13826841	冰箱里有优格。	1
+precision	ma-question	statement + 吗?	s:4757665	你熟悉这个领域吗？	1
+precision	cong-dao	从 A 到 B	s:336186	从大阪到秋田的车费是多少？	1
+precision	ma-question	statement + 吗?	s:349293	你妈会开车吗？	1
+precision	adj-yidian	adjective + 一点儿	s:13749886	汤姆比玛丽高一点。	1
+precision	jiu-early	就 + verb	s:957755	难道他可以买一把刀，而我就不行了？	0
+precision	shei	谁	s:13786732	汤姆大概知道是谁烧了他的房子。	1
+precision	number-measure	number + measure + noun	s:3377919	这张照片上有四个可爱的孩子。	1
+precision	zai-location	subject + 在 + place	s:6535846	我被风暴困在波士顿。	0
+precision	number-measure	number + measure + noun	s:8750771	萨米在一家旅馆的房间。	1
+precision	clock-time	number + 点	s:1406848	不是有一点小吗?	0
+precision	ma-question	statement + 吗?	s:5378672	我碍著你了吗？	1
+precision	de-possessive	A 的 B	s:8556515	古老的信仰即使被证明是错误的，也很难消亡。	1
+precision	shi-link	A 是 B	s:11508965	我们是哥们儿。	1
+precision	le-change	sentence + 了	s:13564962	我现在和我父亲差不多高了。	1
+precision	duoshao	多少	s:8825038	菠萝一公斤多少钱？	1
+precision	demonstrative	这/那 + measure + noun	s:332700	我已经受够了这个计划。	1
+precision	zai-progressive	在 + verb	s:805038	我在擦鞋垫下面发现了这把钥匙。	0
+precision	number-measure	number + measure + noun	s:10652429	教室里一个人也没有。	1
+precision	le-change	sentence + 了	s:591528	蜡烛没有了芯，就不能算是蜡烛了。	1
+precision	buyao-dont	不要 + verb	s:4764649	请小心不要受伤了。	1
+precision	hui-can	会 + verb	s:910223	我不认为他会说好。	1
+precision	de-possessive	A 的 B	s:1618866	我一定会去参加你的葬礼的。	1
+precision	mei-negation	没(有) + verb	s:10262822	我今天还啥也没吃呢。	1
+precision	jiu-early	就 + verb	s:6105212	我们马上就去做。	1
+precision	shi-bu-shi	是不是	s:388130	这把伞是不是你的？	1
+precision	duo-da-age	多大	s:1147872	你爷爷多大了？	1
+precision	zai-place-verb	在 + place + verb	s:894351	很多人在战争中被杀。	1
+precision	nar	哪儿 / 哪里	s:13519259	你知道哪里买电脑性价比高吗？	1
+precision	de-possessive	A 的 B	s:2680412	藤村和白秋这样的诗人太少了。	1
+precision	ruguo-dehua	如果…的话	s:585688	如果你想要这份工作的话，就一定要在明天之前申请。	1
+precision	le-change	sentence + 了	s:333579	许多燕子不久就要从南方飞来了。	1
+precision	bi-compare	A 比 B + adjective	s:1235588	汤姆看起来的确比玛丽年轻。	1
+precision	le-completed	verb + 了	s:10182775	我变了这么多吗？	1
+precision	de-possessive	A 的 B	s:1323320	我很喜欢你为人设想的性格。	1
+precision	jiao-name	叫 + name	s:10086132	如果我没忘了的话，我会叫汤姆做那件事。	0
+precision	le-completed	verb + 了	s:886580	这个守财奴打开了盒子，发现他的钱被偷了。	1
+precision	number-measure	number + measure + noun	s:5541840	我等了三个小时。	1
+precision	zai-location	subject + 在 + place	s:11702399	不好意思，请问鸡蛋在哪儿？	1
+precision	ma-question	statement + 吗?	s:12080367	她是强大的对手，不是吗？	1
+precision	le-change	sentence + 了	s:10303626	我已经不记得第一次碰到汤姆的情形了。	1
+precision	zui	最 + adjective	s:598129	最重要的是你有没有尽全力去做。	1
+precision	zai-progressive	在 + verb	s:6105246	汤姆突然看起来在担心。	1
+precision	he-and	A 和 B	s:400274	我们常常把英国和日本作比较。	1
+precision	shei	谁	s:1880459	你爱谁？	1
+precision	clock-time	number + 点	s:10275083	我们七点钟吃早饭。	1
+precision	ma-question	statement + 吗?	s:710384	这样真的值得吗？	1
+precision	ye-also	也 + verb	s:5995701	我也不。	1
+precision	demonstrative	这/那 + measure + noun	s:2930903	这个不会。	1
+precision	dui-toward	对 + person/thing + …	s:804806	没有对外语的认识，你永远无法理解外国人的沉默。	1
+precision	de-possessive	A 的 B	s:832965	请把你的外套挂起来。	1
+precision	de-possessive	A 的 B	s:10357446	你有吃早餐的习惯吗？	1
+precision	ma-question	statement + 吗?	s:13549681	你们也有贩售咖啡壶配件吗？	1
+precision	shi-link	A 是 B	s:599675	这是我听过最好笑的笑话。	1
+precision	number-measure	number + measure + noun	s:1182100	大多数中国人没见过几个外国人，觉得特新奇，看见外星人的感觉。	1
+precision	de-relative	verb phrase + 的 + noun	s:1236433	超市现在已经关了，我们只能加减用一下冰箱里剩的食物。	1
+precision	gen-yiqi	和/跟 + person + 一起 + verb	s:870168	昨天晚上乔跟你在一起吗？	1
+precision	bu-negation	不 + verb/adjective	s:790778	老实说, 我已经渐渐地不喜欢这里的生活。	1
+precision	xiang-want	想 + verb	s:13137892	我没想打探的。	1
+precision	zai-again	再 + verb	s:794188	很高兴再见到您。	1
+precision	de-complement	verb + 得 + description	s:793593	昨天我们玩得特别痛快!	1
+precision	you-have	A 有 B	s:12990151	澳大利亚有很多毒蛇吗？	1
+precision	gen-yiqi	和/跟 + person + 一起 + verb	s:5978322	我过会儿再跟你们一起。	1
+precision	de-possessive	A 的 B	s:3579576	杰克快速掷界外球给他的队友。	1
+precision	dui-laishuo	对…来说	s:765981	对我来说, 情况一天比一天糟。	1
+precision	le-change	sentence + 了	s:6146527	我不会再犯那错了。	1
+precision	hen-adjective	subject + 很 + adjective	s:346108	电影很有趣。	1
+precision	shi-bu-shi	是不是	s:7768201	喝红酒是不是还太早？	1
+precision	de-shihou	… 的时候	s:2456059	困倦的时候学习是在浪费时间。	1
+precision	shi-link	A 是 B	s:815018	写日记是一个好习惯。	1
+precision	dou-all	plural + 都 + verb	s:6585424	那些事都是真的。	1
+precision	mei-negation	没(有) + verb	s:787314	他没疯。	1
+precision	bixu	必须 + verb	s:1477285	如果签证过期，你就必须离开中国。	1
+precision	de-possessive	A 的 B	s:5576817	汤姆回到了他的卧室。	1
+precision	de-possessive	A 的 B	s:865435	你是这栋房子的主人吗？	1
+precision	bei-passive	A 被 B + verb	s:10734193	您的密码已被更改。	1
+precision	de-possessive	A 的 B	s:6031629	这是一张多语言的单词对照表。	1
+precision	le-completed	verb + 了	s:780041	当这位女士得知她已经赢得了百万美元, 她真的乐疯了。	1
+precision	ma-question	statement + 吗?	s:13278127	汤姆在医院待得久吗？	1
+precision	hui-can	会 + verb	s:770352	按下这个按钮, 窗口会自动打开。	1
+precision	zai-place-verb	在 + place + verb	s:793568	你如果看见圣灵降下，落在谁身上，谁就是用圣灵替人施洗的了。	0
+precision	le-change	sentence + 了	s:10635235	这个视频很快火了。	1
+precision	zhe-state	verb + 着	s:455323	箱子的内容在标签上面写着。	1
+precision	ji-count	几 + measure + noun	s:5845630	汤姆在这里工作了几年？	1
+precision	demonstrative	这/那 + measure + noun	s:335102	那个孩子可能在回家的路上被绑架了。	1
+precision	reduplicate-verb	verb + verb	s:10182820	来看看！	1
+precision	le-change	sentence + 了	s:899352	挺好，挺好，下一次再花点儿功夫就成功了。	1
+precision	hai-still	还 + verb	s:6059532	汤姆还没做完。	1
+precision	ma-question	statement + 吗?	s:794632	他是老师吗?	1
+precision	ma-question	statement + 吗?	s:344236	你可以给我一些建议吗？	1
+precision	yizhi	一直 + verb	s:1235610	这个月一直都很热，但今天是个例外。	1
+precision	de-possessive	A 的 B	s:8593083	你的袜子破了一个洞呀。	1
+precision	youdian	有点儿 + adjective	s:336045	今天有点冷。	1
+precision	dou-all	plural + 都 + verb	s:1205874	每个人都应该带自己的午餐。	1
+precision	result-complement	verb + 完/到/见/懂/好	s:1946827	讲到埃及就想到了尼罗河。	1
+precision	shenme	什么	s:919751	我不知道要做什么。	1
+precision	le-completed	verb + 了	s:776983	你赢了许多比赛。	1
+precision	de-possessive	A 的 B	s:1315960	对于他的康复没有任何希望。	1
+precision	hui-can	会 + verb	s:336698	很少有人会批评他，即使有也不多。	1
+precision	le-completed	verb + 了	s:13867692	布拉赫有一个兄弟，长大后在政府任职。他还有一个姊妹，后来成为了科学家。	1
+precision	gen-yiqi	和/跟 + person + 一起 + verb	s:13907654	汤姆没有钱了，所以他不能和我一起去。	1
+precision	ba-disposal	subject + 把 + object + verb + result	s:5542975	让我把你介绍给他。	1
+precision	de-possessive	A 的 B	s:836270	他登广告出售他的房子。	1
+precision	de-possessive	A 的 B	s:13529490	他吻了我的额头。	1
+precision	demonstrative	这/那 + measure + noun	s:354504	这个词对我很有用。	1
+precision	shenme	什么	s:420050	你的朋友近来在忙些什么？	1
+precision	clock-time	number + 点	s:1670118	小声一点啦！	0
+precision	bing-not	并 + 不/没	s:13216866	这并不简单。	1
+precision	shenme	什么	s:13753067	我需要知道如果我们这样做可能会发生什么。	1
+precision	mei-negation	没(有) + verb	s:9400923	萨米没有发疯。	1
+precision	keyi	可以 + verb	s:4844580	嗯。。。我可以加入你的小组嘛	1
+precision	zhe-state	verb + 着	s:737174	你们把自行车留下，明天带着身份证和20块钱到交通局领自行车。	1
+precision	number-measure	number + measure + noun	s:5998474	这件事是他人生的一个重要的转折点。	1
+precision	guo-experience	verb + 过	s:8883773	轮到他时，我们故意跳过了他。	0
+precision	clock-time	number + 点	s:4831260	汤姆的主要问题是他一点幽默感都没有	0
+precision	number-measure	number + measure + noun	s:10023033	我的一个兄弟是老师，其他都是律师。	1
+precision	zhe-state	verb + 着	s:7772529	我的朋友相信阴谋论，我该试着向他指出他错了吗？	0
+precision	le-change	sentence + 了	s:793345	现今每个人都对天花免疫了。	1
+precision	demonstrative	这/那 + measure + noun	s:333458	那个男人，就是他的孩子很友好的那个.	1
+precision	shenme	什么	s:4	这是什么啊？	1
+recall	hen-adjective	subject + 很 + adjective	s:4832323	这家饭馆的餐具很讲究	1
+recall	de-relative	verb phrase + 的 + noun	s:803824	女人的力量在她的舌头。	0
+recall	de-possessive	A 的 B	s:1694986	今天早上在去学校的路上，我看到了一群外国人。	1
+recall	zai-place-verb	在 + place + verb	s:466361	汤姆今天要留在家中吗？	0
+recall	shi-de	是…的	s:787361	他是我们的英文老师。	0
+recall	a-not-a	verb + 不 + verb?	s:1807070	她不喜欢不守时的人。	0
+recall	jiu-early	就 + verb	s:375970	人拥有得愈多，贪念就愈大。	1
+recall	a-not-a	verb + 不 + verb?	s:8326221	我不知道你的书在哪里。	0
+recall	zai-progressive	在 + verb	s:332702	我发现他在花园里干活。	0
+recall	number-measure	number + measure + noun	s:4267323	穆阿迈尔·卡扎菲是个权力狂。	0
+recall	de-relative	verb phrase + 的 + noun	s:748694	你能帮助我的话，我将很感激的。	0
+recall	number-measure	number + measure + noun	s:13846659	法迪尔是个拥有迷人笑容的男人。	0
+recall	zai-progressive	在 + verb	s:13552204	拉斐尔莱唐表示，在巴西，职业棋手很难获得赞助，因为西洋棋在巴西并不流行。	0
+recall	de-adverb	adjective + 地 + verb	s:462086	我们时不时地去钓鱼。	1
+recall	zai-place-verb	在 + place + verb	s:790624	"""他想在下班后喝杯咖啡。"" ""我也想。"""	0
+recall	xiang-want	想 + verb	s:5911602	你想跟我去野餐吗？	1
+recall	de-relative	verb phrase + 的 + noun	s:832965	请把你的外套挂起来。	0
+recall	de-possessive	A 的 B	s:1112784	史泰龙是从拍电影而出名的。	0
+recall	zai-progressive	在 + verb	s:748705	她住在一个村子里。	0
+recall	shi-link	A 是 B	s:1325672	这是个副词。	1
+recall	de-possessive	A 的 B	s:3500938	这场战争死了数以百万计的军人。	1
+recall	you-exist	place + 有 + thing	s:337261	他的圈子里有两人是医生，一个是外科医生，另一个是眼科医生。	1
+recall	meiyou-compare	A 没有 B + adjective	s:903482	你说的没有道理。	0
+recall	de-noun-drop	… 的 (noun left out)	s:3493357	即使她没生病，到了规定的日期她也完成不了她的博士论文， 因为论文题目涉及的内容太广泛。	0
+recall	shi-link	A 是 B	s:332918	许多词是根据拼写来发音的，不过有些不是。	0
+recall	de-noun-drop	… 的 (noun left out)	s:13240167	不可被她的外表蒙骗。	0
+recall	a-not-a	verb + 不 + verb?	s:6380104	但是，如果你动错了，你别放弃。因为你不知道接下来会发生什么。记得，不要轻易放弃。	0
+recall	de-possessive	A 的 B	s:1372503	我本不应该做的。	0
+recall	zai-progressive	在 + verb	s:7768334	汤姆不想在波士顿工作。	0
+recall	de-relative	verb phrase + 的 + noun	s:8789777	我理所当然地认为她会参加我们的结婚典礼。	0
+recall	le-completed	verb + 了	s:13845814	许多公司都尝试过大规模生产这种复杂的零件，但目前只有我们成功了。	1
+recall	de-relative	verb phrase + 的 + noun	s:844482	你做了一个明智的选择。	0
+recall	de-noun-drop	… 的 (noun left out)	s:8591276	有只小鸟拉了泡屎在我阿姨的车上。	0
+recall	de-noun-drop	… 的 (noun left out)	s:600001	哈佛大学是在一六三六年创立的。	0
+recall	de-relative	verb phrase + 的 + noun	s:8748557	怎么会有这么多的人同意呢？	0
+recall	bi-compare	A 比 B + adjective	s:4844660	充满希望比绝望好。	1
+recall	zai-location	subject + 在 + place	s:881838	不少人认为，所有外国制造的物品均优于那些在本国所制造的。	0
+recall	you-have	A 有 B	s:464870	有着火的汽车和垂死的人，而且没有人能帮得上忙。	0
+recall	de-noun-drop	… 的 (noun left out)	s:1397306	一杯冷水在暑热的天气里十分提神。	0
+recall	de-relative	verb phrase + 的 + noun	s:685093	日本的高校生每年要上三十五个星期的学。	0
+recall	zai-place-verb	在 + place + verb	s:919612	赌博网站让用户投注在将灭绝的物种上，因为墨西哥湾漏油。	0
+recall	le-change	sentence + 了	s:10569645	汤姆登上了月球。	0
+recall	zai-progressive	在 + verb	s:9987058	他在傍晚写诗。	0
+recall	de-relative	verb phrase + 的 + noun	s:619528	我们很快就可以知道事情的真相了。	0
+recall	meiyou-compare	A 没有 B + adjective	s:806659	没有困难就没有成功。	0
+recall	de-noun-drop	… 的 (noun left out)	s:780279	当这个女孩走进房间时, 每个孩子都在嘲笑她的小帽子。	0
+recall	zai-progressive	在 + verb	s:8853890	他在用伯伯尔语阅读圣经。	1
+recall	zai-place-verb	在 + place + verb	s:848703	他昨晚在看电视。	0
+recall	zai-location	subject + 在 + place	s:7004959	他在纠结要不要买这本书	0
+recall	rang-causative	A 让 B + verb	s:5091411	我觉得你真是让人大吃一惊。	1
+recall	zai-progressive	在 + verb	s:5663499	汤姆把手放在麦克风上。	0
+recall	de-noun-drop	… 的 (noun left out)	s:2412077	我的祖父死于二战。	0
+recall	de-possessive	A 的 B	s:754093	最后，他们感受到了胜利的喜悦。	1
+recall	de-noun-drop	… 的 (noun left out)	s:375441	她很讨厌这样的想法。	0
+recall	de-relative	verb phrase + 的 + noun	s:344221	从远处看，岩石像一张人的脸。	0
+recall	shi-link	A 是 B	s:335874	这些工具是用来造房子的。	0
+recall	zai-place-verb	在 + place + verb	s:9959658	我出生在二十年前。	0
+recall	de-possessive	A 的 B	s:866231	听起来好像他是这场灾难的罪魁祸首。	1
+recall	hui-can	会 + verb	s:824616	我会进去。	1
+recall	de-noun-drop	… 的 (noun left out)	s:7771880	你最喜欢的颜色是什么？	0
+recall	zai-location	subject + 在 + place	s:12781185	我坐在火车上总还是比掉到火车底下要好。	0
+recall	number-measure	number + measure + noun	s:6583889	汤姆不是个多好的人。	0
+recall	zai-location	subject + 在 + place	s:6467627	在这座城市里，公共道德不再受到尊重。	0
+recall	de-possessive	A 的 B	s:10280531	这个商店里的人讲世界语。	1
+recall	zai-location	subject + 在 + place	s:336693	和你在一起，我很高兴。	0
+recall	dou-all	plural + 都 + verb	s:8845364	所有的男生都被茱莉亚迷住了。	1
+recall	shi-de	是…的	s:933622	你是我的朋友。	0
+recall	time-first	time + subject + verb	s:599140	你今天有点发烧，是吧？	1
+recall	le-completed	verb + 了	s:13138449	他已经足够大去投票了	0
+recall	zai-location	subject + 在 + place	s:12073388	今天你在学校学到了什么？	0
+recall	le-completed	verb + 了	s:8744081	今天太热了，我没心情学习。	0
+recall	rang-causative	A 让 B + verb	s:8934237	让我们问老师。	1
+recall	de-relative	verb phrase + 的 + noun	s:3742505	这张木制的椅子六十英镑。	0
+recall	de-possessive	A 的 B	s:842316	你有任何比较小的尺寸吗?	1
+recall	de-relative	verb phrase + 的 + noun	s:4297298	不关我的事。	0
+recall	zai-progressive	在 + verb	s:13665581	汤姆在波士顿过圣诞节。	0
+recall	de-relative	verb phrase + 的 + noun	s:2357831	他的身体很好。	0
+recall	le-completed	verb + 了	s:6047482	汤姆看来完全输了。	1
+recall	de-noun-drop	… 的 (noun left out)	s:872221	你的英语进步了很多。	0
+recall	de-relative	verb phrase + 的 + noun	s:613623	我们想要听起来自然的翻译，而不需要逐字的翻译。	1
+recall	de-relative	verb phrase + 的 + noun	s:5794108	你说的关于汤姆的话不是真的。	1
+recall	hen-adjective	subject + 很 + adjective	s:1788049	他们吃很多米饭。	0
+recall	jiu-early	就 + verb	s:346174	差点就对了。	0
+recall	de-noun-drop	… 的 (noun left out)	s:5558516	愚蠢骑着没有闸的单车。	0
+recall	hai-still	还 + verb	s:9007585	你为啥还不结婚？	1
+recall	shi-de	是…的	s:13744203	你谈起的那个人是我姐姐。	0
+recall	le-change	sentence + 了	s:552794	我家的旁边建了一栋高楼。	0
+recall	de-noun-drop	… 的 (noun left out)	s:1776503	他应该为自己对客人的粗鲁无礼而道歉。	0
+recall	de-possessive	A 的 B	s:733166	不久，同样的服务员回来拿起菜。	1
+recall	zai-place-verb	在 + place + verb	s:3625650	特快火车会带着你在主要城市穿梭，期间不停。	1
+recall	bixu	必须 + verb	s:1659561	不幸的是，我必须每天早起。	1
+recall	shi-link	A 是 B	s:899958	美国民主的中心思想是自由。	1
+recall	yao-want	要 + verb	s:1238379	因为我这份工作的缘故，我总是要打领带。	1
+recall	zai-progressive	在 + verb	s:375290	她不在，我很孤独。	0
+recall	le-completed	verb + 了	s:883301	我简直不用花钱就买到了。	1
+recall	a-not-a	verb + 不 + verb?	s:859114	盯著人看是不礼貌的。	0
+recall	le-completed	verb + 了	s:6923201	汤姆问玛丽她把钥匙放在哪里了。	1
+recall	zai-progressive	在 + verb	s:623223	她决定长期住在美国。	0
+recall	tai-le	太 + adjective + 了	s:471388	这房间太小了，容纳不下五十人。	1
+recall	meiyou-compare	A 没有 B + adjective	s:5433153	如果汤姆没有做他应当做的事，请让我知道。	0
+recall	zai-progressive	在 + verb	s:844703	我们不是在巴黎认识的。	0
+recall	de-noun-drop	… 的 (noun left out)	s:1502687	您好，我跟总经理有约十点见面，这是我的面试通知。	0
+recall	a-not-a	verb + 不 + verb?	s:502739	世界上有10种人：懂二进制和不懂二进制的人。	0
+recall	de-relative	verb phrase + 的 + noun	s:876715	这辆公车多久前离开的?	0
+recall	bixu	必须 + verb	s:1992650	你必须在九点之前回来。	1
+recall	neng-can	能 + verb	s:2453044	你能记起来的最后一件事是什么？	1
+recall	le-completed	verb + 了	s:3538039	一个月后，天气就不会像现在这么热了。	0
+recall	bu-negation	不 + verb/adjective	s:1888733	我不在讨论这个问题的状态。	1
+recall	zai-location	subject + 在 + place	s:6017486	你还在吃。	0
+recall	zui	最 + adjective	s:1776667	佛罗伦萨是意大利最美丽的城市。	1
+recall	he-and	A 和 B	s:869951	他们的名字是汤姆和肯。	1
+recall	you-have	A 有 B	s:345776	有一天你会忘记我的。	0
+recall	yizhi	一直 + verb	s:364838	我来到这里以后，一直过著单调乏味的生活。	1
+recall	de-relative	verb phrase + 的 + noun	s:392264	我的腿还是很痛。	0
+recall	shi-link	A 是 B	s:1298060	我是个化妆师，每当我把一个姑娘变成大美女。	1
+recall	de-relative	verb phrase + 的 + noun	s:9952203	萨米给莱拉买了一枚美丽的钻戒。	0
+recall	meiyou-have	A 没有 B	s:3804963	你带书没有？	0
+recall	de-relative	verb phrase + 的 + noun	s:2737443	这个故事是老张讲给我听的。	0
+recall	de-possessive	A 的 B	s:785178	我们买了一磅的茶。	1
+recall	le-completed	verb + 了	s:2138418	我记不起我把它给了谁。	1
+recall	de-relative	verb phrase + 的 + noun	s:813501	你该考虑他的年纪。	0
+recall	de-relative	verb phrase + 的 + noun	s:9306482	这些考虑没有一项是决定性的。	0
+recall	de-possessive	A 的 B	s:5809515	一天一个苹果对我们的健康有帮助。	1
+recall	de-possessive	A 的 B	s:1423321	你的生意进展如何？	1
+recall	le-completed	verb + 了	s:1270574	你比以前更容易上课迟到了。	0
+recall	you-have	A 有 B	s:333343	人们相信鲸有他们自己的语言。	1
+recall	le-completed	verb + 了	s:332764	这个诗人兼学者死了。	1
+recall	a-not-a	verb + 不 + verb?	s:1700146	我不喜欢夏天。	0
+recall	a-not-a	verb + 不 + verb?	s:1729545	不，如果不从现在开始练习，就来不及了 。	0
+recall	de-noun-drop	… 的 (noun left out)	s:1736070	学好一门外语需要坚韧不拔的毅力。	0
+recall	de-relative	verb phrase + 的 + noun	s:868376	再过两、三个月，你就能说得一口流利的英语了。	0
+recall	le-change	sentence + 了	s:4956719	汤姆赢了吗？	0
+recall	de-relative	verb phrase + 的 + noun	s:492876	智子邀请了朋友来参加她的派对。	0
+recall	xihuan-verb	喜欢 + verb	s:858961	现在，我也喜欢。	0
+recall	de-noun-drop	… 的 (noun left out)	s:745868	打的去旅馆吧。	0
+recall	he-and	A 和 B	s:850301	约翰和安彼此互相喜欢。	1
+recall	le-completed	verb + 了	s:792811	我不想再听到其他借口了。	0
+recall	shi-link	A 是 B	s:2040277	汤姆不知道今天是期限。	1
+recall	de-relative	verb phrase + 的 + noun	s:833153	他反对我们的计划。	0
+recall	le-change	sentence + 了	s:372176	我吃过晚饭后打开电视看了一会儿新闻。	0
+recall	zai-place-verb	在 + place + verb	s:1485503	他的车在掉进河里前翻转了好几次。	0
+recall	shi-de	是…的	s:13579012	汤姆是位考古学家，在领导罗马附近的发掘项目。	0
+recall	de-noun-drop	… 的 (noun left out)	s:6307274	我的车今天早上坏了，星期五才能修好。	0
+recall	zai-location	subject + 在 + place	s:3888923	我在告诉你真相	0
+recall	le-change	sentence + 了	s:2047863	他们垄断了原物料供应，并开天价。	0
+recall	shi-de	是…的	s:8514570	那是玛丽的丈夫。	0
+recall	de-relative	verb phrase + 的 + noun	s:1928658	这之后他与他的母亲、兄弟和门徒们一起去了迦百农。	0
+recall	ba-disposal	subject + 把 + object + verb + result	s:371144	我握住门把，它就从门上掉了下来。	0
+recall	de-noun-drop	… 的 (noun left out)	s:1776587	他的长相与年龄不符。	0
+recall	duo-adj	多 + adjective?	s:2704934	请多保重身体。	0
+recall	qing-please	请 + verb	s:13539908	请在杂货店买一些血橙。	1
+recall	le-change	sentence + 了	s:3526276	你就要走了，是吗？	1
+recall	shi-de	是…的	s:855955	我的兴趣是钓鱼和看电视。	0
+recall	le-completed	verb + 了	s:6089707	全都靠它了。	0
+recall	zai-location	subject + 在 + place	s:692060	难怪我们会把蝙蝠和黑暗的地方联想在一起了。	0
+recall	de-relative	verb phrase + 的 + noun	s:2030442	如果你的孩子很辛苦你觉得日子很漫长。	0
+recall	a-not-a	verb + 不 + verb?	s:941150	我不擅长画画。	0
+recall	zai-progressive	在 + verb	s:512107	她把自己关在房里。	0
+recall	de-relative	verb phrase + 的 + noun	s:785325	它们主要的看法其中也有“没有西装革履也可以很正经”。	0
+recall	dui-toward	对 + person/thing + …	s:342109	我对童年的记忆越来越模糊了.	1
+recall	de-relative	verb phrase + 的 + noun	s:8555762	我的左眼皮在跳。	0
+recall	de-relative	verb phrase + 的 + noun	s:13904671	宗教不过是有组织的迷信加上一本畅销书。	1
+recall	zai-progressive	在 + verb	s:13545637	先让曲奇待在那里吧。	0
+recall	le-completed	verb + 了	s:851498	"""你想再多吃点吗?"" ""不，我吃饱了。"""	1
+recall	le-change	sentence + 了	s:13754415	我为此计划了一年多。	0
+recall	hen-adjective	subject + 很 + adjective	s:890882	他写了很多关于中国的书。	0
+recall	de-relative	verb phrase + 的 + noun	s:836563	我今天的心情不好。	0
+recall	de-relative	verb phrase + 的 + noun	s:775454	我过著放荡的生活。	0
+recall	shi-link	A 是 B	s:727305	二氧化碳是燃烧煤、石油或天然气这样的燃料时会产生的气体。	1
+recall	de-possessive	A 的 B	s:8780278	谢谢您的好意。	1
+recall	ne-followup	noun + 呢?	s:9489503	那我为什么会做呢？	0
+recall	de-noun-drop	… 的 (noun left out)	s:13468890	黑胡子是最有名的海盗之一。	0
+recall	duo-adj	多 + adjective?	s:408493	你不该吃太多冰激淋和太多意大利面。	0
+recall	meiyou-have	A 没有 B	s:348172	据我所知，他从来没有犯过这样的错。	0
+recall	le-completed	verb + 了	s:5102356	汤姆挥手了。	1
+recall	le-completed	verb + 了	s:460825	我们终于见面了！我等这一刻等了好久了。	1
+recall	de-possessive	A 的 B	s:918571	今天出奇的热。	0
+recall	le-change	sentence + 了	s:13523739	你看起来就像见鬼了一样。	0
+recall	dou-all	plural + 都 + verb	s:458163	大家都在等你。	1
+recall	le-change	sentence + 了	s:862735	我看见了她打扫房间。	0
+recall	zai-place-verb	在 + place + verb	s:136598	他住在这里吗？	0
+recall	a-not-a	verb + 不 + verb?	s:13527681	您购买另一台电脑的计划是不可能的。	0
+recall	de-possessive	A 的 B	s:636203	他们把他视为城里最好的医生。	1
+recall	le-completed	verb + 了	s:6080281	跟你妹妹说一声，她的丁字裤露出来了。	1
+recall	de-noun-drop	… 的 (noun left out)	s:13539913	比起紫色的毛衣，我更喜欢灰色的毛衣。	0
+recall	de-noun-drop	… 的 (noun left out)	s:793564	不要把你的灯藏在斗笠下。	0
+recall	you-have	A 有 B	s:8709515	有不懂的东西就去问吧。	0
+recall	de-possessive	A 的 B	s:779458	我遇到的人都很仁慈。	1
+recall	zai-place-verb	在 + place + verb	s:9684720	你儿子在上大学吗？	0
+recall	shi-link	A 是 B	s:380289	换了是我，我也会这样做的。	0
+recall	meiyou-have	A 没有 B	s:801303	聊胜于无、有比没有好。	0
+recall	de-noun-drop	… 的 (noun left out)	s:8550325	汤姆本可以叫警察的。	0
+recall	you-have	A 有 B	s:1240252	我喜欢有幽默感的人。	1
+recall	de-possessive	A 的 B	s:5698048	她的成功让她受尽嫉妒。	1
+recall	you-have	A 有 B	s:394454	百货商店前有个书店。	0
+recall	duo-adj	多 + adjective?	s:801974	他为迟到找了很多的借口。	0
+recall	de-noun-drop	… 的 (noun left out)	s:2104068	他是我认识的人中最懒的。	1
+recall	de-noun-drop	… 的 (noun left out)	s:834241	是的，我知道。	0
+recall	hui-can	会 + verb	s:6318550	如果你能教我怎么做，我会很感激。	1
+recall	yizhi	一直 + verb	s:13855606	汤姆一直在吐高端术语，但我知道都是虚的。	1

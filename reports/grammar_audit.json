@@ -1,0 +1,27 @@
+{
+ "precision": {
+  "labelled": 200,
+  "true": 183,
+  "share": 0.915,
+  "ci95": [
+   0.8681031145576462,
+   0.9462547005301476
+  ]
+ },
+ "recall": {
+  "labelled": 200,
+  "true": 65,
+  "share": 0.325,
+  "ci95": [
+   0.2639146705018622,
+   0.3926814315695502
+  ]
+ },
+ "estimated_recall": 0.6490667966794458,
+ "estimated_recall_range": [
+  0.5922205559320225,
+  0.7019763333564502
+ ],
+ "matched_pairs": 70551,
+ "unmatched_candidate_pairs": 107393
+}
