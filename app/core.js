@@ -218,9 +218,21 @@
   }
 
   /** Progress as stable IDs, so an export survives a rebuild of the data. */
+  /**
+   * Progress file. Version 2 adds the journey: review schedule (id -> [box, due day]), days learned,
+   * milestones reached (key -> day), stats, and the lesson in progress. Items are stored by stable
+   * ids ("w:学生", "h:好", "g:key") so files survive data rebuilds.
+   */
   function serialise(state, core) {
     const id = (i) => { const it = core.get(i); return it.kind === "g" ? "g:" + it.key : (it.kind === "w" ? "w:" : "h:") + it.form; };
-    return { app: "jiesuo", version: 1, savedAt: state.savedAt || null, known: [...state.known].map(id).sort(), traditionalToo: [...state.tradSeen].map(id).sort(), script: state.script, focus: state.focus };
+    const ids = (list) => (list || []).map(id);
+    const lesson = state.lesson ? { ...state.lesson, items: ids(state.lesson.items), reviews: ids(state.lesson.reviews), added: ids(state.lesson.added) } : null;
+    return {
+      app: "jiesuo", version: 2, savedAt: state.savedAt || null,
+      known: [...state.known].map(id).sort(), traditionalToo: [...(state.tradSeen || [])].map(id).sort(), script: state.script, focus: state.focus,
+      review: Object.fromEntries([...(state.review || new Map())].map(([u, e]) => [id(u), e])),
+      days: [...(state.days || [])].sort(), milestones: state.milestones || {}, stats: state.stats || { written: 0, unlocked: 0 }, lesson,
+    };
   }
 
   function deserialise(obj, core) {
@@ -229,7 +241,16 @@
     for (const it of core.items) ids.set((it.kind === "w" ? "w:" : "h:") + it.form, it.i);
     for (const p of core.patterns) ids.set("g:" + p.key, p.i);
     const pick = (list) => (list || []).map((x) => ids.get(x)).filter((x) => x !== undefined);
-    return { known: new Set(pick(obj.known)), tradSeen: new Set(pick(obj.traditionalToo)), script: obj.script === "t" ? "t" : "s", focus: obj.focus === "hsk" ? "hsk" : "unlock", skipped: obj.known.length - pick(obj.known).length };
+    const review = new Map();
+    for (const [k, e] of Object.entries(obj.review || {})) if (ids.has(k) && Array.isArray(e)) review.set(ids.get(k), [e[0], e[1]]);
+    const l = obj.lesson;
+    const lesson = l && l.day ? { ...l, items: pick(l.items), reviews: pick(l.reviews), added: pick(l.added) } : null;
+    const stats = { written: 0, unlocked: 0, ...(obj.stats || {}) };
+    return {
+      known: new Set(pick(obj.known)), tradSeen: new Set(pick(obj.traditionalToo)), script: obj.script === "t" ? "t" : "s", focus: obj.focus === "hsk" ? "hsk" : "unlock",
+      review, days: new Set(obj.days || []), milestones: { ...(obj.milestones || {}) }, stats, lesson,
+      skipped: obj.known.length - pick(obj.known).length,
+    };
   }
 
   return { createCore, serialise, deserialise };

@@ -108,10 +108,11 @@ main > * { min-width: 0; }
 .intro { display: grid; gap: 8px; }
 .intro .num { font-variant-numeric: tabular-nums; }
 .item {
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center;
-  padding-block: 12px; border-bottom: 1px solid var(--grid-faint);
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: start;
+  padding-block: 10px; border-bottom: 1px solid var(--grid-faint);
 }
-.item:first-child .ge { --size: 92px; }
+.item:first-child .ge { --size: 72px; }
+.item .tick { align-self: center; }
 .item .text { min-width: 0; display: grid; gap: 2px; }
 .item .kind { color: var(--soft); font-size: .92rem; }
 .item .pinyin { font-weight: 500; }
@@ -179,7 +180,51 @@ canvas.field { display: block; width: 100%; cursor: pointer; touch-action: manip
 .key .k-front { background: var(--grid); border-color: var(--grid); }
 
 /* Item page */
+.back {
+  justify-self: start; min-height: 44px; padding: 6px 12px 6px 4px; margin: -8px 0 -12px; border: 0; background: none;
+  color: var(--pen); cursor: pointer; font-weight: 500;
+}
+.cols, .col-a, .col-b { display: grid; gap: 28px; align-content: start; min-width: 0; }
+@media (min-width: 1000px) {
+  main.wide { max-width: 1080px; }
+  .cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; }
+  .col-a { position: sticky; top: 84px; }
+}
+.say-row { display: flex; align-items: center; gap: 6px; }
+.say {
+  display: inline-grid; place-items: center; width: 44px; height: 44px; border: 1.5px solid var(--grid); border-radius: 50%;
+  background: var(--sheet); color: var(--pen); cursor: pointer; flex: none;
+}
+.say:hover { background: var(--pen-wash); }
 .head { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+
+/* Writing practice: the practice square is the pad */
+.write { display: grid; gap: 12px; justify-items: start; }
+.write-pad-wrap { width: min(280px, 100%); }
+.write-pad {
+  width: 100%; aspect-ratio: 1; display: grid; place-items: center; touch-action: none;
+  background-color: var(--sheet); border: 1.5px solid var(--grid);
+  background-image:
+    repeating-linear-gradient(to right, var(--grid) 0 6px, transparent 6px 12px),
+    repeating-linear-gradient(to bottom, var(--grid) 0 6px, transparent 6px 12px),
+    linear-gradient(45deg, transparent calc(50% - .5px), var(--grid-faint) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px)),
+    linear-gradient(-45deg, transparent calc(50% - .5px), var(--grid-faint) calc(50% - .5px) calc(50% + .5px), transparent calc(50% + .5px));
+  background-size: 100% 1px, 1px 100%, 100% 100%, 100% 100%;
+  background-position: 0 50%, 50% 0, 0 0, 0 0;
+  background-repeat: no-repeat;
+}
+.write-pad svg { display: block; }
+.write-msg { min-height: 1.5em; color: var(--pen); font-weight: 500; }
+.linkish { background: none; border: 0; padding: 0 0 0 4px; color: var(--pen); text-decoration: underline; cursor: pointer; font: inherit; min-height: 32px; }
+
+/* See it built */
+.built { display: grid; gap: 8px; justify-items: start; }
+.built-svg.ge { --size: min(52vw, 168px); padding: 6%; }
+.built-svg path { fill: var(--ink); }
+.built-svg .bp.known path { fill: var(--pen); }
+.built-svg .bp { transition: transform .9s cubic-bezier(.2, .8, .2, 1), opacity .6s ease-out; }
+.built-label { font-size: 1.4rem; }
+@media (prefers-reduced-motion: reduce) { .built-svg .bp { transition: none; } }
 .head .text { min-width: 0; flex: 1 1 200px; display: grid; gap: 6px; }
 .pinyin-big { font-size: 1.4rem; font-weight: 500; }
 .part-list { display: grid; gap: 10px; }
@@ -196,6 +241,85 @@ canvas.field { display: block; width: 100%; cursor: pointer; touch-action: manip
 }
 .toast button { background: none; border: 0; color: inherit; text-decoration: underline; cursor: pointer; min-height: 32px; font-weight: 700; }
 @media (min-width: 641px) { .toast { bottom: 24px; } }
+/* Today: lead with what's next. The glowing square is the one bright thing on the screen. */
+.today-hero { display: grid; gap: 8px; }
+.today-hero h1 { font-size: 1.8rem; }
+.teaser {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center;
+  padding: 18px; background: var(--sheet); border: 1.5px solid var(--grid);
+}
+.teaser-text { display: grid; gap: 4px; min-width: 0; }
+.teaser .ge { --size: 88px; }
+.small-teaser .ge { --size: 56px; }
+.word.glow .ge { border-color: var(--pen); box-shadow: 0 0 0 4px var(--pen-wash), 0 0 28px var(--pen-wash); }
+@media (prefers-reduced-motion: no-preference) {
+  .word.glow .ge { animation: glow 3.2s ease-in-out infinite; }
+  @keyframes glow { 50% { box-shadow: 0 0 0 6px var(--pen-wash), 0 0 40px var(--pen-wash); } }
+}
+.built-from { font-size: 1.02rem; }
+.built-from .zh { font-size: 1.25rem; }
+.btn.big { min-height: 52px; padding: 10px 24px; font-size: 1.1rem; font-weight: 700; }
+.path { list-style: none; margin: 0; padding: 0 0 0 4px; display: grid; gap: 0; }
+.path li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; padding-block: 6px; position: relative; color: var(--soft); }
+.path li::before { content: ""; position: absolute; left: 16px; top: -6px; height: 12px; border-left: 2px dotted var(--grid); }
+.path li:first-child::before { display: none; }
+.path li.done { color: var(--ink); }
+.path li.done .ge { background-color: var(--pen-wash); border-color: var(--pen); color: var(--pen); font: 700 1rem/1 var(--ui); }
+.path li.next { color: var(--ink); }
+.path li.next .ge { border: 2px dashed var(--pen); }
+.path li.more .ge { font: 700 .9rem/1 var(--ui); }
+.done-card { display: grid; gap: 6px; padding: 14px 16px; background: var(--pen-wash); border-left: 4px solid var(--pen); }
+.big-inline { font-size: 1.4em; }
+
+/* The lesson: a focused space, with a way out that keeps your place */
+body.in-lesson .tabs { display: none; }
+@media (max-width: 640px) { body.in-lesson { padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); } }
+.lesson-top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; }
+.close { width: 44px; height: 44px; border: 0; background: none; font: 400 2rem/1 var(--ui); color: var(--soft); cursor: pointer; }
+.progress { height: 10px; background: var(--grid-faint); overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--pen); transition: width .5s ease-out; }
+.lesson-body { display: grid; gap: 20px; max-width: 560px; width: 100%; justify-self: center; }
+.lesson-actions { gap: 16px; padding-top: 4px; }
+.meet-glyph .ge { --size: min(36vw, 132px); }
+.meet-glyph .built-svg.ge { --size: min(52vw, 200px); }
+.meaning { font-size: 1.15rem; }
+.use-word { font-size: 1.05rem; }
+.use-word .zh { font-size: 1.5rem; }
+.write-head { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.big-form { font-size: 2.6rem; line-height: 1; }
+.options { display: grid; gap: 8px; }
+.option {
+  min-height: 52px; padding: 10px 14px; text-align: left; border: 1.5px solid var(--grid); background: var(--sheet);
+  cursor: pointer; font-size: 1.05rem;
+}
+.option:hover:not(:disabled) { border-color: var(--pen); }
+.option.right { border-color: var(--pen); background: var(--pen-wash); color: var(--pen); font-weight: 700; }
+.option.chosen { opacity: .55; }
+.yay { color: var(--pen); font-weight: 700; font-size: 1.1rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .word.slide .ge { animation: slide-in .8s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--k) * 120ms + 200ms); }
+  @keyframes slide-in { from { transform: translateX(calc((var(--k) - (var(--n) - 1) / 2) * 40px)); opacity: .2; } }
+}
+
+/* Finish: the payoff */
+.finish { display: grid; gap: 14px; }
+.finish h1 { font-size: 1.9rem; color: var(--pen); }
+.unlocked { padding: 16px; background: var(--sheet); border: 1.5px solid var(--pen); }
+.unlocked .line { font-size: 1.7rem; }
+.ink-line .ink { color: var(--pen); }
+@media (prefers-reduced-motion: no-preference) {
+  .ink-line .ink { animation: ink .5s ease-out both; animation-delay: calc(var(--k) * 140ms + 300ms); }
+  @keyframes ink { from { color: var(--grid); transform: translateY(4px); } }
+  .stamp .ge { animation: stamp .45s cubic-bezier(.3, 1.6, .5, 1) both; animation-delay: .8s; }
+  @keyframes stamp { from { transform: scale(1.8); opacity: 0; } }
+}
+.gain .up { color: var(--pen); font-weight: 700; }
+.big-number { font-size: 1.2rem; }
+.big-number strong { font-size: 2.2rem; color: var(--pen); }
+.stamps { display: grid; gap: 6px; }
+.stamp { display: flex; gap: 10px; align-items: center; font-weight: 700; }
+.stamp .ge { background-color: var(--pen-wash); border-color: var(--pen); color: var(--pen); font: 700 1rem/1 var(--ui); }
+
 .credits { display: grid; gap: 10px; }
 .credits p { max-width: 65ch; }
 pre.export { max-height: 160px; overflow: auto; background: var(--sheet); border: 1px solid var(--grid); padding: 10px; font-size: .85rem; overflow-wrap: anywhere; white-space: pre-wrap; }

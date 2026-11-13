@@ -21,8 +21,9 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="#next" aria-label="Jiesuo home"><span class="ge ge-s"><b>解</b></span><span class="ge ge-s"><b>锁</b></span></a>
+  <a class="brand" href="#today" aria-label="Jiesuo home"><span class="ge ge-s"><b>解</b></span><span class="ge ge-s"><b>锁</b></span></a>
   <nav class="tabs" aria-label="Screens">
+    <a href="#today" data-tab="today"><span class="zh">今</span>Today</a>
     <a href="#next" data-tab="next"><span class="zh">学</span>Next</a>
     <a href="#read" data-tab="read"><span class="zh">读</span>Read</a>
     <a href="#map" data-tab="map"><span class="zh">图</span>Map</a>
@@ -36,7 +37,11 @@
 <p id="storage-warning" class="warn" hidden>This browser is blocking storage, so progress disappears when you close the page. Use Progress to save a file first.</p>
 <main id="view" tabindex="-1"><p class="loading">Opening the exercise book…</p></main>
 <div id="toast" class="toast" role="status" hidden></div>
+<script src="vendor/hanzi-writer.min.js"></script>
+<script src="writer.js"></script>
 <script src="core.js"></script>
+<script src="journey.js"></script>
+<script src="today.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

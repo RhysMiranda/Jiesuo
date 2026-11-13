@@ -3,6 +3,7 @@
   "use strict";
   const STORE_KEY = "jiesuo-progress-v1";
   const DRAFT_KEY = "jiesuo-draft-v1";
+  const HOME = "today";
   const SAMPLE = "我家离学校不远，所以我每天走路去上课。今天下雨了，虽然我带了雨伞，但是衣服还是湿了。到了学校以后，老师说明天有考试，大家都有点紧张。";
   const view = document.getElementById("view");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -22,6 +23,7 @@
   }
 
   let core, order, bands, sentences = null;
+  if (window.JiesuoWriter) JiesuoWriter.loadStrokeParts(); // small, and gives "built from" its stroke order
   try {
     const [dict, parts, grammar, ord, hsk] = await Promise.all(["dict.json", "parts.json", "grammar.json", "order.json", "hsk.json"].map(fetchJson));
     core = JiesuoCore.createCore({ dict, parts, grammar });
@@ -33,7 +35,8 @@
     return;
   }
 
-  const state = { known: new Set(), tradSeen: new Set(), script: "s", focus: "unlock" };
+  const freshJourney = () => ({ review: new Map(), days: new Set(), milestones: {}, stats: { written: 0, unlocked: 0 }, lesson: null });
+  const state = { known: new Set(), tradSeen: new Set(), script: "s", focus: "unlock", ...freshJourney() };
   try {
     const saved = store.get(STORE_KEY);
     if (saved) Object.assign(state, JiesuoCore.deserialise(JSON.parse(saved), core));
@@ -70,6 +73,13 @@
     added.forEach((u) => state.known.add(u));
     save();
   }
+  /** Learning in a lesson: like markKnown, without the undo toast. Returns what was added. */
+  function learn(i) {
+    const added = core.closure(i, state.known);
+    added.forEach((u) => state.known.add(u));
+    save();
+    return added;
+  }
   function markUnknown(i) {
     snapshot(`Marked ${disp(i)} as not known`);
     const stack = [i];
@@ -95,6 +105,38 @@
     return `<a class="chip ${cls}" href="#i${i}">${label}${it.pinyin ? `<span class="soft">${esc(firstReading(it.pinyin))}</span>` : ""}</a>`;
   };
   const firstReading = (p) => p.split(",")[0];
+
+  // ---- Audio: the browser's own Mandarin voice, where one exists. zh-HK voices speak Cantonese, so they are skipped.
+  let voice = null;
+  function pickVoice() {
+    try {
+      const vs = speechSynthesis.getVoices();
+      const by = (re) => vs.find((v) => re.test((v.lang || "").replace("_", "-")));
+      voice = by(/^zh-CN/i) || by(/^cmn/i) || by(/^zh-TW/i) || by(/^zh(?!-HK)/i) || null;
+    } catch (e) { voice = null; }
+    document.querySelectorAll("[data-say]").forEach((b) => (b.hidden = !voice));
+  }
+  try {
+    if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.addEventListener("voiceschanged", pickVoice); }
+  } catch (e) { /* no audio */ }
+  const canSpeak = () => !!voice;
+  function speak(text) {
+    if (!voice) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.voice = voice; u.lang = voice.lang; u.rate = 0.8;
+      speechSynthesis.speak(u);
+    } catch (e) { /* audio is optional */ }
+  }
+  const SPEAKER = `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>`;
+  const sayButton = (text) => `<button type="button" class="say" data-say="${esc(text)}" aria-label="Hear it" title="Hear it"${voice ? "" : " hidden"}>${SPEAKER}</button>`;
+  const backButton = () => `<button type="button" class="back" data-back>‹ Back</button>`;
+  view.addEventListener("click", (e) => {
+    const say = e.target.closest("[data-say]");
+    if (say) speak(say.dataset.say);
+    if (e.target.closest("[data-back]")) goBack();
+  });
   const glossOf = (it) => it.gloss || (core.partsData[it.form] || {}).d || "";
   const pinyinOf = (it) => it.pinyin || (core.partsData[it.form] || {}).y || "";
 
@@ -387,13 +429,16 @@
   }
 
   // ---- Item page
+  let sentenceRows = null;
   async function loadSentences() {
     if (sentences) return sentences;
     const j = await fetchJson("sentences.json");
+    sentenceRows = j.sentences;
     sentences = new Map();
     for (const s of j.sentences) for (const u of s[4]) { if (!sentences.has(u)) sentences.set(u, []); sentences.get(u).push(s); }
     return sentences;
   }
+  async function loadSentenceRows() { await loadSentences(); return sentenceRows; }
 
   const ROLE = { semantic: "gives the meaning", phonetic: "gives the sound", both: "gives the meaning and the sound", meaning: "part of the idea", form: "part of the shape", no_etymology: "part of the shape", unmatched: "part of the shape" };
 
@@ -417,33 +462,55 @@
       return `<div class="part">${g}<div><strong>${esc(ROLE[role] || "part of the shape")}</strong>${u2 && glossOf(u2) ? `<br><span class="soft small">${esc(pinyinOf(u2))} ${esc(glossOf(u2))}</span>` : ""}</div></div>`;
     }).join("");
     view.innerHTML = `
-      <section class="head">
-        <div class="word">${Array.from(disp(i)).map((c) => `<span class="ge ${it.form.length > 2 ? "" : "ge-xl"} ${known ? "is-known" : ""}"><b>${esc(c)}</b></span>`).join("")}</div>
-        <div class="text">
-          <span class="soft">${KIND[it.kind]}${bands[i] ? `, HSK ${bands[i] === 7 ? "7–9" : bands[i]}` : ""}</span>
-          <span class="pinyin-big">${esc(pinyinOf(it))}</span>
-          <span>${esc(glossOf(it) || "No dictionary entry for this one.")}</span>
-          ${forms.length > 1 ? `<span class="small soft">Also written <span class="zh">${forms.filter((f) => f !== disp(i)).map(esc).join(", ")}</span></span>` : ""}
+      ${backButton()}
+      <div class="cols">
+        <div class="col-a">
+          <section class="head">
+            <div class="word">${Array.from(disp(i)).map((c) => `<span class="ge ${it.form.length > 2 ? "" : "ge-xl"} ${known ? "is-known" : ""}"><b>${esc(c)}</b></span>`).join("")}</div>
+            <div class="text">
+              <span class="soft">${KIND[it.kind]}${bands[i] ? `, HSK ${bands[i] === 7 ? "7–9" : bands[i]}` : ""}</span>
+              <span class="say-row"><span class="pinyin-big">${esc(pinyinOf(it))}</span>${it.kind !== "p" ? sayButton(it.form) : ""}</span>
+              <span>${esc(glossOf(it) || "No dictionary entry for this one.")}</span>
+              ${forms.length > 1 ? `<span class="small soft">Also written <span class="zh">${forms.filter((f) => f !== disp(i)).map(esc).join(", ")}</span></span>` : ""}
+            </div>
+          </section>
+          <section class="stack">
+            <div class="row">
+              <button type="button" class="btn ${known ? "quiet" : "primary"}" id="toggle-known">${known ? "Mark as not known" : "I know this"}</button>
+            </div>
+            ${missing.length && !known ? `<p class="small soft">Marking this also marks ${missing.length} ${missing.length === 1 ? "item" : "items"} it needs.</p>` : ""}
+            ${(it.hk || it.others.length) && known ? `<label class="check"><input type="checkbox" id="trad-too" ${state.tradSeen.has(i) ? "checked" : ""}> I can read the other script's form too</label>` : ""}
+            <p class="why soft">${why(i)}</p>
+          </section>
+          <section class="stack" id="write"></section>
         </div>
-      </section>
-      <section class="stack">
-        <div class="row">
-          <button type="button" class="btn ${known ? "quiet" : "primary"}" id="toggle-known">${known ? "Mark as not known" : "I know this"}</button>
+        <div class="col-b">
+          ${rec.h || partRows ? `<section class="stack"><h2>How it is built</h2><div id="built"></div>${rec.h ? `<p class="zh" style="font-family:var(--ui)">${esc(rec.h)}</p>` : ""}<div class="part-list">${partRows}</div></section>` : ""}
+          ${glyphs.length ? `<section class="stack"><h2>Characters in this word</h2><div class="chips">${glyphs.map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div></section>` : ""}
+          <section class="stack" id="example"><h2>Example</h2><p class="soft small">Loading a sentence…</p></section>
+          ${words.length ? `<section class="stack"><h2>Words using it</h2><div class="chips">${words.slice(0, 24).map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div>${words.length > 24 ? `<p class="soft small">And ${fmt(words.length - 24)} more.</p>` : ""}</section>` : ""}
+          ${chars.length ? `<section class="stack"><h2>Characters built from it</h2><div class="chips">${chars.slice(0, 24).map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div>${chars.length > 24 ? `<p class="soft small">And ${fmt(chars.length - 24)} more.</p>` : ""}</section>` : ""}
+          ${patterns.length ? `<section class="stack"><h2>Grammar that needs it</h2><div class="chips">${patterns.map((c) => chip(c)).join("")}</div></section>` : ""}
         </div>
-        ${missing.length && !known ? `<p class="small soft">Marking this also marks ${missing.length} ${missing.length === 1 ? "item" : "items"} it needs.</p>` : ""}
-        ${(it.hk || it.others.length) && known ? `<label class="check"><input type="checkbox" id="trad-too" ${state.tradSeen.has(i) ? "checked" : ""}> I can read the other script's form too</label>` : ""}
-        <p class="why soft">${why(i)}</p>
-      </section>
-      ${rec.h || partRows ? `<section class="stack"><h2>How it is built</h2>${rec.h ? `<p class="zh" style="font-family:var(--ui)">${esc(rec.h)}</p>` : ""}<div class="part-list">${partRows}</div></section>` : ""}
-      ${glyphs.length ? `<section class="stack"><h2>Characters in this word</h2><div class="chips">${glyphs.map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div></section>` : ""}
-      <section class="stack" id="example"><h2>Example</h2><p class="soft small">Loading a sentence…</p></section>
-      ${words.length ? `<section class="stack"><h2>Words using it</h2><div class="chips">${words.slice(0, 24).map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div>${words.length > 24 ? `<p class="soft small">And ${fmt(words.length - 24)} more.</p>` : ""}</section>` : ""}
-      ${chars.length ? `<section class="stack"><h2>Characters built from it</h2><div class="chips">${chars.slice(0, 24).map((c) => chip(c, state.known.has(c) ? "" : "need")).join("")}</div>${chars.length > 24 ? `<p class="soft small">And ${fmt(chars.length - 24)} more.</p>` : ""}</section>` : ""}
-      ${patterns.length ? `<section class="stack"><h2>Grammar that needs it</h2><div class="chips">${patterns.map((c) => chip(c)).join("")}</div></section>` : ""}`;
+      </div>`;
     document.getElementById("toggle-known").onclick = () => { known ? markUnknown(i) : markKnown(i); renderItem(i); };
     const t = document.getElementById("trad-too");
     if (t) t.onchange = () => { t.checked ? state.tradSeen.add(i) : state.tradSeen.delete(i); save(); };
     drawExample(i, it);
+    drawWriting(i, it);
+  }
+
+  /** Is this written glyph (a character or part, either script) one the learner knows? */
+  const knowsGlyph = (f) => { const u = core.glyphUnit.has(f) ? core.glyphUnit.get(f) : core.lookup.get(f); return u !== undefined && state.known.has(u); };
+  const glyphsOf = (i) => Array.from(disp(i));
+
+  function drawWriting(i, it) {
+    const box = document.getElementById("write");
+    if (!box || !window.JiesuoWriter) return;
+    box.innerHTML = `<h2>Write it</h2><div id="write-panel"></div>`;
+    JiesuoWriter.writePanel(document.getElementById("write-panel"), glyphsOf(i), { isKnown: knowsGlyph });
+    const built = document.getElementById("built");
+    if (built && it.kind !== "w") JiesuoWriter.buildAnimation(built, glyphsOf(i)[0], { isKnown: knowsGlyph });
   }
 
   function sentenceHtml(s) {
@@ -481,6 +548,7 @@
   async function renderPattern(p) {
     const known = state.known.has(p.i);
     view.innerHTML = `
+      ${backButton()}
       <section class="stack">
         <span class="soft">Grammar, HSK ${p.level} by our estimate</span>
         <h1 class="zh">${esc(p.form)}</h1>
@@ -591,6 +659,7 @@
       document.getElementById("reset-yes").onclick = () => {
         snapshot("Cleared all progress");
         state.known = new Set(); state.tradSeen = new Set();
+        Object.assign(state, freshJourney());
         save();
         renderMore();
       };
@@ -599,21 +668,40 @@
   function showPlain(text) { undo = null; showToast(text); }
 
   // ---- Routing: a plain #name, the only hash form every host preserves
+  const today = JiesuoToday.create({
+    core, state, save, view, esc, fmt, disp, sayButton, glossOf, pinyinOf, knowsGlyph: (f) => knowsGlyph(f), learn,
+    bands, loadSentences, loadSentenceRows, sentenceHtml: (s) => sentenceHtml(s), currentOrder: () => currentOrder(),
+  });
+
   function route() {
-    const h = (location.hash || "#next").slice(1);
+    const h = (location.hash || "#" + HOME).slice(1);
     const m = /^i(\d+)$/.exec(h);
-    const tab = m ? null : ["next", "read", "map", "more"].includes(h) ? h : "next";
-    document.querySelectorAll(".tabs a").forEach((a) => a.dataset.tab === tab ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+    const tab = m ? null : ["today", "lesson", "next", "read", "map", "more"].includes(h) ? h : HOME;
+    const lit = tab === "lesson" ? "today" : tab;
+    document.querySelectorAll(".tabs a").forEach((a) => a.dataset.tab === lit ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
     document.documentElement.lang = state.script === "t" ? "zh-HK" : "zh-Hans";
     document.getElementById("script-s").setAttribute("aria-pressed", state.script === "s");
     document.getElementById("script-t").setAttribute("aria-pressed", state.script === "t");
+    view.classList.toggle("wide", !!m);
+    if (tab !== "lesson") document.body.classList.remove("in-lesson");
     if (m) renderItem(+m[1]);
-    else ({ next: renderNext, read: renderRead, map: renderMap, more: renderMore })[tab]();
+    else ({ today: today.renderToday, lesson: today.renderLesson, next: renderNext, read: renderRead, map: renderMap, more: renderMore })[tab]();
   }
   function setScript(s) { state.script = s; save(); route(); }
   document.getElementById("script-s").onclick = () => setScript("s");
   document.getElementById("script-t").onclick = () => setScript("t");
-  window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
+
+  // Back goes to the previous screen inside the app. With no in-app history (opened from the
+  // home screen straight onto an item), it goes home, so it never leaves the app.
+  let depth = 0, goingBack = false;
+  function goBack() {
+    if (depth > 0) { goingBack = true; history.back(); }
+    else location.hash = HOME;
+  }
+  window.addEventListener("hashchange", () => {
+    if (goingBack) { depth = Math.max(0, depth - 1); goingBack = false; } else depth++;
+    route(); window.scrollTo(0, 0);
+  });
   store.set("jiesuo-test", "1");
   document.getElementById("storage-warning").hidden = storageOk;
   route();

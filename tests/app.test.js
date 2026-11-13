@@ -166,3 +166,72 @@ test("data stays under the size target", () => {
   const total = fs.readdirSync(dir).reduce((s, f) => s + fs.statSync(path.join(dir, f)).size, 0);
   assert.ok(total < 5e6, `${total} bytes`);
 });
+
+// ---- Journey: spaced review, new items, the unlock sentence, milestones, progress v2
+const J = require("../app/journey.js");
+
+test("review schedule: Leitner boxes 1, 2, 4, 8, 16, 32 days; a miss goes back to box 1", () => {
+  const d = "2026-11-13";
+  assert.deepStrictEqual(J.schedule(undefined, true, d), [1, "2026-11-14"]);
+  assert.deepStrictEqual(J.schedule([3, d], true, d), [4, "2026-11-21"]);
+  assert.deepStrictEqual(J.schedule([5, d], false, d), [1, "2026-11-14"]);
+  assert.deepStrictEqual(J.schedule([6, d], true, d), [6, "2026-12-15"]);
+  assert.strictEqual(J.addDays("2026-12-31", 1), "2027-01-01");
+  assert.strictEqual(J.daysBetween("2026-11-13", "2026-11-20"), 7);
+});
+
+test("due reviews: overdue first, then lower boxes, capped", () => {
+  const r = new Map([[1, [3, "2026-11-10"]], [2, [1, "2026-11-13"]], [3, [2, "2026-11-13"]], [4, [1, "2026-11-14"]]]);
+  assert.deepStrictEqual(J.dueReviews(r, "2026-11-13"), [1, 2, 3]);
+  assert.deepStrictEqual(J.dueReviews(r, "2026-11-13", 2), [1, 2]);
+});
+
+test("new items for a lesson are unknown, in order, and never grammar", () => {
+  const known = new Set(order.unlock.slice(0, 40));
+  const picked = J.pickNew(core, order.unlock, known, 3);
+  assert.strictEqual(picked.length, 3);
+  assert.ok(picked.every((i) => !known.has(i) && i < core.n));
+  assert.deepStrictEqual(picked, order.unlock.filter((i) => !known.has(i) && i < core.n).slice(0, 3));
+});
+
+test("unlock sentence: the shortest one newly readable in full, or none", () => {
+  const rows = [["9", "我是学生，我很好。", 0, "x", [], "a", 0, 0], ["1", "我是学生。", 0, "I am a student.", [], "a", 0, 0], ["2", "你好。", 0, "Hello.", [], "b", 0, 0]];
+  const before = new Set(["我", "是", "学", "生", "很", "好"].flatMap((f) => core.closure(unit(f), new Set())));
+  const after = new Set([...before, ...core.closure(unit("学生"), before)]);
+  assert.strictEqual(J.unlockSentence(core, rows, before, after)[0], "1");
+  assert.strictEqual(J.unlockSentence(core, rows, before, before), null);
+});
+
+test("milestones: reached ones marked, the next one says how far", () => {
+  const m = J.milestones({ chars: 7, words: 3, written: 1, unlocked: 0, days: 2, coverage: 0.1, hsk1Done: false });
+  const byKey = Object.fromEntries(m.map((x) => [x.key, x]));
+  assert.ok(byKey["first-char"].reached && byKey["first-write"].reached);
+  assert.ok(!byKey["chars-10"].reached);
+  assert.strictEqual(byKey["chars-10"].hint, "3 more characters");
+  assert.strictEqual(byKey["days-7"].hint, "5 more days of learning");
+});
+
+test("progress v2 keeps reviews, days, milestones, stats and an open lesson", () => {
+  const state = {
+    known: new Set([unit("学生")]), tradSeen: new Set(), script: "s", focus: "unlock",
+    review: new Map([[unit("学生"), [2, "2026-11-15"]]]), days: new Set(["2026-11-12", "2026-11-13"]),
+    milestones: { "first-char": "2026-11-12" }, stats: { written: 4, unlocked: 1 },
+    lesson: { day: "2026-11-13", items: [unit("学生")], reviews: [], added: [unit("学生")], step: 2, before: { coverage: 0.1 } },
+  };
+  const file = JSON.parse(JSON.stringify(serialise(state, core)));
+  assert.strictEqual(file.version, 2);
+  const back = deserialise(file, core);
+  assert.deepStrictEqual([...back.review], [...state.review]);
+  assert.deepStrictEqual([...back.days].sort(), [...state.days].sort());
+  assert.deepStrictEqual(back.milestones, state.milestones);
+  assert.deepStrictEqual(back.stats, state.stats);
+  assert.deepStrictEqual(back.lesson, state.lesson);
+});
+
+test("a version 1 progress file still imports, with empty journey state", () => {
+  const back = deserialise({ app: "jiesuo", version: 1, known: ["w:学生"] }, core);
+  assert.strictEqual(back.review.size, 0);
+  assert.strictEqual(back.days.size, 0);
+  assert.deepStrictEqual(back.stats, { written: 0, unlocked: 0 });
+  assert.strictEqual(back.lesson, null);
+});

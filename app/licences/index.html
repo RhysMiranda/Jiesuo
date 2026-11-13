@@ -24,8 +24,11 @@
 
   <section>
     <h2>App code</h2>
-    <p><code>index.html</code>, <code>app.js</code>, <code>core.js</code>, <code>style.css</code>, <code>sw.js</code>
-      and <code>data/grammar.json</code>: MIT. <a href="Jiesuo-LICENSE.txt">Licence text</a>.</p>
+    <p><code>index.html</code>, <code>app.js</code>, <code>core.js</code>, <code>journey.js</code>, <code>today.js</code>,
+      <code>writer.js</code>, <code>style.css</code>, <code>sw.js</code> and <code>data/grammar.json</code>: MIT.
+      <a href="Jiesuo-LICENSE.txt">Licence text</a>.</p>
+    <p><code>vendor/hanzi-writer.min.js</code>: <a href="https://github.com/chanind/hanzi-writer">Hanzi Writer</a> 3.7.3
+      by David Chanin, MIT. <a href="hanzi-writer-LICENSE.txt">Licence text</a>.</p>
   </section>
 
   <section>
@@ -38,6 +41,24 @@
       <li><a href="makemeahanzi-COPYING.txt">Make Me a Hanzi notice</a></li>
       <li><a href="LGPL-3.0.txt">GNU LGPL version 3</a></li>
       <li><a href="GPL-3.0.txt">GNU GPL version 3</a>, which the LGPL builds on</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Which strokes make which part: <code>data/stroke-parts.json</code></h2>
+    <p>Derived from the <code>matches</code> field of Make Me a Hanzi's <code>dictionary.txt</code>, under the same
+      GNU LGPL version 3 or later as <code>parts.json</code> (texts above). We kept, for each character, the strokes that
+      belong to each of its top-level parts.</p>
+  </section>
+
+  <section>
+    <h2>Stroke outlines: <code>strokes/</code></h2>
+    <p>From <code>graphics.txt</code> in <a href="https://github.com/skishore/makemeahanzi">Make Me a Hanzi</a>, derived
+      from the Arphic PL KaitiM GB and Arphic PL UKai fonts, under the Arphic Public License. Changes: split into one file
+      per character, keeping the outlines and centre lines of each stroke. These files are distributed under the same licence.</p>
+    <ul>
+      <li><a href="makemeahanzi-COPYING.txt">Make Me a Hanzi notice</a></li>
+      <li><a href="ARPHICPL.TXT">Arphic Public License</a></li>
     </ul>
   </section>
 

@@ -24,6 +24,9 @@ TATOEBA = "https://downloads.tatoeba.org/exports"
 SOURCES = {
     "mmh_dictionary.txt": (f"{GH}/skishore/makemeahanzi/master/dictionary.txt", None),
     "mmh_COPYING.txt": (f"{GH}/skishore/makemeahanzi/master/COPYING", None),
+    # Stroke outlines for the Write panel: Arphic Public Licence, kept in their own files.
+    "mmh_graphics.txt": (f"{GH}/skishore/makemeahanzi/master/graphics.txt", None),
+    "mmh_ARPHICPL.TXT": (f"{GH}/skishore/makemeahanzi/master/APL/english/ARPHICPL.TXT", None),
     "hsk30_wordlist.txt": (f"{GH}/elkmovie/hsk30/main/wordlist.txt", None),
     "hsk30_charlist.txt": (f"{GH}/elkmovie/hsk30/main/charlist.txt", None),
     "hsk30_LICENSE.txt": (f"{GH}/elkmovie/hsk30/main/LICENSE", None),

@@ -34,11 +34,18 @@ Open `app/index.html` through any static server (`python -m http.server -d app`)
 `app/` to GitHub Pages with the included workflow. After one visit it works offline, and on a
 phone "Add to Home Screen" installs it with its own icon. There is no server and no account.
 
+- **Today:** the home screen. A short daily lesson: meet a few new things and see each one put
+  together from parts you know, hear it, write it stroke by stroke, review earlier ones, and finish
+  on a real sentence you can now read in full. A journey path shows milestones reached and the next one.
+  No streaks to lose: missed days are never mentioned.
+- **Write it:** on every character page, watch the stroke order, trace it, or write from memory.
+  Strokes you already know from a part are drawn in blue. Mistakes get a hint, never a penalty.
 - **Next:** the next 10 things to learn and why each matters. Choose fastest reading or HSK focus.
 - **Read:** paste Chinese text to see what you can read, and the smallest set of things to learn for the rest.
 - **Map:** what you know, what is one step away, and the whole language as a grid.
 - **Progress:** save your progress to a file and restore it.
 - **简/繁:** switch script anywhere. Learning one form counts toward the other.
+- **Audio:** a speaker button uses the device's own Mandarin voice, and is hidden when there is none.
 
 ## Rebuilding the data
 
@@ -50,6 +57,7 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
     python -m jiesuo.order              # writes data/order
     python -m jiesuo.evaluate           # scores held-out sentences
     python -m jiesuo.export_app         # writes app/data, one file per licence
+    python -m jiesuo.export_strokes     # writes app/strokes and app/data/stroke-parts.json
     python scripts/phase1_report.py && python scripts/phase2_report.py
     python scripts/segmentation_check.py      # word splitting against UD
     python scripts/grammar_audit.py score     # grammar detection, from the labelled sample

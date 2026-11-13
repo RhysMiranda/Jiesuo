@@ -130,5 +130,17 @@
   "member": null,
   "sha256": "38ad4f76224567a275f3492a87a9b7ed91690b8f0959ee4eabac0ae022d6cf41",
   "bytes": 2199916
+ },
+ "mmh_graphics.txt": {
+  "url": "https://raw.githubusercontent.com/skishore/makemeahanzi/master/graphics.txt",
+  "member": null,
+  "sha256": "a28c478b5178e98f67f510b2d52fde08a69dc664654ef43498253b9b764d46ee",
+  "bytes": 30778076
+ },
+ "mmh_ARPHICPL.TXT": {
+  "url": "https://raw.githubusercontent.com/skishore/makemeahanzi/master/APL/english/ARPHICPL.TXT",
+  "member": null,
+  "sha256": "3a5e90c0957524a89e48203febcd4492ca4393678abaa7e5b4d70f3ff32b386d",
+  "bytes": 6901
  }
 }
