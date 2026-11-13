@@ -69,3 +69,15 @@ def test_patterns_follow_their_words(data):
     for a, b, kind, _ in data.edges:
         if kind == "word_pattern":
             assert pos[word_unit(a[2:])] < pos[b], (a, b)
+
+
+def test_sentence_bonus_finishes_a_sentence_before_a_slightly_better_word():
+    # Without a bonus, w (value 3) beats sentence needs {a, b} (value 1 each).
+    m = Model({"w": 3.0, "a": 1.0, "b": 1.0}, {})
+    assert greedy(m)[0] == "w"
+    assert set(greedy(m, 0.0, [frozenset({"a", "b"})], bonus=10.0)[:2]) == {"a", "b"}
+
+
+def test_sentence_bonus_zero_matches_plain_greedy(data):
+    m = data.model()
+    assert greedy(m)[:300] == greedy(m, 0.0, data.sentence_bundles()[:500], 0.0)[:300]

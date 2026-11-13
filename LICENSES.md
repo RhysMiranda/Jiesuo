@@ -24,6 +24,7 @@ in `jiesuo/grammar.py`. It does not cover the data below.
 |---|---|---|
 | SUBTLEX-CH raw tables | Not in the graph and never shipped. Used only to report coverage | [The paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC2880003) makes the frequencies "freely available for research purposes" and names no data licence. The article's CC BY covers the article. The npm copies say MIT, but the republisher cannot grant that. Replaced by wordfreq, whose author records e-mail permission from Marc Brysbaert for use beyond research |
 | [complete-hsk-vocabulary](https://github.com/drkameleon/complete-hsk-vocabulary) | Replaced by elkmovie/hsk30 | Labelled MIT, but it merges CC-CEDICT definitions (CC BY-SA) and SUBTLEX-derived data, so the label does not hold for the whole file |
+| [Universal Dependencies](https://universaldependencies.org/) Chinese-HK, Chinese-GSDSimp, Chinese-PUD | Test sets only. Never shipped, never used to build or tune | CC BY-SA 4.0 (HK, GSDSimp) and CC BY-SA 3.0 (PUD), from each treebank's README and LICENSE.txt. If we publish results from them, credit the treebanks and their authors |
 | Chinese Grammar Wiki and similar sites | Never consulted for text | Copyrighted. Grammar patterns here are original |
 
 ## Republished copies

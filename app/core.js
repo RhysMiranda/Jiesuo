@@ -179,7 +179,8 @@
       const it = items[token.unit];
       if (script !== "t") return { text: it.form, alternatives: [] };
       if (token.text !== it.form) return { text: token.text, alternatives: [] };
-      return { text: it.hk || it.form, alternatives: it.others.filter((f) => f !== it.hk) };
+      // Only flag characters the conversion changed. 了 also has a rare form 瞭, but bare 了 is almost always 了.
+      return { text: it.hk || it.form, alternatives: it.hk ? it.others.filter((f) => f !== it.hk) : [] };
     }
 
     /** Share of everyday text covered by known units, estimated from word frequencies. */

@@ -12,66 +12,97 @@ R = json.loads((ROOT / "reports" / "phase2_results.json").read_text())
 MODE = "explained"
 NS = ("100", "500", "1000", "2000")
 NAMES = {"unlock": "Unlock order", "frequency": "Frequency order", "hsk": "HSK order"}
+ALL = {"unlock": "Unlock", "sentences": "Unlock + sentences", "frequency": "Frequency", "hsk": "HSK", "hsk_focus": "HSK focus (app)"}
 COLORS = {"unlock": "#2a78d6", "frequency": "#eb6834", "hsk": "#1baf7a"}
 INK, MUTED, GRID, SURFACE = "#0b0b0b", "#52514e", "#e6e5e0", "#fcfcfb"
+PANELS = [("Tatoeba, held out", R["curves"][MODE], R["sentences"], R["tokens"])]
+PANELS += [(v["label"].split(" (")[0], v["curves"], v["sentences"], v["tokens"]) for v in R["corpora"].values()]
 
-c = R["curves"][MODE]
+# ---- Plot: one panel per corpus, same scale, labels at the line ends
 plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 11, "axes.edgecolor": GRID, "text.color": INK,
                      "axes.labelcolor": MUTED, "xtick.color": MUTED, "ytick.color": MUTED})
-fig, (a, b) = plt.subplots(2, 1, figsize=(8.5, 7), sharex=True, height_ratios=[3, 1.25], facecolor=SURFACE)
-for ax in (a, b):
+fig, axes = plt.subplots(1, len(PANELS), figsize=(13, 5.2), sharey=True, facecolor=SURFACE)
+for ax, (title, c, n_s, n_t) in zip(axes, PANELS):
     ax.set_facecolor(SURFACE)
     ax.grid(axis="y", color=GRID, linewidth=1)
     ax.spines[["top", "right", "left"]].set_visible(False)
     ax.tick_params(length=0)
-for name in NAMES:
-    a.plot(c["n"], [v * 100 for v in c[name]], color=COLORS[name], linewidth=2, label=NAMES[name], solid_capstyle="round")
-a.set_ylim(0, 100)
-a.set_xlim(0, 3000)
-a.set_ylabel("Held-out tokens readable (%)")
-a.legend(frameon=False, loc="lower right")
-fig.suptitle("Unlock order leads both baselines by 1 to 3 points from 1,000 items", x=0.08, ha="left", fontsize=13.5, fontweight="bold", y=0.97)
-a.set_title(f"{R['sentences']:,} held-out Tatoeba sentences, {R['tokens']:,} tokens. Every order pays for its prerequisites.",
-            loc="left", fontsize=10.5, color=MUTED, pad=10)
-last = c["n"].index(3000)
-offsets = {"unlock": 3.0, "frequency": -0.6, "hsk": -4.2}
-for name in NAMES:
-    a.annotate(NAMES[name].replace(" order", ""), (3000, c[name][last] * 100 + offsets[name]), xytext=(4, 0),
-               textcoords="offset points", fontsize=10, color=INK, va="center", annotation_clip=False)
-for base in ("frequency", "hsk"):
-    b.plot(c["n"], [(u - v) * 100 for u, v in zip(c["unlock"], c[base])], color=COLORS[base], linewidth=2, label=f"Unlock minus {NAMES[base].split()[0]}")
-b.axhline(0, color=MUTED, linewidth=1)
-b.set_ylabel("Lead (points)")
-b.set_xlabel("Items learned (components, characters and words; grammar patterns not counted)")
-b.set_ylim(-5, 8)
-b.legend(frameon=False, loc="upper right", ncol=2)
-fig.tight_layout(rect=(0, 0, 0.97, 0.97))
+    for name in NAMES:
+        ax.plot(c["n"], [v * 100 for v in c[name]], color=COLORS[name], linewidth=2, solid_capstyle="round")
+    ax.set_xlim(0, 3000)
+    ax.set_ylim(0, 100)
+    ax.set_xticks([0, 1000, 2000, 3000])
+    ax.set_title(f"{title}\n{n_s:,} sentences, {n_t:,} tokens", loc="left", fontsize=10.5, color=MUTED)
+    last = c["n"].index(3000)
+    ends = sorted(((c[name][last] * 100, name) for name in NAMES), reverse=True)
+    y_prev = None
+    for y, name in ends:  # keep labels at least 5 points apart
+        y = min(y, y_prev - 5) if y_prev is not None else y
+        ax.annotate(NAMES[name].split()[0], (3000, y), xytext=(4, 0), textcoords="offset points", fontsize=10,
+                    color=INK, va="center", annotation_clip=False)
+        y_prev = y
+    ax.set_xlabel("Items learned")
+axes[0].set_ylabel("Tokens readable (%)")
+fig.suptitle("On real text, unlock order leads HSK order by 5 to 13 points from 500 items", x=0.06, ha="left",
+             fontsize=14, fontweight="bold", y=0.99)
+fig.text(0.06, 0.905, "On Tatoeba's short learner sentences the gap is about 1 point. Every order pays for its prerequisites; "
+         "grammar patterns are not counted.", fontsize=10.5, color=MUTED)
+fig.tight_layout(rect=(0, 0, 0.97, 0.9))
 fig.savefig(ROOT / "reports" / "coverage.png", dpi=200, facecolor=SURFACE)
 
-out = ["# Phase 2 checkpoint\n", "![Coverage plot](coverage.png)\n",
-       f"Held-out: {R['sentences']:,} sentences, {R['tokens']:,} Han tokens, of which {R['token_kinds']['exact']:,} are graph words, "
-       f"{R['token_kinds']['split']:,} are readable only by splitting into smaller units, and {R['token_kinds']['unknown']:,} use a character outside the graph. "
-       f"Lookahead weight, chosen on training sentences: {R['lookahead']}.\n"]
-for mode, label in (("explained", "Primary: a component is required only when the data explains why it is there"),
-                    ("all", "Sensitivity: every component edge required"), ("none", "Sensitivity: no component required")):
+# ---- Report
+pct = lambda x: f"{x:.1%}"
+ci = lambda pair: f"{pair[0] * 100:+.1f} to {pair[1] * 100:+.1f}"
+out = ["# Phase 2 checkpoint (updated 2026-11-13)\n", "![Coverage plot](coverage.png)\n",
+       f"Settings chosen on training sentences only: lookahead {R['lookahead']}, sentence bonus {R['sentence_bonus']}. "
+       "Everything below was run once on text that played no part in building or tuning.\n"]
+
+
+def section(title, t, info, note=""):
+    lines = [f"## {title}\n"]
+    if note:
+        lines.append(note + "\n")
+    kinds = info["token_kinds"]
+    lines.append(f"{info['sentences']:,} sentences, {info['tokens']:,} Han tokens ({kinds['exact']:,} graph words, "
+                 f"{kinds['split']:,} readable only by splitting, {kinds['unknown']:,} with a character outside the graph).\n")
+    lines += ["| Items | " + " | ".join(ALL.values()) + " |", "|---:|" + "---:|" * len(ALL)]
+    lines += [f"| {int(n):,} | " + " | ".join(pct(t[k][n]["tokens"]) for k in ALL) + " |" for n in NS]
+    lines += ["", "Differences in percentage points, 95% bootstrap intervals by sentence:\n",
+              "| Items | Unlock − Frequency | Unlock − HSK | Unlock + sentences − Unlock |", "|---:|---:|---:|---:|"]
+    lines += [f"| {int(n):,} | {ci(t['unlock_minus_frequency'][n])} | {ci(t['unlock_minus_hsk'][n])} | {ci(t['sentences_minus_unlock'][n])} |" for n in NS]
+    lines += ["", "Whole sentences readable start to finish:\n", "| Items | " + " | ".join(ALL.values()) + " | HSK − Unlock (95% CI) |",
+              "|---:|" + "---:|" * (len(ALL) + 1)]
+    lines += [f"| {int(n):,} | " + " | ".join(pct(t[k][n]["sentences"]) for k in ALL) + f" | {ci(t['whole_sentences_hsk_minus_unlock'][n])} |" for n in NS]
+    return lines + [""]
+
+
+out += section("Tatoeba, held out (primary mode)", R["modes"][MODE], R,
+               "Short sentences, many written for learners. 汤姆 and 玛丽 alone are "
+               f"{R['name_share_tom_mary']:.1%} of tokens.")
+for v in R["corpora"].values():
+    note = ("Independent of everything used to build the graph. " +
+            ("wordfreq includes Wikipedia, so this set shares a source with our frequencies, which favours the unlock and frequency orders."
+             if "wiki" in v["label"].lower() else "Not drawn from any source we use, as far as we know."))
+    out += section(v["label"], v["table"], v, note)
+
+d = R["decision"]
+out += ["## Should the sentence-aware order become the default?\n",
+        "The rule was fixed in `jiesuo/evaluate.py` before the held-out run. It needed all three of these:\n",
+        f"- Tatoeba tokens within 0.5 points of unlock at every checkpoint: {'yes' if d['tatoeba_tokens_ok'] else 'no'}",
+        f"- Tatoeba whole sentences higher at 1,000 and 2,000: {'yes' if d['tatoeba_sentences_better'] else 'no'}",
+        f"- UD tokens within 1 point of unlock at every checkpoint: {'yes' if d['ud_tokens_ok'] else 'no'}",
+        f"\nResult: **{'adopt it' if d['use_sentence_order'] else 'keep plain unlock'}**. It learns Tatoeba's style: 玛丽 comes at item "
+        f"{R['name_positions']['玛丽']['sentences']:,} instead of {R['name_positions']['玛丽']['unlock']:,}.\n"]
+
+for mode, label in (("all", "Sensitivity: every component edge required"), ("none", "Sensitivity: no component required")):
     t = R["modes"][mode]
-    out += [f"## {label}\n", "| Items | Unlock | Frequency | HSK | Lead over frequency (95% CI) | Lead over HSK (95% CI) |", "|---:|---:|---:|---:|---:|---:|"]
-    for n in NS:
-        f = lambda name: f"{t[name][n]['tokens']:.1%}"
-        ci = lambda k: f"{t[k][n][0] * 100:+.1f} to {t[k][n][1] * 100:+.1f}"
-        out.append(f"| {int(n):,} | {f('unlock')} | {f('frequency')} | {f('hsk')} | {ci('unlock_minus_frequency')} | {ci('unlock_minus_hsk')} |")
+    out += [f"## {label} (Tatoeba)\n", "| Items | Unlock | Frequency | HSK |", "|---:|---:|---:|---:|"]
+    out += [f"| {int(n):,} | {pct(t['unlock'][n]['tokens'])} | {pct(t['frequency'][n]['tokens'])} | {pct(t['hsk'][n]['tokens'])} |" for n in NS]
     out.append("")
-t = R["modes"][MODE]
-out += ["## Whole sentences readable (primary mode)\n", "| Items | Unlock | Frequency | HSK | HSK minus unlock (95% CI) |", "|---:|---:|---:|---:|---:|"]
-out += [f"| {int(n):,} | " + " | ".join(f"{t[k][n]['sentences']:.1%}" for k in NAMES) + f" | {t['whole_sentences_hsk_minus_unlock'][n][0] * 100:+.1f} to {t['whole_sentences_hsk_minus_unlock'][n][1] * 100:+.1f} |" for n in NS]
-out += ["", "## HSK focus, the app's alternative order (primary mode)\n", "| Items | Tokens readable | Whole sentences readable |", "|---:|---:|---:|"]
-out += [f"| {int(n):,} | {t['hsk_focus'][n]['tokens']:.1%} | {t['hsk_focus'][n]['sentences']:.1%} |" for n in NS]
-out += ["", "## Counting only tokens that are graph words (no splitting)\n", "| Items | Unlock | Frequency | HSK |", "|---:|---:|---:|---:|"]
-out += [f"| {int(n):,} | " + " | ".join(f"{t[k]['exact_tokens_only'][n]:.1%}" for k in NAMES) + " |" for n in NS]
 if R.get("subtlex_not_held_out"):
     s = R["subtlex_not_held_out"]
-    out += ["", "## SUBTLEX-CH subtitle tokens (not held out: wordfreq includes SUBTLEX)\n", "| Items | Unlock | Frequency | HSK |", "|---:|---:|---:|---:|"]
-    out += [f"| {int(n):,} | " + " | ".join(f"{s[k][n]:.1%}" for k in NAMES) + " |" for n in NS]
-out += ["", f"汤姆 and 玛丽 alone are {R['name_share_tom_mary']:.1%} of held-out tokens.", ""]
+    out += ["## SUBTLEX-CH subtitle word counts (not held out: wordfreq includes SUBTLEX)\n", "| Items | Unlock | Frequency | HSK |", "|---:|---:|---:|---:|"]
+    out += [f"| {int(n):,} | {pct(s['unlock'][n])} | {pct(s['frequency'][n])} | {pct(s['hsk'][n])} |" for n in NS]
+    out.append("")
 (ROOT / "reports" / "phase2_checkpoint.md").write_text("\n".join(out), encoding="utf8")
 print("\n".join(out))

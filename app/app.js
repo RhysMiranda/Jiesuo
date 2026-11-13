@@ -148,7 +148,7 @@
           <button type="button" id="focus-unlock" aria-pressed="${state.focus === "unlock"}">Fastest reading</button>
           <button type="button" id="focus-hsk" aria-pressed="${state.focus === "hsk"}">HSK focus</button>
         </div>
-        <p class="soft small">${state.focus === "hsk" ? "Finishes each HSK level in turn, starting with the lowest. In our tests it lets you read more whole sentences, and slightly fewer individual words, for the same effort." : "Picks whatever adds the most readable words next, whatever its HSK level."}</p>
+        <p class="soft small">${state.focus === "hsk" ? "Finishes each HSK level in turn, starting with the lowest. Best for exam preparation. On real Hong Kong and news text it lets you read 5 to 13% fewer words for the same effort." : "Picks whatever adds the most readable words next, whatever its HSK level. Best for reading real Chinese."}</p>
         ${state.focus === "hsk" ? bandBars() : ""}
       </section>
       ${known < 50 ? `<section class="stack"><h2>Already studying?</h2>
@@ -242,6 +242,7 @@
           <span><span class="zh tok-unknown">生</span> not known yet</span>
           <span><span class="zh tok-via">學</span> known in the other script</span>
           ${r.outside ? `<span><span class="zh tok-outside">罕</span> not in our data (${fmt(r.outside)})</span>` : ""}
+          ${r.tokens.some((t) => t.han && t.unit !== null && core.shownForm(t, state.script).alternatives.length) ? `<span><span class="zh">发<sup class="alt">?</sup></span> has more than one Traditional form; tap for the others</span>` : ""}
         </div>
       </section>
       ${r.ladder.length ? `<section class="stack">

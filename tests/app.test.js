@@ -136,6 +136,8 @@ test("a lone Simplified character with several Traditional forms lists the other
   const r = core.shownForm(t, "t");
   assert.strictEqual(r.text, "發");
   assert.ok(r.alternatives.includes("髮"));
+  const le = core.tokenise("了").find((x) => x.han);
+  assert.deepStrictEqual(core.shownForm(le, "t").alternatives, [], "了 is not flagged");
 });
 
 test("Traditional display uses the Hong Kong form and leaves shared glyphs alone", () => {
