@@ -46,7 +46,10 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
   is done, Today offers a quick review round for them.
 - **Next:** the next 10 things to learn and why each matters. Choose fastest reading or HSK focus.
 - **Read:** paste Chinese text to see what you can read, and the smallest set of things to learn for the rest.
-- **Map:** what you know, what is one step away, and the whole language as a grid.
+- **Map:** one item in the middle, what it is built from on the left, and what it unlocks on the
+  right, each marked ready now or with what it still needs. Tap any square to move it to the middle.
+  Starts on your next item; "See it on the map" on any word page opens it there. Below: everything
+  ready to learn now, and the whole language as a grid.
 - **Progress:** save your progress to a file and restore it.
 - **简/繁:** switch script anywhere. Learning one form counts toward the other.
 - **Audio:** a speaker button uses the device's own Mandarin voice, and is hidden when there is none.

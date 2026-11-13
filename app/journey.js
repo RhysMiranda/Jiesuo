@@ -53,6 +53,26 @@
     return best;
   }
 
+  /**
+   * The focus map around one item. Each item's state is "known", "ready" (everything it needs is
+   * known) or "locked". parts: what it is made of (required parts first, then shape-only ones).
+   * unlocks: what is built from it; "ready" means nothing else is missing besides this item,
+   * so ready ones open as soon as this is learned. Ready first, then most frequent.
+   */
+  function focusInfo(core, i, known) {
+    const stateOf = (u) => (known.has(u) ? "known" : core.prereq[u].every((p) => known.has(p)) ? "ready" : "locked");
+    const hard = core.prereq[i];
+    const soft = i < core.n ? core.softParts[i].filter((p) => !hard.includes(p)) : [];
+    const parts = [...new Set([...hard, ...soft])].map((u) => ({ u, state: stateOf(u), soft: !hard.includes(u) }));
+    const weight = (u) => core.get(u).freq || 0;
+    const unlocks = core.children[i].map((c) => {
+      const missing = core.prereq[c].filter((p) => p !== i && !known.has(p));
+      return { u: c, ready: missing.length === 0, missing, state: stateOf(c) };
+    }).sort((a, b) => (b.ready - a.ready) || weight(b.u) - weight(a.u) || a.u - b.u);
+    const readyCount = unlocks.filter((x) => x.ready).length;
+    return { u: i, state: stateOf(i), needs: hard.filter((p) => !known.has(p)), parts, unlocks, readyCount, laterCount: unlocks.length - readyCount };
+  }
+
   // The journey path. Counts say how far away they are; flags are firsts.
   const MILESTONES = [
     { key: "first-char", label: "Your first character", field: "chars", target: 1 },
@@ -85,5 +105,5 @@
     });
   }
 
-  return { dayKey, addDays, daysBetween, BOXES, schedule, dueReviews, pickNew, unlockSentence, MILESTONES, milestones };
+  return { dayKey, addDays, daysBetween, BOXES, schedule, dueReviews, pickNew, unlockSentence, focusInfo, MILESTONES, milestones };
 });

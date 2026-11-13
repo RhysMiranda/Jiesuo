@@ -303,87 +303,142 @@
     };
   }
 
-  // ---- My map
-  function renderMap() {
+  // ---- My map: one item in the middle, what it is made of, and what it unlocks
+  const MAP_KEY = "jiesuo-map-focus-v1";
+  let mapTrail = [], mapShowAll = false, mapResize = null;
+
+  function renderMap(focus) {
     const seq = currentOrder();
     const frList = core.frontier(seq, state.known);
     const known = state.known.size;
+    if (focus === undefined || !core.get(focus)) {
+      const saved = +store.get(MAP_KEY);
+      focus = saved && core.get(saved) ? saved : (core.next(seq, state.known, 1, 0)[0] ?? seq[0]);
+    }
+    if (mapTrail[mapTrail.length - 1] !== focus) { mapTrail = [...mapTrail.filter((u) => u !== focus), focus].slice(-6); mapShowAll = false; }
+    store.set(MAP_KEY, String(focus));
     view.innerHTML = `
       <section class="stack">
         <h1>My map</h1>
-        <p>${known ? `You know ${fmt(known)} of ${fmt(seq.length)} items. ` : `Nothing is lit yet. `}<strong>${fmt(frList.length)}</strong> ${frList.length === 1 ? "item is" : "items are"} one step away: you already have everything they need.</p>
+        <p>${known ? `You know ${fmt(known)} of ${fmt(seq.length)} items. ` : `Nothing is lit yet. `}<strong>${fmt(frList.length)}</strong> ${frList.length === 1 ? "item is" : "items are"} ready to learn now: you already know everything they need.</p>
       </section>
+      <section class="stack" id="focus-map" aria-label="What it is made of and what it unlocks"></section>
       <section class="stack">
-        <h2>What you know, and what it opens up</h2>
-        <p class="soft small">A sample of the closest next steps, with the items that lead to them.</p>
-        <div class="scroll-x" id="graph"></div>
-        <div class="key"><span><i class="k-known"></i>Known</span><span><i style="background:var(--sheet);border:2px dashed var(--pen)"></i>One step away</span></div>
-      </section>
-      <section class="stack">
-        <h2>Closest next steps</h2>
-        <div class="chips">${frList.slice(0, 30).map((i) => chip(i, "need")).join("")}</div>
+        <h2>Ready to learn now</h2>
+        <p class="soft small">Tap one to see what it unlocks.</p>
+        <div class="chips">${frList.slice(0, 30).map((i) => mapChip(i, "need")).join("")}</div>
       </section>
       <section class="stack">
         <h2>The whole language</h2>
-        <p class="soft small">Every square is one item, in learning order. Tap one to open it.</p>
-        <canvas class="field" id="field" aria-label="Grid of all items, showing which are known and which are one step away"></canvas>
-        <div class="key"><span><i class="k-known"></i>Known</span><span><i class="k-front"></i>One step away</span><span><i></i>Further off</span></div>
+        <p class="soft small">Every square is one item, in learning order. Tap one to see it on the map.</p>
+        <canvas class="field" id="field" aria-label="Grid of all items, showing which are known and which are ready to learn"></canvas>
+        <div class="key"><span><i class="k-known"></i>Known</span><span><i class="k-front"></i>Ready to learn</span><span><i></i>Further off</span></div>
         <div id="peek"></div>
       </section>`;
-    drawGraph(frList);
+    drawFocus(focus);
     drawField(seq, new Set(frList));
   }
 
-  function drawGraph(frList) {
-    // A readable sample: a few frontier items of each kind, plus the known items that lead to them.
-    const take = (kind, k) => frList.filter((i) => i < core.n && core.get(i).kind === kind).slice(0, k);
-    const fr = [...take("w", 7), ...take("c", 6), ...take("p", 3)];
-    const nodes = new Set(fr);
-    fr.forEach((i) => core.prereq[i].forEach((p) => nodes.add(p)));
-    const columns = { p: [], c: [], w: [] };
-    [...nodes].sort((a, b) => a - b).forEach((i) => columns[core.get(i).kind].push(i));
-    // Sit each item level with what it leads to, which keeps edges from crossing the whole map.
-    const rowOf = new Map();
-    columns.w.forEach((i, r) => rowOf.set(i, r));
-    for (const k of ["c", "p"]) {
-      const score = (i) => {
-        const rows = core.children[i].filter((c) => rowOf.has(c)).map((c) => rowOf.get(c));
-        return rows.length ? rows.reduce((a, b) => a + b, 0) / rows.length : 1e6 + i;
-      };
-      const scored = new Map(columns[k].map((i) => [i, score(i)]));
-      columns[k].sort((a, b) => scored.get(a) - scored.get(b));
-      columns[k].forEach((i, r) => rowOf.set(i, r));
-    }
-    const names = { p: "Parts", c: "Characters", w: "Words" };
-    const present = Object.keys(columns).filter((k) => columns[k].length);
-    const boxH = 44, gap = 10, top = 30, colW = 118;
-    const width = Math.max(320, present.length * colW);
-    const step = width / present.length;
-    const pos = new Map();
-    let maxRows = 0;
-    present.forEach((k, c) => {
-      maxRows = Math.max(maxRows, columns[k].length);
-      columns[k].forEach((i, r) => pos.set(i, { x: c * step + 6, y: top + r * (boxH + gap), w: Math.min(step - 22, 24 * Math.max(Array.from(disp(i)).length, 2) + 14) }));
+  /** A chip that moves the map's centre rather than opening the page. */
+  const mapChip = (i, cls = "") => chip(i, cls).replace(`href="#i${i}"`, `href="#m${i}"`);
+
+  /** "1 word", "2 characters and 3 words". */
+  function countText(list) {
+    const n = { c: 0, p: 0, w: 0, g: 0 };
+    list.forEach((u) => n[core.get(u).kind]++);
+    const names = { c: ["character", "characters"], p: ["part", "parts"], w: ["word", "words"], g: ["grammar pattern", "grammar patterns"] };
+    const bits = Object.keys(n).filter((k) => n[k]).map((k) => `${fmt(n[k])} ${names[k][n[k] === 1 ? 0 : 1]}`);
+    return bits.length > 1 ? bits.slice(0, -1).join(", ") + " and " + bits[bits.length - 1] : bits[0] || "nothing";
+  }
+
+  /** A few words of meaning: a part's own short name, else the first sense without its bracketed notes. */
+  function shortMeaning(it) {
+    const raw = (it.kind === "p" && (core.partsData[it.form] || {}).d) || glossOf(it) || "";
+    const first = raw.split(";")[0].trim();
+    return first.replace(/\([^)]*\)/g, "").replace(/\s+/g, " ").trim() || first;
+  }
+
+  function drawFocus(i) {
+    const box = document.getElementById("focus-map");
+    const it = core.get(i);
+    const info = JiesuoJourney.focusInfo(core, i, state.known);
+    const form = disp(i);
+    const stateCls = (s) => (s === "known" ? "is-known" : s === "ready" ? "is-frontier" : "");
+    const node = (u, s, note = "") => {
+      const g = core.get(u);
+      const inner = g.kind === "g"
+        ? `<span class="fm-gram">${esc(g.form)}</span>`
+        : `<span class="word">${Array.from(disp(u)).map((c) => `<span class="ge ge-s ${stateCls(s)}"><b>${esc(c)}</b></span>`).join("")}</span>`;
+      const href = g.kind === "g" ? `#i${u}` : `#m${u}`;
+      return `<a class="fm-node" href="${href}" data-u="${u}" data-state="${s}">${inner}${note ? `<span class="fm-note">${note}</span>` : ""}</a>`;
+    };
+    const shown = mapShowAll ? info.unlocks.slice(0, 60) : info.unlocks.slice(0, 8);
+    const unlockNote = (x) => {
+      if (x.state === "known") return "known";
+      if (x.ready) return info.state === "known" ? "ready to learn" : `ready once you learn ${esc(form)}`;
+      return `needs ${x.missing.slice(0, 2).map((m) => `<span class="zh">${esc(disp(m))}</span>`).join(" ")}${x.missing.length > 2 ? ` +${x.missing.length - 2}` : ""}`;
+    };
+    const status = info.state === "known" ? "You know this."
+      : info.state === "ready" ? "Ready to learn: you know everything it needs."
+      : `First learn ${info.needs.map((u) => `<a class="zh" href="#m${u}">${esc(disp(u))}</a>`).join(" ")}.`;
+    const fresh = info.unlocks.filter((x) => x.ready && x.state !== "known").map((x) => x.u);
+    const later = info.unlocks.filter((x) => !x.ready).map((x) => x.u);
+    const summary = !info.unlocks.length ? `Nothing else in our data is built from <span class="zh">${esc(form)}</span>.`
+      : info.state === "known"
+        ? `<span class="zh">${esc(form)}</span> helps build ${countText(info.unlocks.map((x) => x.u))}. ${fresh.length ? `${countText(fresh)} ${fresh.length === 1 ? "is" : "are"} ready to learn now.` : ""}`
+        : `Learning <span class="zh">${esc(form)}</span> opens ${fresh.length ? `${countText(fresh)} straight away` : "nothing straight away"}${later.length ? `, and helps with ${countText(later)} more` : ""}.`;
+    box.innerHTML = `
+      ${mapTrail.length > 1 ? `<nav class="trail" aria-label="Where you have been">${mapTrail.map((u) => u === i ? `<span class="zh" aria-current="true">${esc(disp(u))}</span>` : `<a class="zh" href="#m${u}">${esc(disp(u))}</a>`).join("<span aria-hidden=\"true\">›</span>")}</nav>` : ""}
+      <div class="fmap" id="fmap">
+        <svg class="fm-lines" aria-hidden="true"></svg>
+        <div class="fm-col fm-left">
+          <span class="fm-head">${it.kind === "w" ? "Made of" : "Built from"}</span>
+          ${info.parts.map((p) => node(p.u, p.state, esc(firstReading(pinyinOf(core.get(p.u))) || ""))).join("") || `<span class="soft small fm-empty">a basic shape</span>`}
+        </div>
+        <div class="fm-centre" data-centre>
+          <span class="word fm-big">${Array.from(form).map((c) => `<span class="ge ${Array.from(form).length > 2 ? "ge-m" : ""} ${stateCls(info.state)}"><b>${esc(c)}</b></span>`).join("")}</span>
+          <span class="pinyin">${esc(firstReading(pinyinOf(it)))}</span>
+          <span class="small fm-gloss">${esc(shortMeaning(it))}</span>
+        </div>
+        <div class="fm-col fm-right">
+          <span class="fm-head">Unlocks${info.unlocks.length ? ` (${fmt(info.unlocks.length)})` : ""}</span>
+          ${shown.map((x) => node(x.u, x.ready && x.state !== "known" ? "ready" : x.state === "known" ? "known" : "locked", unlockNote(x))).join("") || `<span class="soft small fm-empty">nothing yet</span>`}
+          ${info.unlocks.length > shown.length ? (mapShowAll
+            ? `<span class="soft small">Showing the first ${fmt(shown.length)}. <a href="#i${i}">Open <span class="zh">${esc(form)}</span></a> for all ${fmt(info.unlocks.length)}.</span>`
+            : `<button type="button" class="linkish" data-showall>Show ${info.unlocks.length > 60 ? "more" : `all ${fmt(info.unlocks.length)}`}</button>`) : ""}
+        </div>
+      </div>
+      <p class="fm-status">${status}</p>
+      <p>${summary}</p>
+      <div class="row"><a class="btn" href="#i${i}">Open <span class="zh">${esc(form)}</span></a>${it.kind !== "p" ? sayButton(it.form) : ""}</div>`;
+    const all = box.querySelector("[data-showall]");
+    if (all) all.onclick = () => { mapShowAll = true; drawFocus(i); };
+    drawFocusLines(info);
+    if (mapResize) mapResize.disconnect();
+    if (window.ResizeObserver) { mapResize = new ResizeObserver(() => drawFocusLines(info)); mapResize.observe(document.getElementById("fmap")); }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (document.getElementById("fmap")) drawFocusLines(info); });
+  }
+
+  /** Lines from each part to the centre, and from the centre to each unlock. Blue where the link is lit. */
+  function drawFocusLines(info) {
+    const map = document.getElementById("fmap");
+    if (!map) return;
+    const svg = map.querySelector(".fm-lines"), base = map.getBoundingClientRect();
+    const centre = map.querySelector("[data-centre] .word").getBoundingClientRect();
+    const focusKnown = info.state === "known";
+    const pt = (r, side) => [(side === "r" ? r.right : r.left) - base.left, r.top + r.height / 2 - base.top];
+    const curve = ([x1, y1], [x2, y2], cls) => { const m = (x1 + x2) / 2; return `<path class="${cls}" d="M${x1} ${y1}C${m} ${y1} ${m} ${y2} ${x2} ${y2}"/>`; };
+    let paths = "";
+    map.querySelectorAll(".fm-left .fm-node").forEach((n) => {
+      const sq = n.querySelector(".word, .fm-gram").getBoundingClientRect();
+      paths += curve(pt(sq, "r"), pt(centre, "l"), n.dataset.state === "known" && focusKnown ? "lit" : n.dataset.state === "known" ? "half" : "");
     });
-    const height = top + maxRows * (boxH + gap);
-    let edges = "";
-    for (const i of nodes) {
-      for (const p of core.prereq[i]) {
-        if (!nodes.has(p)) continue;
-        const a = pos.get(p), b = pos.get(i);
-        if (a.x === b.x) continue;
-        const x1 = a.x + a.w, y1 = a.y + boxH / 2, x2 = b.x, y2 = b.y + boxH / 2;
-        edges += `<path class="edge ${state.known.has(i) ? "lit" : ""}" d="M${x1} ${y1}C${x1 + 26} ${y1} ${x2 - 26} ${y2} ${x2} ${y2}"/>`;
-      }
-    }
-    const boxes = [...nodes].map((i) => {
-      const a = pos.get(i);
-      const cls = state.known.has(i) ? "n-known" : "n-frontier";
-      const text = disp(i);
-      return `<a href="#i${i}" class="${cls}" aria-label="${esc(text)}"><rect class="box" x="${a.x}" y="${a.y}" width="${a.w}" height="${boxH}"/><text x="${a.x + a.w / 2}" y="${a.y + 31}" text-anchor="middle" font-size="24">${esc(text)}</text></a>`;
-    }).join("");
-    const heads = present.map((k, c) => `<text class="col" x="${c * step + 6}" y="16">${names[k]}</text>`).join("");
-    document.getElementById("graph").innerHTML = `<svg class="graph" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="Known items and the items they lead to">${heads}${edges}${boxes}</svg>`;
+    map.querySelectorAll(".fm-right .fm-node").forEach((n) => {
+      const sq = n.querySelector(".word, .fm-gram").getBoundingClientRect();
+      paths += curve(pt(centre, "r"), pt(sq, "l"), n.dataset.state === "known" ? "lit" : n.dataset.state === "ready" ? "ready" : "");
+    });
+    svg.setAttribute("width", base.width); svg.setAttribute("height", base.height);
+    svg.innerHTML = paths;
   }
 
   function drawField(seq, fr) {
@@ -424,7 +479,7 @@
         const dd = (n.x + cell / 2 - x) ** 2 + (n.y + cell / 2 - yy) ** 2;
         if (dd < d) { d = dd; best = n.i; }
       }
-      if (best !== null) document.getElementById("peek").innerHTML = chip(best, state.known.has(best) ? "" : "need") + (core.get(best).gloss ? ` <span class="soft small">${esc(core.get(best).gloss)}</span>` : "");
+      if (best !== null) document.getElementById("peek").innerHTML = chip(best, state.known.has(best) ? "" : "need") + (core.get(best).gloss ? ` <span class="soft small">${esc(core.get(best).gloss)}</span>` : "") + ` <a class="small" href="#m${best}">See it on the map</a>`;
     };
   }
 
@@ -478,6 +533,7 @@
             <div class="row">
               <button type="button" class="btn ${known ? "quiet" : "primary"}" id="toggle-known">${known ? "Mark as not known" : "I know this"}</button>
               <span id="review-slot">${reviewButton(i)}</span>
+              <a class="btn quiet" href="#m${i}">See it on the map</a>
             </div>
             ${missing.length && !known ? `<p class="small soft">Marking this also marks ${missing.length} ${missing.length === 1 ? "item" : "items"} it needs.</p>` : ""}
             ${(it.hk || it.others.length) && known ? `<label class="check"><input type="checkbox" id="trad-too" ${state.tradSeen.has(i) ? "checked" : ""}> I can read the other script's form too</label>` : ""}
@@ -745,7 +801,8 @@
   function route() {
     const h = (location.hash || "#" + HOME).slice(1);
     const m = /^i(\d+)$/.exec(h);
-    const tab = m ? null : ["today", "lesson", "search", "next", "read", "map", "more"].includes(h) ? h : HOME;
+    const onMap = /^m(\d+)$/.exec(h);
+    const tab = m ? null : onMap ? "map" : ["today", "lesson", "search", "next", "read", "map", "more"].includes(h) ? h : HOME;
     const lit = tab === "lesson" ? "today" : tab;
     document.querySelectorAll(".tabs a, .search-btn").forEach((a) => a.dataset.tab === lit ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
     document.documentElement.lang = state.script === "t" ? "zh-HK" : "zh-Hans";
@@ -754,6 +811,7 @@
     view.classList.toggle("wide", !!m);
     if (tab !== "lesson") document.body.classList.remove("in-lesson");
     if (m) renderItem(+m[1]);
+    else if (onMap) renderMap(+onMap[1]);
     else ({ today: today.renderToday, lesson: today.renderLesson, search: renderSearch, next: renderNext, read: renderRead, map: renderMap, more: renderMore })[tab]();
   }
   // "/" opens search from anywhere on desktop, as in many dictionaries.

@@ -279,3 +279,30 @@ test("empty or symbol-only search returns nothing, and grammar is left out", () 
 test("a lesson with no new items asked for picks none", () => {
   assert.deepStrictEqual(J.pickNew(core, order.unlock, new Set(), 0), []);
 });
+
+// ---- Focus map: what an item is made of and what it unlocks
+test("focus map: 他 is made of 也 and 亻 and unlocks words, ready ones first", () => {
+  const known = new Set(["也", "人"].flatMap((f) => core.closure(unit(f), new Set())));
+  const info = J.focusInfo(core, unit("他"), known);
+  const parts = Object.fromEntries(info.parts.map((p) => [core.get(p.u).form, p.state]));
+  assert.strictEqual(parts["也"], "known");
+  assert.ok("亻" in parts && parts["亻"] !== "known");
+  const byForm = Object.fromEntries(info.unlocks.map((x) => [core.get(x.u).form, x]));
+  assert.ok(byForm["他人"].ready, "他人 needs only 他 and 人");
+  assert.deepStrictEqual(byForm["他们"].missing.map((u) => core.get(u).form), ["们"]);
+  const firstNotReady = info.unlocks.findIndex((x) => !x.ready);
+  assert.ok(info.unlocks.slice(firstNotReady).every((x) => !x.ready), "ready ones come first");
+  assert.strictEqual(info.readyCount, info.unlocks.filter((x) => x.ready).length);
+  assert.strictEqual(info.state, "locked");
+  assert.deepStrictEqual(info.needs.map((u) => core.get(u).form), ["亻"]);
+});
+
+test("focus map: a word is made of its characters, and states follow what is known", () => {
+  const known = new Set(core.closure(unit("学"), new Set()));
+  const info = J.focusInfo(core, unit("学生"), known);
+  assert.deepStrictEqual(info.parts.map((p) => core.get(p.u).form).sort(), ["学", "生"].sort());
+  assert.strictEqual(info.parts.find((p) => core.get(p.u).form === "学").state, "known");
+  const all = new Set(core.closure(unit("学生"), new Set()));
+  assert.strictEqual(J.focusInfo(core, unit("学生"), all).state, "known");
+  assert.strictEqual(J.focusInfo(core, unit("学生"), new Set([...all].filter((u) => u !== unit("学生")))).state, "ready");
+});
