@@ -5,23 +5,24 @@
 | type | count | Simplified only | Traditional only | both scripts |
 |---|---|---|---|---|
 | component | 420 | - | - | - |
-| character | 4,952 | 1168 | 1451 | 2333 |
-| word | 17,084 | 5956 | 6379 | 4749 |
+| character | 4,955 | 1168 | 1454 | 2333 |
+| word | 21,233 | 7490 | 8009 | 5734 |
 | pattern | 152 | - | - | - |
-| sentence | 51,826 | 28725 | 23101 | - |
-| **total** | 74,434 |  |  |  |
+| sentence | 56,068 | 30741 | 25327 | - |
+| **total** | 82,828 |  |  |  |
 
 ## Edges
 
 | type | count |
 |---|---|
-| word_sentence | 338,483 |
-| pattern_sentence | 65,213 |
-| char_word | 33,221 |
-| simp_trad | 15,688 |
-| component | 10,247 |
+| word_sentence | 362,705 |
+| pattern_sentence | 70,551 |
+| char_word | 43,344 |
+| simp_trad | 18,958 |
+| component | 10,251 |
+| char_sentence | 2,724 |
 | word_pattern | 227 |
-| **total** | 463,079 |
+| **total** | 508,760 |
 
 ## Vocabulary selection
 
@@ -37,16 +38,16 @@
 
 | decomposition status | top 3,500 | all glyphs |
 |---|---|---|
-| fully decomposed | 3197 | 4794 |
+| fully decomposed | 3197 | 4796 |
 | partly decomposed (`？` in the IDS, like 发 = ⿸？又) | 151 | 251 |
 | no parts given (`？`), treated as a root (人, 一) | 27 | 61 |
 | pictograph, parts ignored on purpose (木 is not 十+八) | 124 | 180 |
-| not in Make Me a Hanzi at all | 1 | 86 |
+| not in Make Me a Hanzi at all | 1 | 87 |
 
 | component edge role | count |
 |---|---|
-| semantic | 3,277 |
-| phonetic | 3,127 |
+| semantic | 3,279 |
+| phonetic | 3,129 |
 | meaning | 2,390 |
 | no_etymology | 806 |
 | form | 299 |
@@ -56,27 +57,27 @@
 - Component edges dropped from pictographs: 334
 - Self-loops dropped: 0
 - Cycle edges removed from the dependency graph: 0 []
-- Glyphs missing from Make Me a Hanzi: 86, of which 1 are needed in Simplified: ['祂']
-- Words containing a character rarer than rank 1,500: 1,665
-- Words containing a character rarer than rank 2,500: 204
-- Words containing a character rarer than rank 3,000: 11
+- Glyphs missing from Make Me a Hanzi: 87, of which 1 are needed in Simplified: ['祂']
+- Words containing a character rarer than rank 1,500: 2,540
+- Words containing a character rarer than rank 2,500: 453
+- Words containing a character rarer than rank 3,000: 104
 - Words containing a character rarer than rank 3,500: 1
 - Most frequent words with a character rarer than rank 3,000 (character's rank): 咦 (3047), 捅 (3012), 渲染 (3005), 昵称 (3010), 诶 (3103), 傀儡 (3069), 揍 (3022)
-- Simplified characters with more than one Traditional form: 80, e.g. 发→發/髮, 说→說/説, 里→裏/裡, 当→噹/當, 面→麪/麵, 只→秖/隻, 并→並/併, 系→係/繫, 别→別/彆, 向→嚮/曏
+- Simplified characters with more than one Traditional form: 81, e.g. 发→發/髮, 说→說/説, 里→裏/裡, 当→噹/當, 面→麪/麵, 只→秖/隻, 并→並/併, 系→係/繫, 别→別/彆, 向→嚮/曏
 
 ## Sentences (Tatoeba, Mandarin with an English translation)
 
 | step | count |
 |---|---|
-| tokens | 352,918 |
-| kept | 51,826 |
 | dropped_no_han_or_latin | 1,120 |
-| tokens_backed_off | 29,563 |
 | held_out | 6,362 |
-| tokens_unresolvable | 5,460 |
-| dropped_unresolvable_token | 4,842 |
 | dropped_duplicate | 435 |
 | dropped_too_long | 318 |
+| tokens | 352,918 |
+| kept | 56,068 |
+| tokens_backed_off | 24,797 |
+| tokens_unresolvable | 632 |
+| dropped_unresolvable_token | 600 |
 
 ## Prerequisite depth
 
@@ -84,7 +85,7 @@
 |---|---|---|---|
 | character (top 3,500) | 4.0 | 8 | 15 |
 | word (frequency top 10,000) | 8.0 | 13 | 36 |
-| sentence | 39.0 | 62 | 166 |
+| sentence | 39.0 | 64 | 165 |
 
 ## Coverage of SUBTLEX-CH (evaluation only, never shipped)
 
@@ -115,43 +116,42 @@ Words: 33,526,201 Han tokens, 90,706 types.
 **h:侌** (component)  
 needs: h:云 (unmatched), h:今 (phonetic)  
 
-**h:獻** (character, script T)  
-xian4 — to offer; to present; to dedicate  
-needs: h:犬 (semantic), h:鬳 (phonetic)  
-same item as: h:献  
+**h:獸** (character, script T)  
+shou4 — beast; animal; beastly  
+needs: h:嘼 (phonetic), h:犬 (semantic)  
+same item as: h:兽  
 
-**h:軀** (character, script T)  
+**h:躯** (character, script S, rank 2827, HSK 7)  
 qu1 — human body  
-needs: h:區 (phonetic), h:身 (semantic)  
-same item as: h:躯  
+needs: h:区 (phonetic), h:身 (semantic)  
+same item as: h:軀  
 
-**h:返** (character, script B, rank 1411, HSK 5)  
-fan3 — to return (to)  
-needs: h:反 (meaning), h:辶 (meaning)  
+**h:迎** (character, script B, rank 933, HSK 2)  
+ying2 — to welcome; to meet; to forge ahead (esp. in the face of difficulties); to meet face to face  
+needs: h:卬 (phonetic), h:辶 (semantic)  
 
-**w:另類** (word, script T)  
-ling4 lei4 — offbeat; alternative; avant-garde  
-needs: h:另, h:類  
-same item as: w:另类  
+**w:鼓吹** (word, script B, rank 8086)  
+gu3 chui1 — to agitate for; to enthusiastically promote  
+needs: h:吹, h:鼓  
 
-**w:投身** (word, script B, rank 9643, HSK 7)  
-tou2 shen1 — to throw oneself into sth  
-needs: h:投, h:身  
+**w:募集** (word, script B, rank 8004)  
+mu4 ji2 — to raise; to collect  
+needs: h:募, h:集  
 
-**w:观赏** (word, script S, rank 5837, HSK 7)  
-guan1 shang3 — to look at sth with pleasure; to watch (sth marvelous); ornamental  
-needs: h:观, h:赏  
-same item as: w:觀賞  
+**w:平静** (word, script S, rank 4489, HSK 4)  
+ping2 jing4 — tranquil; undisturbed; serene  
+needs: h:平, h:静  
+same item as: w:平靜  
 
-**g:zhengzai** (pattern, HSK 2)  
- — Stresses that the action is under way right now.  
-needs: w:正在  
+**g:zai-xia** (pattern, HSK 4)  
+ — Under certain conditions or help.  
+needs: w:下, w:在  
 
-**s:762004** (sentence, script T)  
-我喜歡你。 — I like you.  
-needs: w:你, w:喜欢, w:我  
+**s:469410** (sentence, script S)  
+你想成为什么？ — What do you want to be?  
+needs: g:shenme, g:xiang-want, w:什么, w:你, w:想, w:成为  
 
-**s:8933583** (sentence, script S)  
-恶劣的天气对他的健康带来了影响。 — The bad weather affected his health.  
-needs: g:dui-toward, w:了, w:他, w:健康, w:天气, w:对, w:带来, w:影响, w:恶劣, w:的  
+**s:8905162** (sentence, script S)  
+汤姆今晚不在这里。 — Tom isn't here tonight.  
+needs: g:zai-location, w:不, w:今晚, w:在, w:汤姆, w:这里  
 

@@ -1,5 +1,5 @@
 // Caches the app so it works offline after one visit. Bump VERSION when the data changes.
-const VERSION = "jiesuo-v2";
+const VERSION = "jiesuo-v3";
 const FILES = ["./", "index.html", "style.css", "core.js", "app.js", "data/dict.json", "data/parts.json", "data/grammar.json", "data/order.json", "data/hsk.json", "data/sentences.json",
   "manifest.webmanifest", "icons/favicon-32.png", "icons/apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png",
   "licences/"];
