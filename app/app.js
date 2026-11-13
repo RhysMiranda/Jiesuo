@@ -477,6 +477,7 @@
           <section class="stack">
             <div class="row">
               <button type="button" class="btn ${known ? "quiet" : "primary"}" id="toggle-known">${known ? "Mark as not known" : "I know this"}</button>
+              <span id="review-slot">${reviewButton(i)}</span>
             </div>
             ${missing.length && !known ? `<p class="small soft">Marking this also marks ${missing.length} ${missing.length === 1 ? "item" : "items"} it needs.</p>` : ""}
             ${(it.hk || it.others.length) && known ? `<label class="check"><input type="checkbox" id="trad-too" ${state.tradSeen.has(i) ? "checked" : ""}> I can read the other script's form too</label>` : ""}
@@ -494,6 +495,7 @@
         </div>
       </div>`;
     document.getElementById("toggle-known").onclick = () => { known ? markUnknown(i) : markKnown(i); renderItem(i); };
+    document.getElementById("review-slot").onclick = () => { toggleReview(i); document.getElementById("review-slot").innerHTML = reviewButton(i); };
     const t = document.getElementById("trad-too");
     if (t) t.onchange = () => { t.checked ? state.tradSeen.add(i) : state.tradSeen.delete(i); save(); };
     drawExample(i, it);
@@ -567,6 +569,73 @@
     } catch (e) {
       box.innerHTML = `<h2>Examples</h2><p class="soft small">Example sentences did not load. Reload to try again.</p>`;
     }
+  }
+
+  // ---- Search, Pleco-style, and "add to my reviews"
+  const SEARCH_KEY = "jiesuo-search-v1";
+  let lastQuery = store.get(SEARCH_KEY) || "";
+  const inReview = (i) => state.review.has(i);
+  /** Add to (or take out of) the review schedule. Added items are due today, so they come up next lesson. */
+  function toggleReview(i) {
+    if (inReview(i)) {
+      state.review.delete(i);
+      showPlain(`Took ${disp(i)} out of your reviews.`);
+    } else {
+      state.review.set(i, [1, JiesuoJourney.dayKey()]);
+      showPlain(`Added ${disp(i)}. It comes up in your next lesson.`);
+    }
+    save();
+  }
+  const reviewButton = (i, cls = "") => `<button type="button" class="btn ${cls} review-btn" data-review="${i}" aria-pressed="${inReview(i)}">${inReview(i) ? "✓ In your reviews" : "+ Add to my reviews"}</button>`;
+
+  function renderSearch() {
+    view.innerHTML = `
+      <section class="stack search-head">
+        <h1 class="sr-only">Search</h1>
+        <input id="q" type="search" lang="zh" placeholder="好, hao3, nihao or good" aria-label="Search by characters, pinyin or English"
+          autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" value="${esc(lastQuery)}">
+      </section>
+      <section id="results" class="stack" aria-live="polite"></section>`;
+    const input = document.getElementById("q");
+    let timer;
+    input.oninput = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { lastQuery = input.value; store.set(SEARCH_KEY, lastQuery); drawResults(); }, 80);
+    };
+    view.querySelector("#results").onclick = (e) => {
+      const b = e.target.closest("[data-review]");
+      if (!b) return;
+      toggleReview(+b.dataset.review);
+      b.outerHTML = reviewButton(+b.dataset.review, "small-btn");
+    };
+    drawResults();
+    input.focus({ preventScroll: true });
+    if (lastQuery) input.select();
+  }
+
+  function drawResults() {
+    const box = document.getElementById("results");
+    const q = lastQuery.trim();
+    if (!q) {
+      const reviewing = [...state.review.keys()].filter((i) => i < core.n);
+      box.innerHTML = `
+        <p class="soft">Type characters, pinyin with or without tones (<span class="zh">nihao</span>, <span class="zh">ni3hao</span>, <span class="zh">nǐ hǎo</span>), or English. Tap <strong>+ Add to my reviews</strong> on anything you want to practise; it comes up in your next lesson.</p>
+        ${reviewing.length ? `<h2>In your reviews (${fmt(reviewing.length)})</h2><div class="chips">${reviewing.slice(0, 60).map((i) => chip(i, state.known.has(i) ? "" : "need")).join("")}</div>` : ""}`;
+      return;
+    }
+    const hits = core.search(q, 60);
+    if (!hits.length) { box.innerHTML = `<p class="soft">Nothing found for “${esc(q)}”. Try pinyin without tones, or a single English word.</p>`; return; }
+    box.innerHTML = hits.map((i) => {
+      const it = core.get(i);
+      const other = state.script === "t" ? (it.hk ? it.form : "") : it.hk;
+      return `<article class="result">
+        <a class="result-main" href="#i${i}">
+          <span class="zh result-form ${state.known.has(i) ? "tok-known" : ""}">${esc(disp(i))}</span>${other ? `<span class="zh soft small">${esc(other)}</span>` : ""}
+          <span class="result-text"><span class="pinyin">${esc(pinyinOf(it))}</span> <span class="soft small">${KIND[it.kind]}${state.known.has(i) ? " · known" : ""}</span><br><span>${esc(glossOf(it))}</span></span>
+        </a>
+        ${reviewButton(i, "small-btn")}
+      </article>`;
+    }).join("");
   }
 
   // ---- Progress and credits
@@ -676,17 +745,23 @@
   function route() {
     const h = (location.hash || "#" + HOME).slice(1);
     const m = /^i(\d+)$/.exec(h);
-    const tab = m ? null : ["today", "lesson", "next", "read", "map", "more"].includes(h) ? h : HOME;
+    const tab = m ? null : ["today", "lesson", "search", "next", "read", "map", "more"].includes(h) ? h : HOME;
     const lit = tab === "lesson" ? "today" : tab;
-    document.querySelectorAll(".tabs a").forEach((a) => a.dataset.tab === lit ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+    document.querySelectorAll(".tabs a, .search-btn").forEach((a) => a.dataset.tab === lit ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
     document.documentElement.lang = state.script === "t" ? "zh-HK" : "zh-Hans";
     document.getElementById("script-s").setAttribute("aria-pressed", state.script === "s");
     document.getElementById("script-t").setAttribute("aria-pressed", state.script === "t");
     view.classList.toggle("wide", !!m);
     if (tab !== "lesson") document.body.classList.remove("in-lesson");
     if (m) renderItem(+m[1]);
-    else ({ today: today.renderToday, lesson: today.renderLesson, next: renderNext, read: renderRead, map: renderMap, more: renderMore })[tab]();
+    else ({ today: today.renderToday, lesson: today.renderLesson, search: renderSearch, next: renderNext, read: renderRead, map: renderMap, more: renderMore })[tab]();
   }
+  // "/" opens search from anywhere on desktop, as in many dictionaries.
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+    e.preventDefault();
+    if (location.hash === "#search") document.getElementById("q").focus(); else location.hash = "search";
+  });
   function setScript(s) { state.script = s; save(); route(); }
   document.getElementById("script-s").onclick = () => setScript("s");
   document.getElementById("script-t").onclick = () => setScript("t");

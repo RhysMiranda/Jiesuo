@@ -73,6 +73,13 @@ button, textarea, input { font: inherit; color: inherit; }
   .tabs .zh { font-size: 1.3rem; line-height: 1.2; }
 }
 @media (min-width: 641px) { body { padding-bottom: 40px; } }
+/* Between phone and desktop, five tabs plus search fit only without the glyphs. */
+@media (min-width: 641px) and (max-width: 900px) {
+  .top { gap: 10px; }
+  .tabs { gap: 0; }
+  .tabs a { padding: 6px 8px; }
+  .tabs a .zh { display: none; }
+}
 
 main {
   display: grid; gap: 28px; max-width: 760px; margin-inline: auto; outline: none;
@@ -241,6 +248,29 @@ canvas.field { display: block; width: 100%; cursor: pointer; touch-action: manip
 }
 .toast button { background: none; border: 0; color: inherit; text-decoration: underline; cursor: pointer; min-height: 32px; font-weight: 700; }
 @media (min-width: 641px) { .toast { bottom: 24px; } }
+/* Search: one box, results as you type */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.search-btn { display: inline-grid; place-items: center; flex: none; width: 44px; height: 44px; color: var(--soft); border: 1px solid transparent; }
+.search-btn:hover, .search-btn[aria-current="page"] { color: var(--pen); border-color: var(--grid); background: var(--sheet); }
+@media (max-width: 640px) { .search-btn { margin-left: auto; } }
+#q {
+  width: 100%; min-height: 52px; padding: 10px 14px; font: 400 1.25rem/1.3 var(--ui); background: var(--sheet);
+  border: 1.5px solid var(--pen); color: var(--ink);
+}
+#q::placeholder { color: var(--soft); }
+.result { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding-block: 8px; border-bottom: 1px solid var(--grid-faint); }
+.result-main { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 10px; align-items: baseline; text-decoration: none; color: var(--ink); min-width: 0; }
+.result-form { font-size: 1.7rem; line-height: 1.1; }
+.result-text { grid-column: 3; min-width: 0; overflow-wrap: anywhere; }
+.result-main > .small { align-self: center; }
+.btn.small-btn { min-height: 40px; padding: 6px 10px; font-size: .92rem; white-space: nowrap; }
+.review-btn[aria-pressed="true"] { border-color: var(--pen); background: var(--pen-wash); color: var(--pen); }
+@media (max-width: 420px) {
+  .result-main { grid-template-columns: auto minmax(0, 1fr); }
+  .result-main > .small { display: none; }
+  .result-text { grid-column: 2; }
+}
+
 /* Today: lead with what's next. The glowing square is the one bright thing on the screen. */
 .today-hero { display: grid; gap: 8px; }
 .today-hero h1 { font-size: 1.8rem; }

@@ -40,6 +40,10 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
   No streaks to lose: missed days are never mentioned.
 - **Write it:** on every character page, watch the stroke order, trace it, or write from memory.
   Strokes you already know from a part are drawn in blue. Mistakes get a hint, never a penalty.
+- **Search** (magnifier, or press `/`): one box for characters in either script, pinyin with or
+  without tones (`nihao`, `ni3hao`, `nǐ hǎo`, `lv4`), or English. **+ Add to my reviews** on a result
+  or any word page puts it into your next lesson's reviews, like adding a flashcard; once today's lesson
+  is done, Today offers a quick review round for them.
 - **Next:** the next 10 things to learn and why each matters. Choose fastest reading or HSK focus.
 - **Read:** paste Chinese text to see what you can read, and the smallest set of things to learn for the rest.
 - **Map:** what you know, what is one step away, and the whole language as a grid.

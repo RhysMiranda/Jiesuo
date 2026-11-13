@@ -183,6 +183,56 @@
       return { text: it.hk || it.form, alternatives: it.hk ? it.others.filter((f) => f !== it.hk) : [] };
     }
 
+    // ---- Search, Pleco-style: characters (either script), pinyin with or without tones, or English.
+    let searchIndex = null;
+    function buildSearchIndex() {
+      return items.map((it) => {
+        const rec = (data.parts.parts || {})[it.form] || {};
+        const readings = (it.pinyin || rec.y || "").split(",").map((r) => syllables(r)).filter((s) => s.length);
+        // Parts also carry Make Me a Hanzi's short meaning ("hand" for 扌).
+        const gloss = [it.gloss, it.kind === "p" ? rec.d : ""].filter(Boolean).join("; ").toLowerCase();
+        const senses = gloss.split(";").map((s) => s.replace(/\([^)]*\)/g, "").replace(/^\s*to /, "").trim());
+        return { forms: [it.form, it.hk, ...it.others].filter(Boolean), readings, gloss, senses };
+      });
+    }
+
+    /** search("nihao") -> unit ids, best first. Grammar patterns are not included. */
+    function search(query, limit = 50) {
+      const q = String(query || "").trim();
+      if (!q) return [];
+      if (!searchIndex) searchIndex = buildSearchIndex();
+      const scores = new Map();
+      const add = (i, s) => { if (!scores.has(i) || s < scores.get(i)) scores.set(i, s); };
+      const han = Array.from(q).filter((c) => HAN.test(c)).join("");
+      if (han) {
+        searchIndex.forEach((x, i) => {
+          for (const f of x.forms) {
+            if (f === han) add(i, 0);
+            else if (f.startsWith(han)) add(i, 1);
+            else if (f.includes(han)) add(i, 2);
+          }
+        });
+      } else {
+        const pq = parsePinyinQuery(q);
+        if (pq) searchIndex.forEach((x, i) => {
+          for (const r of x.readings) {
+            const m = matchPinyin(pq, r);
+            if (m) add(i, m === "exact" ? 0.5 : 1.5);
+          }
+        });
+        const eq = q.toLowerCase().replace(/\s+/g, " ");
+        if (/^[a-z][a-z '-]*$/.test(eq)) {
+          const word = new RegExp(`(^|[^a-z])${eq.replace(/[-']/g, "\\$&")}([^a-z]|$)`);
+          searchIndex.forEach((x, i) => {
+            if (x.senses.includes(eq)) add(i, 1);
+            else if (word.test(x.gloss)) add(i, 3);
+          });
+        }
+      }
+      return [...scores].sort((a, b) => a[1] - b[1] || items[b[0]].freq - items[a[0]].freq || items[a[0]].form.length - items[b[0]].form.length)
+        .slice(0, limit).map(([i]) => i);
+    }
+
     /** Share of everyday text covered by known units, estimated from word frequencies. */
     function estimatedCoverage(known) {
       let s = 0;
@@ -190,7 +240,53 @@
       return totalFreq ? s / totalFreq : 0;
     }
 
-    return { items, patterns, get, n, prereq, softParts, children, closure, next, frontier, tokenise, segmentRun, analyse, spotPatterns, estimatedCoverage, shownForm, lookup, glyphUnit, wordUnit };
+    return { items, patterns, get, n, prereq, softParts, children, closure, next, frontier, tokenise, segmentRun, analyse, spotPatterns, estimatedCoverage, shownForm, search, lookup, glyphUnit, wordUnit };
+  }
+
+  // ---- Pinyin for search. Tones: 1-4, and 5 for neutral. ü is written v.
+  const TONE_MARK = { "\u0304": 1, "\u0301": 2, "\u030c": 3, "\u0300": 4 };
+  /** "nǐ hǎo" -> [["ni", 3], ["hao", 3]]. */
+  function syllables(reading) {
+    const out = [];
+    for (const syl of reading.toLowerCase().normalize("NFD").split(/[\s·'-]+/)) {
+      let s = "", tone = 5;
+      for (const ch of syl) {
+        if (TONE_MARK[ch]) tone = TONE_MARK[ch];
+        else if (ch === "\u0308") s = s.replace(/u$/, "v");
+        else if (ch >= "a" && ch <= "z") s += ch;
+      }
+      if (s) out.push([s, tone]);
+    }
+    return out;
+  }
+  /**
+   * What someone typed, as letters plus tone constraints: a digit says the syllable ends there with
+   * that tone ("ni3hao"), a tone mark says the syllable holding that letter has that tone ("nǐhao").
+   * Returns null when the text cannot be pinyin.
+   */
+  function parsePinyinQuery(text) {
+    const s = text.toLowerCase().replace(/u:/g, "v").normalize("NFD");
+    let letters = "";
+    const ends = [], marks = [];
+    for (const ch of s) {
+      if (ch >= "a" && ch <= "z") letters += ch;
+      else if (ch === "\u0308") letters = letters.replace(/u$/, "v");
+      else if (TONE_MARK[ch]) { if (letters) marks.push([letters.length - 1, TONE_MARK[ch]]); }
+      else if (ch >= "1" && ch <= "5") { if (letters) ends.push([letters.length, +ch]); }
+      else if (!/[\s'·-]/.test(ch)) return null;
+    }
+    return letters ? { letters, ends, marks } : null;
+  }
+  /** "exact", "prefix" or null. */
+  function matchPinyin(q, syls) {
+    const plain = syls.map((x) => x[0]).join("");
+    if (!plain.startsWith(q.letters)) return null;
+    const toneAt = [], endTone = new Map();
+    let pos = 0;
+    for (const [s, t] of syls) { for (let k = 0; k < s.length; k++) toneAt.push(t); pos += s.length; endTone.set(pos, t); }
+    if (!q.ends.every(([p, t]) => endTone.get(p) === t)) return null;
+    if (!q.marks.every(([p, t]) => toneAt[p] === t)) return null;
+    return plain.length === q.letters.length ? "exact" : "prefix";
   }
 
   function compileLiteral(spec) {

@@ -235,3 +235,47 @@ test("a version 1 progress file still imports, with empty journey state", () => 
   assert.deepStrictEqual(back.stats, { written: 0, unlocked: 0 });
   assert.strictEqual(back.lesson, null);
 });
+
+// ---- Search, Pleco-style: characters, pinyin with or without tones, or English
+const top = (q, k = 5) => core.search(q, 50).slice(0, k).map((i) => core.get(i).form);
+
+test("search by characters: exact first, then words containing it", () => {
+  assert.strictEqual(top("好")[0], "好");
+  assert.ok(core.search("好", 50).map((i) => core.get(i).form).includes("你好"));
+  assert.strictEqual(top("學生")[0], "学生");
+});
+
+test("search by pinyin: plain, numbered, tone marks and spaces all work", () => {
+  for (const q of ["nihao", "ni3hao3", "ni3hao", "nǐ hǎo", "NI HAO"]) assert.strictEqual(top(q)[0], "你好", q);
+  assert.strictEqual(top("zhongguo")[0], "中国");
+});
+
+test("pinyin tone numbers narrow the match, and any reading counts", () => {
+  const hao3 = core.search("hao3", 50).map((i) => core.get(i).form);
+  assert.ok(hao3.includes("好"));
+  assert.ok(!hao3.includes("号"));
+  assert.ok(core.search("hao4", 50).map((i) => core.get(i).form).includes("好"));
+});
+
+test("ü can be typed as v or u:", () => {
+  assert.ok(core.search("lv4", 50).map((i) => core.get(i).form).includes("绿"));
+  assert.ok(core.search("nu:3", 50).map((i) => core.get(i).form).includes("女"));
+});
+
+test("search by English matches whole words, best senses first", () => {
+  assert.ok(top("student").includes("学生"));
+  assert.ok(top("hello").includes("你好"));
+  assert.ok(!core.search("he", 50).map((i) => core.get(i).form).includes("你好"));
+  assert.ok(core.search("hand", 50).map((i) => core.get(i).form).includes("扌"));
+});
+
+test("empty or symbol-only search returns nothing, and grammar is left out", () => {
+  assert.deepStrictEqual(core.search(""), []);
+  assert.deepStrictEqual(core.search("   "), []);
+  assert.deepStrictEqual(core.search("!?"), []);
+  assert.ok(core.search("le", 50).every((i) => i < core.n));
+});
+
+test("a lesson with no new items asked for picks none", () => {
+  assert.deepStrictEqual(J.pickNew(core, order.unlock, new Set(), 0), []);
+});

@@ -31,7 +31,7 @@
   }
 
   /** The next new items for a lesson: parts, characters and words in the learner's order, no grammar. */
-  const pickNew = (core, order, known, k = 3) => core.next(order, known, k, 0);
+  const pickNew = (core, order, known, k = 3) => (k > 0 ? core.next(order, known, k, 0) : []);
 
   const HAN = /[㐀-䶿一-鿿\u{20000}-\u{3ffff}]/u;
   /**

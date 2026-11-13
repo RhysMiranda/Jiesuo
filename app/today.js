@@ -51,9 +51,9 @@
     }
 
     // ---- Lesson state
-    function newLesson(k = 3, withReviews = true) {
+    function newLesson(k = 3, withReviews = true, maxReviews = 5) {
       const items = J.pickNew(core, ctx.currentOrder(), state.known, k);
-      const reviews = withReviews ? J.dueReviews(state.review, today(), 5).filter((u) => !items.includes(u)) : [];
+      const reviews = withReviews ? J.dueReviews(state.review, today(), maxReviews).filter((u) => !items.includes(u)) : [];
       state.lesson = { day: today(), items, reviews, added: [], step: 0, before: { coverage: core.estimatedCoverage(state.known) } };
       save();
     }
@@ -112,12 +112,16 @@
           </div>
         </section>`;
 
+      // Words added from search (or due again) can be reviewed straight away once today's lesson is done.
+      const reviewNow = !l || l.finished ? J.dueReviews(state.review, t, 10).length : 0;
+      const reviewBtn = (primary) => reviewNow ? `<button type="button" class="btn ${primary ? "primary" : ""} big" data-review-only>Review ${reviewNow} ${reviewNow === 1 ? "word" : "words"}</button>` : "";
       let action;
-      if (l && l.finished) action = finishSummary(l) + `<div class="row"><button type="button" class="btn primary big" data-one-more>Learn one more</button></div>`;
+      if (l && l.finished) action = finishSummary(l) + `<div class="row">${reviewBtn(true)}<button type="button" class="btn ${reviewNow ? "" : "primary"} big" data-one-more>Learn one more</button></div>`;
       else if (first === undefined && !due) action = `<p>You've learned everything in this learning order. Paste real Chinese into Read to keep going.</p>`;
+      else if (doneToday && !l) action = `<div class="row">${reviewBtn(true)}<button type="button" class="btn ${reviewNow ? "" : "primary"} big" data-one-more>Learn one more</button></div>`;
       else {
         const what = [items.length ? `${items.length} new ${items.length === 1 ? "thing" : "things"}` : "", due ? `${due} to review` : "", `about ${mins} minutes`].filter(Boolean).join(" · ");
-        action = `<p class="soft">${what}</p><div class="row"><button type="button" class="btn primary big" data-start>${l ? `Continue (${l.step + 1} of ${steps(l).length})` : doneToday ? "Learn more" : "Start today's lesson"}</button></div>`;
+        action = `<p class="soft">${what}</p><div class="row"><button type="button" class="btn primary big" data-start>${l ? `Continue (${l.step + 1} of ${steps(l).length})` : "Start today's lesson"}</button></div>`;
       }
 
       view.innerHTML = `
@@ -130,9 +134,11 @@
         <section class="stack">${action}</section>
         <section class="stack"><h2>Your journey</h2>${journeyPath()}</section>`;
       const start = view.querySelector("[data-start]");
-      if (start) start.onclick = () => { if (!state.lesson) newLesson(doneToday ? 1 : 3, !doneToday); location.hash = "lesson"; };
+      if (start) start.onclick = () => { if (!state.lesson) newLesson(3, true); location.hash = "lesson"; };
       const more = view.querySelector("[data-one-more]");
       if (more) more.onclick = () => { newLesson(1, false); location.hash = "lesson"; };
+      const rev = view.querySelector("[data-review-only]");
+      if (rev) rev.onclick = () => { newLesson(0, true, 10); location.hash = "lesson"; };
       prefetchStrokes();
     }
 
@@ -255,6 +261,8 @@
       if (!document.body.contains(box)) return;
       const finish = (correct, answerHtml) => {
         state.review.set(u, J.schedule(state.review.get(u), correct, today()));
+        state.lesson.reviewed = (state.lesson.reviewed || 0) + 1;
+        if (correct) state.lesson.remembered = (state.lesson.remembered || 0) + 1;
         if (correct && canWrite) state.stats.written++;
         save();
         box.querySelector("[data-result]").innerHTML = answerHtml;
@@ -327,6 +335,7 @@
           learned: l.items.map((u) => disp(u)), unlock: unlock ? unlock[0] : null, opened,
           gain: Math.max(0, core.estimatedCoverage(after) - l.before.coverage), coverage: core.estimatedCoverage(after),
           milestones: fresh.map((m) => m.label),
+          reviewed: l.reviewed || 0, remembered: l.remembered || 0,
         };
         save();
       }
@@ -336,8 +345,9 @@
       const next = J.pickNew(core, ctx.currentOrder(), state.known, 1)[0];
       box.innerHTML = `
         <section class="finish">
-          <p class="soft">Lesson complete</p>
-          <h1>${unlockRow ? "You can read this now." : "Look what you unlocked."}</h1>
+          <p class="soft">${r.learned.length ? "Lesson complete" : "Reviews complete"}</p>
+          <h1>${unlockRow ? "You can read this now." : r.learned.length ? "Look what you unlocked." : r.remembered ? "Your memory is getting stronger." : "Every review makes it stick."}</h1>
+          ${r.reviewed ? `<p class="big-number"><strong>${fmt(r.remembered)}</strong> of ${fmt(r.reviewed)} remembered${r.remembered < r.reviewed ? ". The others come back soon, so they stick" : ""}.</p>` : ""}
           ${unlockRow ? `<div class="unlocked">${inkSentence(unlockRow)}</div>` : r.opened ? `<p class="big-number"><strong>${fmt(r.opened)}</strong> new ${r.opened === 1 ? "word is" : "words are"} now one step away.</p>` : ""}
           <p class="gain">You can now read about <strong>${(r.coverage * 100).toFixed(1)}%</strong> of everyday Chinese${r.gain >= 0.0005 ? ` <span class="up">+${(r.gain * 100).toFixed(1)}% today</span>` : ""}.</p>
           ${r.learned.length ? `<p>Learned today: ${r.learned.map((f) => `<span class="zh tok-known big-inline">${esc(f)}</span>`).join(" ")}</p>` : ""}
