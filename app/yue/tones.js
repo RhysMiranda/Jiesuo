@@ -8,10 +8,10 @@
 })(typeof self !== "undefined" ? self : this, function (Tone, Jyut) {
   "use strict";
 
-  // Placeholders until Task 5 tunes them on recorded voices.
+  // Tuned by scripts/yue_tone_eval.js on the tuning voices only (see reports/yue_tone_check.md).
   // shift: largest global pitch shift tried (semitones); step: its increment;
   // unsure: smallest margin (semitones) between best and second-best tone that counts as a decision.
-  const DEFAULTS = { shift: 1.5, step: 0.25, unsure: 0.35 };
+  const DEFAULTS = { shift: 0.5, step: 0.25, unsure: 0.15 };
   const ANCHORS = ["si1", "si3", "si6", "si4", "si2", "si5"];
   const MIN_FRAMES = 8, MIN_VOICED_SHARE = 0.05;
 
