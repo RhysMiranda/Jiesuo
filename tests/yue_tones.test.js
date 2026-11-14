@@ -109,13 +109,13 @@ test("a speaker drifting 1 semitone sharp is still classified", () => {
   try {
     // 3 and 6 are 2 st apart here, so a 1 st drift sits exactly between them: it must never be a
     // confident wrong answer (right, or "not sure"). Contoured tones and tone 1 stay exact.
-    for (const t of [1, 2, 4, 5]) assert.strictEqual(Y.classify(segs(syllable(voice[t]), 1)[0], p).tone, t, `tone ${t}`);
+    for (const t of [1, 2, 4, 5]) assert.strictEqual(Y.classify(segs(syllable(voice[t]), 1)[0], p, wide).tone, t, `tone ${t}`);
     for (const t of [3, 6]) {
-      const c = Y.classify(segs(syllable(voice[t]), 1)[0], p);
+      const c = Y.classify(segs(syllable(voice[t]), 1)[0], p, wide);
       assert.ok(c.tone === t || c.unsure, `tone ${t} heard as ${c.tone}`);
     }
     drift = 0.5;
-    for (const t of [1, 2, 3, 4, 5, 6]) assert.strictEqual(Y.classify(segs(syllable(voice[t]), 1)[0], p).tone, t, `tone ${t} at +0.5`);
+    for (const t of [1, 2, 3, 4, 5, 6]) assert.strictEqual(Y.classify(segs(syllable(voice[t]), 1)[0], p, wide).tone, t, `tone ${t} at +0.5`);
   } finally { drift = 0; }
 });
 
