@@ -199,6 +199,12 @@ function main() {
   md.push(`| largest single confusion | ${maxConf[0]} -> ${maxConf[1]}, ${pct(maxConf[2])} | <= 10% | ${maxConf[2] <= 0.1 ? "yes" : "NO"} |`);
   md.push(`| "not sure" rate | ${pct(held.unsureRate)} | <= 20% | ${held.unsureRate <= 0.2 ? "yes" : "NO"} |`, "");
   md.push(`Held-out items: ${held.n} clips from ${heldOk.join(", ")} (${held.decided} decided). This includes the ${anchorN} calibration clips (the 42 clips of the seven calibration sets per voice), which the profiles were built from.`, "");
+  const gd = profs.googleD ? profs.googleD.spread : null;
+  md.push("## How far to trust these numbers", "");
+  md.push(`- Held-out is ${heldOk.join(" and ")}: one engine, not a spread of vendors. ${HELD.length - heldOk.length} of the ${HELD.length} planned held-out voices (${Object.keys(excluded).filter((v) => HELD.includes(v)).join(", ")}) could not be calibrated.${gd ? ` googleD's calibration is unstable: its per-set spreads are t1 ${gd.t1.toFixed(1)}, t3 ${gd.t3.toFixed(1)}, t6 ${gd.t6.toFixed(1)}, t2 end ${gd.t2hi.toFixed(1)} st (probably pitch octave errors), so the held-out accuracy is low-confidence.` : ""}`);
+  md.push("- Parameters were chosen on the tuning voices only. But the calibration method was changed (single si clips, then the ji series with medians over seven sets) after calibration failures on held-out voices were seen, and held-out voices were evaluated in more than one round. Nothing was fitted to held-out accuracy, but this is not a single untouched test.");
+  md.push("- The excluded-clips list is disputed clips as judged by this same classifier, with other voices vouching for the label. It is not confirmed bad audio.");
+  md.push(`- The tuned shift of ${best.shift} st tolerates only about +/- ${best.shift} st of pitch drift. Real speakers who drift will see more \"not sure\".`, "");
   md.push("## Chosen parameters", "");
   md.push(`shift ${params.shift} st, step ${params.step} st, unsure ${params.unsure} st. Chosen by grid search over shift ${JSON.stringify(shifts)} x unsure ${JSON.stringify(GRID_UNSURE)} on the tuning voices only (${tuneOk.join(", ")}), maximising decided-accuracy x (1 - unsure rate). Shift values at or above half the smallest tuning-voice tone 3-6 gap (${minGap.toFixed(2)} st) were not tried, because drift of half the gap makes tones 3 and 6 confusable.`, "");
   md.push("| shift | unsure | accuracy | not sure | objective |", "|---|---|---|---|---|");

@@ -14,6 +14,13 @@ Rule: a check needs, on held-out voices, accuracy on decided items >= 90%, no si
 
 Held-out items: 7304 clips from googleC, googleD (6420 decided). This includes the 84 calibration clips (the 42 clips of the seven calibration sets per voice), which the profiles were built from.
 
+## How far to trust these numbers
+
+- Held-out is googleC and googleD: one engine, not a spread of vendors. 2 of the 4 planned held-out voices (microsoftHiuMaan, microsoftWanLung) could not be calibrated. googleD's calibration is unstable: its per-set spreads are t1 12.5, t3 13.0, t6 18.8, t2 end 22.5 st (probably pitch octave errors), so the held-out accuracy is low-confidence.
+- Parameters were chosen on the tuning voices only. But the calibration method was changed (single si clips, then the ji series with medians over seven sets) after calibration failures on held-out voices were seen, and held-out voices were evaluated in more than one round. Nothing was fitted to held-out accuracy, but this is not a single untouched test.
+- The excluded-clips list is disputed clips as judged by this same classifier, with other voices vouching for the label. It is not confirmed bad audio.
+- The tuned shift of 0.25 st tolerates only about +/- 0.25 st of pitch drift. Real speakers who drift will see more "not sure".
+
 ## Chosen parameters
 
 shift 0.25 st, step 0.25 st, unsure 0.1 st. Chosen by grid search over shift [0.25,0.5] x unsure [0.1,0.15,0.25,0.35,0.5] on the tuning voices only (googleA, googleB, amazonHiuJin), maximising decided-accuracy x (1 - unsure rate). Shift values at or above half the smallest tuning-voice tone 3-6 gap (1.35 st) were not tried, because drift of half the gap makes tones 3 and 6 confusable.
