@@ -171,8 +171,13 @@ def main():
     w = wordshk_entry()
     if w:
         manifest["wordshk"] = w
-    MANIFEST.parent.mkdir(parents=True, exist_ok=True)
-    MANIFEST.write_text(json.dumps(manifest, indent=1) + "\n")
+    update = "--update" in sys.argv
+    bad = merge_manifest(MANIFEST, manifest, update=update)
+    if bad and not update:
+        print(f"MISMATCH against {MANIFEST.name}: {bad}. Manifest not written; rerun with --update to accept.", file=sys.stderr)
+        sys.exit(1)
+    if bad:
+        print(f"updated: {bad}")
 
 
 if __name__ == "__main__":

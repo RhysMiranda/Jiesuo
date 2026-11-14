@@ -66,3 +66,37 @@ def test_merge_manifest_detects_mismatch(tmp_path):
     assert mod.merge_manifest(m, fresh, update=True) == ["a"]
     assert json.loads(m.read_text())["a"]["sha256"] == "new"
     assert "b" in json.loads(m.read_text())
+
+
+def _rerun_setup(mod, tmp_path, monkeypatch, argv):
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    for name in mod.SOURCES:
+        (raw / name).write_bytes(b"data " + name.encode())
+    (raw / "cantone" / "v").mkdir(parents=True)
+    (raw / "cantone" / "v" / "a.wav").write_bytes(b"w")
+    monkeypatch.setattr(mod, "RAW", raw)
+    monkeypatch.setattr(mod, "WORDSHK", tmp_path / "none")
+    monkeypatch.setattr(mod, "MANIFEST", tmp_path / "m" / "manifest.json")
+    monkeypatch.setattr(mod, "cantone_paths", lambda: ["v/a.wav"])
+    monkeypatch.setattr(mod, "get", lambda *a, **k: (_ for _ in ()).throw(AssertionError("network")))
+    monkeypatch.setattr(mod.sys, "argv", ["fetch_yue_data.py", *argv])
+    return raw
+
+
+def test_main_rerun_refuses_mismatch_unless_update(tmp_path, monkeypatch):
+    import pytest
+    mod = _load()
+    raw = _rerun_setup(mod, tmp_path, monkeypatch, [])
+    mod.main()  # first run writes the manifest
+    before = mod.MANIFEST.read_text()
+    mod.main()  # unchanged rerun is fine
+    assert mod.MANIFEST.read_text() == before
+    (raw / "rime_chars.dict.yaml").write_bytes(b"tampered")
+    with pytest.raises(SystemExit) as e:
+        mod.main()
+    assert e.value.code == 1
+    assert mod.MANIFEST.read_text() == before
+    monkeypatch.setattr(mod.sys, "argv", ["fetch_yue_data.py", "--update"])
+    mod.main()
+    assert mod.MANIFEST.read_text() != before
