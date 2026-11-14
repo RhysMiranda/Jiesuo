@@ -566,7 +566,7 @@ test("summary never mentions missed days", …)                  // no /miss|str
 **Interfaces:**
 - Consumes: `JyutTones`, `tonecheck.json`, `JyutAudio`.
 - Produces (`JyutSpeak`):
-  - `calibrationPanel(el, {onDone(profile)})`: records `si1, si3, si6, si4, si2, si5` one at a time, each after hearing the model clip. It runs `validProfile`; on `{ok: false, redo}` it asks only for that anchor again and keeps any old profile.
+  - `calibrationPanel(el, {onDone(profile)})`: records the calibration anchors `JyutTones.ANCHORS` (`ji1, ji3, ji6, ji4, ji2, ji5`: 衣 意 二 兒 椅 耳 — ruling R10) one at a time, each after hearing the model clip. It runs `validProfile`; on `{ok: false, redo}` it asks only for that anchor again and keeps any old profile.
   - `sayPanel(el, {expected: [{syl, tone}], profile, mode, onResult})`
   - `verdictText(result, mode) -> string`, pure: `unsure` gives "Not sure, try once more"; `heard: false` gives "Didn't catch that, try again"; in mode `"guide"` the result is worded as a guide ("Sounded like tone 3").
   - `shouldRecord(result) -> boolean`: false when not heard or unsure.
