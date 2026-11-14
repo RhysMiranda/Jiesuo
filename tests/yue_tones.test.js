@@ -137,3 +137,16 @@ test("too few voiced frames is not heard", () => {
   const short = syllable(voice[1], 0.06);
   assert.strictEqual(Y.check(join(short, new Float32Array(SR)), SR, [{ syl: "si1", tone: 1 }], profile()).heard, false);
 });
+
+test("a broken profile or bad Hz frames never give a confident verdict", () => {
+  const good = profile(), seg = segs(syllable(voice[1]), 1)[0];
+  const nan = { ...good, t3: NaN };
+  assert.strictEqual(Y.classify(seg, nan).unsure, true);
+  assert.strictEqual(Y.classify(seg, {}).unsure, true);
+  const dirty = Y.classify([0, -5, ...seg, 0], good);
+  assert.ok(Object.values(dirty.scores).every(Number.isFinite) && dirty.points.every(Number.isFinite));
+  assert.strictEqual(dirty.tone, 1);
+  const r = Y.check(syllable(voice[1]), SR, [{ syl: "si1", tone: 1 }], nan);
+  assert.ok(r.results.every((x) => x.unsure && !x.ok));
+  assert.ok(Y.check(syllable(voice[1]), SR, [{ syl: "si1", tone: 1 }], undefined).results.every((x) => x.unsure && !x.ok));
+});

@@ -16,6 +16,7 @@
   const MIN_FRAMES = 8, MIN_VOICED_SHARE = 0.05;
 
   const semis = (hz) => 12 * Math.log2(hz / 55);
+  const positive = (segHz) => (segHz || []).filter((h) => Number.isFinite(h) && h > 0); // zero or negative Hz is not a pitch
   const median = (a) => {
     if (!a.length) return NaN;
     const s = a.slice().sort((x, y) => x - y), m = s.length >> 1;
@@ -29,6 +30,7 @@
 
   /** The steady height of a syllable: semitones re 55 Hz, median of the middle 60% of frames. */
   function level(segHz) {
+    segHz = positive(segHz);
     const n = segHz.length;
     if (!n) return NaN;
     const a = Math.floor(n * 0.2), b = Math.max(a + 1, Math.ceil(n * 0.8));
@@ -37,6 +39,7 @@
 
   /** The end height of a syllable: median of the last 30% of frames, in semitones re 55 Hz. */
   function tail(segHz) {
+    segHz = positive(segHz);
     const n = segHz.length;
     if (!n) return NaN;
     return median(segHz.slice(Math.min(n - 1, Math.floor(n * 0.7))).map(semis));
@@ -90,13 +93,21 @@
   /** Which tone a syllable sounds like, among `allowed`; `unsure` when the best two are too close. */
   function classify(segHz, profile, { allowed = [1, 2, 3, 4, 5, 6], params = DEFAULTS } = {}) {
     const prm = { ...DEFAULTS, ...params };
-    if (!segHz || segHz.length < MIN_FRAMES) return { tone: 0, unsure: true, margin: 0, scores: {}, points: [] };
+    const none = { tone: 0, unsure: true, margin: 0, scores: {}, points: [] };
+    segHz = positive(segHz);
+    if (segHz.length < MIN_FRAMES) return none;
     const points = Tone.resample(segHz.map(semis), 5);
+    if (points.length < 5 || !points.every(Number.isFinite)) return none;
     const scores = {};
-    for (const t of allowed) scores[t] = score(points, template(t, profile), prm);
+    for (const t of allowed) {
+      const tpl = template(t, profile);
+      if (!tpl.every(Number.isFinite)) return none; // a broken profile never gives a verdict
+      scores[t] = score(points, tpl, prm);
+    }
+    if (!allowed.every((t) => Number.isFinite(scores[t]))) return none;
     const order = allowed.slice().sort((a, b) => scores[a] - scores[b]);
     const margin = order.length > 1 ? scores[order[1]] - scores[order[0]] : Infinity;
-    return { tone: order[0], unsure: margin < prm.unsure, margin, scores, points };
+    return { tone: order[0], unsure: !(margin >= prm.unsure), margin, scores, points };
   }
 
   function isChecked(syl) { try { return Jyut.isChecked(syl); } catch (e) { return false; } }
@@ -112,6 +123,10 @@
     const segs = segmentsHz(track, expected.length);
     if (voiced < MIN_VOICED_SHARE || segs.length < expected.length || segs.some((s) => s.length < MIN_FRAMES)) {
       return { heard: false, results: [] };
+    }
+    if (!validProfile(profile).ok) {
+      // heard, but with no usable calibration nothing can be decided: every syllable is "not sure"
+      return { heard: true, results: expected.map(({ syl, tone: want }) => ({ syl, want, got: 0, ok: false, unsure: true, points: [] })) };
     }
     const results = expected.map(({ syl, tone: want }, k) => {
       const allowed = isChecked(syl) ? [1, 3, 6] : [1, 2, 3, 4, 5, 6];
