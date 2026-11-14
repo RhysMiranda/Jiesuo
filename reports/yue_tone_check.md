@@ -16,8 +16,9 @@ Held-out items: 7304 clips from googleC, googleD (6420 decided). This includes t
 
 ## How far to trust these numbers
 
-- Held-out is googleC and googleD: one engine, not a spread of vendors. 2 of the 4 planned held-out voices (microsoftHiuMaan, microsoftWanLung) could not be calibrated. googleD's calibration is unstable: its per-set spreads are t1 12.5, t3 13.0, t6 18.8, t2 end 22.5 st (probably pitch octave errors), so the held-out accuracy is low-confidence.
+- Held-out is googleC and googleD: one engine, not a spread of vendors. 4 of the 6 planned held-out voices could not be used: microsoftHiuMaan, microsoftWanLung (calibration failed) and appleAasing, appleSinji (no tone-5 recordings, so they cannot be calibrated). googleD's calibration is unstable: its per-set spreads are t1 12.5, t3 13.0, t6 18.8, t2 end 22.5 st (probably pitch octave errors), so the held-out accuracy is low-confidence.
 - Parameters were chosen on the tuning voices only. But the calibration method was changed (single si clips, then the ji series with medians over seven sets) after calibration failures on held-out voices were seen, and held-out voices were evaluated in more than one round. Nothing was fitted to held-out accuracy, but this is not a single untouched test.
+- The exclusion step uses googleC and googleD (held-out) as vouching voices, so held-out audio does shape the shipped exclusion list, as a clip-quality cross-check and not as parameter fitting.
 - The excluded-clips list is disputed clips as judged by this same classifier, with other voices vouching for the label. It is not confirmed bad audio.
 - The tuned shift of 0.25 st tolerates only about +/- 0.25 st of pitch drift. Real speakers who drift will see more "not sure".
 
