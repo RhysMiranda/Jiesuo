@@ -39,7 +39,7 @@ const voice = {
 const segs = (audio, n) => Y.segmentsHz(T.pitchTrack(audio, SR), n);
 function calibrate() {
   const one = (t) => segs(syllable(voice[t]), 1)[0];
-  return Y.profileFrom({ si1: [one(1)][0], si3: one(3), si6: one(6), si4: one(4), si2: one(2), si5: one(5) });
+  return Y.profileFrom({ ji1: one(1), ji3: one(3), ji6: one(6), ji4: one(4), ji2: one(2), ji5: one(5) });
 }
 const profile = () => { const saved = drift; drift = 0; const p = calibrate(); drift = saved; return p; };
 const classifyTone = (t, opts) => Y.classify(segs(syllable(voice[t]), 1)[0], profile(), opts);
@@ -84,10 +84,10 @@ test("check reports each syllable against what was wanted", () => {
 test("profile with levels out of order is rejected", () => {
   const p = profile();
   const bad = { ...p, t3: p.t1 + 1 };
-  assert.deepStrictEqual(Y.validProfile(bad), { ok: false, redo: "si1" });
-  assert.deepStrictEqual(Y.validProfile({ ...p, t6: p.t3 }), { ok: false, redo: "si3" });
-  assert.deepStrictEqual(Y.validProfile({ ...p, t4lo: p.t6 }), { ok: false, redo: "si6" });
-  assert.deepStrictEqual(Y.validProfile({ ...p, t5hi: p.t2hi }), { ok: false, redo: "si2" });
+  assert.deepStrictEqual(Y.validProfile(bad), { ok: false, redo: "ji1" });
+  assert.deepStrictEqual(Y.validProfile({ ...p, t6: p.t3 }), { ok: false, redo: "ji3" });
+  assert.deepStrictEqual(Y.validProfile({ ...p, t4lo: p.t6 }), { ok: false, redo: "ji6" });
+  assert.deepStrictEqual(Y.validProfile({ ...p, t5hi: p.t2hi }), { ok: false, redo: "ji2" });
 });
 
 test("silence is not heard", () => {
@@ -149,4 +149,18 @@ test("a broken profile or bad Hz frames never give a confident verdict", () => {
   const r = Y.check(syllable(voice[1]), SR, [{ syl: "si1", tone: 1 }], nan);
   assert.ok(r.results.every((x) => x.unsure && !x.ok));
   assert.ok(Y.check(syllable(voice[1]), SR, [{ syl: "si1", tone: 1 }], undefined).results.every((x) => x.unsure && !x.ok));
+});
+
+test("ANCHORS is the ji series", () => {
+  assert.deepStrictEqual(Y.ANCHORS, ["ji1", "ji3", "ji6", "ji4", "ji2", "ji5"]);
+});
+
+test("profileFrom with arrays of segments takes the median of each field", () => {
+  const seg = (hz) => Array(12).fill(hz);
+  const one = (hz) => ({ ji1: seg(hz), ji3: seg(hz), ji6: seg(hz), ji4: seg(hz), ji2: seg(hz), ji5: seg(hz) });
+  const a = Y.profileFrom({ ...one(200), ji1: [seg(200), seg(220), seg(400)] });
+  assert.ok(Math.abs(a.t1 - Y.level(seg(220))) < 1e-9, "median of three levels is the middle one");
+  assert.ok(Math.abs(a.t3 - Y.level(seg(200))) < 1e-9, "a single bare segment still works");
+  const b = Y.profileFrom({ ...one(200), ji2: [seg(200), [], seg(300)] });
+  assert.ok(Math.abs(b.t2hi - (Y.tail(seg(200)) + Y.tail(seg(300))) / 2) < 1e-9, "unvoiced segments are skipped");
 });

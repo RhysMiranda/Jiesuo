@@ -17,8 +17,10 @@ const HELD = ["googleC", "googleD", "microsoftHiuMaan", "microsoftWanLung"];
 const NO_SI5 = "no si5 clip (the dataset removed all Apple tone-5 clips), so it cannot be calibrated";
 const EXCLUDED_VOICES = { appleAasing: NO_SI5, appleSinji: NO_SI5 };
 const SHIPPED = ["googleA", "googleB", "microsoftHiuGaai"];
-const ANCHORS = ["si1", "si3", "si6", "si4", "si2", "si5"];
-const GRID_SHIFT = [0.5, 1, 1.5, 2], GRID_UNSURE = [0.15, 0.25, 0.35, 0.5];
+const ANCHORS = Y.ANCHORS; // ji1 ji3 ji6 ji4 ji2 ji5
+const SETS = ["ji", "jau", "jan", "wai", "maa", "ngaa", "lou"]; // voiced six-tone sets used for every profile
+const FIELDS = ["t1", "t3", "t6", "t4lo", "t2hi", "t5hi"];
+const GRID_SHIFT = [0.25, 0.5, 0.75, 1], GRID_UNSURE = [0.1, 0.15, 0.25, 0.35, 0.5];
 const TONES = [1, 2, 3, 4, 5, 6];
 const family = (v) => v.replace(/(A|B|C|D|Aasing|Sinji|HiuGaai|HiuMaan|WanLung|HiuJin)$/, "");
 
@@ -66,12 +68,21 @@ function voiceClips(voice) {
 const toneOf = (syl) => Number(syl.slice(-1));
 const allowedFor = (syl) => (Jyut.isChecked(syl) ? [1, 3, 6] : TONES);
 
+/** One profile per voice: per tone, the segments of the same tone in each of the seven six-tone sets. */
 function profileOf(clips) {
-  if (!ANCHORS.every((a) => clips[a])) return { ok: false, why: "missing anchor clips" };
-  const [si1, si3, si6, si4, si2, si5] = ANCHORS.map((a) => clips[a]);
-  const profile = Y.profileFrom({ si1, si3, si6, si4, si2, si5 });
+  const tones = [1, 3, 6, 4, 2, 5];
+  const miss = tones.flatMap((t) => SETS.map((x) => x + t)).filter((k) => !clips[k]);
+  if (miss.length) return { ok: false, why: "missing anchor clips " + miss.join(" ") };
+  const anchors = {};
+  tones.forEach((t, i) => { anchors[ANCHORS[i]] = SETS.map((x) => clips[x + t]); });
+  const profile = Y.profileFrom(anchors);
+  const per = SETS.map((x, k) => Y.profileFrom(Object.fromEntries(ANCHORS.map((n) => [n, anchors[n][k]]))));
+  const spread = Object.fromEntries(FIELDS.map((f) => {
+    const v = per.map((q) => q[f]).filter(Number.isFinite);
+    return [f, v.length ? Math.max(...v) - Math.min(...v) : NaN];
+  }));
   const v = Y.validProfile(profile);
-  return v.ok ? { ok: true, profile } : { ok: false, why: "profile invalid, redo " + v.redo, profile };
+  return v.ok ? { ok: true, profile, spread } : { ok: false, why: "profile invalid, redo " + v.redo, profile, spread };
 }
 
 /** Classify every clip of a voice with the given params. */
@@ -123,7 +134,7 @@ function main() {
     if (p.ok) profiles[v] = p.profile; else { excluded[v] = p.why; console.log("  EXCLUDED: " + p.why); }
   }
   const profs = {};
-  for (const v of all) { const pr = profileOf(clips[v]); if (pr.profile) profs[v] = pr.profile; }
+  for (const v of all) { const pr = profileOf(clips[v]); if (pr.profile) profs[v] = pr; }
   const gap = (v) => profiles[v].t3 - profiles[v].t6;
   const tuneOk = TUNE.filter((v) => profiles[v]), heldOk = HELD.filter((v) => profiles[v]);
   const minGap = Math.min(...tuneOk.map(gap));
@@ -163,7 +174,7 @@ function main() {
   // Report.
   const fams = {};
   for (const v of heldOk) (fams[family(v)] = fams[family(v)] || []).push(v);
-  const anchorN = heldOk.length * ANCHORS.length;
+  const anchorN = heldOk.length * SETS.length * 6;
   const md = [];
   md.push("# Cantonese tone check: held-out evaluation", "");
   md.push(`**Result: the tone feedback is a ${mode.toUpperCase()}.**`, "");
@@ -173,7 +184,7 @@ function main() {
   md.push(`| accuracy on decided items | ${pct(held.accuracy)} | >= 90% | ${held.accuracy >= 0.9 ? "yes" : "NO"} |`);
   md.push(`| largest single confusion | ${maxConf[0]} -> ${maxConf[1]}, ${pct(maxConf[2])} | <= 10% | ${maxConf[2] <= 0.1 ? "yes" : "NO"} |`);
   md.push(`| "not sure" rate | ${pct(held.unsureRate)} | <= 20% | ${held.unsureRate <= 0.2 ? "yes" : "NO"} |`, "");
-  md.push(`Held-out items: ${held.n} clips from ${heldOk.join(", ")} (${held.decided} decided). This includes the ${anchorN} anchor clips (si1 si3 si6 si4 si2 si5 of each voice), which the profiles were built from.`, "");
+  md.push(`Held-out items: ${held.n} clips from ${heldOk.join(", ")} (${held.decided} decided). This includes the ${anchorN} calibration clips (the 42 clips of the seven calibration sets per voice), which the profiles were built from.`, "");
   md.push("## Chosen parameters", "");
   md.push(`shift ${params.shift} st, step ${params.step} st, unsure ${params.unsure} st. Chosen by grid search over shift ${JSON.stringify(shifts)} x unsure ${JSON.stringify(GRID_UNSURE)} on the tuning voices only (${tuneOk.join(", ")}), maximising decided-accuracy x (1 - unsure rate). Shift values at or above half the smallest tuning-voice tone 3-6 gap (${minGap.toFixed(2)} st) were not tried, because drift of half the gap makes tones 3 and 6 confusable.`, "");
   md.push("| shift | unsure | accuracy | not sure | objective |", "|---|---|---|---|---|");
@@ -186,11 +197,12 @@ function main() {
     const s = summarise(rowsBy[v]);
     md.push(`| ${v} | ${role} | ${gap(v).toFixed(2)} | ${s.n} | ${pct(s.accuracy)} | ${pct(s.unsureRate)} |`);
   }
-  md.push("", "Calibration profiles from each voice's own anchor clips (semitones re 55 Hz; NaN means no voiced frames):", "");
-  md.push("| voice | t1 | t3 | t6 | t4 end | t2 end | t5 end | valid |", "|---|---|---|---|---|---|---|---|");
+  md.push("", "Calibration profiles (semitones re 55 Hz): per field, the median over the seven voiced six-tone sets (ji, jau, jan, wai, maa, ngaa, lou) of the voice's own clips; spread = max minus min of the per-set values:", "");
+  md.push("| voice | t1 | t3 | t6 | t4 end | t2 end | t5 end | 3-6 gap | valid |", "|---|---|---|---|---|---|---|---|---|");
   for (const v of all) {
     const pr = profs[v];
-    if (pr) md.push(`| ${v} | ${[pr.t1, pr.t3, pr.t6, pr.t4lo, pr.t2hi, pr.t5hi].map((x) => x.toFixed(2)).join(" | ")} | ${profiles[v] ? "yes" : "NO: " + excluded[v]} |`);
+    if (pr) md.push(`| ${v} | ${FIELDS.map((f) => pr.profile[f].toFixed(2) + " (spread " + pr.spread[f].toFixed(2) + ")").join(" | ")} | ${(pr.profile.t3 - pr.profile.t6).toFixed(2)} | ${profiles[v] ? "yes" : "NO: " + excluded[v]} |`);
+    else md.push(`| ${v} | - | - | - | - | - | - | - | NO: ${excluded[v]} |`);
   }
   md.push("", "Excluded from tuning and held-out metrics:", "");
   for (const [v, why] of Object.entries(EXCLUDED_VOICES)) md.push(`- ${v}: ${why}.`);

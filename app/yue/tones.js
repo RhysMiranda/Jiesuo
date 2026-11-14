@@ -11,8 +11,9 @@
   // Tuned by scripts/yue_tone_eval.js on the tuning voices only (see reports/yue_tone_check.md).
   // shift: largest global pitch shift tried (semitones); step: its increment;
   // unsure: smallest margin (semitones) between best and second-best tone that counts as a decision.
-  const DEFAULTS = { shift: 0.5, step: 0.25, unsure: 0.15 };
-  const ANCHORS = ["si1", "si3", "si6", "si4", "si2", "si5"];
+  const DEFAULTS = { shift: 0.25, step: 0.25, unsure: 0.1 };
+  // Calibration syllables: sonorant onset, so the whole syllable is voiced (衣 意 二 兒 椅 耳).
+  const ANCHORS = ["ji1", "ji3", "ji6", "ji4", "ji2", "ji5"];
   const MIN_FRAMES = 8, MIN_VOICED_SHARE = 0.05;
 
   const semis = (hz) => 12 * Math.log2(hz / 55);
@@ -45,20 +46,29 @@
     return median(segHz.slice(Math.min(n - 1, Math.floor(n * 0.7))).map(semis));
   }
 
-  /** The learner's calibration: heights of the anchor syllables si1, si3, si6, si4, si2, si5. */
-  function profileFrom({ si1, si3, si6, si4, si2, si5 }) {
-    return { t1: level(si1), t3: level(si3), t6: level(si6), t4lo: tail(si4), t2hi: tail(si2), t5hi: tail(si5) };
+  /** The learner's calibration from the anchor syllables ji1, ji3, ji6, ji4, ji2, ji5.
+      Each value is one Hz segment or an array of Hz segments; each field is the median over the segments. */
+  function profileFrom(anchors) {
+    const segsOf = (v) => (Array.isArray(v) && Array.isArray(v[0]) ? v : [v]);
+    const field = (name, fn) => {
+      const vals = segsOf(anchors[name]).map(fn).filter(Number.isFinite);
+      return vals.length ? median(vals) : NaN;
+    };
+    return {
+      t1: field("ji1", level), t3: field("ji3", level), t6: field("ji6", level),
+      t4lo: field("ji4", tail), t2hi: field("ji2", tail), t5hi: field("ji5", tail),
+    };
   }
 
   /** Whether the calibration makes sense; if not, the first anchor to record again. */
   function validProfile(p) {
     const bad = Object.values(p || {}).some((v) => !Number.isFinite(v)) || !p || ["t1", "t3", "t6", "t4lo", "t2hi", "t5hi"].some((k) => !(k in p));
-    if (bad) return { ok: false, redo: "si1" };
-    if (!(p.t1 - p.t3 >= 1)) return { ok: false, redo: "si1" };
-    if (!(p.t3 - p.t6 >= 1)) return { ok: false, redo: "si3" };
-    if (!(p.t6 - p.t4lo >= 0.5)) return { ok: false, redo: "si6" };
-    if (!(p.t2hi - p.t5hi >= 1)) return { ok: false, redo: "si2" };
-    if (!(p.t2hi > p.t3)) return { ok: false, redo: "si3" };
+    if (bad) return { ok: false, redo: "ji1" };
+    if (!(p.t1 - p.t3 >= 1)) return { ok: false, redo: "ji1" };
+    if (!(p.t3 - p.t6 >= 1)) return { ok: false, redo: "ji3" };
+    if (!(p.t6 - p.t4lo >= 0.5)) return { ok: false, redo: "ji6" };
+    if (!(p.t2hi - p.t5hi >= 1)) return { ok: false, redo: "ji2" };
+    if (!(p.t2hi > p.t3)) return { ok: false, redo: "ji3" };
     return { ok: true };
   }
 
@@ -136,5 +146,5 @@
     return { heard: true, results };
   }
 
-  return { DEFAULTS, TEMPLATES, template, segmentsHz, level, tail, profileFrom, validProfile, classify, check };
+  return { DEFAULTS, ANCHORS, TEMPLATES, template, segmentsHz, level, tail, profileFrom, validProfile, classify, check };
 });
