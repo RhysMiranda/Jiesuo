@@ -16,7 +16,8 @@ const TUNE = ["googleA", "googleB", "microsoftHiuGaai", "amazonHiuJin"];
 const HELD = ["googleC", "googleD", "microsoftHiuMaan", "microsoftWanLung"];
 const NO_SI5 = "no si5 clip (the dataset removed all Apple tone-5 clips), so it cannot be calibrated";
 const EXCLUDED_VOICES = { appleAasing: NO_SI5, appleSinji: NO_SI5 };
-const SHIPPED = ["googleA", "googleB", "microsoftHiuGaai"];
+const SHIPPED = ["googleA", "googleB", "amazonHiuJin"]; // microsoftHiuGaai dropped (R12): it cannot be calibrated
+const CROSS_CHECK = ["googleA", "googleB", "googleC", "googleD", "amazonHiuJin"]; // calibratable voices that vouch for a clip (R11)
 const ANCHORS = Y.ANCHORS; // ji1 ji3 ji6 ji4 ji2 ji5
 const SETS = ["ji", "jau", "jan", "wai", "maa", "ngaa", "lou"]; // voiced six-tone sets used for every profile
 const FIELDS = ["t1", "t3", "t6", "t4lo", "t2hi", "t5hi"];
@@ -28,6 +29,16 @@ const family = (v) => v.replace(/(A|B|C|D|Aasing|Sinji|HiuGaai|HiuMaan|WanLung|H
 function labelMode({ accuracy, unsureRate, confusions }) {
   const maxConf = Math.max(0, ...(confusions || []).map((c) => c[2]));
   return accuracy >= 0.9 && maxConf <= 0.1 && unsureRate <= 0.2 ? "check" : "guide";
+}
+
+/** Why a shipped clip is excluded, or null. `others` = [{voice, row}] for the same syllable in the other voices.
+    Rule (R11): the classifier confidently disagrees with the filename (decided, margin >= 2 x unsure) AND at least 2
+    other voices decide the same syllable and get the filename's tone. */
+function exclusionReason(voice, row, others, unsure) {
+  if (row.unsure || row.got === row.want || !(row.margin >= 2 * unsure)) return null;
+  const agree = others.filter((o) => o.voice !== voice && !o.row.unsure && o.row.got === o.row.want).map((o) => o.voice);
+  if (agree.length < 2) return null;
+  return `classifier decides tone ${row.got} but the file says tone ${row.want}: want ${row.want}, got ${row.got}, margin ${row.margin.toFixed(2)} st; agreeing voices: ${agree.join(", ")}`;
 }
 
 function readWav(file) {
@@ -163,11 +174,14 @@ function main() {
   };
   const maxConf = held.confusions[0] || [0, 0, 0];
 
-  // Exclusions: only the shipped voices.
+  // Exclusions (R11): shipped voices only; a confidently wrong clip is dropped only if >= 2 other calibratable voices agree with its label.
+  const bySyl = {};
+  for (const v of CROSS_CHECK) if (profiles[v]) for (const r of rowsBy[v]) (bySyl[r.syl] = bySyl[r.syl] || []).push({ voice: v, row: r });
   const exclusions = {};
   for (const v of SHIPPED) if (profiles[v]) {
-    for (const r of rowsBy[v]) if (!r.unsure && r.got !== r.want && r.margin >= 2 * params.unsure) {
-      exclusions[`${v}/${r.syl}`] = `classifier decides tone ${r.got} but the file says tone ${r.want}: want ${r.want}, got ${r.got}, margin ${r.margin.toFixed(2)} st`;
+    for (const r of rowsBy[v]) {
+      const why = exclusionReason(v, r, bySyl[r.syl] || [], params.unsure);
+      if (why) exclusions[`${v}/${r.syl}`] = why;
     }
   }
 
@@ -217,7 +231,7 @@ function main() {
   }
   md.push("", "## Largest confusions, held-out", "", ...held.confusions.slice(0, 8).map(([a, b, c]) => `- ${a} -> ${b}: ${pct(c)}`));
   md.push("", "## Excluded clips", "");
-  md.push(`Shipped voices (${SHIPPED.join(", ")}) lose a clip when the classifier decides a different tone than the filename with margin >= 2 x unsure (${(2 * params.unsure).toFixed(2)} st). ${Object.keys(exclusions).length} clips excluded.`, "");
+  md.push(`Shipped voices (${SHIPPED.join(", ")}) lose a clip only when the classifier confidently disagrees with the filename (decided, margin >= 2 x unsure = ${(2 * params.unsure).toFixed(2)} st) AND at least 2 other calibratable voices (${CROSS_CHECK.join(", ")}) decide the same syllable and agree with the filename. The other voices are used only as a cross-check of clip quality, never for parameter selection. microsoftHiuGaai is not shipped (it cannot be calibrated). ${Object.keys(exclusions).length} clips excluded.`, "");
   for (const v of SHIPPED) md.push(`- ${v}: ${Object.keys(exclusions).filter((k) => k.startsWith(v + "/")).length}`);
   md.push("", "Full list with reasons: data/yue/audio_exclusions.json.", "");
   const sample = Object.entries(exclusions).slice(0, 30);
@@ -235,5 +249,5 @@ function main() {
   if (params.shift !== Y.DEFAULTS.shift || params.unsure !== Y.DEFAULTS.unsure) console.log("NOTE: set DEFAULTS in app/yue/tones.js to " + JSON.stringify(params));
 }
 
-module.exports = { labelMode, readWav };
+module.exports = { labelMode, readWav, exclusionReason };
 if (require.main === module) main();

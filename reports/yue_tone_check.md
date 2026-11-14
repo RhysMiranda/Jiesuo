@@ -104,44 +104,44 @@ Accuracy on decided 85.1%, not sure 12.1%, largest confusion 2 -> 5 14.6%.
 
 ## Excluded clips
 
-Shipped voices (googleA, googleB, microsoftHiuGaai) lose a clip when the classifier decides a different tone than the filename with margin >= 2 x unsure (0.20 st). 988 clips excluded.
+Shipped voices (googleA, googleB, amazonHiuJin) lose a clip only when the classifier confidently disagrees with the filename (decided, margin >= 2 x unsure = 0.20 st) AND at least 2 other calibratable voices (googleA, googleB, googleC, googleD, amazonHiuJin) decide the same syllable and agree with the filename. The other voices are used only as a cross-check of clip quality, never for parameter selection. microsoftHiuGaai is not shipped (it cannot be calibrated). 853 clips excluded.
 
-- googleA: 840
-- googleB: 148
-- microsoftHiuGaai: 0
+- googleA: 505
+- googleB: 93
+- amazonHiuJin: 255
 
 Full list with reasons: data/yue/audio_exclusions.json.
 
-- googleA/aa2: classifier decides tone 6 but the file says tone 2: want 2, got 6, margin 0.81 st
-- googleA/aa5: classifier decides tone 6 but the file says tone 5: want 5, got 6, margin 0.44 st
-- googleA/aai2: classifier decides tone 4 but the file says tone 2: want 2, got 4, margin 0.79 st
-- googleA/aai5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.49 st
-- googleA/aai6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.33 st
-- googleA/aau2: classifier decides tone 4 but the file says tone 2: want 2, got 4, margin 0.69 st
-- googleA/aau5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.33 st
-- googleA/ai5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.67 st
-- googleA/ai6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.59 st
-- googleA/au2: classifier decides tone 6 but the file says tone 2: want 2, got 6, margin 0.37 st
-- googleA/au5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.65 st
-- googleA/au6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.67 st
-- googleA/baa2: classifier decides tone 4 but the file says tone 2: want 2, got 4, margin 0.90 st
-- googleA/baa5: classifier decides tone 6 but the file says tone 5: want 5, got 6, margin 0.64 st
-- googleA/baai5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.33 st
-- googleA/baau2: classifier decides tone 4 but the file says tone 2: want 2, got 4, margin 1.38 st
-- googleA/baau5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.28 st
-- googleA/bai5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.43 st
-- googleA/bai6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.67 st
-- googleA/bau5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.67 st
-- googleA/bau6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.33 st
-- googleA/be5: classifier decides tone 6 but the file says tone 5: want 5, got 6, margin 0.49 st
-- googleA/bei5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.76 st
-- googleA/bin2: classifier decides tone 1 but the file says tone 2: want 2, got 1, margin 2.99 st
-- googleA/bin6: classifier decides tone 3 but the file says tone 6: want 6, got 3, margin 0.70 st
-- googleA/bit2: classifier decides tone 1 but the file says tone 2: want 2, got 1, margin 2.68 st
-- googleA/bit6: classifier decides tone 1 but the file says tone 6: want 6, got 1, margin 3.82 st
-- googleA/biu2: classifier decides tone 1 but the file says tone 2: want 2, got 1, margin 3.82 st
-- googleA/biu3: classifier decides tone 1 but the file says tone 3: want 3, got 1, margin 1.07 st
-- googleA/biu4: classifier decides tone 1 but the file says tone 4: want 4, got 1, margin 0.76 st
-- ... and 958 more
+- googleA/aai2: classifier decides tone 4 but the file says tone 2: want 2, got 4, margin 0.79 st; agreeing voices: googleC, amazonHiuJin
+- googleA/aai6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.33 st; agreeing voices: googleC, googleD
+- googleA/aau2: classifier decides tone 4 but the file says tone 2: want 2, got 4, margin 0.69 st; agreeing voices: googleC, amazonHiuJin
+- googleA/aau5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.33 st; agreeing voices: googleB, googleD
+- googleA/ai6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.59 st; agreeing voices: googleB, googleC, googleD
+- googleA/au2: classifier decides tone 6 but the file says tone 2: want 2, got 6, margin 0.37 st; agreeing voices: googleC, googleD, amazonHiuJin
+- googleA/au6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.67 st; agreeing voices: googleB, googleC
+- googleA/baau2: classifier decides tone 4 but the file says tone 2: want 2, got 4, margin 1.38 st; agreeing voices: googleC, googleD, amazonHiuJin
+- googleA/baau5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.28 st; agreeing voices: googleB, googleD
+- googleA/bai6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.67 st; agreeing voices: googleB, googleC, googleD, amazonHiuJin
+- googleA/bau5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.67 st; agreeing voices: googleB, googleD
+- googleA/bau6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.33 st; agreeing voices: googleB, googleC, googleD, amazonHiuJin
+- googleA/bin6: classifier decides tone 3 but the file says tone 6: want 6, got 3, margin 0.70 st; agreeing voices: googleB, googleC, googleD, amazonHiuJin
+- googleA/biu2: classifier decides tone 1 but the file says tone 2: want 2, got 1, margin 3.82 st; agreeing voices: googleB, googleC, googleD, amazonHiuJin
+- googleA/biu3: classifier decides tone 1 but the file says tone 3: want 3, got 1, margin 1.07 st; agreeing voices: googleB, googleD, amazonHiuJin
+- googleA/biu4: classifier decides tone 1 but the file says tone 4: want 4, got 1, margin 0.76 st; agreeing voices: googleB, googleC, amazonHiuJin
+- googleA/biu6: classifier decides tone 1 but the file says tone 6: want 6, got 1, margin 3.82 st; agreeing voices: googleB, amazonHiuJin
+- googleA/bou5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.73 st; agreeing voices: googleB, googleD
+- googleA/bou6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.58 st; agreeing voices: googleB, googleC, amazonHiuJin
+- googleA/bui2: classifier decides tone 1 but the file says tone 2: want 2, got 1, margin 1.99 st; agreeing voices: googleC, googleD, amazonHiuJin
+- googleA/bui3: classifier decides tone 1 but the file says tone 3: want 3, got 1, margin 3.82 st; agreeing voices: googleB, amazonHiuJin
+- googleA/bui4: classifier decides tone 1 but the file says tone 4: want 4, got 1, margin 0.48 st; agreeing voices: googleB, googleC, amazonHiuJin
+- googleA/bui6: classifier decides tone 1 but the file says tone 6: want 6, got 1, margin 3.82 st; agreeing voices: googleB, googleC, googleD, amazonHiuJin
+- googleA/bun2: classifier decides tone 1 but the file says tone 2: want 2, got 1, margin 0.66 st; agreeing voices: googleC, amazonHiuJin
+- googleA/bun3: classifier decides tone 1 but the file says tone 3: want 3, got 1, margin 0.76 st; agreeing voices: googleB, googleC, googleD, amazonHiuJin
+- googleA/but3: classifier decides tone 1 but the file says tone 3: want 3, got 1, margin 3.82 st; agreeing voices: googleB, amazonHiuJin
+- googleA/but6: classifier decides tone 1 but the file says tone 6: want 6, got 1, margin 3.82 st; agreeing voices: googleB, amazonHiuJin
+- googleA/caai5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.33 st; agreeing voices: googleC, googleD
+- googleA/cai6: classifier decides tone 2 but the file says tone 6: want 6, got 2, margin 0.67 st; agreeing voices: googleB, googleC, googleD, amazonHiuJin
+- googleA/cau5: classifier decides tone 2 but the file says tone 5: want 5, got 2, margin 0.67 st; agreeing voices: googleB, googleD
+- ... and 823 more
 
 Run time (including any pitch tracking not yet cached): 1 s.

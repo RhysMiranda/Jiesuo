@@ -37,7 +37,21 @@ test("audio_exclusions.json, if present, maps voice/syl to a reason", () => {
   const e = read("data/yue/audio_exclusions.json");
   if (!e) return;
   for (const [k, v] of Object.entries(e)) {
-    assert.match(k, /^(googleA|googleB|microsoftHiuGaai)\/[a-z]+[1-6]$/);
+    assert.match(k, /^(googleA|googleB|amazonHiuJin)\/[a-z]+[1-6]$/);
     assert.match(v, /want \d.*got \d.*margin/);
   }
+});
+
+test("exclusion rule: confidently wrong AND at least 2 other voices agree with the label", () => {
+  const { exclusionReason } = require("../scripts/yue_tone_eval.js");
+  const wrong = { syl: "baa1", want: 1, got: 3, unsure: false, margin: 0.5 };
+  const ok = (v) => ({ voice: v, row: { syl: "baa1", want: 1, got: 1, unsure: false, margin: 1 } });
+  const others = [ok("googleB"), ok("googleC")];
+  const r = exclusionReason("googleA", wrong, others, 0.1);
+  assert.match(r, /want 1.*got 3.*margin 0\.50.*googleB, googleC/);
+  assert.strictEqual(exclusionReason("googleA", wrong, [ok("googleB")], 0.1), null, "only one agreeing voice: kept");
+  assert.strictEqual(exclusionReason("googleA", wrong, [ok("googleB"), { voice: "googleC", row: { ...ok("x").row, unsure: true } }], 0.1), null, "unsure or wrong others do not count");
+  assert.strictEqual(exclusionReason("googleA", { ...wrong, margin: 0.15 }, others, 0.1), null, "margin below 2 x unsure: kept");
+  assert.strictEqual(exclusionReason("googleA", { ...wrong, unsure: true }, others, 0.1), null);
+  assert.strictEqual(exclusionReason("googleA", { ...wrong, got: 1 }, others, 0.1), null, "classified right: kept");
 });
