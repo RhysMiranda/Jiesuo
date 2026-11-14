@@ -1,0 +1,66 @@
+{
+ "rime_chars.dict.yaml": {
+  "url": "https://raw.githubusercontent.com/rime/rime-cantonese/259f0e48bba840c3a2e0d117539e96937f3d89bc/jyut6ping3.chars.dict.yaml",
+  "sha256": "9b053a594c80eae76545bcdd83239884a49b1ba48b89ca0ab9e8daac79f33013",
+  "bytes": 345329
+ },
+ "rime_words.dict.yaml": {
+  "url": "https://raw.githubusercontent.com/rime/rime-cantonese/259f0e48bba840c3a2e0d117539e96937f3d89bc/jyut6ping3.words.dict.yaml",
+  "sha256": "54d174ad2bb997e4a678b7b076b84e4dc5914481b32467cdea3b43e88b7d5474",
+  "bytes": 2630257
+ },
+ "rime_LICENSE-CC-BY.txt": {
+  "url": "https://raw.githubusercontent.com/rime/rime-cantonese/259f0e48bba840c3a2e0d117539e96937f3d89bc/LICENSE-CC-BY",
+  "sha256": "97d24386ff776d7160b87031b259a942bd03c9939796cab6724ad5d17d2cf785",
+  "bytes": 18657
+ },
+ "cccanto.zip": {
+  "url": "https://cantonese.org/cccanto-170202.zip",
+  "sha256": "0cc9e600a19c02405064d6d227d96563c09da1a0af1c7717508c0f231028af27",
+  "bytes": 1282537
+ },
+ "cccedict_canto_readings.zip": {
+  "url": "https://cantonese.org/cccedict-canto-readings-150923.zip",
+  "sha256": "f6d99991791f49aaf96d97b2838a3ba9e057e060a5a9e24311cf851f8f71a950",
+  "bytes": 1874027
+ },
+ "Unihan.zip": {
+  "url": "https://www.unicode.org/Public/16.0.0/ucd/Unihan.zip",
+  "sha256": "b8f000df69de7828d21326a2ffea462b04bc7560022989f7cc704f10521ef3e0",
+  "bytes": 8382485
+ },
+ "hkcancor-utf8.zip": {
+  "url": "https://raw.githubusercontent.com/fcbond/hkcancor/39aeadf920e0b5ca93d0ad7792c59e740e7bdd65/data/hkcancor-utf8.zip",
+  "sha256": "09223963b8756254e15353cad843f8a4b0cbc4b9223dc8a8fa27fb1cf846057e",
+  "bytes": 961514
+ },
+ "hkcancor_LICENSE.txt": {
+  "url": "https://raw.githubusercontent.com/fcbond/hkcancor/39aeadf920e0b5ca93d0ad7792c59e740e7bdd65/data/LICENSE",
+  "sha256": "ca2b19c8e224511f96187a44139da2d33a8cf9ff9d4695b584de7cc8c964638e",
+  "bytes": 15037
+ },
+ "NotoSerifHK.ttf": {
+  "url": "https://raw.githubusercontent.com/google/fonts/29b4ec6df2522a8aee279414b78a07910b065874/ofl/notoserifhk/NotoSerifHK%5Bwght%5D.ttf",
+  "sha256": "66108860e321aa413e7cb346448b4a418b779d94ae392accb32d163c024ae661",
+  "bytes": 16828640
+ },
+ "NotoSerifHK_OFL.txt": {
+  "url": "https://raw.githubusercontent.com/google/fonts/29b4ec6df2522a8aee279414b78a07910b065874/ofl/notoserifhk/OFL.txt",
+  "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+  "bytes": 4388
+ },
+ "cantone": {
+  "url": "https://huggingface.co/api/datasets/AlienKevin/cantone/revision/9ae2dec425f472255c1e146cd6b3f428e7c21e80",
+  "files": 34488,
+  "sha256": "e095e6f057e28a1172a657c8a1006850b246f24aefd6fa0ccd498cc889900aa8",
+  "bytes": 421895456
+ },
+ "wordshk": {
+  "files": [
+   "all-1794600301.csv",
+   "wordpos-1794600353.csv"
+  ],
+  "sha256": "fc56c7f78b5da7006f9288935feecfd1307b10a608be3268d18aa9e6e6878fd3",
+  "bytes": 23611991
+ }
+}
