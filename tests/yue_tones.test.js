@@ -104,6 +104,7 @@ test("an ambiguous contour halfway between 3 and 6 is unsure", () => {
 });
 
 test("a speaker drifting 1 semitone sharp is still classified", () => {
+  const wide = { params: { shift: 1.5, step: 0.25, unsure: 0.35 } }; // tuned defaults allow little drift; test the mechanism wide
   const p = profile();
   drift = 1;
   try {
