@@ -1,0 +1,95 @@
+{
+  "sources": {
+    "matthews-yip-2011": "Matthews, Stephen and Virginia Yip (2011). Cantonese: A Comprehensive Grammar, 2nd ed. Routledge. Chapter 1.",
+    "lshk-1997": "Linguistic Society of Hong Kong (1997). 粵語拼音字表 (Guide to LSHK Cantonese Romanization of Chinese Characters). The Jyutping scheme.",
+    "bauer-benedict-1997": "Bauer, Robert S. and Paul K. Benedict (1997). Modern Cantonese Phonology. Mouton de Gruyter."
+  },
+  "units": [
+    {
+      "id": "tones-six",
+      "title": "The six tones",
+      "teach": [
+        {"text": "Cantonese has six tones. The pitch of a syllable is part of the word, so si1 and si6 are different words.", "source": "matthews-yip-2011"},
+        {"text": "Pitch is written with Chao numbers, from 1 (lowest) to 5 (highest): tone 1 high level 55 (53), tone 2 high rising 35, tone 3 mid level 33, tone 4 low falling 21 (11), tone 5 low rising 23, tone 6 low level 22.", "source": "matthews-yip-2011"},
+        {"text": "The numbers in brackets are normal variants: tone 1 is also said as a high fall (53), and tone 4 is often heard as low level (11).", "source": "matthews-yip-2011"},
+        {"text": "Jyutping writes the tone as a digit after the syllable: 詩 si1, 史 si2, 試 si3, 時 si4, 市 si5, 事 si6, and 分 fan1, 粉 fan2, 訓 fan3, 墳 fan4, 奮 fan5, 份 fan6.", "source": "lshk-1997"}
+      ],
+      "anchors": [["詩", "si1"], ["史", "si2"], ["試", "si3"], ["時", "si4"], ["市", "si5"], ["事", "si6"],
+                  ["分", "fan1"], ["粉", "fan2"], ["訓", "fan3"], ["墳", "fan4"], ["奮", "fan5"], ["份", "fan6"]],
+      "tones": [1, 2, 3, 4, 5, 6],
+      "drills": ["tone-id", "same-diff", "say"]
+    },
+    {
+      "id": "tones-hear",
+      "title": "Hearing the tones",
+      "teach": [
+        {"text": "Tones 1, 3 and 6 are level and differ only in height: tone 1 is high (55), tone 3 mid (33), tone 6 low (22).", "source": "matthews-yip-2011"},
+        {"text": "Tones 2 and 5 both rise: tone 2 rises high (35), tone 5 rises only a little from low (23).", "source": "matthews-yip-2011"},
+        {"text": "Tones 4 and 6 are both low: tone 4 falls to the bottom (21), tone 6 stays level (22).", "source": "matthews-yip-2011"}
+      ],
+      "anchors": [],
+      "tones": [1, 2, 3, 4, 5, 6],
+      "drills": ["tone-id", "same-diff", "say"]
+    },
+    {
+      "id": "checked",
+      "title": "Short tones: -p, -t, -k",
+      "teach": [
+        {"text": "Syllables ending in -p, -t or -k are short: the stop at the end cuts the vowel off. They use only three pitches: high, mid and low.", "source": "matthews-yip-2011"},
+        {"text": "Traditional accounts count these short syllables as three extra tones, which is why Cantonese is often said to have nine tones. In pitch they match tones 1, 3 and 6.", "source": "matthews-yip-2011"},
+        {"text": "So Jyutping numbers them 1, 3 and 6: 色 sik1, 錫 sek3, 食 sik6.", "source": "lshk-1997"}
+      ],
+      "anchors": [["色", "sik1"], ["錫", "sek3"], ["食", "sik6"]],
+      "tones": [1, 3, 6],
+      "drills": ["tone-id", "same-diff", "say"]
+    },
+    {
+      "id": "initials",
+      "title": "Initials",
+      "teach": [
+        {"text": "Jyutping has 19 initial consonants: b p m f d t n l g k ng h gw kw w z c s j. A syllable can also begin with a vowel.", "source": "lshk-1997"},
+        {"text": "b, d, g are unaspirated and voiceless: Jyutping b sounds like an unaspirated English \"p\", as in \"spin\". p, t, k are aspirated, with a puff of air, as in \"pin\".", "source": "matthews-yip-2011"},
+        {"text": "The same contrast runs through gw/kw (g and k with rounded lips) and z/c (an unaspirated and an aspirated \"ts\").", "source": "lshk-1997"},
+        {"text": "ng can begin a syllable, like the \"ng\" of English \"sing\". Many speakers drop it, so ngo5 is often heard as o5.", "source": "bauer-benedict-1997"}
+      ],
+      "anchors": [],
+      "tones": [1, 2, 3, 4, 5, 6],
+      "drills": ["syl-id", "same-diff", "say"]
+    },
+    {
+      "id": "finals",
+      "title": "Finals",
+      "teach": [
+        {"text": "aa is long and a is short: 三 saam1 has a long vowel, 心 sam1 a short one.", "source": "matthews-yip-2011"},
+        {"text": "yu, oe and eo are said with rounded lips: yu is \"ee\" with rounded lips, oe is the \"e\" of \"bed\" with rounded lips, and eo is a short rounded vowel that comes only in eoi, eon and eot.", "source": "lshk-1997"},
+        {"text": "The nasal endings -m, -n and -ng keep words apart: sam1, san1 and sang1 are different syllables.", "source": "matthews-yip-2011"},
+        {"text": "The stop endings -p, -t and -k are unreleased: the lips or tongue close and hold, with no puff of air after.", "source": "matthews-yip-2011"},
+        {"text": "m and ng can be whole syllables: 唔 m4 (not) and 五 ng5 (five). There are no recordings of these two in the app yet.", "source": "bauer-benedict-1997"}
+      ],
+      "anchors": [["三", "saam1"], ["心", "sam1"]],
+      "tones": [1, 2, 3, 4, 5, 6],
+      "drills": ["syl-id", "same-diff", "say"]
+    },
+    {
+      "id": "jyutping",
+      "title": "Reading and typing Jyutping",
+      "teach": [
+        {"text": "Jyutping is the romanisation of the Linguistic Society of Hong Kong. A syllable is written initial + final + tone digit: s + ik + 6 = sik6.", "source": "lshk-1997"},
+        {"text": "Some letters differ from English: j is the \"y\" of \"yes\" (ji1), z and c are \"ts\" sounds, and yu, oe and eo are rounded vowels.", "source": "lshk-1997"}
+      ],
+      "anchors": [],
+      "tones": [1, 2, 3, 4, 5, 6],
+      "drills": ["read", "dictation"]
+    },
+    {
+      "id": "say",
+      "title": "Saying it",
+      "teach": [
+        {"text": "A tone is a pitch shape within your own voice: high level 55, high rising 35, mid level 33, low falling 21, low rising 23, low level 22. Match the shape, not the recording's exact pitch.", "source": "matthews-yip-2011"}
+      ],
+      "anchors": [],
+      "tones": [1, 2, 3, 4, 5, 6],
+      "drills": ["say"]
+    }
+  ]
+}
