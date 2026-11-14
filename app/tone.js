@@ -70,7 +70,7 @@
    * with too many runs the shortest gaps are merged, with too few the longest runs are cut evenly.
    * Each syllable is a list of pitches in semitones from the speaker's median.
    */
-  function syllables(track, n) {
+  function runs(track, n) {
     const voiced = track.map((x) => x.f0 > 0);
     let runs = [];
     for (let k = 0; k < track.length; k++) {
@@ -94,9 +94,15 @@
       if (mid <= a || mid >= b) break;
       runs.splice(at, 1, [a, mid], [mid + 1, b]);
     }
+    return runs;
+  }
+
+  function syllables(track, n) {
+    const rs = runs(track, n);
+    if (!rs.length) return [];
     const all = track.filter((x) => x.f0 > 0).map((x) => x.f0).sort((a, b) => a - b);
     const median = all[Math.floor(all.length / 2)] || 1;
-    return runs.map(([a, b]) => track.slice(a, b + 1).filter((x) => x.f0 > 0).map((x) => 12 * Math.log2(x.f0 / median)));
+    return rs.map(([a, b]) => track.slice(a, b + 1).filter((x) => x.f0 > 0).map((x) => 12 * Math.log2(x.f0 / median)));
   }
 
   // Tone shapes in semitones from a speaker's middle pitch, on five points (Chao's 55, 35, 214, 51).
@@ -198,5 +204,5 @@
     return { heard: true, track, results, range, syllablesFound: segs.length };
   }
 
-  return { pitchTrack, syllables, classify, resample, tonesOf, spoken, check, SHAPES, rangeOf };
+  return { pitchTrack, runs, syllables, classify, resample, tonesOf, spoken, check, SHAPES, rangeOf };
 });
