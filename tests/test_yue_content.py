@@ -83,6 +83,7 @@ def test_tone_facts_present():
     assert "tone 7 matches tone 1, tone 8 matches tone 3, and tone 9 matches tone 6" in checked
     assert "愛 oi3" in _text(UNITS["initials"])
     assert "u\" of English \"cut\"" in _text(UNITS["finals"])
+    assert "differs as well as the length" in _text(UNITS["finals"]) and "main cue" not in _text(UNITS["finals"])
     assert "The initial is optional" in _text(UNITS["jyutping"])
     assert 'Jyutping b sounds like an unaspirated English "p"' in _text(UNITS["initials"])
     finals = _text(UNITS["finals"])
@@ -104,6 +105,7 @@ def test_every_anchor_matches_its_resolved_reading():
             if r.main == syl:
                 continue
             assert syl in r.others, (u["id"], ch, syl, r)
+            assert syl in READINGS["chars"][ch], (u["id"], ch, syl)  # the app must know the taught reading
             # a non-main reading is taught only with a note naming both character and reading
             assert any(ch in t["text"] and syl in t["text"] and r.main in t["text"] for t in u["teach"]), (ch, syl)
 
@@ -197,3 +199,13 @@ def test_build_uses_given_inputs_even_when_empty():
     from jiesuo.yue import export_app
     with pytest.raises(KeyError):
         export_app.build(SRCS, content={})
+
+
+def test_anchor_must_be_a_shipped_reading():
+    import copy
+    from jiesuo.yue import export_app
+    content = copy.deepcopy(json.loads(export_app.CONTENT.read_text(encoding="utf8")))
+    unit = next(u for u in content["units"] if u["id"] == "checked")
+    unit["anchors"].append(["錫", "sek6"])  # rime only, so not shipped in readings.json
+    with pytest.raises(ValueError, match="not a shipped reading"):
+        export_app.build(SRCS, content=content)

@@ -167,16 +167,16 @@ def build(srcs=None, content=None, audio=None):
         units.append({**u, "syllables": syls, "minimalSets": sets})
     stage0 = {"licence": STAGE0_LICENCE, "sources": content["sources"], "units": units}
 
-    chars, resolved = {}, {}
+    chars = {}
     for ch in sorted(set(HAN.findall(json.dumps(units, ensure_ascii=False)))):  # not the citations
-        r = resolved[ch] = resolve_char(ch, srcs)
+        r = resolve_char(ch, srcs)
         if r.status == "unresolved":
             raise ValueError(f"{ch}: reading unresolved, cannot be taught")
         chars[ch] = [r.main, *(o for o in r.others if len(r.evidence[o]) >= MIN_SOURCES)]
     for u in units:
         for ch, syl in u["anchors"]:
-            if syl != resolved[ch].main and syl not in resolved[ch].others:
-                raise ValueError(f"{u['id']}: {ch} {syl} is not a reading of {ch} ({chars[ch]})")
+            if syl not in chars[ch]:  # the shipped readings, not every candidate
+                raise ValueError(f"{u['id']}: {ch} {syl} is not a shipped reading of {ch} ({chars[ch]})")
     return stage0, {"licence": READINGS_LICENCE, "chars": chars}
 
 
