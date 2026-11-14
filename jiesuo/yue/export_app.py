@@ -3,13 +3,14 @@
 Reads the authored units in data/yue/content/stage0.json and the audio inventory in
 app/yue/data/audio.json, and writes one file per licence:
     app/yue/data/stage0.json    MIT           the units, with generated syllables and minimal sets
-    app/yue/data/readings.json  CC BY-SA 4.0  the resolved reading of every character stage0.json uses
+    app/yue/data/readings.json  CC BY-SA 4.0  every character the units use: main reading, then the
+                                              other readings at least MIN_SOURCES sources list
 
 Each unit's `syllables` and `minimalSets` are generated here, from syllables that at least
 MIN_VOICES shipped voices have recorded:
     tones-six   the anchors, grouped by toneless syllable (si1..si6, fan1..fan6)
     tones-hear  every non-checked syllable recorded in all six tones, one set per syllable
-    checked     the anchors (sik1 sek3 sik6), then every -p/-t/-k syllable recorded in tones 1, 3 and 6
+    checked     every -p/-t/-k syllable recorded in tones 1, 3 and 6 (sik first); anchors kept as syllables
     initials    pairs that differ only in aspiration (b/p d/t g/k gw/kw z/c), then ng- vs no initial
     finals      long aa vs short a; -m/-n/-ng; -p/-t/-k; unrounded vs rounded vowels (i/yu, e/oe, ...)
     jyutping    every syllable of the units before it, for reading and dictation (no sets)
@@ -33,6 +34,7 @@ STAGE0_LICENCE = "MIT: Jiesuo"
 READINGS_LICENCE = ("CC BY-SA 4.0: readings from rime-cantonese (CC BY 4.0), checked against "
                     "CC-Canto (CC BY-SA 3.0), Unihan, HKCanCor (CC BY 4.0)")
 MIN_VOICES = 2
+MIN_SOURCES = 2  # an "other" reading ships only if at least this many sources list it
 HAN = re.compile(r"[㐀-鿿\U00020000-\U0003ffff]")
 
 ASPIRATION = [("b", "p"), ("d", "t"), ("g", "k"), ("gw", "kw"), ("z", "c")]
@@ -71,9 +73,12 @@ def tones_hear(have, anchors):
 
 
 def checked(have, anchors):
+    """Tone-only sets (same syllable in tones 1, 3, 6). The anchors' own syllables come first;
+    the anchor trio itself (sik1 sek3 sik6) differs in vowel too, so it is not a set."""
     tones = _by_base(have)
-    full = sorted(b for b, ts in tones.items() if ts >= {1, 3, 6} and jyutping.is_checked(b + "1"))
-    return [list(anchors)] + [[f"{b}{t}" for t in (1, 3, 6)] for b in full]
+    full = {b for b, ts in tones.items() if ts >= {1, 3, 6} and jyutping.is_checked(b + "1")}
+    first = list(dict.fromkeys(jyutping.toneless(s) for s in anchors if jyutping.toneless(s) in full))
+    return [[f"{b}{t}" for t in (1, 3, 6)] for b in first + sorted(full - set(first))]
 
 
 def initials(have):
@@ -131,7 +136,7 @@ def generate(units, have):
     hear = tones_hear(have, anchors["tones-six"])
     out["tones-hear"] = (_flat(hear), hear)
     chk = checked(have, anchors["checked"])
-    out["checked"] = (_flat(chk), chk)
+    out["checked"] = (list(dict.fromkeys([*anchors["checked"], *_flat(chk)])), chk)
     ini = initials(have)
     out["initials"] = (_flat(ini), ini)
     fin = finals(have)
@@ -149,9 +154,12 @@ def generate(units, have):
 
 def build(srcs=None, content=None, audio=None):
     """(stage0.json, readings.json) as dicts."""
-    content = content or json.loads(CONTENT.read_text(encoding="utf8"))
-    audio = audio or json.loads(AUDIO.read_text(encoding="utf8"))
-    srcs = srcs or load_sources()
+    if content is None:
+        content = json.loads(CONTENT.read_text(encoding="utf8"))
+    if audio is None:
+        audio = json.loads(AUDIO.read_text(encoding="utf8"))
+    if srcs is None:
+        srcs = load_sources()
     gen = generate(content["units"], recorded(audio))
     units = []
     for u in content["units"]:
@@ -159,15 +167,15 @@ def build(srcs=None, content=None, audio=None):
         units.append({**u, "syllables": syls, "minimalSets": sets})
     stage0 = {"licence": STAGE0_LICENCE, "sources": content["sources"], "units": units}
 
-    chars = {}
-    for ch in sorted(set(HAN.findall(json.dumps(stage0, ensure_ascii=False)))):
-        r = resolve_char(ch, srcs)
+    chars, resolved = {}, {}
+    for ch in sorted(set(HAN.findall(json.dumps(units, ensure_ascii=False)))):  # not the citations
+        r = resolved[ch] = resolve_char(ch, srcs)
         if r.status == "unresolved":
             raise ValueError(f"{ch}: reading unresolved, cannot be taught")
-        chars[ch] = [r.main, *r.others]
+        chars[ch] = [r.main, *(o for o in r.others if len(r.evidence[o]) >= MIN_SOURCES)]
     for u in units:
         for ch, syl in u["anchors"]:
-            if chars[ch][0] != syl and syl not in chars[ch]:
+            if syl != resolved[ch].main and syl not in resolved[ch].others:
                 raise ValueError(f"{u['id']}: {ch} {syl} is not a reading of {ch} ({chars[ch]})")
     return stage0, {"licence": READINGS_LICENCE, "chars": chars}
 

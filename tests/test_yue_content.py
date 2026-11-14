@@ -75,8 +75,15 @@ def test_tone_facts_present():
     six = _text(UNITS["tones-six"])
     for chao in ("55 (53)", "35", "33", "21 (11)", "23", "22"):
         assert chao in six, chao
+    assert "tone 1 is the highest tone" in six and "older" in six
+    hear = _text(UNITS["tones-hear"])
+    assert "tone 4 is the lowest tone" in hear and "Tone 5 starts where tone 6 sits" in hear
     checked = _text(UNITS["checked"])
-    assert "1, 3 and 6" in checked and "short" in checked
+    assert "1, 3 and 6" in checked and "short" in checked and "basic form" in checked
+    assert "tone 7 matches tone 1, tone 8 matches tone 3, and tone 9 matches tone 6" in checked
+    assert "愛 oi3" in _text(UNITS["initials"])
+    assert "u\" of English \"cut\"" in _text(UNITS["finals"])
+    assert "The initial is optional" in _text(UNITS["jyutping"])
     assert 'Jyutping b sounds like an unaspirated English "p"' in _text(UNITS["initials"])
     finals = _text(UNITS["finals"])
     assert "unreleased" in finals and "-p, -t and -k" in finals
@@ -102,13 +109,16 @@ def test_every_anchor_matches_its_resolved_reading():
 
 
 def test_no_unresolved_reading_is_taught():
-    used = set(HAN.findall(json.dumps(STAGE0, ensure_ascii=False)))
+    used = set(HAN.findall(json.dumps(STAGE0["units"], ensure_ascii=False)))  # citations are not taught
     assert used, "stage0.json has no characters"
     assert set(READINGS["chars"]) == used
     for ch in used:
         r = resolve_char(ch, SRCS)
         assert r.status != "unresolved", (ch, r)
-        assert READINGS["chars"][ch] == [r.main, *r.others], ch
+        # main, then only the other readings at least two sources list
+        assert READINGS["chars"][ch] == [r.main, *(o for o in r.others if len(r.evidence[o]) >= 2)], ch
+    assert READINGS["chars"]["份"] == ["fan6", "fan2"]  # rime 0% ban1 dropped
+    assert READINGS["chars"]["錫"] == ["sek3", "sik3"]  # sek6 (rime only) and sik1 (CC-Canto only) dropped
 
 
 def test_every_character_renders_in_the_font():
@@ -124,6 +134,10 @@ def test_teaching_anchors_follow_the_spec():
         "詩史試時市事分粉訓墳奮份",
         ["si1", "si2", "si3", "si4", "si5", "si6", "fan1", "fan2", "fan3", "fan4", "fan5", "fan6"])]
     assert UNITS["checked"]["anchors"] == [["色", "sik1"], ["錫", "sek3"], ["食", "sik6"]]
+    calib = "衣 ji1, 椅 ji2, 意 ji3, 兒 ji4, 耳 ji5, 二 ji6"  # voice calibration anchors (ruling R10)
+    assert calib in _text(UNITS["tones-six"])
+    for ch, syl in zip("衣椅意兒耳二", ["ji1", "ji2", "ji3", "ji4", "ji5", "ji6"]):
+        assert READINGS["chars"][ch][0] == syl
     assert ["三", "saam1"] in UNITS["finals"]["anchors"] and ["心", "sam1"] in UNITS["finals"]["anchors"]
 
 
@@ -139,7 +153,8 @@ def test_generated_tone_sets():
     assert {"si", "fan", "jau", "se"} <= bases
     checked = UNITS["checked"]
     assert checked["tones"] == [1, 3, 6]
-    assert ["sik1", "sek3", "sik6"] in checked["minimalSets"]
+    assert checked["minimalSets"][0] == ["sik1", "sik3", "sik6"]  # tone-only set first
+    assert ["sik1", "sek3", "sik6"] not in checked["minimalSets"]  # differs in vowel too
     assert all(jyutping.is_checked(s) for s in checked["syllables"])
     assert len(checked["minimalSets"]) > 1
 
@@ -156,6 +171,8 @@ def test_generated_initial_and_final_sets():
     assert ("sam1", "san1", "sang1") in finals
     assert ("sap1", "sat1", "sak1") in finals
     assert ("si1", "syu1") in finals
+    assert any(jyutping.parse(a)[1] == "e" and jyutping.parse(b)[1] == "oe" for a, b, *_ in finals)
+    assert any(jyutping.parse(a)[1] == "ei" and jyutping.parse(b)[1] == "eoi" for a, b, *_ in finals)
     for ms in finals:  # each set keeps initial and tone
         assert len({(jyutping.parse(s)[0], jyutping.parse(s)[2]) for s in ms}) == 1, ms
 
@@ -174,3 +191,9 @@ def test_export_is_current():
     stage0, readings = export_app.build(SRCS)
     assert stage0 == STAGE0
     assert readings == READINGS
+
+
+def test_build_uses_given_inputs_even_when_empty():
+    from jiesuo.yue import export_app
+    with pytest.raises(KeyError):
+        export_app.build(SRCS, content={})
