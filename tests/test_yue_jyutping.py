@@ -47,8 +47,13 @@ def test_every_rime_syllable_parses():
         parts = line.split("\t")
         if len(parts) < 2 or line.startswith("#"):
             continue
-        try:
-            parse(parts[1].strip())
-        except ValueError:
-            bad.add(parts[1].strip())
+        reading = parts[1].strip()
+        if "".join(split(reading)) != "".join(reading.split()):
+            bad.add(reading)
+            continue
+        for syl in split(reading):
+            try:
+                parse(syl)
+            except ValueError:
+                bad.add(syl)
     assert not bad, sorted(bad)[:20]
