@@ -503,3 +503,13 @@ test("library: needs a refresh lists due items first, then the least secure", ()
   assert.deepStrictEqual(J2.memoryOf([2, "2026-11-12"], "2026-11-13"), { strength: 2 / 6, due: true });
   assert.deepStrictEqual(J2.memoryOf(undefined, "2026-11-13"), { strength: null, due: false });
 });
+
+test("a Cantonese progress file is refused by the Mandarin app", () => {
+  assert.throws(() => deserialise({ lang: "yue", v: 1, known: [] }, core), /Cantonese/);
+});
+
+test("the Mandarin service worker only deletes its own old caches", () => {
+  const sw = fs.readFileSync(path.join(__dirname, "../app/sw.js"), "utf8");
+  assert.ok(sw.includes("/^jiesuo-v" + String.fromCharCode(92) + "d+$/"), "activate filters on /^jiesuo-v\d+$/");
+  assert.ok(!/keys\.filter\(\(k\) => k !== VERSION\)/.test(sw));
+});

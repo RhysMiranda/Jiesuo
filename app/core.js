@@ -421,6 +421,7 @@
   }
 
   function deserialise(obj, core) {
+    if (obj && obj.lang === "yue") throw new Error("This file is from the Cantonese app. Open it there.");
     if (!obj || obj.app !== "jiesuo" || !Array.isArray(obj.known)) throw new Error("This file is not a Jiesuo progress file.");
     const ids = new Map();
     for (const it of core.items) ids.set((it.kind === "w" ? "w:" : "h:") + it.form, it.i);

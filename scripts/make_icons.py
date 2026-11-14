@@ -4,10 +4,18 @@
 Needs LXGW WenKai TC (SIL OFL), the font the app itself uses:
     https://github.com/google/fonts/raw/main/ofl/lxgwwenkaitc/LXGWWenKaiTC-Regular.ttf
 Usage: python scripts/make_icons.py path/to/LXGWWenKaiTC-Regular.ttf app/icons
+Cantonese app: python scripts/make_icons.py data/raw/yue/NotoSerifHK.ttf app/yue/icons --glyph 粵
+(or --font FILE --out DIR).
 """
-import sys
+import argparse
 from PIL import Image, ImageDraw, ImageFont
-font_path, out = sys.argv[1], sys.argv[2]
+ap = argparse.ArgumentParser()
+ap.add_argument("font", nargs="?"); ap.add_argument("outdir", nargs="?")
+ap.add_argument("--font", dest="font_opt"); ap.add_argument("--out", dest="out_opt")
+ap.add_argument("--glyph", default="解")
+a = ap.parse_args()
+font_path, out, GLYPH = a.font_opt or a.font, a.out_opt or a.outdir, a.glyph
+if not font_path or not out: ap.error("need a font file and an output folder")
 PAPER, SHEET, INK, GRID = "#f0f5ee", "#f8fbf6", "#1b2a2e", "#9fc4ad"
 
 def icon(size, square_frac):
@@ -25,7 +33,7 @@ def icon(size, square_frac):
         d.line([(mid, p), (mid, e)], fill=GRID, width=w)
         p += dash + gap
     f = ImageFont.truetype(font_path, round(side * 0.74))
-    d.text((S / 2, S / 2 + side * 0.01), "解", font=f, fill=INK, anchor="mm")
+    d.text((S / 2, S / 2 + side * 0.01), GLYPH, font=f, fill=INK, anchor="mm")
     return im.resize((size, size), Image.LANCZOS)
 
 icon(192, 0.78).save(f"{out}/icon-192.png", optimize=True)

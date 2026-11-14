@@ -22,6 +22,19 @@ in `jiesuo/grammar.py`. It does not cover the data below.
 | [OpenCC](https://github.com/BYVoid/OpenCC) 1.4.2 | `s2hk` and `t2s` configs in the wheel | Apache-2.0 ([LICENSE](https://raw.githubusercontent.com/BYVoid/OpenCC/master/LICENSE)) | Simplified/Traditional conversion, Hong Kong forms | Keep the licence and notices |
 | [jieba](https://github.com/fxsjy/jieba) 0.42.1 | Built-in dictionary | MIT ([LICENSE](https://raw.githubusercontent.com/fxsjy/jieba/master/LICENSE)) | Segmentation and POS tags | Keep the notice |
 
+## Cantonese app (`app/yue/`)
+
+| Source | Licence | Used for | Attribution needed |
+|---|---|---|---|
+| [rime-cantonese](https://github.com/rime/rime-cantonese) | CC BY 4.0 (`app/yue/licences/rime-cantonese-LICENSE-CC-BY.txt`) | Jyutping readings in `readings.json` | Credit, link the licence |
+| [CC-Canto](https://cantonese.org/download.html) and CC-CEDICT Cantonese readings | CC BY-SA 3.0 | Checking readings; `readings.json` is shared as CC BY-SA 4.0 | Credit, link the licence, share alike |
+| [HKCanCor](https://github.com/fcbond/hkcancor) | CC BY 4.0 (`app/yue/licences/HKCanCor-LICENSE.txt`) | Checking readings | Credit, link the licence |
+| [Unihan](https://www.unicode.org/charts/unihan.html) | Unicode Terms of Use | Checking readings | Link the licence |
+| [Cantone](https://huggingface.co/datasets/AlienKevin/cantone) | MIT | Synthetic syllable audio in `app/yue/audio/` | Keep the notice; say the voices are synthetic |
+| Noto Serif HK | SIL OFL 1.1 (`app/yue/licences/NotoSerifHK-OFL.txt`) | Page font (Google Fonts) and the app icon | Keep the licence |
+
+Shown to the learner at `app/yue/licences/`.
+
 ## Evaluation only, never shipped
 
 | Source | Exact files | Licence (where it was read) | Used for | Attribution needed |

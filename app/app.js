@@ -1220,6 +1220,9 @@
         <p>Pictures: all emojis designed by <a href="https://openmoji.org/" rel="noopener" target="_blank">OpenMoji</a>, the open-source emoji and icon project. License: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="noopener" target="_blank">CC BY-SA 4.0</a>.</p>
         <p>Grammar explanations were written for Jiesuo, and their HSK levels are our own estimates.</p>
         <p><a href="licences/">Full licence texts and notices</a></p>
+      </section>
+      <section class="stack">
+        <p class="soft small">Learning Hong Kong Cantonese? <a href="yue/">Open Jiesuo 粵</a>. It keeps its own progress.</p>
       </section>`;
     view.querySelectorAll("[data-view]").forEach((b) => (b.onclick = () => {
       libView = b.dataset.view; store.set(LIB_KEY, libView); libOpen = new Set();

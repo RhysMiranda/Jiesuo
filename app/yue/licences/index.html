@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jiesuo 粵 licences</title>
+<link rel="stylesheet" href="../yue.css">
+<style>
+  body { padding: 24px 16px 48px; }
+  main { max-width: 680px; margin: 0 auto; display: grid; gap: 28px; }
+  section { display: grid; gap: 8px; }
+  ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+</style>
+</head>
+<body>
+<main>
+  <section>
+    <p><a href="../">← Back to Jiesuo 粵</a></p>
+    <h1>Licences</h1>
+    <p>The Cantonese app is made of separately licensed files. Each data file in <code>data/</code> carries its own
+      licence in a <code>licence</code> line, and the same lines are shown below. Source code and the scripts that
+      build every data file are in the project's repository.</p>
+  </section>
+
+  <section>
+    <h2>App code and lesson text</h2>
+    <p><code>index.html</code>, <code>app.js</code>, <code>state.js</code>, <code>drills.js</code>, <code>jyutping.js</code>,
+      <code>tones.js</code>, <code>yue.css</code>, <code>sw.js</code> and <code>data/stage0.json</code>, <code>data/tonecheck.json</code>: MIT.
+      <a href="Jiesuo-LICENSE.txt">Licence text</a>.</p>
+    <p>Data file notice: <code>data/stage0.json</code> says “MIT: Jiesuo”; <code>data/tonecheck.json</code> says “MIT: Jiesuo (computed)”.</p>
+    <p>The lesson text cites its sources in the file: Matthews and Yip, <em>Cantonese: A Comprehensive Grammar</em> (2nd ed., Routledge 2011),
+      and the Linguistic Society of Hong Kong's Jyutping scheme.</p>
+  </section>
+
+  <section>
+    <h2>Readings: <code>data/readings.json</code></h2>
+    <p>Data file notice: “CC BY-SA 4.0: readings from rime-cantonese (CC BY 4.0), checked against CC-Canto (CC BY-SA 3.0), Unihan, HKCanCor (CC BY 4.0)”.
+      The file is shared under CC BY-SA 4.0, because it builds on CC-Canto.
+      Changes: we kept only the characters the lessons use, and only well-attested readings.</p>
+    <ul>
+      <li><a href="https://github.com/rime/rime-cantonese">rime-cantonese</a>, Creative Commons Attribution 4.0 (CC BY 4.0).
+        <a href="rime-cantonese-LICENSE-CC-BY.txt">Licence text</a></li>
+      <li><a href="https://cantonese.org/download.html">CC-Canto</a> and CC-CEDICT Cantonese readings, Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0).
+        <a href="https://creativecommons.org/licenses/by-sa/3.0/legalcode">Licence text</a></li>
+      <li><a href="https://github.com/fcbond/hkcancor">HKCanCor</a>, the Hong Kong Cantonese Corpus, Creative Commons Attribution 4.0 (CC BY 4.0).
+        <a href="HKCanCor-LICENSE.txt">Licence text</a></li>
+      <li><a href="https://www.unicode.org/charts/unihan.html">Unihan Database</a>, Unicode, Inc.,
+        under the <a href="https://www.unicode.org/license.txt">Unicode Terms of Use</a>.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Recorded syllables: <code>audio/</code> and <code>data/audio.json</code></h2>
+    <p>Data file notice: “MIT: Cantone (AlienKevin/cantone), synthetic voices from Amazon and Google”.
+      The clips are computer-generated voices, not people. They are from the
+      <a href="https://huggingface.co/datasets/AlienKevin/cantone">Cantone</a> dataset by Kevin Li, MIT licence.
+      Changes: we kept the syllables the lessons use and re-encoded them as mp3 files.</p>
+    <p>MIT licence: permission is granted, free of charge, to use, copy, modify, merge, publish, distribute, sublicense
+      and sell the data and its associated files, provided the copyright notice and this permission notice are kept.
+      The data is provided “as is”, without warranty of any kind.</p>
+  </section>
+
+  <section>
+    <h2>Font: Noto Serif HK</h2>
+    <p>Hong Kong forms of the characters are set in Noto Serif HK (Noto Serif CJK), loaded from Google Fonts, and used for the app icon.
+      Copyright Google and Adobe, SIL Open Font License 1.1. <a href="NotoSerifHK-OFL.txt">Licence text</a>.</p>
+  </section>
+
+  <section>
+    <h2>Shared with the Mandarin app</h2>
+    <p>The exercise-book look (<code>../style.css</code>), <code>../journey.js</code> and <code>../tone.js</code> are the Mandarin app's, MIT.
+      The Mandarin app's own <a href="../../licences/">licences page</a> covers its data.</p>
+  </section>
+</main>
+</body>
+</html>

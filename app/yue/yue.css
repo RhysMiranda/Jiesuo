@@ -1,0 +1,9 @@
+/* Same exercise-book look as the Mandarin app; only the font changes. */
+@import url("../style.css");
+:root, :root[lang="zh-HK"] { --zh: "Noto Serif HK", "Noto Serif CJK HK", "PingFang HK", "Microsoft JhengHei", serif; }
+.unit-row { display: grid; gap: 4px; padding: 10px 0; border-bottom: 1px dashed var(--grid); }
+.unit-row .name { font-weight: 700; }
+.unit-row .bar { height: 8px; background: var(--grid-faint); border: 1px solid var(--grid); }
+.unit-row .bar > i { display: block; height: 100%; background: var(--pen); }
+.done-mark { color: var(--pen); font-weight: 700; }
+.placeholder { padding: 24px 0; }
