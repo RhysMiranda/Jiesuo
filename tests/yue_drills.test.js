@@ -145,7 +145,7 @@ test("checked unit only offers tones 1, 3, 6", () => {
 });
 
 test("initials and finals pick categories fairly", () => {
-  for (const [unit, cats] of [["finals", 4], ["initials", 3]]) {
+  for (const [unit, cats] of [["finals", 4], ["initials", 2]]) {
     const rng = seeded(10);
     const counts = {};
     const N = 3000;
@@ -193,4 +193,36 @@ test("score, say and record basics", () => {
   const s1 = Drills.record(s0, say, "right", "2026-01-01");
   assert.strictEqual(JSON.stringify(s0), frozen);
   assert.notStrictEqual(s1, s0);
+});
+
+test("z/c counts as aspiration", () => {
+  assert.strictEqual(D.category("initials", ["zaa1", "caa1"]), "aspiration");
+  assert.strictEqual(D.category("initials", ["ngaa1", "aa1"]), "ng-zero");
+});
+
+test("pick falls back to other drill types offline and returns null with nothing playable", () => {
+  const rng = seeded(13);
+  const offline = { baa1: [0] };
+  for (let i = 0; i < 100; i++) {
+    const d = D.pick("jyutping", Drills.emptyStats(), rng, { offlineClips: offline, type: "read" });
+    assert.ok(d && d.target === "baa1" && d.voice === 0);
+  }
+  // tones-hear cannot build any tone drill from one clip, but must not throw
+  assert.strictEqual(D.pick("tones-hear", Drills.emptyStats(), rng, { offlineClips: offline }), null);
+  assert.strictEqual(D.pick("jyutping", Drills.emptyStats(), rng, { offlineClips: {} }), null);
+  // fallback: requested type unavailable, another type works
+  const only = { baa1: [0], paa1: [0] };
+  const d = D.pick("initials", Drills.emptyStats(), rng, { offlineClips: only, type: "say" });
+  assert.ok(d && syllablesOf(d).every((s) => only[s]));
+  const e = D.pick("jyutping", Drills.emptyStats(), rng, { offlineClips: { baa1: [0], baa2: [0] }, type: "say" });
+  assert.ok(e && e.type !== "say"); // jyutping has no say drill: falls back to read/dictation
+});
+
+test("a plain wrong on tone-id does not dilute tone pair error rates", () => {
+  const d = toneIdDrill("tones-hear", 2, Drills.emptyStats());
+  const s = Drills.record(Drills.emptyStats(), d, "wrong", "2026-01-01");
+  assert.deepStrictEqual(s.tonePairs, {});
+  assert.strictEqual(s.byUnit["tones-hear"].length, 1);
+  const r = Drills.record(Drills.emptyStats(), d, "right", "2026-01-01");
+  assert.ok(r.tonePairs["2-5"].n === 1 && r.tonePairs["2-5"].wrong === 0);
 });

@@ -43,7 +43,7 @@
       const want = toneOf(drill.target), got = Number(answer);
       const opts = (drill.options || []).map(Number);
       const gotKnown = !ok && opts.includes(got) && got !== want;
-      for (const o of opts) if (o !== want) bump(want, o, gotKnown && o === got);
+      if (ok || gotKnown) for (const o of opts) if (o !== want) bump(want, o, gotKnown && o === got);
       if (gotKnown) { const k = want + ">" + got; out.pairs[k] = (out.pairs[k] || 0) + 1; }
     } else if (drill.type === "same-diff" && Array.isArray(drill.target)) {
       const [a, b] = drill.target.map(toneOf);
@@ -71,7 +71,7 @@
   }
 
   // ---- minimal-set categories (ruling R14) ----
-  const ASPIRATION = new Set(["b-p", "d-t", "g-k", "gw-kw", "z-c"]);
+  const ASPIRATION = new Set(["b-p", "d-t", "g-k", "gw-kw", "c-z"]);
   const ending = (f, re) => { const m = re.exec(f); return m ? [f.slice(0, m.index), m[0]] : null; };
 
   function initialsCategory(a, b) {
@@ -244,13 +244,16 @@
       const { review = false, offlineClips = null, type = null } = opts || {};
       const unit = units[unitId];
       if (!unit) throw new Error("unknown unit: " + unitId);
-      const t = type && unit.drills.includes(type) ? type : choice(rng, unit.drills);
+      const first = type && unit.drills.includes(type) ? type : choice(rng, unit.drills);
+      const types = [first].concat(shuffle(rng, unit.drills.filter((x) => x !== first)));
       const start = rnd(rng, nVoices);
-      for (let i = 0; i < nVoices; i++) {
-        const drill = build(t, unit, stats, rng, (start + i) % nVoices, offlineClips, review);
-        if (drill) return drill;
+      for (const t of types) {
+        for (let i = 0; i < nVoices; i++) {
+          const drill = build(t, unit, stats, rng, (start + i) % nVoices, offlineClips, review);
+          if (drill) return drill;
+        }
       }
-      throw new Error("no drill available for " + unitId + " / " + t);
+      return null; // nothing playable (for example nothing cached offline)
     }
 
     function score(drill, answer) {
