@@ -64,14 +64,40 @@ def test_unresolved_is_reported(tmp_path):
     assert "蚊" in text and "man1" in text and "man4" in text and "unresolved" in text
 
 
-def test_corpus_beats_contradicted_rime(tmp_path):
-    sent = [("甲", "n", "baa1")] * 6
-    srcs = {
-        "rime": {"甲": [("baa3", None)]},
-        "cccanto": {"甲": {"baa1", "baa3"}},
-        "unihan": {},
-        "hkcancor": [sent],
-        "overrides": {},
-    }
-    r = resolve_char("甲", srcs)
-    assert r.main == "baa1" and r.status == "corpus" and "baa3" in r.others
+def test_dictionary_agreed_citation_readings_are_not_demoted():
+    for ch, want in zip("到位友樣來嘩", ["dou3", "wai6", "jau5", "joeng6", "loi4", "waa1"]):
+        r = resolve_char(ch, SRCS)
+        assert r.main == want and r.status == "agreed", (ch, r.main, r.status)
+
+
+def test_speech_reading_recorded_in_evidence():
+    r = resolve_char("到", SRCS)
+    assert r.main == "dou3"
+    reading, count = r.evidence["speech_top"]
+    assert reading == "dou2" and count >= 5
+
+
+def test_sheng_keeps_both_readings():
+    r = resolve_char("生", SRCS)
+    assert {r.main, *r.others} >= {"saang1", "sang1"}
+
+
+def _synthetic(rime, canto, unihan, tokens):
+    sent = [("甲", "n", t) for t in tokens]
+    return {"rime": {"甲": rime}, "cccanto": {"甲": canto} if canto else {},
+            "unihan": {"甲": unihan} if unihan else {}, "hkcancor": [sent], "overrides": {}}
+
+
+def test_corpus_decides_only_without_confirmed_rime_main():
+    # rime main baa3 confirmed by CC-Canto: corpus (baa1 x8) must not override it
+    r = resolve_char("甲", _synthetic([("baa3", None)], {"baa3", "baa1"}, None, ["baa1"] * 8))
+    assert r.main == "baa3" and r.status == "agreed" and r.evidence["speech_top"] == ("baa1", 8)
+    # rime main unconfirmed: corpus decides
+    r = resolve_char("甲", _synthetic([("baa3", None)], {"baa1"}, None, ["baa1"] * 8))
+    assert r.main == "baa1" and r.status == "corpus"
+
+
+def test_five_tokens_count_four_do_not():
+    args = ([("baa3", None)], {"baa1"}, None)
+    assert resolve_char("甲", _synthetic(*args, ["baa1"] * 4)).status == "unresolved"
+    assert resolve_char("甲", _synthetic(*args, ["baa1"] * 5)).status == "corpus"

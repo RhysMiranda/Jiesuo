@@ -3,10 +3,14 @@
 Rules, in order:
 1. A character in data/yue/overrides.tsv takes that reading (status "override").
 2. rime's main reading (the entry with no weight; with none unweighted, the heaviest entry; a tie
-   or several unweighted entries is ambiguous and gives no rime main) is "agreed" if CC-Canto or
-   Unihan also has it and HKCanCor does not contradict it.
-3. Otherwise HKCanCor's top one-character reading ("corpus"), if the character occurs at least
-   MIN_TOKENS times as a one-character word, the top is unique, and some dictionary source has it.
+   or several unweighted entries is broken by CC-Canto/Unihan if exactly one candidate is listed there,
+   else gives no rime main) is "agreed" if CC-Canto or
+   Unihan also has it, whatever HKCanCor says. A different HKCanCor top reading (at least
+   MIN_TOKENS one-character tokens) is kept in evidence["speech_top"] = (reading, count) and
+   never changes main: speech tokens carry changed tones and function-word uses.
+3. Only without a confirmed rime main: HKCanCor's unique top one-character reading ("corpus"), if
+   the character occurs at least MIN_TOKENS times as a one-character word and some dictionary
+   source has that reading.
 4. Otherwise "unresolved".
 """
 import sys
@@ -66,15 +70,19 @@ def _corpus(srcs) -> dict:
     return srcs["_corpus"]
 
 
-def _rime_main(entries):
+def _rime_main(entries, confirmed=frozenset()):
+    """rime's main reading. Among tied candidates (several unweighted, or equal top weight) the one
+    that CC-Canto or Unihan list is the main, if exactly one is so confirmed."""
     if not entries:
         return None
-    unweighted = [r for r, w in entries if w is None]
-    if unweighted:
-        return unweighted[0] if len(unweighted) == 1 else None
-    top = max(w for _, w in entries)
-    best = {r for r, w in entries if w == top}
-    return best.pop() if len(best) == 1 else None
+    best = {r for r, w in entries if w is None}
+    if not best:
+        top = max(w for _, w in entries)
+        best = {r for r, w in entries if w == top}
+    if len(best) == 1:
+        return next(iter(best))
+    sure = best & confirmed
+    return next(iter(sure)) if len(sure) == 1 else None
 
 
 def _top(counter, min_tokens=MIN_TOKENS):
@@ -116,11 +124,12 @@ def resolve_char(ch, srcs) -> Resolution:
     top, tied = _top(corpus)
     in_dict = {r for r, _ in rime} | canto | uni
 
-    main = _rime_main(rime)
+    main = _rime_main(rime, canto | uni)
     if main and (main in canto or main in uni):
-        contradicted = top is not None and top != main or (top is None and tied and main not in tied)
-        if not contradicted:
-            return finish(main, "agreed")
+        res = finish(main, "agreed")
+        if top is not None and top != main:
+            res.evidence["speech_top"] = (top, corpus[top])
+        return res
 
     if top is not None and top in in_dict:
         return finish(top, "corpus")
@@ -131,6 +140,10 @@ def resolve_all(srcs) -> dict:
     forms = set(srcs["rime"]) | set(srcs["cccanto"]) | set(_corpus(srcs)) | set(srcs.get("overrides", {}))
     forms = {f for f in forms if len(f) == 1}
     return {f: resolve_char(f, srcs) for f in sorted(forms)}
+
+
+def _cands(r) -> str:
+    return "; ".join(f"{rd} [{', '.join(s)}]" for rd, s in sorted(r.evidence.items()) if rd != "speech_top")
 
 
 def write_report(resolutions, path=REPORT, srcs=None):
@@ -147,6 +160,19 @@ def write_report(resolutions, path=REPORT, srcs=None):
              "| status | characters |", "|---|---|"]
     for status in ("agreed", "corpus", "override", "unresolved"):
         lines.append(f"| {status} | {counts.get(status, 0)} |")
+    decided = sorted((r for r in res if r.status == "corpus"), key=lambda r: (-freq(r), r.form))
+    lines += ["", f"## Decided by the corpus ({len(decided)})", "",
+              "No dictionary-confirmed rime main; HKCanCor's top one-character reading was chosen.", ""]
+    for r in decided:
+        lines.append(f"- {r.form} -> {r.main} (hkcancor {freq(r)}): {_cands(r)}")
+    speech = sorted((r for r in res if r.status == "agreed" and "speech_top" in r.evidence),
+                    key=lambda r: (-r.evidence["speech_top"][1], r.form))
+    lines += ["", f"## Said differently in speech ({len(speech)})", "",
+              "Dictionary-agreed main, but HKCanCor's most frequent one-character reading differs "
+              "(changed tones, function-word uses; useful for phase 2 teaching).", ""]
+    for r in speech:
+        rd, n = r.evidence["speech_top"]
+        lines.append(f"- {r.form}: main {r.main}, speech {rd} (x{n})")
     lines += ["", f"## Unresolved ({len(unresolved)} in total)", ""]
     if not unresolved:
         lines.append("None.")
@@ -155,7 +181,7 @@ def write_report(resolutions, path=REPORT, srcs=None):
                      "Each candidate shows which sources have it.")
         lines.append("")
         for r in unresolved:
-            cands = "; ".join(f"{rd} [{', '.join(srcs_)}]" for rd, srcs_ in sorted(r.evidence.items()))
+            cands = _cands(r)
             lines.append(f"- {r.form} (hkcancor {freq(r)}): {cands or 'no readings'}")
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     Path(path).write_text("\n".join(lines) + "\n", encoding="utf8")
