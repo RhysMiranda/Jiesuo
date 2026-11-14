@@ -7,3 +7,27 @@
 .unit-row .bar > i { display: block; height: 100%; background: var(--pen); }
 .done-mark { color: var(--pen); font-weight: 700; }
 .placeholder { padding: 24px 0; }
+
+/* Sounds screen */
+.ladder { width: 100%; max-width: 420px; height: auto; }
+.lad { cursor: pointer; outline: none; }
+.lad:focus-visible .lad-line, .lad:hover .lad-line { stroke: var(--ink); }
+.lad-line { stroke: var(--pen); stroke-width: 4; stroke-linecap: round; fill: none; }
+.lad-dot { fill: var(--pen); }
+.lad-n { fill: var(--ink); font: 700 18px var(--ui); }
+.lad-s { fill: var(--soft); font: 500 13px var(--ui); }
+.chart-box { max-width: 100%; overflow: auto; max-height: 60vh; border: 1px solid var(--grid); background: var(--sheet); }
+.chart { border-collapse: separate; border-spacing: 0; font: 500 .9rem var(--ui); }
+.chart th, .chart td { padding: 0; text-align: center; border-right: 1px dashed var(--grid-faint); border-bottom: 1px dashed var(--grid-faint); }
+.chart thead th { position: sticky; top: 0; z-index: 2; background: var(--paper); color: var(--soft); padding: 6px 8px; }
+.chart tbody th { position: sticky; left: 0; z-index: 1; background: var(--paper); color: var(--soft); padding: 0 10px; min-width: 40px; }
+.chart thead th:first-child { left: 0; z-index: 3; }
+.chart .cell { min-width: 52px; min-height: 44px; padding: 0 6px; background: transparent; border: 0; color: var(--pen); font: 500 .95rem var(--ui); cursor: pointer; }
+.chart .cell:hover, .chart .cell.on { background: var(--pen-wash); }
+.chart .cell.on { font-weight: 700; }
+.tone-panel:empty { display: none; }
+.tone-panel { padding: 10px 12px; border: 1px solid var(--grid); background: var(--sheet); }
+.tonebtn b { margin-left: 2px; }
+.tonebtn[disabled] { opacity: .4; cursor: default; }
+.mixrow { justify-content: space-between; }
+.voice { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding-right: 12px; }

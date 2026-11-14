@@ -2,7 +2,7 @@
 // Audio (audio/…mp3) is never precached: it is cached the first time it is played.
 const VERSION = "jiesuo-yue-v1";
 const FILES = ["./", "index.html", "yue.css", "../style.css", "../journey.js", "../tone.js",
-  "jyutping.js", "tones.js", "drills.js", "state.js", "today.js", "sounds.js", "app.js",
+  "jyutping.js", "tones.js", "drills.js", "state.js", "audio.js", "today.js", "sounds.js", "app.js",
   "data/stage0.json", "data/audio.json", "data/readings.json", "data/tonecheck.json",
   "manifest.webmanifest", "icons/favicon-32.png", "icons/apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png",
   "licences/"];

@@ -1,0 +1,58 @@
+"use strict";
+const test = require("node:test");
+const assert = require("node:assert");
+const A = require("../app/yue/audio.js");
+const S = require("../app/yue/sounds.js");
+const audio = require("../app/yue/data/audio.json");
+
+A.init(audio);
+
+test("clipUrl returns null when no clip", () => {
+  assert.strictEqual(A.clipUrl("m4", 0), null);
+  assert.strictEqual(A.clipUrl("zzz9", 0), null);
+});
+
+test("clipUrl builds the path and falls back to a voice that has the clip", () => {
+  assert.strictEqual(A.clipUrl("si1", 0), "audio/googleA/si1.mp3");
+  A.init({ voices: [{ id: "a" }, { id: "b" }, { id: "c" }], clips: { x1: [2] } });
+  assert.strictEqual(A.clipUrl("x1", 0), "audio/c/x1.mp3");
+  assert.strictEqual(A.clipUrl("x1", 99), "audio/c/x1.mp3");
+  assert.strictEqual(A.clipUrl("x1", -1), "audio/c/x1.mp3");
+  assert.strictEqual(A.clipUrl("x1", 2), "audio/c/x1.mp3");
+  A.init(audio);
+});
+
+test("voicesFor follows audio.json", () => {
+  assert.deepStrictEqual(A.voicesFor("aa1"), audio.clips.aa1);
+  assert.deepStrictEqual(A.voicesFor("m4"), []);
+  assert.deepStrictEqual(A.voicesFor("nope1"), []);
+});
+
+test("failed playback skips without scoring", () => {
+  assert.deepStrictEqual(A.afterPlay("failed", {}), { skip: true, message: "This sound isn't downloaded yet" });
+  assert.deepStrictEqual(A.afterPlay("played", {}), { skip: false, message: "" });
+});
+
+test("play resolves failed without throwing when there is no clip or no DOM", async () => {
+  assert.strictEqual(await A.play("m4", { voice: 0 }), "failed");
+  assert.strictEqual(await A.play("si1", { voice: 0 }), "failed"); // no fetch/Audio in this context
+});
+
+test("chart model: only rows and columns with audio, cells list their tones", () => {
+  const m = S.buildChart({ clips: { si1: [0], si6: [0], sik1: [0], aa1: [0], aa3: [0], m4: [], ngaa4: [0] } });
+  assert.deepStrictEqual(m.initials, ["", "ng", "s"]);
+  assert.deepStrictEqual(m.finals, ["aa", "i", "ik"]);
+  assert.deepStrictEqual(m.cell("s", "i"), [1, 6]);
+  assert.strictEqual(m.cell("s", "aa"), null);
+  assert.deepStrictEqual(m.cell("", "aa"), [1, 3]);
+});
+
+test("tone tabs: checked finals show only 1, 3 and 6", () => {
+  assert.deepStrictEqual(S.tonesShown("sik"), [1, 3, 6]);
+  assert.deepStrictEqual(S.tonesShown("si"), [1, 2, 3, 4, 5, 6]);
+});
+
+test("mix-up sentences are plain", () => {
+  assert.strictEqual(S.confusionText(6, 3), "You hear tone 6 as tone 3 most often");
+  assert.strictEqual(S.confusionText(2, 5, false), "You hear tone 2 as tone 5 sometimes");
+});
