@@ -6,9 +6,10 @@ manifest (data/yue/manifest.json) is. Every URL is pinned to a commit or a
 dated release. The words.hk CSVs are not downloaded: they are hashed from
 data/raw/wordshk/ if present.
 
-Usage: python scripts/fetch_yue_data.py [--check]
+Usage: python scripts/fetch_yue_data.py [--check | --update]
 """
 import hashlib
+import http.client
 import json
 import sys
 import time
@@ -52,7 +53,11 @@ def get(url):
     for attempt in range(RETRIES):
         try:
             with urllib.request.urlopen(url, timeout=120) as r:
-                return r.read()
+                body = r.read()
+                want = r.headers.get("Content-Length")
+            if want is not None and want.isdigit() and int(want) != len(body):
+                raise http.client.IncompleteRead(body, int(want) - len(body))
+            return body
         except urllib.error.HTTPError as e:
             if e.code != 429 and e.code < 500 or attempt == RETRIES - 1:
                 raise
@@ -60,7 +65,7 @@ def get(url):
             if ra.isdigit():
                 time.sleep(min(int(ra), 120))
                 continue
-        except (urllib.error.URLError, TimeoutError, ConnectionError):
+        except (urllib.error.URLError, http.client.HTTPException, OSError):
             if attempt == RETRIES - 1:
                 raise
         time.sleep(min(2 ** attempt, 60))
@@ -107,6 +112,23 @@ def wordshk_entry():
         "sha256": hashlib.sha256("\n".join(lines).encode()).hexdigest(),
         "bytes": sum(p.stat().st_size for p in files),
     }
+
+
+def mismatches(existing, fresh):
+    """Names whose fresh hash differs from the manifest entry already recorded."""
+    return [n for n, e in fresh.items() if n in existing and existing[n]["sha256"] != e["sha256"]]
+
+
+def merge_manifest(path, fresh, update=False):
+    """Write fresh entries. Entries already in the manifest must match unless update.
+    Returns the list of mismatched names (nothing is written if any, without update)."""
+    existing = json.loads(path.read_text()) if path.exists() else {}
+    bad = mismatches(existing, fresh)
+    if bad and not update:
+        return bad
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({**existing, **fresh}, indent=1) + "\n")
+    return bad
 
 
 def check():
