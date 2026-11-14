@@ -30,12 +30,10 @@
     return;
   }
 
-  let state = JyutState.emptyState();
-  try {
-    const saved = store.get(STORE_KEY);
-    if (saved) state = JyutState.deserialise(JSON.parse(saved));
-  } catch (e) { /* a damaged or foreign save starts fresh */ }
+  const loaded = JyutState.load(store.get(STORE_KEY));
+  let state = loaded.state; // a damaged or foreign save starts fresh
 
+  const FRESH_MSG = "Your saved progress could not be read, so the app started fresh. Restore from a file if you have one.";
   function save() {
     store.set(STORE_KEY, JSON.stringify(JyutState.serialise(state)));
     document.getElementById("storage-warning").hidden = storageOk;
@@ -136,13 +134,17 @@
     const restore = (text) => {
       const msg = document.getElementById("import-msg");
       try {
-        state = JyutState.deserialise(JSON.parse(text));
+        const got = JyutState.deserialise(JSON.parse(text));
+        const old = state;
+        state = got;
+        // Draw first: if the new state cannot be drawn, keep the old state and storage untouched.
+        try { renderProgress(); } catch (err) { state = old; renderProgress(); throw new Error("bad-file"); }
         save();
-        renderProgress();
         toast("Progress restored.");
       } catch (e) {
         msg.innerHTML = e instanceof SyntaxError ? "That text is not valid JSON. Check that you copied the whole file."
-          : e.message === "not-yue" ? `This file is from the Mandarin app. <a href="../">Open it there.</a>` : esc(e.message);
+          : e.message === "not-yue" ? `This file is from the Mandarin app. <a href="../">Open it there.</a>`
+            : e.message === "bad-file" ? "That file is damaged, so it was not restored. Your progress is unchanged." : esc(e.message);
       }
     };
     document.getElementById("import-go").onclick = () => restore(document.getElementById("import-text").value);
@@ -162,14 +164,25 @@
     const tab = SCREENS.includes(h) ? h : HOME;
     document.querySelectorAll(".tabs a").forEach((a) => (a.dataset.tab === tab ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
     const screens = window.JyutScreens || {};
-    if (tab === "progress") renderProgress();
-    else if (typeof screens[tab] === "function") screens[tab](ctx);
-    else view.innerHTML = `<p class="soft">This screen is not ready yet.</p>`;
+    const draw = () => {
+      if (tab === "progress") renderProgress();
+      else if (typeof screens[tab] === "function") screens[tab](ctx);
+      else view.innerHTML = `<p class="soft">This screen is not ready yet.</p>`;
+    };
+    try { draw(); } catch (e) {
+      // Whatever got into the state, never leave the app unusable: start fresh and say so.
+      state = JyutState.emptyState();
+      save();
+      try { draw(); } catch (e2) { view.innerHTML = `<p class="warn">Something went wrong drawing this screen.</p>`; }
+      toast(FRESH_MSG);
+    }
   }
   window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
-  store.set("jiesuo-yue-test", "1");
+  store.set("jiesuo-yue-test", "1"); // probe only; remove the junk key again
+  try { localStorage.removeItem("jiesuo-yue-test"); } catch (e) { /* already flagged by the probe */ }
   document.getElementById("storage-warning").hidden = storageOk;
   route();
+  if (loaded.fresh) toast(FRESH_MSG);
 
   // Offline support where the host allows service workers (GitHub Pages does).
   try {

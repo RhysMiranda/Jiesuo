@@ -35,6 +35,32 @@ test("deserialise fills defaults for missing fields", () => {
   assert.deepStrictEqual(back, State.emptyState());
 });
 
+test("a yue file with wrong inner types is refused as bad-file", () => {
+  const ok = (extra) => Object.assign({ lang: "yue", v: 1 }, extra);
+  const bads = [
+    { stats: { byUnit: { "tones-six": 5 }, pairs: {}, gateLog: [], tonePairs: {} } },
+    { stats: { byUnit: { u: [{ r: "x" }] }, pairs: {}, gateLog: [], tonePairs: {} } },
+    { stats: { byUnit: {}, pairs: { "1>2": "a" }, gateLog: [], tonePairs: {} } },
+    { stats: { byUnit: {}, pairs: {}, gateLog: [2], tonePairs: {} } },
+    { stats: { byUnit: {}, pairs: {}, gateLog: [], tonePairs: { "1-2": 3 } } },
+    { stats: "x" }, { profile: { t1: "a" } }, { voice: -1 }, { voice: 1.5 }, { days: [1] },
+  ];
+  for (const b of bads) assert.throws(() => State.deserialise(ok(b)), { message: "bad-file" }, JSON.stringify(b));
+  const good = State.emptyState(); good.profile = { t1: 3.2, t3: 1 };
+  assert.deepStrictEqual(State.deserialise(ok(good)).profile, good.profile);
+});
+
+test("load falls back to a fresh state on a bad, foreign or unparseable save", () => {
+  const fresh = State.emptyState();
+  assert.deepStrictEqual(State.load(null), { state: fresh, fresh: false });
+  const bad = JSON.stringify({ lang: "yue", v: 1, stats: { byUnit: { a: 5 }, pairs: {}, gateLog: [], tonePairs: {} } });
+  assert.deepStrictEqual(State.load(bad), { state: fresh, fresh: true });
+  assert.deepStrictEqual(State.load("{nope"), { state: fresh, fresh: true });
+  assert.deepStrictEqual(State.load(JSON.stringify({ known: [] })), { state: fresh, fresh: true });
+  const s = State.emptyState(); s.days = ["2026-11-14"];
+  assert.deepStrictEqual(State.load(JSON.stringify(State.serialise(s))).state, s);
+});
+
 test("the Mandarin service worker no longer deletes foreign caches", () => {
   const sw = fs.readFileSync(path.join(__dirname, "../app/sw.js"), "utf8");
   assert.ok(sw.includes("/^jiesuo-v" + String.fromCharCode(92) + "d+$/"));
