@@ -344,7 +344,7 @@ Each voice's profile comes from its own `si1 si3 si6 si4 si2 si5` clips. Grid-se
 **Interfaces:**
 - Consumes: `data/raw/yue/cantone/`, `data/yue/audio_exclusions.json`, and `load_rime_chars()` (the syllable inventory).
 - Produces: `audio.json = {licence, voices: [{id, label}], clips: {"<syl>": [voiceIndex, …]}}`.
-  - Shipped voices, in this order: `googleA` ("Voice 1, female"), `googleB` ("Voice 2, male"), `microsoftHiuGaai` ("Voice 3, female").
+  - Shipped voices, in this order: `googleA` ("Voice 1, female"), `googleB` ("Voice 2, male"), `amazonHiuJin` ("Voice 3, female") (ruling R12).
   - A syllable is listed only if it is in rime's inventory and has at least one non-excluded clip.
   - MP3 encoding: mono, 16 kHz, 24 kbps (`lameenc`).
 
