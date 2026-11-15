@@ -33,6 +33,30 @@
     return null;
   }
 
+  const AUDIO_CACHE = "jiesuo-yue-audio-v1"; // sw.js keeps clips here
+
+  /** Cached clip URLs -> {syl: [voice, ...]} (the shape of audio.clips), for voices and syllables audio.json knows. */
+  function clipsFromUrls(urls) {
+    const out = {};
+    for (const u of urls || []) {
+      const m = /\/audio\/([^/]+)\/([^/]+)\.mp3$/.exec(String(u));
+      if (!m) continue;
+      const v = voices.findIndex((x) => x.id === m[1]);
+      if (v < 0 || !voicesFor(m[2]).includes(v)) continue;
+      (out[m[2]] = out[m[2]] || []).includes(v) || out[m[2]].push(v);
+    }
+    return out;
+  }
+
+  /** What the service worker's audio cache holds, as clipsFromUrls; null where caches are unavailable. Never rejects. */
+  async function cachedClips() {
+    try {
+      if (typeof caches === "undefined") return null;
+      const keys = await (await caches.open(AUDIO_CACHE)).keys();
+      return clipsFromUrls(keys.map((r) => r.url));
+    } catch (e) { return null; }
+  }
+
   const LOAD_MS = 8000;
   let actx = null, current = null;
 
@@ -132,5 +156,5 @@
     return { skip: false, message: "" };
   }
 
-  return { init, clipUrl, voicesFor, voiceForAll, play, unlock, withTimeout, prefetch, afterPlay };
+  return { init, clipUrl, voicesFor, voiceForAll, clipsFromUrls, cachedClips, play, unlock, withTimeout, prefetch, afterPlay };
 });

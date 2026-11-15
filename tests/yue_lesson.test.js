@@ -136,16 +136,45 @@ test("an unplayable gate question is replaced, and a short gate is reported hone
   assert.match(L.gateSummary(full, false), /You got 30 of 40 on the tone check/);
 });
 
-test("a kept lesson decides the gate when it starts", () => {
+test("a kept lesson carries its gate step, and decides at the start whether it is due", () => {
   const ready = statsWith(["tones-six", "tones-hear"]);
-  const kept = L.compose(stage0, ready, Object.assign({}, base, { gate: false }), seeded(23)).steps;
-  assert.ok(!kept.some((s) => s.kind === "gate"));
-  const day2 = L.withGate(stage0, kept, ready, Object.assign({}, base, { gateLast: "2026-11-14", today: "2026-11-15" }), seeded(24));
-  const gi = day2.findIndex((s) => s.kind === "gate");
-  assert.ok(gi >= 0 && day2.slice(0, gi).every((s) => s.kind === "teach"));
-  assert.strictEqual(day2.length, kept.length + 1);
-  const sameDay = L.withGate(stage0, day2, ready, Object.assign({}, base, { gateLast: "2026-11-15", today: "2026-11-15" }), seeded(25));
-  assert.ok(!sameDay.some((s) => s.kind === "gate")); // an old gate step is dropped when the gate is not due
+  const today = { gateLast: "2026-11-15", today: "2026-11-15" }, tomorrow = { gateLast: "2026-11-15", today: "2026-11-16" };
+  // composed in done() right after today's gate: the gate step is kept anyway, so its clips can be prefetched
+  const kept = L.compose(stage0, ready, Object.assign({}, base, today, { gate: "keep" }), seeded(23)).steps;
+  const g = kept.find((s) => s.kind === "gate");
+  assert.ok(g && g.drills.length === 40 && g.drills.every((d) => d.gate === true));
+  const pre = new Set();
+  kept.forEach((s) => { if (s.kind === "gate") s.drills.forEach((d) => pre.add(d.voice + "|" + d.target)); });
+  assert.strictEqual(pre.size > 0, true); // the prefetch branch in today.js done() sees these drills
+  // due at the start: the very same (prefetched) gate step is kept
+  const next = L.withGate(stage0, kept, ready, Object.assign({}, base, tomorrow), seeded(24));
+  assert.deepStrictEqual(next.find((s) => s.kind === "gate"), g);
+  assert.strictEqual(next.length, kept.length);
+  // not due (same day): dropped
+  assert.ok(!L.withGate(stage0, kept, ready, Object.assign({}, base, today), seeded(25)).some((s) => s.kind === "gate"));
+  // passed meanwhile: dropped
+  const passed = Object.assign({}, ready, { gateLog: Array(40).fill(1) });
+  assert.ok(!L.withGate(stage0, kept, passed, Object.assign({}, base, tomorrow), seeded(26)).some((s) => s.kind === "gate"));
+  // none kept but due: a fresh one goes after the teach steps
+  const plain = L.compose(stage0, ready, Object.assign({}, base, { gate: false }), seeded(27)).steps;
+  const fresh = L.withGate(stage0, plain, ready, Object.assign({}, base, tomorrow), seeded(28));
+  const gi = fresh.findIndex((s) => s.kind === "gate");
+  assert.ok(gi >= 0 && fresh.slice(0, gi).every((s) => s.kind === "teach"));
+});
+
+test("a replacement gate question prefers a cached clip", () => {
+  const ready = statsWith(["tones-six", "tones-hear"]);
+  const unit = stage0.units.find((u) => u.id === "tones-hear");
+  const set = unit.minimalSets.find((s) => s.filter((x) => (audio.clips[x] || []).includes(0)).length >= 4);
+  const cached = {};
+  for (const x of set) if ((audio.clips[x] || []).includes(0)) cached[x] = [0];
+  const failed = { type: "tone-id", unit: "tones-hear", target: "zzz1", voice: 9 };
+  const rng = seeded(31);
+  for (let i = 0; i < 20; i++) {
+    const d = L.replaceGateDrill(D, ready, failed, rng, cached);
+    assert.ok(d && d.gate === true && d.voice === 0 && cached[d.target], JSON.stringify(d));
+  }
+  assert.ok(L.replaceGateDrill(D, ready, failed, rng, {})); // nothing cached: any playable question
 });
 
 test("summary never mentions missed days", () => {

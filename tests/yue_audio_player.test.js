@@ -36,6 +36,14 @@ test("voiceForAll keeps a group in one voice", () => {
   assert.ok(v !== null && ladder.every((s) => audio.clips[s].includes(v)));
 });
 
+test("clipsFromUrls maps cached clip URLs to the shape of audio.clips", () => {
+  A.init({ voices: [{ id: "a" }, { id: "b" }], clips: { x1: [0, 1], x2: [1] } });
+  const got = A.clipsFromUrls(["http://h/yue/audio/b/x1.mp3", "http://h/yue/audio/a/x1.mp3", "http://h/yue/audio/a/x2.mp3",
+    "http://h/yue/audio/zz/x1.mp3", "http://h/yue/index.html", "http://h/yue/audio/b/x2.mp3", "http://h/yue/audio/b/x2.mp3"]);
+  assert.deepStrictEqual(got, { x1: [1, 0], x2: [1] }); // unknown voices and clips audio.json lacks are left out
+  A.init(audio);
+});
+
 test("voicesFor follows audio.json", () => {
   assert.deepStrictEqual(A.voicesFor("aa1"), audio.clips.aa1);
   assert.deepStrictEqual(A.voicesFor("m4"), []);

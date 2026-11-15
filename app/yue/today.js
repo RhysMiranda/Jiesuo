@@ -5,6 +5,7 @@
   window.JyutScreens = window.JyutScreens || {};
 
   let staleKeyOff = null; // the previous render's keydown listener, removed when Today is drawn again
+  let cachedMap = null; // {syl: [voice]} the audio cache holds, refreshed on every render (async)
   const sylsOf = (d) => (Array.isArray(d.target) ? d.target : [d.target]).concat((d.options || []).filter((o) => typeof o === "string" && o !== "same" && o !== "different"));
 
   function render(ctx) {
@@ -12,6 +13,8 @@
     const esc = ctx.esc, data = ctx.data, view = ctx.view;
     const D = ctx.drills.createDrills({ stage0: data.stage0, audio: data.audio });
     A.init(data.audio);
+    A.cachedClips().then((m) => { cachedMap = m && Object.keys(m).length ? m : null; });
+    const offline = () => (typeof navigator !== "undefined" && navigator.onLine === false ? cachedMap : null);
     if (staleKeyOff) { staleKeyOff(); staleKeyOff = null; }
     const pm = /^today\/practise\/([1-6])-([1-6])$/.exec((location.hash || "").slice(1));
     const rng = Math.random;
@@ -26,6 +29,7 @@
       gateLast: ctx.state.gate && typeof ctx.state.gate.offered === "string" ? ctx.state.gate.offered : null,
       today: day(),
       drills: D,
+      offlineClips: offline(), // offline, draw only what is cached
     });
     function build() {
       const stats = ctx.state.stats;
@@ -35,7 +39,7 @@
       } else {
         const kept = ctx.state.lesson;
         const keptSteps = kept ? L.usableSteps(kept.steps) : null; // a damaged kept lesson is dropped and composed fresh
-        // a kept lesson was composed without the gate; whether the gate is due is decided now, as it starts
+        // a kept lesson carries its prefetched gate step; whether the gate is due is decided now, as it starts
         const lesson = keptSteps ? { steps: L.withGate(data.stage0, keptSteps, stats, lessonOpts(), rng) } : L.compose(data.stage0, stats, lessonOpts(), rng);
         if (kept) { ctx.state.lesson = null; ctx.save(); } // used once, so the next lesson is composed fresh
         if (lesson.steps.some((s) => s.kind === "gate")) { // note the offer, so the gate comes at most once a day
@@ -88,7 +92,7 @@
         if (r === "failed" && skipOnFail && !answeredNow) {
           const step = steps[idx];
           // A gate question that will not play is swapped for another, so the gate can still reach 40.
-          const nd = step && step.gate && swaps < 20 ? L.replaceGateDrill(D, ctx.state.stats, step.drill, rng) : null;
+          const nd = step && step.gate && swaps < 20 ? L.replaceGateDrill(D, ctx.state.stats, step.drill, rng, cachedMap) : null; // cached clips first
           if (nd) { swaps++; steps[idx] = Object.assign({}, step, { drill: nd }); ctx.toast("That sound would not play, so here is another one."); go(); return; }
           ctx.toast(after.message);
           next();
@@ -266,7 +270,8 @@
       const text = L.summarise(before, ctx.state.stats, answered);
       if (!pm) { // compose the next lesson now, keep it, and warm the cache for exactly its drills
         try {
-          const nl = L.compose(data.stage0, ctx.state.stats, Object.assign(lessonOpts(), { gate: false }), rng); // gate decided when it starts
+          // keep the gate step whatever the day (withGate decides at the start), so its clips are prefetched now
+          const nl = L.compose(data.stage0, ctx.state.stats, Object.assign(lessonOpts(), { gate: "keep" }), rng);
           ctx.state.lesson = { steps: nl.steps };
           ctx.save();
           const byVoice = {};

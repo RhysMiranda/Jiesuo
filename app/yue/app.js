@@ -73,7 +73,7 @@
   function renderProgress() {
     const g = JyutDrills.gate(state.stats);
     const gateLine = g.passed
-      ? `You got ${g.right} of ${g.count} on the tone check, so the words are open to you.`
+      ? JyutLesson.gateSummary(state.stats, true) // "N of the M questions you answered" when fewer than 40
       : g.count ? `So far you have ${g.right} of ${g.count} on the tone check. The words open at 34 of 40, or you can move on whenever you like.`
         : "The 40-question tone check opens the words at 34 right. You can move on whenever you like.";
     const guideLine = window.JyutSpeak && JyutSpeak.guideText ? JyutSpeak.guideText(data.tonecheck) : "";

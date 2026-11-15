@@ -21,7 +21,8 @@
    * The 40-question gate is offered once tones-hear is passed and the gate is not, at most once a day:
    * gateLast is the day it was last offered (state.gate.offered), today the current day key.
    * Only the gate step's drills carry gate:true, so only a taken gate fills the gate log.
-   * gate:false leaves the gate out: a lesson kept for later decides it when it starts (withGate).
+   * gate:false leaves the gate out. gate:"keep" ignores gateLast: done() keeps the next lesson with its gate
+   * step (so its clips can be prefetched), and withGate decides at the start whether it is due that day.
    */
   function compose(stage0, stats, opts, rng) {
     rng = rng || Math.random;
@@ -103,11 +104,16 @@
     return d && d.type === "tone-id" && d.options.length === 6 ? Object.assign(d, { gate: true }) : null;
   }
 
+  /** Is the gate due: tones-hear passed, the gate not, and (unless ignoreDay) not already offered today. */
+  function gateDue(D, stats, opts, ignoreDay) {
+    const { gateLast = null, today = null } = opts || {};
+    return D.unitPassed(stats, "tones-hear") && !D.gate(stats).passed && (ignoreDay || !(gateLast && today && gateLast === today));
+  }
+
   /** The 40-question gate step if it is due (see compose), else null. */
   function gateStep(D, stats, opts, rng) {
-    const { gateLast = null, today = null, offlineClips = null } = opts || {};
-    const due = D.unitPassed(stats, "tones-hear") && !D.gate(stats).passed && !(gateLast && today && gateLast === today);
-    if (!due) return null;
+    const { offlineClips = null } = opts || {};
+    if (!gateDue(D, stats, opts, opts && opts.gate === "keep")) return null;
     const gd = [];
     for (let tries = 0; gd.length < GATE_SIZE && tries < GATE_SIZE * 5; tries++) {
       const d = gateDrill(D, stats, rng, offlineClips);
@@ -116,22 +122,29 @@
     return gd.length === GATE_SIZE ? { kind: "gate", drills: gd, summary: "A 40-question tone check. It opens the words at 34 right, and you can move on whenever you like." } : null;
   }
 
-  /** A kept lesson's steps with the gate decided now, as the lesson starts: any old gate step is dropped and a
-      fresh one goes after the opening teach steps if the gate is due today. opts as compose. */
+  /** A kept lesson's steps with the gate decided now, as the lesson starts. Due today: the kept gate step (its
+      clips were prefetched) stays, or a fresh one goes after the opening teach steps if none was kept.
+      Not due: any kept gate step is dropped. opts as compose. */
   function withGate(stage0, steps, stats, opts, rng) {
     const D = (opts && opts.drills) || Drills.createDrills({ stage0, audio: opts.audio });
-    const out = steps.filter((s) => s.kind !== "gate");
-    const g = gateStep(D, stats, opts, rng || Math.random);
+    const o = Object.assign({}, opts, { gate: true });
+    if (!gateDue(D, stats, o, false)) return steps.filter((s) => s.kind !== "gate");
+    if (steps.some((s) => s.kind === "gate")) return steps.slice();
+    const out = steps.slice();
+    const g = gateStep(D, stats, o, rng || Math.random);
     if (g) { let i = 0; while (i < out.length && out[i].kind === "teach") i++; out.splice(i, 0, g); }
     return out;
   }
 
   /** A playable stand-in for a gate question whose clip would not play: another gate question, not the same
-      syllable in the same voice. null if none can be drawn. */
-  function replaceGateDrill(D, stats, failed, rng) {
-    for (let t = 0; t < 50; t++) {
-      const d = gateDrill(D, stats, rng || Math.random, null);
-      if (d && !(d.target === failed.target && d.voice === failed.voice)) return d;
+      syllable in the same voice. With offlineClips (what the audio cache holds) cached clips are tried first.
+      null if none can be drawn. */
+  function replaceGateDrill(D, stats, failed, rng, offlineClips) {
+    for (const off of offlineClips ? [offlineClips, null] : [null]) {
+      for (let t = 0; t < 50; t++) {
+        const d = gateDrill(D, stats, rng || Math.random, off);
+        if (d && !(d.target === failed.target && d.voice === failed.voice)) return d;
+      }
     }
     return null;
   }
