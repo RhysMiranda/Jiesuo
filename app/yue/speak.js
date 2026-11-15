@@ -19,6 +19,22 @@
     return (mode === "check" ? "Heard as " : "Sounded like ") + heard;
   }
 
+  /** Guide mode in plain words, naming the checker's main mix-ups from tonecheck.json (shares over 10% first;
+      if none, the top two). "" in check mode. */
+  function guideText(tonecheck) {
+    if (!tonecheck || tonecheck.mode !== "guide") return "";
+    const conf = (tonecheck.confusions || []).filter((c) => Array.isArray(c) && c.length >= 3).slice().sort((a, b) => b[2] - a[2]);
+    const big = conf.filter((c) => c[2] > 0.1);
+    const pairs = [];
+    for (const [w, g] of big.length ? big : conf.slice(0, 2)) {
+      const k = Math.min(w, g) + " and " + Math.max(w, g);
+      if (!pairs.includes(k)) pairs.push(k);
+    }
+    const list = pairs.map((k) => "tones " + k); // "tones 2 and 5, and tones 1 and 3": a comma keeps the pairs apart
+    const mixes = !list.length ? "" : " It often mixes up " + (list.length === 1 ? list[0] : list.slice(0, -1).join(", ") + ", and " + list[list.length - 1]) + ".";
+    return "The tone checker is a guide, not a test: it was tried on synthetic voices only, so treat its verdict as a hint." + mixes;
+  }
+
   /** "say" when the calibration profile is usable, otherwise "calibrate". */
   function panelState(profile) {
     try { return profile && Tones.validProfile(profile).ok ? "say" : "calibrate"; } catch (e) { return "calibrate"; }
@@ -42,7 +58,21 @@
   }
 
   /** Record for up to `seconds` (stopRef.stop() ends it early). Resolves {samples, rate}; rejects {denied:true} or an Error. */
+  /** iOS (Safari 16.4+): "playback" (set by audio.js for clips) can silence the microphone, so recording runs
+      under "play-and-record" and hands back to "playback" when it ends. Quiet where unsupported. */
+  function setSession(type) {
+    try {
+      const nav = typeof navigator !== "undefined" ? navigator : null;
+      if (nav && nav.audioSession && nav.audioSession.type !== type) nav.audioSession.type = type;
+    } catch (e) { /* not supported */ }
+  }
+
   async function record(seconds, onStart, stopRef) {
+    setSession("play-and-record");
+    try { return await recordInner(seconds, onStart, stopRef); } finally { setSession("playback"); }
+  }
+
+  async function recordInner(seconds, onStart, stopRef) {
     let stream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
@@ -166,13 +196,13 @@
   }
 
   /** Say one syllable (or a pair) and see your pitch over the tone shape. */
-  function sayPanel(el, { expected, profile, mode, onResult, onProfile } = {}) {
+  function sayPanel(el, { expected, profile, mode, onResult, onProfile, voice } = {}) {
     if (!el) return;
     injectStyle();
     if (!canRecord()) { noMic(el, onResult); return; }
     if (panelState(profile) === "calibrate") {
       el.innerHTML = `<p><strong>Set up your voice first</strong></p><p class="soft small">The tone check compares you with your own high and low.</p><button type="button" class="btn primary" data-cal>Set up my voice</button>`;
-      el.querySelector("[data-cal]").onclick = () => calibrationPanel(el, { onDone: (p) => { if (onProfile) onProfile(p); sayPanel(el, { expected, profile: p, mode, onResult, onProfile }); } });
+      el.querySelector("[data-cal]").onclick = () => calibrationPanel(el, { onDone: (p) => { if (onProfile) onProfile(p); sayPanel(el, { expected, profile: p, mode, onResult, onProfile, voice }); } });
       return;
     }
     el.innerHTML = `<div class="ys-row"><button type="button" class="btn quiet" data-hear>🔊 Hear it</button>
@@ -181,8 +211,11 @@
     const hear = el.querySelector("[data-hear]"), rec = el.querySelector("[data-rec]"), status = el.querySelector("[data-status]"), bar = el.querySelector(".ys-bar"), out = el.querySelector("[data-out]");
     hear.onclick = () => {
       if (!Audio || !Audio.play) { status.textContent = "Couldn't play the clip."; return; }
-      let p = Audio.play(expected[0].syl); // first call is inside the tap
-      for (const e of expected.slice(1)) p = Promise.resolve(p).then((r) => (r === "played" ? Audio.play(e.syl) : r));
+      const syls = expected.map((e) => e.syl);
+      const one = Audio.voiceForAll ? Audio.voiceForAll(syls, voice) : null; // a pair is heard in one voice
+      const v = one == null ? voice : one;
+      let p = Audio.play(syls[0], { voice: v }); // first call is inside the tap
+      for (const syl of syls.slice(1)) p = Promise.resolve(p).then((r) => (r === "played" ? Audio.play(syl, { voice: v }) : r));
       Promise.resolve(p).then((r) => { if (r === "failed" || r === "blocked") status.textContent = "Couldn't play the clip."; });
     };
     const stopRef = {};
@@ -205,5 +238,5 @@
     };
   }
 
-  return { calibrationPanel, sayPanel, verdictText, shouldRecord, panelState, canRecord };
+  return { calibrationPanel, sayPanel, record, verdictText, guideText, shouldRecord, panelState, canRecord };
 });

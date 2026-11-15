@@ -57,10 +57,12 @@
     return log.length === UNIT_WINDOW && log.reduce((n, e) => n + e.r, 0) / UNIT_WINDOW >= UNIT_PASS;
   }
 
+  /** The taken gate passes at 34 right. A question that would not play is replaced, but if fewer than 40 were
+      answered, 34 right still passes (count says honestly how many were answered). */
   function gate(stats) {
     const log = stats.gateLog.slice(-GATE_SIZE);
     const right = log.reduce((n, x) => n + x, 0);
-    return { passed: log.length === GATE_SIZE && right >= GATE_PASS, right, count: log.length };
+    return { passed: right >= GATE_PASS, right, count: log.length };
   }
 
   /** [[want, got, count], ...] most frequent first. */
@@ -168,10 +170,8 @@
         const t = weighted(rng, ok, (x) => toneWeight(stats, unit, x, review));
         const set = choice(rng, withTone(sets, t));
         const target = choice(rng, set.filter((x) => toneOf(x) === t));
-        return Object.assign(base, {
-          target, options: unit.tones.slice(),
-          gate: unit.tones.length === 6 && unit.id !== "tones-six",
-        });
+        // gate stays false: only the composed 40-question gate step marks its drills (lesson.js)
+        return Object.assign(base, { target, options: unit.tones.slice() });
       }
 
       if (type === "same-diff") {

@@ -68,12 +68,54 @@ test("the Mandarin service worker no longer deletes foreign caches", () => {
 
 test("the Cantonese service worker caches shell and data but not audio", () => {
   const sw = fs.readFileSync(yue("sw.js"), "utf8");
-  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v4"'));
+  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v7"'));
   assert.ok(sw.includes("network-first for everything else"));
   assert.ok(sw.includes("cache-first"));
   assert.ok(sw.includes('cache: "no-cache"'));
   assert.ok(!/audio\/.*\.mp3/.test(sw.split("const FILES")[1].split("];")[0]));
   assert.ok(sw.includes("jiesuo-yue-"));
+});
+
+test("Cantonese audio survives a version bump and slow networks fall back to the cache", () => {
+  const sw = fs.readFileSync(yue("sw.js"), "utf8");
+  const audioName = /const AUDIO = "([^"]+)"/.exec(sw)[1];
+  const shell = new RegExp(/const SHELL_CACHE = \/(.+)\/;/.exec(sw)[1]);
+  assert.ok(!shell.test(audioName), "the shell cleanup must never match the audio cache");
+  assert.ok(shell.test("jiesuo-yue-v4") && !shell.test("jiesuo-v12"));
+  assert.ok(/isAudio\(req\.url\)\) \{ \/\/ cache-first\s+e\.respondWith\(caches\.open\(AUDIO\)/.test(sw));
+  assert.ok(/NET_MS = \d+/.test(sw) && sw.includes("Promise.race"));
+  for (const f of ["Cantone-LICENSE.txt", "Jiesuo-LICENSE.txt", "rime-cantonese-LICENSE-CC-BY.txt", "HKCanCor-LICENSE.txt", "NotoSerifHK-OFL.txt"]) {
+    assert.ok(sw.includes('"licences/' + f + '"'), f + " is cached for offline");
+  }
+});
+
+test("the Mandarin service worker only answers from its own cache", () => {
+  const sw = fs.readFileSync(path.join(__dirname, "../app/sw.js"), "utf8");
+  assert.ok(sw.includes("caches.open(VERSION).then((c) => c.match(e.request))"));
+  assert.ok(!/caches\.match\(/.test(sw));
+});
+
+test("the Cantone licence ships and is linked", () => {
+  const txt = fs.readFileSync(yue("licences/Cantone-LICENSE.txt"), "utf8");
+  assert.ok(txt.includes("MIT License") && txt.includes("Copyright (c)") && txt.includes("WITHOUT WARRANTY"));
+  const page = fs.readFileSync(yue("licences/index.html"), "utf8");
+  assert.ok(page.includes('href="Cantone-LICENSE.txt"'));
+  for (const f of ["lesson.js", "today.js", "sounds.js", "audio.js", "speak.js"]) assert.ok(page.includes("<code>" + f + "</code>"), f);
+  assert.ok(fs.readFileSync(path.join(__dirname, "../LICENSES.md"), "utf8").includes("app/yue/licences/Cantone-LICENSE.txt"));
+});
+
+test("drawSafely retries without the kept lesson before a backed-up reset", () => {
+  // Today clears the kept lesson itself before drawing, so the retry must happen even when state.lesson is null.
+  const run = (failures) => {
+    const log = [];
+    let n = 0;
+    const out = State.drawSafely(() => { log.push("draw"); if (n++ < failures) throw new Error("x"); }, () => log.push("drop"), () => log.push("reset"));
+    return [out, log.join(" ")];
+  };
+  assert.deepStrictEqual(run(0), ["ok", "draw"]);
+  assert.deepStrictEqual(run(1), ["retried", "draw drop draw"]);
+  assert.deepStrictEqual(run(2), ["reset", "draw drop draw reset draw"]);
+  assert.deepStrictEqual(run(3), ["broken", "draw drop draw reset draw"]);
 });
 
 test("manifest identity", () => {

@@ -16,12 +16,17 @@
   }
 
   /**
-   * compose(stage0, stats, {hasMic, calibrated, audio, drills?}, rng?) -> {unit, steps}
+   * compose(stage0, stats, {hasMic, calibrated, audio, drills?, gateLast?, today?, gate?}, rng?) -> {unit, steps}
    * audio (audio.json) is needed so drills only use syllables that have clips.
+   * The 40-question gate is offered once tones-hear is passed and the gate is not, at most once a day:
+   * gateLast is the day it was last offered (state.gate.offered), today the current day key.
+   * Only the gate step's drills carry gate:true, so only a taken gate fills the gate log.
+   * gate:false leaves the gate out. gate:"keep" ignores gateLast: done() keeps the next lesson with its gate
+   * step (so its clips can be prefetched), and withGate decides at the start whether it is due that day.
    */
   function compose(stage0, stats, opts, rng) {
     rng = rng || Math.random;
-    const { hasMic = false, calibrated = false, audio, offlineClips = null } = opts || {};
+    const { hasMic = false, calibrated = false, audio, offlineClips = null, gate = true } = opts || {};
     const D = (opts && opts.drills) || Drills.createDrills({ stage0, audio });
     const units = stage0.units;
     const cur = units.find((u) => !D.unitPassed(stats, u.id)) || units[units.length - 1];
@@ -30,15 +35,8 @@
 
     if (!(stats.byUnit[cur.id] || []).length) steps.push({ kind: "teach", unit: cur.id, title: cur.title, lines: cur.teach, anchors: cur.anchors });
 
-    const gateWanted = D.unitPassed(stats, "tones-hear") && !D.gate(stats).passed && D.gate(stats).count < GATE_SIZE;
-    if (gateWanted) {
-      const gd = [];
-      for (let i = 0, tries = 0; gd.length < GATE_SIZE && tries < GATE_SIZE * 5; tries++, i++) {
-        const d = D.pick("tones-hear", stats, rng, { type: "tone-id", offlineClips });
-        if (d && d.gate) gd.push(d);
-      }
-      if (gd.length === GATE_SIZE) steps.push({ kind: "gate", drills: gd, summary: "A 40-question tone check. It opens the words at 34 right, and you can move on whenever you like." });
-    }
+    const g = gate ? gateStep(D, stats, opts, rng) : null;
+    if (g) steps.push(g);
 
     const nonSay = (unit, review) => {
       for (let t = 0; t < 12; t++) {
@@ -100,6 +98,57 @@
     return { unit: cur.id, steps };
   }
 
+  /** One gate question: a six-tone tone-id from tones-hear, marked gate:true; null if none can be drawn. */
+  function gateDrill(D, stats, rng, offlineClips) {
+    const d = D.pick("tones-hear", stats, rng, { type: "tone-id", offlineClips });
+    return d && d.type === "tone-id" && d.options.length === 6 ? Object.assign(d, { gate: true }) : null;
+  }
+
+  /** Is the gate due: tones-hear passed, the gate not, and (unless ignoreDay) not already offered today. */
+  function gateDue(D, stats, opts, ignoreDay) {
+    const { gateLast = null, today = null } = opts || {};
+    return D.unitPassed(stats, "tones-hear") && !D.gate(stats).passed && (ignoreDay || !(gateLast && today && gateLast === today));
+  }
+
+  /** The 40-question gate step if it is due (see compose), else null. */
+  function gateStep(D, stats, opts, rng) {
+    const { offlineClips = null } = opts || {};
+    if (!gateDue(D, stats, opts, opts && opts.gate === "keep")) return null;
+    const gd = [];
+    for (let tries = 0; gd.length < GATE_SIZE && tries < GATE_SIZE * 5; tries++) {
+      const d = gateDrill(D, stats, rng, offlineClips);
+      if (d) gd.push(d);
+    }
+    return gd.length === GATE_SIZE ? { kind: "gate", drills: gd, summary: "A 40-question tone check. It opens the words at 34 right, and you can move on whenever you like." } : null;
+  }
+
+  /** A kept lesson's steps with the gate decided now, as the lesson starts. Due today: the kept gate step (its
+      clips were prefetched) stays, or a fresh one goes after the opening teach steps if none was kept.
+      Not due: any kept gate step is dropped. opts as compose. */
+  function withGate(stage0, steps, stats, opts, rng) {
+    const D = (opts && opts.drills) || Drills.createDrills({ stage0, audio: opts.audio });
+    const o = Object.assign({}, opts, { gate: true });
+    if (!gateDue(D, stats, o, false)) return steps.filter((s) => s.kind !== "gate");
+    if (steps.some((s) => s.kind === "gate")) return steps.slice();
+    const out = steps.slice();
+    const g = gateStep(D, stats, o, rng || Math.random);
+    if (g) { let i = 0; while (i < out.length && out[i].kind === "teach") i++; out.splice(i, 0, g); }
+    return out;
+  }
+
+  /** A playable stand-in for a gate question whose clip would not play: another gate question, not the same
+      syllable in the same voice. With offlineClips (what the audio cache holds) cached clips are tried first.
+      null if none can be drawn. */
+  function replaceGateDrill(D, stats, failed, rng, offlineClips) {
+    for (const off of offlineClips ? [offlineClips, null] : [null]) {
+      for (let t = 0; t < 50; t++) {
+        const d = gateDrill(D, stats, rng || Math.random, off);
+        if (d && !(d.target === failed.target && d.voice === failed.voice)) return d;
+      }
+    }
+    return null;
+  }
+
   /** Pair-by-pair gain between two stats: the most-practised pair this lesson. */
   function summarise(before, after, answered) {
     let best = null;
@@ -117,10 +166,11 @@
 
   function gateSummary(stats, passed) {
     const g = Drills.gate(stats);
-    if (passed) return "You got " + g.right + " of " + g.count + " on the tone check, so the words are open to you.";
+    const got = "You got " + g.right + " of " + (g.count < GATE_SIZE ? "the " + g.count + " questions you answered" : g.count) + " on the tone check";
+    if (passed) return got + ", so the words are open to you.";
     const top = Drills.confusions(stats)[0];
     const pair = top ? " The pair to practise most is tone " + Math.min(top[0], top[1]) + " and tone " + Math.max(top[0], top[1]) + "." : "";
-    return "You got " + g.right + " of " + g.count + " on the tone check. The words open at 34 right." + pair;
+    return got + ". The words open at 34 right." + pair;
   }
 
   /** A 10-drill practice for one tone pair: tone-id on either tone, or same-diff built from those two tones. */
@@ -141,6 +191,28 @@
     return out;
   }
 
+  const isDrill = (d) => !!d && typeof d === "object" && typeof d.type === "string" && typeof d.unit === "string"
+    && Number.isInteger(d.voice) && (typeof d.target === "string" || (Array.isArray(d.target) && d.target.length && d.target.every((x) => typeof x === "string")))
+    && Array.isArray(d.options);
+
+  /**
+   * A kept lesson's steps (state.lesson.steps, from storage) made safe to run, or null if any step is damaged.
+   * Drills outside a gate step lose any gate flag, so only a taken gate counts toward it.
+   */
+  function usableSteps(steps) {
+    if (!Array.isArray(steps) || !steps.length) return null;
+    const out = [];
+    for (const s of steps) {
+      if (!s || typeof s !== "object") return null;
+      if (s.kind === "drill") { if (!isDrill(s.drill)) return null; out.push(Object.assign({}, s, { drill: Object.assign({}, s.drill, { gate: false }) })); }
+      else if (s.kind === "gate") { if (!Array.isArray(s.drills) || !s.drills.length || !s.drills.every(isDrill)) return null; out.push(Object.assign({}, s, { drills: s.drills.map((d) => Object.assign({}, d, { gate: true })) })); }
+      else if (s.kind === "teach") { if (typeof s.title !== "string" || !Array.isArray(s.lines) || !s.lines.every((l) => l && typeof l.text === "string") || (s.anchors != null && !Array.isArray(s.anchors))) return null; out.push(s); }
+      else if (s.kind === "calibrate" || s.kind === "done") out.push(s);
+      else return null;
+    }
+    return out;
+  }
+
   /** Maps a sayPanel result to "skip" | "retry" | "right" | "wrong". should = JyutSpeak.shouldRecord. */
   function sayVerdict(r, should) {
     if (!r || r.skipped) return "skip";
@@ -148,5 +220,5 @@
     return r.results.every((x) => x.ok) ? "right" : "wrong";
   }
 
-  return { compose, summarise, gateSummary, practise, sayVerdict };
+  return { compose, summarise, gateSummary, practise, sayVerdict, usableSteps, withGate, replaceGateDrill };
 });

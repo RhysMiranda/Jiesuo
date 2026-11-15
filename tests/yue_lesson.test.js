@@ -82,6 +82,101 @@ test("gate appears after tones-hear passes", () => {
   assert.ok(!L.compose(stage0, done, base, seeded(5)).steps.some((s) => s.kind === "gate"));
 });
 
+test("only a taken gate fills the gate log, and it passes at 34 of 40", () => {
+  const ready = statsWith(["tones-six", "tones-hear"]);
+  const g = L.compose(stage0, ready, base, seeded(11)).steps.find((s) => s.kind === "gate");
+  const run = (right) => g.drills.reduce((s, d, i) => Drills.record(s, d, i < right ? "right" : "wrong", "2026-01-01"), ready);
+  assert.deepStrictEqual(Drills.gate(run(34)), { passed: true, right: 34, count: 40 });
+  assert.strictEqual(Drills.gate(run(33)).passed, false);
+  // ordinary lesson drills and pair practice never count toward the gate
+  const { steps } = L.compose(stage0, statsWith(["tones-six"]), base, seeded(12));
+  let s = statsWith(["tones-six"]);
+  for (const st of drillsOf(steps)) { assert.strictEqual(st.drill.gate, false); s = Drills.record(s, st.drill, "right", "2026-01-01"); }
+  const prac = L.practise(stage0, audio, ready, 2, 5, seeded(13), 10);
+  assert.ok(prac.length && prac.every((d) => d.gate === false));
+  for (const d of prac) s = Drills.record(s, d, "right", "2026-01-01");
+  assert.strictEqual(Drills.gate(s).count, 0);
+});
+
+test("a failed gate is offered again on a later day, not the same day", () => {
+  const failed = statsWith(["tones-six", "tones-hear"]);
+  failed.gateLog = Array(40).fill(1).fill(0, 0, 10);
+  const has = (o) => L.compose(stage0, failed, Object.assign({}, base, o), seeded(14)).steps.some((s) => s.kind === "gate");
+  assert.ok(has({}));
+  assert.ok(!has({ gateLast: "2026-11-15", today: "2026-11-15" }));
+  assert.ok(has({ gateLast: "2026-11-14", today: "2026-11-15" }));
+});
+
+test("usableSteps keeps a sound kept lesson and refuses a damaged one", () => {
+  const ready = statsWith(["tones-six", "tones-hear"]);
+  const steps = JSON.parse(JSON.stringify(L.compose(stage0, ready, base, seeded(15)).steps));
+  const ok = L.usableSteps(steps);
+  assert.ok(ok && ok.length === steps.length);
+  assert.ok(ok.find((s) => s.kind === "gate").drills.every((d) => d.gate === true));
+  const stale = JSON.parse(JSON.stringify(steps));
+  drillsOf(stale)[0].drill.gate = true; // an old save's passive gate flag is dropped
+  assert.strictEqual(drillsOf(L.usableSteps(stale))[0].drill.gate, false);
+  for (const bad of [null, [], [{ kind: "drill" }], [{ kind: "drill", drill: { type: "tone-id" } }], [{ kind: "gate", drills: [] }],
+    [{ kind: "teach", title: "x" }], [{ kind: "mystery" }], [7]]) assert.strictEqual(L.usableSteps(bad), null, JSON.stringify(bad));
+});
+
+test("an unplayable gate question is replaced, and a short gate is reported honestly", () => {
+  const ready = statsWith(["tones-six", "tones-hear"]);
+  const g = L.compose(stage0, ready, base, seeded(21)).steps.find((s) => s.kind === "gate");
+  const failed = g.drills[0];
+  const rng = seeded(22);
+  for (let i = 0; i < 30; i++) {
+    const nd = L.replaceGateDrill(D, ready, failed, rng);
+    assert.ok(nd && nd.gate === true && nd.type === "tone-id" && nd.options.length === 6 && nd.unit === "tones-hear");
+    assert.ok(!(nd.target === failed.target && nd.voice === failed.voice));
+  }
+  const short = Object.assign({}, ready, { gateLog: Array(39).fill(1) });
+  assert.match(L.gateSummary(short, Drills.gate(short).passed), /39 of the 39 questions you answered.*open to you/);
+  const full = Object.assign({}, ready, { gateLog: Array(40).fill(1).fill(0, 0, 10) });
+  assert.match(L.gateSummary(full, false), /You got 30 of 40 on the tone check/);
+});
+
+test("a kept lesson carries its gate step, and decides at the start whether it is due", () => {
+  const ready = statsWith(["tones-six", "tones-hear"]);
+  const today = { gateLast: "2026-11-15", today: "2026-11-15" }, tomorrow = { gateLast: "2026-11-15", today: "2026-11-16" };
+  // composed in done() right after today's gate: the gate step is kept anyway, so its clips can be prefetched
+  const kept = L.compose(stage0, ready, Object.assign({}, base, today, { gate: "keep" }), seeded(23)).steps;
+  const g = kept.find((s) => s.kind === "gate");
+  assert.ok(g && g.drills.length === 40 && g.drills.every((d) => d.gate === true));
+  const pre = new Set();
+  kept.forEach((s) => { if (s.kind === "gate") s.drills.forEach((d) => pre.add(d.voice + "|" + d.target)); });
+  assert.strictEqual(pre.size > 0, true); // the prefetch branch in today.js done() sees these drills
+  // due at the start: the very same (prefetched) gate step is kept
+  const next = L.withGate(stage0, kept, ready, Object.assign({}, base, tomorrow), seeded(24));
+  assert.deepStrictEqual(next.find((s) => s.kind === "gate"), g);
+  assert.strictEqual(next.length, kept.length);
+  // not due (same day): dropped
+  assert.ok(!L.withGate(stage0, kept, ready, Object.assign({}, base, today), seeded(25)).some((s) => s.kind === "gate"));
+  // passed meanwhile: dropped
+  const passed = Object.assign({}, ready, { gateLog: Array(40).fill(1) });
+  assert.ok(!L.withGate(stage0, kept, passed, Object.assign({}, base, tomorrow), seeded(26)).some((s) => s.kind === "gate"));
+  // none kept but due: a fresh one goes after the teach steps
+  const plain = L.compose(stage0, ready, Object.assign({}, base, { gate: false }), seeded(27)).steps;
+  const fresh = L.withGate(stage0, plain, ready, Object.assign({}, base, tomorrow), seeded(28));
+  const gi = fresh.findIndex((s) => s.kind === "gate");
+  assert.ok(gi >= 0 && fresh.slice(0, gi).every((s) => s.kind === "teach"));
+});
+
+test("a replacement gate question prefers a cached clip", () => {
+  const ready = statsWith(["tones-six", "tones-hear"]);
+  const unit = stage0.units.find((u) => u.id === "tones-hear");
+  const set = unit.minimalSets.find((s) => s.filter((x) => (audio.clips[x] || []).includes(0)).length >= 4);
+  const cached = {};
+  for (const x of set) if ((audio.clips[x] || []).includes(0)) cached[x] = [0];
+  const failed = { type: "tone-id", unit: "tones-hear", target: "zzz1", voice: 9 };
+  const rng = seeded(31);
+  for (let i = 0; i < 20; i++) {
+    const d = L.replaceGateDrill(D, ready, failed, rng, cached);
+    assert.ok(d && d.gate === true && d.voice === 0 && cached[d.target], JSON.stringify(d));
+  }
+  assert.ok(L.replaceGateDrill(D, ready, failed, rng, {})); // nothing cached: any playable question
+});
+
 test("summary never mentions missed days", () => {
   const bad = /miss|streak|lost/i;
   const before = Drills.emptyStats();

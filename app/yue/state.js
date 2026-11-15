@@ -58,5 +58,19 @@
     catch (e) { return { state: emptyState(), fresh: true }; }
   }
 
-  return { serialise, deserialise, emptyState, load };
+  /**
+   * Draw a screen without ever leaving the app unusable. On an error, draw once more without a kept lesson
+   * (dropLesson; always tried, since Today clears the kept lesson itself before it draws); only if that fails
+   * too, reset() (which backs up the old save) and draw again.
+   * Returns "ok" | "retried" | "reset" | "broken" (still failing after the reset).
+   */
+  function drawSafely(draw, dropLesson, reset) {
+    try { draw(); return "ok"; } catch (e) { /* try without a kept lesson */ }
+    dropLesson();
+    try { draw(); return "retried"; } catch (e) { /* start fresh */ }
+    reset();
+    try { draw(); return "reset"; } catch (e) { return "broken"; }
+  }
+
+  return { serialise, deserialise, emptyState, load, drawSafely };
 });

@@ -22,6 +22,28 @@ test("clipUrl builds the path and falls back to a voice that has the clip", () =
   A.init(audio);
 });
 
+test("voiceForAll keeps a group in one voice", () => {
+  A.init({ voices: [{ id: "a" }, { id: "b" }, { id: "c" }], clips: { x1: [0, 1, 2], x2: [1, 2], x3: [2, 1] } });
+  assert.strictEqual(A.voiceForAll(["x1", "x2", "x3"], 0), 1); // preferred lacks x2: first voice with all
+  assert.strictEqual(A.voiceForAll(["x1", "x2", "x3"], 2), 2); // preferred has them all
+  assert.strictEqual(A.voiceForAll(["x1"], 0), 0);
+  assert.strictEqual(A.voiceForAll("x2", undefined), 1);
+  assert.strictEqual(A.voiceForAll(["x1", "nope"], 0), null); // nobody has all: callers fall back per syllable
+  assert.strictEqual(A.voiceForAll([], 0), null);
+  A.init(audio);
+  const ladder = [1, 2, 3, 4, 5, 6].map((t) => "si" + t);
+  const v = A.voiceForAll(ladder, 0);
+  assert.ok(v !== null && ladder.every((s) => audio.clips[s].includes(v)));
+});
+
+test("clipsFromUrls maps cached clip URLs to the shape of audio.clips", () => {
+  A.init({ voices: [{ id: "a" }, { id: "b" }], clips: { x1: [0, 1], x2: [1] } });
+  const got = A.clipsFromUrls(["http://h/yue/audio/b/x1.mp3", "http://h/yue/audio/a/x1.mp3", "http://h/yue/audio/a/x2.mp3",
+    "http://h/yue/audio/zz/x1.mp3", "http://h/yue/index.html", "http://h/yue/audio/b/x2.mp3", "http://h/yue/audio/b/x2.mp3"]);
+  assert.deepStrictEqual(got, { x1: [1, 0], x2: [1] }); // unknown voices and clips audio.json lacks are left out
+  A.init(audio);
+});
+
 test("voicesFor follows audio.json", () => {
   assert.deepStrictEqual(A.voicesFor("aa1"), audio.clips.aa1);
   assert.deepStrictEqual(A.voicesFor("m4"), []);
