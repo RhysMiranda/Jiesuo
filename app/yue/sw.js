@@ -2,7 +2,7 @@
 // Strategy: audio (audio/...mp3) is cache-first and is cached the first time it is played (full 200 responses only).
 // Everything else (shell, scripts, data) is NETWORK-FIRST: fetch, store a copy, return it; only when the network fails
 // is the cached copy used. So an update reaches an installed app on the next online visit. Bump VERSION on big changes.
-const VERSION = "jiesuo-yue-v3";
+const VERSION = "jiesuo-yue-v4";
 const FILES = ["./", "index.html", "yue.css", "../style.css", "../journey.js", "../tone.js",
   "jyutping.js", "tones.js", "drills.js", "state.js", "lesson.js", "audio.js", "speak.js", "today.js", "sounds.js", "app.js",
   "data/stage0.json", "data/audio.json", "data/readings.json", "data/tonecheck.json",
@@ -23,7 +23,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
   // network-first for everything else
-  e.respondWith(caches.open(VERSION).then((cache) => fetch(req).then((res) => {
+  e.respondWith(caches.open(VERSION).then((cache) => (req.mode === "navigate" ? fetch(req.url, { cache: "no-cache", credentials: "same-origin" }) : fetch(req, { cache: "no-cache" })).then((res) => {
     if (res.status === 200) cache.put(req, res.clone()).catch(() => {});
     return res;
   }).catch(() => cache.match(req).then((hit) => hit || (req.mode === "navigate" ? cache.match("./").then((r) => r || cache.match("index.html")) : undefined) || Response.error()))));

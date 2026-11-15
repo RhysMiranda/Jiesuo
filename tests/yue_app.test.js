@@ -68,9 +68,10 @@ test("the Mandarin service worker no longer deletes foreign caches", () => {
 
 test("the Cantonese service worker caches shell and data but not audio", () => {
   const sw = fs.readFileSync(yue("sw.js"), "utf8");
-  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v3"'));
+  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v4"'));
   assert.ok(sw.includes("network-first for everything else"));
   assert.ok(sw.includes("cache-first"));
+  assert.ok(sw.includes('cache: "no-cache"'));
   assert.ok(!/audio\/.*\.mp3/.test(sw.split("const FILES")[1].split("];")[0]));
   assert.ok(sw.includes("jiesuo-yue-"));
 });
