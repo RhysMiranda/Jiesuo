@@ -166,13 +166,13 @@
   }
 
   /** Say one syllable (or a pair) and see your pitch over the tone shape. */
-  function sayPanel(el, { expected, profile, mode, onResult } = {}) {
+  function sayPanel(el, { expected, profile, mode, onResult, onProfile } = {}) {
     if (!el) return;
     injectStyle();
     if (!canRecord()) { noMic(el, onResult); return; }
     if (panelState(profile) === "calibrate") {
       el.innerHTML = `<p><strong>Set up your voice first</strong></p><p class="soft small">The tone check compares you with your own high and low.</p><button type="button" class="btn primary" data-cal>Set up my voice</button>`;
-      el.querySelector("[data-cal]").onclick = () => calibrationPanel(el, { onDone: (p) => sayPanel(el, { expected, profile: p, mode, onResult }) });
+      el.querySelector("[data-cal]").onclick = () => calibrationPanel(el, { onDone: (p) => { if (onProfile) onProfile(p); sayPanel(el, { expected, profile: p, mode, onResult, onProfile }); } });
       return;
     }
     el.innerHTML = `<div class="ys-row"><button type="button" class="btn quiet" data-hear>🔊 Hear it</button>

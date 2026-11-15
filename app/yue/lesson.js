@@ -137,5 +137,12 @@
     return out;
   }
 
-  return { compose, summarise, gateSummary, practise };
+  /** Maps a sayPanel result to "skip" | "retry" | "right" | "wrong". should = JyutSpeak.shouldRecord. */
+  function sayVerdict(r, should) {
+    if (!r || r.skipped) return "skip";
+    if (!should(r)) return "retry";
+    return r.results.every((x) => x.ok) ? "right" : "wrong";
+  }
+
+  return { compose, summarise, gateSummary, practise, sayVerdict };
 });

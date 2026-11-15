@@ -125,3 +125,13 @@ test("practise gives 10 drills for the pair", () => {
     else assert.ok(ts.every((t) => t === 3 || t === 6));
   }
 });
+
+test("sayVerdict maps say results to skip, retry, right or wrong", () => {
+  const should = (r) => !!(r && r.heard && r.results.length && !r.results.some((x) => x.unsure));
+  const res = (...oks) => ({ heard: true, results: oks.map((ok) => ({ ok, unsure: false })) });
+  assert.strictEqual(L.sayVerdict({ skipped: true }, should), "skip");
+  assert.strictEqual(L.sayVerdict({ heard: false, results: [] }, should), "retry");
+  assert.strictEqual(L.sayVerdict({ heard: true, results: [{ ok: false, unsure: true }] }, should), "retry");
+  assert.strictEqual(L.sayVerdict(res(true, true), should), "right");
+  assert.strictEqual(L.sayVerdict(res(true, false), should), "wrong");
+});

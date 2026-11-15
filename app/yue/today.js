@@ -90,10 +90,13 @@
       document.getElementById("hear").onclick = () => playSeq(d.target, d.voice);
       const panel = document.getElementById("panel");
       if (window.JyutSpeak) {
+        const expected = [].concat(d.target).map((syl) => ({ syl, tone: J.parse(syl)[2] }));
         window.JyutSpeak.sayPanel(panel, {
-          expected: d.target, profile: ctx.state.profile, mode: data.tonecheck.mode,
+          expected, profile: ctx.state.profile, mode: data.tonecheck.mode,
+          onProfile(p) { ctx.state.profile = p; ctx.save(); },
           onResult(res) {
-            const v = res && res.verdict;
+            const v = L.sayVerdict(res, window.JyutSpeak.shouldRecord);
+            if (v === "retry") return; // not heard or unsure: the panel lets them try again or skip
             if (v === "right" || v === "wrong") { ctx.state.stats = D.record(ctx.state.stats, d, v, day()); answered++; ctx.save(); }
             next();
           },
