@@ -3,6 +3,7 @@
 (async function () {
   "use strict";
   const STORE_KEY = "jiesuo-yue-progress-v1";
+  const BACKUP_KEY = "jiesuo-yue-progress-backup"; // the last save before a forced fresh start
   const HOME = "today";
   const SCREENS = ["today", "sounds", "progress"];
   const view = document.getElementById("view");
@@ -34,6 +35,7 @@
   let state = loaded.state; // a damaged or foreign save starts fresh
 
   const FRESH_MSG = "Your saved progress could not be read, so the app started fresh. Restore from a file if you have one.";
+  const BACKUP_MSG = "Something in your progress stopped this screen from drawing, so the app started fresh. A backup of your old progress was kept: you can restore it on the Progress screen.";
   function save() {
     store.set(STORE_KEY, JSON.stringify(JyutState.serialise(state)));
     document.getElementById("storage-warning").hidden = storageOk;
@@ -74,7 +76,9 @@
       ? `You got ${g.right} of ${g.count} on the tone check, so the words are open to you.`
       : g.count ? `So far you have ${g.right} of ${g.count} on the tone check. The words open at 34 of 40, or you can move on whenever you like.`
         : "The 40-question tone check opens the words at 34 right. You can move on whenever you like.";
-    const guide = data.tonecheck.mode === "guide" ? `<p class="soft small">The tone checker is a guide, not a test: it was tried on synthetic voices only, so treat its verdict as a hint.</p>` : "";
+    const guideLine = window.JyutSpeak && JyutSpeak.guideText ? JyutSpeak.guideText(data.tonecheck) : "";
+    const guide = guideLine ? `<p class="soft small">${esc(guideLine)}</p>` : "";
+    const backup = store.get(BACKUP_KEY);
     const json = JSON.stringify(JyutState.serialise(state), null, 1);
     const fileName = () => `jiesuo-yue-progress-${new Date().toISOString().slice(0, 10)}.json`;
     view.innerHTML = `
@@ -103,7 +107,7 @@
             <input id="import-file" type="file" accept="application/json,.json" hidden>
             <label for="import-text" class="soft small">Or paste the text of one:</label>
             <textarea id="import-text" style="min-height:72px;font:400 .9rem/1.4 var(--ui)"></textarea>
-            <div class="row"><button type="button" class="btn" id="import-go">Restore pasted text</button></div>
+            <div class="row"><button type="button" class="btn" id="import-go">Restore pasted text</button>${backup ? `<button type="button" class="btn quiet" id="import-backup">Restore the backup kept in this browser</button>` : ""}</div>
             <p id="import-msg" role="status"></p>
           </section>
         </div>
@@ -148,6 +152,7 @@
       }
     };
     document.getElementById("import-go").onclick = () => restore(document.getElementById("import-text").value);
+    if (backup) document.getElementById("import-backup").onclick = () => restore(backup);
     document.getElementById("import-file").onchange = (e) => {
       const f = e.target.files[0];
       if (!f) return;
@@ -170,11 +175,19 @@
       else view.innerHTML = `<p class="soft">This screen is not ready yet.</p>`;
     };
     try { draw(); } catch (e) {
-      // Whatever got into the state, never leave the app unusable: start fresh and say so.
+      // A kept lesson is the likeliest culprit and costs nothing to drop: try that first.
+      if (state.lesson != null) {
+        state.lesson = null;
+        save();
+        try { draw(); return; } catch (e1) { /* still failing: start fresh below */ }
+      }
+      // Never leave the app unusable, but never lose progress silently: keep the old save as a backup first.
+      const old = store.get(STORE_KEY);
+      if (old) store.set(BACKUP_KEY, old);
       state = JyutState.emptyState();
       save();
       try { draw(); } catch (e2) { view.innerHTML = `<p class="warn">Something went wrong drawing this screen.</p>`; }
-      toast(FRESH_MSG);
+      toast(old ? BACKUP_MSG : FRESH_MSG);
     }
   }
   window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
