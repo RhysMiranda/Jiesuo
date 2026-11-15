@@ -141,9 +141,19 @@
    */
   function readableRows(core, rows, known, seen, cache = new Map()) {
     const out = [];
+    // Quick reject: a sentence with a character that no known item contains cannot be read, so it is
+    // skipped without the slower word splitting. Most sentences are rejected this way.
+    const covered = new Set();
+    for (const u of known) {
+      const it = core.get(u);
+      if (it && it.kind !== "g") for (const f of [it.form, it.hk, ...(it.others || [])]) if (f) for (const c of f) covered.add(c);
+    }
     for (const row of rows) {
       let units = cache.get(row[0]);
       if (units === undefined) {
+        let ok = true;
+        for (const c of row[1]) if (HAN.test(c) && !covered.has(c)) { ok = false; break; }
+        if (!ok) continue;
         const toks = core.tokenise(row[1]).filter((t) => t.han);
         units = toks.some((t) => t.unit === null) ? null : [...new Set(toks.map((t) => t.unit))];
         cache.set(row[0], units);

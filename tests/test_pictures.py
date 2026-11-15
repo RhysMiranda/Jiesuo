@@ -37,3 +37,12 @@ def test_meaning_parts_have_pictures_and_appear_in_characters():
     assert PICS["m:扌"] == "270B"
     missing = [k[2:] for k in PICS if k.startswith("m:") and k[2:] not in used]
     assert not missing, missing
+
+
+def test_rounding_path_numbers_keeps_every_number():
+    import re
+    from jiesuo.export_pictures import NUMBER, round_path
+    for d in ["5.3.04 1.234.56", "c0,0-0.0001,2.55", "M.96-.04 L-.049.5", "M1-2-3.5.5z"]:
+        a = [float(x) for x in re.findall(NUMBER, d)]
+        b = [float(x) for x in re.findall(NUMBER, round_path(d))]
+        assert len(a) == len(b) and all(abs(x - y) <= 0.051 for x, y in zip(a, b)), (d, round_path(d))

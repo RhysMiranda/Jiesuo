@@ -14,7 +14,6 @@ activities, objects, and faces. Flags and symbols are left out.
 """
 import json
 import re
-import shutil
 import urllib.request
 from pathlib import Path
 
@@ -58,6 +57,41 @@ def fetch_svg(code):
     return None
 
 
+def minify(svg):
+    """Same drawing, fewer bytes: no indentation, comments or the editor's group ids."""
+    svg = re.sub(r"<!--.*?-->", "", svg, flags=re.S)
+    svg = re.sub(r'\s(id)="[^"]*"', "", svg)
+    svg = re.sub(r">\s+<", "><", svg)
+    svg = re.sub(r"\s{2,}", " ", svg)
+    # Coordinates to one decimal: on a 72-unit box shown at 64 px or less, that is under 0.05 px.
+    svg = re.sub(r'\s(d|points)="([^"]*)"', lambda a: f' {a.group(1)}="{round_path(a.group(2))}"', svg)
+    return svg.strip() + "\n"
+
+
+NUMBER = r"-?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?"
+
+
+def round_path(d):
+    """Path data with every number to one decimal. SVG lets numbers run together ("5.3.04" is 5.3 and
+    .04, "-1-2" is -1 and -2), so the numbers are re-joined with a space wherever they would merge."""
+    out, prev = [], None
+    for tok in re.findall(rf"[A-Za-z]|{NUMBER}", d):
+        if not re.match(NUMBER, tok):
+            out.append(tok)
+            prev = None
+            continue
+        v = round(float(tok), 1)
+        s = str(int(v)) if v == int(v) else f"{v:.1f}"
+        s = s.replace("-0.", "-.") if s.startswith("-0.") else s[1:] if s.startswith("0.") else s
+        if s == "-0":
+            s = "0"
+        if prev is not None and not s.startswith("-") and not (s.startswith(".") and "." in prev):
+            out.append(" ")
+        out.append(s)
+        prev = s
+    return "".join(out)
+
+
 def read_list(path):
     rows = []
     for line in path.read_text(encoding="utf8").splitlines():
@@ -99,7 +133,7 @@ def main():
         if src is None:
             skipped.append(key)
             continue
-        shutil.copyfile(src, OUT / src.name)
+        (OUT / src.name).write_text(minify(src.read_text(encoding="utf8")), encoding="utf8")
         pictures[key] = src.stem
     INDEX.write_text(json.dumps({"licence": "Word-to-picture list: MIT, Jiesuo. Pictures in pictures/: OpenMoji 17.0.0, CC BY-SA 4.0",
                                  "pictures": pictures}, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf8")
