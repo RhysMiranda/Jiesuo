@@ -102,6 +102,36 @@ phone "Add to Home Screen" installs it with its own icon. There is no server and
     python scripts/grammar_audit.py score     # grammar detection, from the labelled sample
     pytest && node --test tests/app.test.js tests/tone.test.js tests/handwriting.test.js
 
+## Cantonese (`/yue/`)
+
+A sister app for Hong Kong Cantonese, at `/yue/` (same repo, own data and licences). Phase 1 is sounds only.
+It teaches:
+
+- the six tones, plus the checked tones 7, 8 and 9 (mapped to 1, 3 and 6);
+- hearing drills that adapt to the tone pairs you mix up;
+- initials and finals, and reading and typing Jyutping;
+- voice calibration (衣 椅 意 兒 耳 二) and a speaking guide;
+- a soft gate (34 of 40) before words.
+
+Words and sentences come in phase 2. Rebuild order (Python 3.12 is required, because of the networkx pin; use the venv above):
+
+    python scripts/fetch_yue_data.py
+    python -m jiesuo.yue.readings
+    node scripts/yue_tone_eval.js
+    python -m jiesuo.yue.export_audio
+    python -m jiesuo.yue.export_app
+    pytest && node --test tests/*.test.js
+
+Tone check: guide mode; on held-out recordings it is right on 85.1% of the syllables it decides, confuses tone 2 for 5 most (14.6%), and says "not sure" on 12.1% ([reports/yue_tone_check.md](reports/yue_tone_check.md)). Readings: [reports/yue_readings.md](reports/yue_readings.md) (22,718 agreed, 4,249 unresolved and never taught).
+
+Limits of phase 1:
+
+- The tone check is a guide. The held-out test used only 2 synthetic Google voices, so real voices will do worse.
+- Syllabic m4 and ng5 have no recordings (text only until phase 2 audio).
+- The recorded voices (googleA, googleB, amazonHiuJin) are synthetic, from Cantone.
+- Without a microphone the saying unit is skipped.
+- Windows' built-in `python http.server` serves `.js` as text/plain, so for local testing use a server that sets JavaScript MIME types (offline mode needs it).
+
 ## Licences
 
 See [LICENSES.md](LICENSES.md). Each example sentence names its Tatoeba author and translator,
