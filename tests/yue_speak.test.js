@@ -32,3 +32,9 @@ test("unheard attempt is not recorded", () => {
   assert.strictEqual(S.shouldRecord({ heard: true, results: [{ unsure: true }] }), false);
   assert.strictEqual(S.shouldRecord({ heard: true, results: [{ unsure: false, ok: true }] }), true);
 });
+
+test("panelState sends a missing or broken profile to calibration", () => {
+  assert.strictEqual(S.panelState(undefined), "calibrate");
+  assert.strictEqual(S.panelState({ t1: NaN, t3: 1, t6: 0, t4lo: -1, t2hi: 5, t5hi: 3 }), "calibrate");
+  assert.strictEqual(S.panelState({ t1: 10, t3: 8, t6: 6, t4lo: 4, t2hi: 10, t5hi: 8 }), "say");
+});
