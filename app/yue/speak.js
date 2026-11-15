@@ -58,7 +58,21 @@
   }
 
   /** Record for up to `seconds` (stopRef.stop() ends it early). Resolves {samples, rate}; rejects {denied:true} or an Error. */
+  /** iOS (Safari 16.4+): "playback" (set by audio.js for clips) can silence the microphone, so recording runs
+      under "play-and-record" and hands back to "playback" when it ends. Quiet where unsupported. */
+  function setSession(type) {
+    try {
+      const nav = typeof navigator !== "undefined" ? navigator : null;
+      if (nav && nav.audioSession && nav.audioSession.type !== type) nav.audioSession.type = type;
+    } catch (e) { /* not supported */ }
+  }
+
   async function record(seconds, onStart, stopRef) {
+    setSession("play-and-record");
+    try { return await recordInner(seconds, onStart, stopRef); } finally { setSession("playback"); }
+  }
+
+  async function recordInner(seconds, onStart, stopRef) {
     let stream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
@@ -224,5 +238,5 @@
     };
   }
 
-  return { calibrationPanel, sayPanel, verdictText, guideText, shouldRecord, panelState, canRecord };
+  return { calibrationPanel, sayPanel, record, verdictText, guideText, shouldRecord, panelState, canRecord };
 });
