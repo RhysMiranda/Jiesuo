@@ -68,7 +68,7 @@ test("the Mandarin service worker no longer deletes foreign caches", () => {
 
 test("the Cantonese service worker caches shell and data but not audio", () => {
   const sw = fs.readFileSync(yue("sw.js"), "utf8");
-  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v5"'));
+  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v6"'));
   assert.ok(sw.includes("network-first for everything else"));
   assert.ok(sw.includes("cache-first"));
   assert.ok(sw.includes('cache: "no-cache"'));
@@ -102,6 +102,20 @@ test("the Cantone licence ships and is linked", () => {
   assert.ok(page.includes('href="Cantone-LICENSE.txt"'));
   for (const f of ["lesson.js", "today.js", "sounds.js", "audio.js", "speak.js"]) assert.ok(page.includes("<code>" + f + "</code>"), f);
   assert.ok(fs.readFileSync(path.join(__dirname, "../LICENSES.md"), "utf8").includes("app/yue/licences/Cantone-LICENSE.txt"));
+});
+
+test("drawSafely retries without the kept lesson before a backed-up reset", () => {
+  // Today clears the kept lesson itself before drawing, so the retry must happen even when state.lesson is null.
+  const run = (failures) => {
+    const log = [];
+    let n = 0;
+    const out = State.drawSafely(() => { log.push("draw"); if (n++ < failures) throw new Error("x"); }, () => log.push("drop"), () => log.push("reset"));
+    return [out, log.join(" ")];
+  };
+  assert.deepStrictEqual(run(0), ["ok", "draw"]);
+  assert.deepStrictEqual(run(1), ["retried", "draw drop draw"]);
+  assert.deepStrictEqual(run(2), ["reset", "draw drop draw reset draw"]);
+  assert.deepStrictEqual(run(3), ["broken", "draw drop draw reset draw"]);
 });
 
 test("manifest identity", () => {

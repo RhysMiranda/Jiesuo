@@ -174,21 +174,17 @@
       else if (typeof screens[tab] === "function") screens[tab](ctx);
       else view.innerHTML = `<p class="soft">This screen is not ready yet.</p>`;
     };
-    try { draw(); } catch (e) {
-      // A kept lesson is the likeliest culprit and costs nothing to drop: try that first.
-      if (state.lesson != null) {
-        state.lesson = null;
-        save();
-        try { draw(); return; } catch (e1) { /* still failing: start fresh below */ }
-      }
-      // Never leave the app unusable, but never lose progress silently: keep the old save as a backup first.
-      const old = store.get(STORE_KEY);
+    // A kept lesson is the likeliest culprit and costs nothing to drop, so that is tried first. Never leave the
+    // app unusable, but never lose progress silently: the old save is kept as a backup before a fresh start.
+    let old = null;
+    const outcome = JyutState.drawSafely(draw, () => { state.lesson = null; save(); }, () => {
+      old = store.get(STORE_KEY);
       if (old) store.set(BACKUP_KEY, old);
       state = JyutState.emptyState();
       save();
-      try { draw(); } catch (e2) { view.innerHTML = `<p class="warn">Something went wrong drawing this screen.</p>`; }
-      toast(old ? BACKUP_MSG : FRESH_MSG);
-    }
+    });
+    if (outcome === "broken") view.innerHTML = `<p class="warn">Something went wrong drawing this screen.</p>`;
+    if (outcome === "reset" || outcome === "broken") toast(old ? BACKUP_MSG : FRESH_MSG);
   }
   window.addEventListener("hashchange", () => { route(); window.scrollTo(0, 0); });
   store.set("jiesuo-yue-test", "1"); // probe only; remove the junk key again
