@@ -119,8 +119,9 @@ test("unitPassed needs 20 drills at 80%", () => {
 });
 
 test("gate passes at 34 of 40 and not at 33", () => {
-  const d = D.pick("tones-hear", Drills.emptyStats(), seeded(7), { type: "tone-id" });
-  assert.strictEqual(d.gate, true);
+  const picked = D.pick("tones-hear", Drills.emptyStats(), seeded(7), { type: "tone-id" });
+  assert.strictEqual(picked.gate, false); // only the composed gate step marks drills (lesson.js)
+  const d = Object.assign({}, picked, { gate: true });
   const run = (right) => {
     let s = Drills.emptyStats();
     for (let i = 0; i < 40; i++) s = Drills.record(s, d, i < right ? "right" : "wrong", "2026-01-01");

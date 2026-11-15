@@ -168,10 +168,8 @@
         const t = weighted(rng, ok, (x) => toneWeight(stats, unit, x, review));
         const set = choice(rng, withTone(sets, t));
         const target = choice(rng, set.filter((x) => toneOf(x) === t));
-        return Object.assign(base, {
-          target, options: unit.tones.slice(),
-          gate: unit.tones.length === 6 && unit.id !== "tones-six",
-        });
+        // gate stays false: only the composed 40-question gate step marks its drills (lesson.js)
+        return Object.assign(base, { target, options: unit.tones.slice() });
       }
 
       if (type === "same-diff") {

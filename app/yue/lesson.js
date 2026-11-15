@@ -16,12 +16,15 @@
   }
 
   /**
-   * compose(stage0, stats, {hasMic, calibrated, audio, drills?}, rng?) -> {unit, steps}
+   * compose(stage0, stats, {hasMic, calibrated, audio, drills?, gateLast?, today?}, rng?) -> {unit, steps}
    * audio (audio.json) is needed so drills only use syllables that have clips.
+   * The 40-question gate is offered once tones-hear is passed and the gate is not, at most once a day:
+   * gateLast is the day it was last offered (state.gate.offered), today the current day key.
+   * Only the gate step's drills carry gate:true, so only a taken gate fills the gate log.
    */
   function compose(stage0, stats, opts, rng) {
     rng = rng || Math.random;
-    const { hasMic = false, calibrated = false, audio, offlineClips = null } = opts || {};
+    const { hasMic = false, calibrated = false, audio, offlineClips = null, gateLast = null, today = null } = opts || {};
     const D = (opts && opts.drills) || Drills.createDrills({ stage0, audio });
     const units = stage0.units;
     const cur = units.find((u) => !D.unitPassed(stats, u.id)) || units[units.length - 1];
@@ -30,12 +33,12 @@
 
     if (!(stats.byUnit[cur.id] || []).length) steps.push({ kind: "teach", unit: cur.id, title: cur.title, lines: cur.teach, anchors: cur.anchors });
 
-    const gateWanted = D.unitPassed(stats, "tones-hear") && !D.gate(stats).passed && D.gate(stats).count < GATE_SIZE;
+    const gateWanted = D.unitPassed(stats, "tones-hear") && !D.gate(stats).passed && !(gateLast && today && gateLast === today);
     if (gateWanted) {
       const gd = [];
-      for (let i = 0, tries = 0; gd.length < GATE_SIZE && tries < GATE_SIZE * 5; tries++, i++) {
+      for (let tries = 0; gd.length < GATE_SIZE && tries < GATE_SIZE * 5; tries++) {
         const d = D.pick("tones-hear", stats, rng, { type: "tone-id", offlineClips });
-        if (d && d.gate) gd.push(d);
+        if (d && d.type === "tone-id" && d.options.length === 6) gd.push(Object.assign(d, { gate: true }));
       }
       if (gd.length === GATE_SIZE) steps.push({ kind: "gate", drills: gd, summary: "A 40-question tone check. It opens the words at 34 right, and you can move on whenever you like." });
     }
@@ -141,6 +144,28 @@
     return out;
   }
 
+  const isDrill = (d) => !!d && typeof d === "object" && typeof d.type === "string" && typeof d.unit === "string"
+    && Number.isInteger(d.voice) && (typeof d.target === "string" || (Array.isArray(d.target) && d.target.length && d.target.every((x) => typeof x === "string")))
+    && Array.isArray(d.options);
+
+  /**
+   * A kept lesson's steps (state.lesson.steps, from storage) made safe to run, or null if any step is damaged.
+   * Drills outside a gate step lose any gate flag, so only a taken gate counts toward it.
+   */
+  function usableSteps(steps) {
+    if (!Array.isArray(steps) || !steps.length) return null;
+    const out = [];
+    for (const s of steps) {
+      if (!s || typeof s !== "object") return null;
+      if (s.kind === "drill") { if (!isDrill(s.drill)) return null; out.push(Object.assign({}, s, { drill: Object.assign({}, s.drill, { gate: false }) })); }
+      else if (s.kind === "gate") { if (!Array.isArray(s.drills) || !s.drills.length || !s.drills.every(isDrill)) return null; out.push(Object.assign({}, s, { drills: s.drills.map((d) => Object.assign({}, d, { gate: true })) })); }
+      else if (s.kind === "teach") { if (typeof s.title !== "string" || !Array.isArray(s.lines) || !s.lines.every((l) => l && typeof l.text === "string") || (s.anchors != null && !Array.isArray(s.anchors))) return null; out.push(s); }
+      else if (s.kind === "calibrate" || s.kind === "done") out.push(s);
+      else return null;
+    }
+    return out;
+  }
+
   /** Maps a sayPanel result to "skip" | "retry" | "right" | "wrong". should = JyutSpeak.shouldRecord. */
   function sayVerdict(r, should) {
     if (!r || r.skipped) return "skip";
@@ -148,5 +173,5 @@
     return r.results.every((x) => x.ok) ? "right" : "wrong";
   }
 
-  return { compose, summarise, gateSummary, practise, sayVerdict };
+  return { compose, summarise, gateSummary, practise, sayVerdict, usableSteps };
 });
