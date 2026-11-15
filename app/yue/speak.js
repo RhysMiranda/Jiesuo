@@ -6,6 +6,7 @@
 })(typeof self !== "undefined" ? self : this, function (Tone, Tones, Audio) {
   "use strict";
   const root = typeof self !== "undefined" ? self : this;
+  const MAX_SECONDS = 6;
   const NO_MIC = "Speaking practice needs a microphone and a browser that can record.";
   const ANCHOR_CH = { ji1: "衣", ji3: "意", ji6: "二", ji4: "兒", ji2: "椅", ji5: "耳" };
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -16,6 +17,11 @@
     if (result.results.some((r) => r.unsure)) return "Not sure, try once more";
     const heard = result.results.map((r) => "tone " + r.got).join(", then ");
     return (mode === "check" ? "Heard as " : "Sounded like ") + heard;
+  }
+
+  /** "say" when the calibration profile is usable, otherwise "calibrate". */
+  function panelState(profile) {
+    try { return profile && Tones.validProfile(profile).ok ? "say" : "calibrate"; } catch (e) { return "calibrate"; }
   }
 
   /** Only a clear, decided attempt is worth keeping. */
@@ -42,17 +48,23 @@
       stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
     } catch (e) { throw { denied: true }; }
     const chunks = [];
-    const rec = new root.MediaRecorder(stream);
-    rec.ondataavailable = (e) => e.data && e.data.size && chunks.push(e.data);
-    const stopped = new Promise((res) => { rec.onstop = res; });
-    rec.start();
-    if (onStart) onStart(seconds);
-    const timer = setTimeout(() => rec.state === "recording" && rec.stop(), seconds * 1000);
-    if (stopRef) stopRef.stop = () => rec.state === "recording" && rec.stop();
-    await stopped;
-    clearTimeout(timer);
-    stream.getTracks().forEach((t) => t.stop());
-    const blob = new Blob(chunks, { type: rec.mimeType || "audio/webm" });
+    let blob, timer;
+    try {
+      const rec = new root.MediaRecorder(stream);
+      rec.ondataavailable = (e) => e.data && e.data.size && chunks.push(e.data);
+      const stopped = new Promise((res) => { rec.onstop = res; rec.onerror = res; });
+      rec.start();
+      const secs = Math.min(seconds, MAX_SECONDS);
+      if (onStart) onStart(secs);
+      const stop = () => { try { if (rec.state === "recording") rec.stop(); } catch (e) { /* already stopped */ } };
+      timer = setTimeout(stop, secs * 1000);
+      if (stopRef) stopRef.stop = stop;
+      await stopped;
+      blob = new Blob(chunks, { type: rec.mimeType || "audio/webm" });
+    } finally {
+      clearTimeout(timer);
+      stream.getTracks().forEach((t) => t.stop());
+    }
     const AC = root.AudioContext || root.webkitAudioContext;
     const ctx = new AC();
     try { return downsample(await ctx.decodeAudioData(await blob.arrayBuffer())); } finally { ctx.close && ctx.close(); }
@@ -158,12 +170,19 @@
     if (!el) return;
     injectStyle();
     if (!canRecord()) { noMic(el, onResult); return; }
+    if (panelState(profile) === "calibrate") {
+      el.innerHTML = `<p><strong>Set up your voice first</strong></p><p class="soft small">The tone check compares you with your own high and low.</p><button type="button" class="btn primary" data-cal>Set up my voice</button>`;
+      el.querySelector("[data-cal]").onclick = () => calibrationPanel(el, { onDone: (p) => sayPanel(el, { expected, profile: p, mode, onResult }) });
+      return;
+    }
     el.innerHTML = `<div class="ys-row"><button type="button" class="btn quiet" data-hear>🔊 Hear it</button>
       <button type="button" class="btn primary" data-rec>🎙 Say it</button></div>
       <div class="ys-bar" hidden><i></i></div><p data-status class="soft small">Tap Say it, then say ${esc(expected.map((e) => e.syl).join(" "))}.</p><div data-out></div>${PRIVACY}`;
     const hear = el.querySelector("[data-hear]"), rec = el.querySelector("[data-rec]"), status = el.querySelector("[data-status]"), bar = el.querySelector(".ys-bar"), out = el.querySelector("[data-out]");
     hear.onclick = () => {
-      const p = Audio && Audio.play ? Audio.play(expected[0].syl) : Promise.resolve("failed");
+      if (!Audio || !Audio.play) { status.textContent = "Couldn't play the clip."; return; }
+      let p = Audio.play(expected[0].syl); // first call is inside the tap
+      for (const e of expected.slice(1)) p = Promise.resolve(p).then((r) => (r === "played" ? Audio.play(e.syl) : r));
       Promise.resolve(p).then((r) => { if (r === "failed" || r === "blocked") status.textContent = "Couldn't play the clip."; });
     };
     const stopRef = {};
@@ -172,19 +191,19 @@
       if (busy) { stopRef.stop && stopRef.stop(); return; }
       busy = true;
       try {
-        const { samples, rate } = await record(Math.min(6, 1.4 + 0.8 * expected.length), (s) => { rec.textContent = "■ Stop"; status.textContent = "Listening…"; barRun(bar, s); }, stopRef);
-        busy = false; rec.textContent = "🎙 Say it again"; bar.hidden = true;
+        const { samples, rate } = await record(Math.min(6, 1.4 + 0.8 * expected.length), (s) => { hear.disabled = true; rec.textContent = "■ Stop"; status.textContent = "Listening…"; barRun(bar, s); }, stopRef);
+        busy = false; hear.disabled = false; rec.textContent = "🎙 Say it again"; bar.hidden = true;
         const r = Tones.check(samples, rate, expected, profile);
         status.textContent = verdictText(r, mode);
         out.innerHTML = r.heard ? r.results.map((x) => `<div>${shapeSvg(x.want, x.points, profile)}</div>`).join("") + `<p class="soft small">Dashed: the tone's shape. Solid: your voice.</p>` : "";
         if (onResult) onResult(r);
       } catch (e) {
-        busy = false; rec.textContent = "🎙 Say it"; bar.hidden = true;
+        busy = false; hear.disabled = false; rec.textContent = "🎙 Say it"; bar.hidden = true;
         if (e && e.denied) noMic(el, onResult);
         else status.textContent = "That recording couldn't be read. Try again.";
       }
     };
   }
 
-  return { calibrationPanel, sayPanel, verdictText, shouldRecord, canRecord };
+  return { calibrationPanel, sayPanel, verdictText, shouldRecord, panelState, canRecord };
 });

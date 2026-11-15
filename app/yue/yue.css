@@ -31,3 +31,10 @@
 .tonebtn[disabled] { opacity: .4; cursor: default; }
 .mixrow { justify-content: space-between; }
 .voice { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding-right: 12px; }
+
+/* Today lesson cards */
+.today .prompt { margin: 0; }
+.today .big { font-size: 1.6rem; }
+.today .choice { min-width: 3rem; }
+.today .hint { margin: 0; padding: 8px 12px; border-left: 3px solid var(--pen); background: var(--pen-wash); }
+.today .ok { margin: 0; color: var(--pen); font-weight: 700; }
