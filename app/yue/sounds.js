@@ -9,8 +9,9 @@
   }
 })(typeof self !== "undefined" ? self : this, function (J) {
   "use strict";
-  const CHAO = { 1: "55", 2: "35", 3: "33", 4: "21", 5: "23", 6: "22" };
-  const NAMES = { 1: "high level", 2: "high rising", 3: "mid level", 4: "low falling", 5: "low rising", 6: "low level" };
+  // Drawn Chao heights [start, end]: 4 is the lowest tone (level, a slight fall), 6 level a step higher, 5 starts where 6 sits.
+  const CHAO = { 1: [5, 5], 2: [3, 5], 3: [3, 3], 4: [1.5, 1], 5: [2, 3], 6: [2, 2] };
+  const NAMES = { 1: "high level", 2: "high rising", 3: "mid level", 4: "lowest, level or slightly falling", 5: "low rising", 6: "low level" };
 
   /** Rows = initials (zero initial first, ""), columns = finals; only those with audio. */
   function buildChart(audio) {
@@ -53,7 +54,7 @@
     // Chao heights 1..5 -> y in the drawing
     const y = (h) => 52 - (h - 1) * 11;
     const ladder = [1, 2, 3, 4, 5, 6].map((t, i) => {
-      const ch = CHAO[t].split("").map(Number);
+      const ch = CHAO[t];
       const x0 = 14 + i * 56, x1 = x0 + 32, syl = "si" + t;
       return `<g class="lad" tabindex="0" role="button" data-syl="${syl}" aria-label="Tone ${t}, ${NAMES[t]}, say ${syl}">
         <rect x="${x0 - 8}" y="0" width="52" height="114" fill="transparent"/>
@@ -81,7 +82,7 @@
         <p class="soft">Tap anything to hear it. Cantonese has six tones, and the same syllable changes meaning with each.</p>
         <h2>The six tones</h2>
         <svg class="ladder" viewBox="0 0 350 114" role="group" aria-label="The six tones. Tap one to hear it.">${ladder}</svg>
-        <p class="soft small">Each line shows the pitch: tone 1 stays high, tone 2 climbs, tone 3 stays in the middle, tone 4 falls, tone 5 climbs from low, tone 6 stays low.</p>
+        <p class="soft small">Tone 1 stays high, tone 2 climbs high, tone 3 stays in the middle. Tones 4, 5 and 6 are the low ones: 4 is the lowest (level or slightly falling), 6 sits a step above it and stays flat, 5 starts where 6 sits and rises a little.</p>
         <h2>Every syllable</h2>
         <p class="soft small">Rows start the syllable, columns end it. Tap a cell to hear its tones.</p>
         <div class="chart-box" tabindex="0" aria-label="Syllable chart"><table class="chart"><thead><tr><th></th>${head}</tr></thead><tbody>${rows}</tbody></table></div>
@@ -93,7 +94,8 @@
       </section>`;
 
     const say = (syl) => A.play(syl, { voice: voiceIdx() }).then((r) => {
-      if (r === "failed") ctx.toast(A.afterPlay(r).message);
+      const a = A.afterPlay(r);
+      if (a.message) ctx.toast(a.message);
       return r;
     });
 

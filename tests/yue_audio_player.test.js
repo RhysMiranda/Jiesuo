@@ -56,3 +56,13 @@ test("mix-up sentences are plain", () => {
   assert.strictEqual(S.confusionText(6, 3), "You hear tone 6 as tone 3 most often");
   assert.strictEqual(S.confusionText(2, 5, false), "You hear tone 2 as tone 5 sometimes");
 });
+
+test("blocked playback asks for another tap", () => {
+  assert.deepStrictEqual(A.afterPlay("blocked", {}), { skip: true, message: "Tap again to hear it" });
+});
+
+test("withTimeout settles once with the fallback", async () => {
+  assert.strictEqual(await A.withTimeout(new Promise(() => {}), 20, "failed"), "failed");
+  assert.strictEqual(await A.withTimeout(Promise.resolve("ok"), 500, "failed"), "ok");
+  assert.strictEqual(await A.withTimeout(Promise.reject(new Error("x")), 500, "failed"), "failed");
+});
