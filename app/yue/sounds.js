@@ -93,14 +93,17 @@
         <div class="row" role="radiogroup" aria-label="Voice">${voices}</div>
       </section>`;
 
-    const say = (syl) => A.play(syl, { voice: voiceIdx() }).then((r) => {
+    // A group played together (the ladder, one cell's tones) keeps one voice: the chosen one if it has them all.
+    const groupVoice = (syls) => { const v = A.voiceForAll(syls, voiceIdx()); return v == null ? voiceIdx() : v; };
+    const LADDER = [1, 2, 3, 4, 5, 6].map((t) => "si" + t);
+    const say = (syl, voice) => A.play(syl, { voice: voice == null ? voiceIdx() : voice }).then((r) => {
       const a = A.afterPlay(r);
       if (a.message) ctx.toast(a.message);
       return r;
     });
 
     ctx.view.querySelectorAll(".lad").forEach((g) => {
-      const go = () => say(g.dataset.syl);
+      const go = () => say(g.dataset.syl, groupVoice(LADDER));
       g.addEventListener("click", go);
       g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     });
@@ -108,16 +111,18 @@
     const panel = document.getElementById("tones");
     function showTones() {
       const i = selected[0], f = selected[1], have = model.cell(i, f) || [], show = tonesShown(f);
+      const v = groupVoice(have.map((t) => i + f + t));
       panel.innerHTML = `<p class="small"><strong>${esc(i + f)}</strong>${show.length < 6 ? ` <span class="soft">(this ending only has tones 1, 3 and 6)</span>` : ""}</p>
         <div class="row">${show.map((t) => `<button type="button" class="btn tonebtn" data-syl="${esc(i + f + t)}"${have.includes(t) ? "" : " disabled"}>${esc(i + f)}<b>${t}</b></button>`).join("")}</div>`;
-      panel.querySelectorAll(".tonebtn").forEach((b) => b.addEventListener("click", () => say(b.dataset.syl)));
+      panel.querySelectorAll(".tonebtn").forEach((b) => b.addEventListener("click", () => say(b.dataset.syl, v)));
+      return v;
     }
     ctx.view.querySelectorAll(".cell").forEach((b) => b.addEventListener("click", () => {
       selected = [b.dataset.i, b.dataset.f];
       ctx.view.querySelectorAll(".cell").forEach((c) => c.classList.toggle("on", c === b));
-      showTones();
+      const v = showTones();
       const first = (model.cell(selected[0], selected[1]) || [])[0];
-      if (first) say(selected[0] + selected[1] + first);
+      if (first) say(selected[0] + selected[1] + first, v);
     }));
 
     ctx.view.querySelectorAll('input[name="voice"]').forEach((r) => r.addEventListener("change", () => {

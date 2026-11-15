@@ -22,6 +22,17 @@
     return "audio/" + voices[v].id + "/" + syl + ".mp3";
   }
 
+  /** One voice for a group of syllables played together (a tone ladder, a pair), so they never mix voices:
+      `preferred` if it has every syllable, else the first voice that does, else null (callers then fall back per syllable). */
+  function voiceForAll(syls, preferred) {
+    const list = [].concat(syls || []);
+    if (!list.length) return null;
+    const hasAll = (v) => Number.isInteger(v) && !!voices[v] && list.every((s) => voicesFor(s).includes(v));
+    if (hasAll(preferred)) return preferred;
+    for (let v = 0; v < voices.length; v++) if (hasAll(v)) return v;
+    return null;
+  }
+
   const LOAD_MS = 8000;
   let actx = null, current = null;
 
@@ -35,6 +46,11 @@
 
   /** Create or resume the one shared AudioContext. Call synchronously inside a tap (play does) so iOS allows sound. */
   function unlock() {
+    try {
+      // iOS (Safari 16.4+): "playback" keeps Web Audio audible with the Ring/Silent switch on silent.
+      const nav = typeof navigator !== "undefined" ? navigator : null;
+      if (nav && nav.audioSession && nav.audioSession.type !== "playback") nav.audioSession.type = "playback";
+    } catch (e) { /* not supported */ }
     try {
       const AC = typeof self !== "undefined" && (self.AudioContext || self.webkitAudioContext);
       if (!AC) return null;
@@ -116,5 +132,5 @@
     return { skip: false, message: "" };
   }
 
-  return { init, clipUrl, voicesFor, play, unlock, withTimeout, prefetch, afterPlay };
+  return { init, clipUrl, voicesFor, voiceForAll, play, unlock, withTimeout, prefetch, afterPlay };
 });
