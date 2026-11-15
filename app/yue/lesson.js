@@ -37,7 +37,7 @@
         const d = D.pick("tones-hear", stats, rng, { type: "tone-id", offlineClips });
         if (d && d.gate) gd.push(d);
       }
-      steps.push({ kind: "gate", drills: gd, summary: "A 40-question tone check. It opens the words at 34 right, and you can move on whenever you like." });
+      if (gd.length === GATE_SIZE) steps.push({ kind: "gate", drills: gd, summary: "A 40-question tone check. It opens the words at 34 right, and you can move on whenever you like." });
     }
 
     const nonSay = (unit, review) => {
@@ -61,13 +61,17 @@
       return false;
     };
     const sayOnly = cur.drills.every((x) => x === "say");
-    if (sayOnly) {
+    if (sayOnly && !hasMic) {
+      // no microphone: the say unit cannot be practised, so stage 0 is complete; review everything else
+      const others = units.filter((u) => u !== cur);
+      for (let i = 0; i < LESSON_SIZE; i++) add(others[Math.floor(rng() * others.length)], true);
+    } else if (sayOnly) {
       for (let i = 0; i < SAY_UNIT_SHARE; i++) {
         const d = D.pick(cur.id, stats, rng, { type: "say", offlineClips });
         if (d) picked.push(d);
       }
     } else for (let i = 0; i < nCur; i++) add(cur, false);
-    if (passed.length) {
+    if (passed.length && !(sayOnly && !hasMic)) {
       const want = LESSON_SIZE - picked.length;
       for (let i = 0; i < want; i++) add(passed[Math.floor(rng() * passed.length)], true);
     }

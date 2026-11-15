@@ -135,3 +135,12 @@ test("sayVerdict maps say results to skip, retry, right or wrong", () => {
   assert.strictEqual(L.sayVerdict(res(true, true), should), "right");
   assert.strictEqual(L.sayVerdict(res(true, false), should), "wrong");
 });
+
+test("without a microphone the say unit is skipped and the learner is not stuck", () => {
+  const all = statsWith(["tones-six", "tones-hear", "checked", "initials", "finals", "jyutping"]);
+  all.gateLog = Array(40).fill(1);
+  const { steps } = L.compose(stage0, all, base, seeded(8));
+  assert.ok(!steps.some((s) => s.kind === "calibrate" || (s.kind === "drill" && s.drill.type === "say")));
+  assert.ok(drillsOf(steps).length >= 25);
+  assert.strictEqual(steps[steps.length - 1].kind, "done");
+});

@@ -4,6 +4,7 @@
   "use strict";
   window.JyutScreens = window.JyutScreens || {};
 
+  let staleKeyOff = null; // the previous render's keydown listener, removed when Today is drawn again
   const sylsOf = (d) => (Array.isArray(d.target) ? d.target : [d.target]).concat((d.options || []).filter((o) => typeof o === "string" && o !== "same" && o !== "different"));
 
   function render(ctx) {
@@ -11,23 +12,28 @@
     const esc = ctx.esc, data = ctx.data, view = ctx.view;
     const D = ctx.drills.createDrills({ stage0: data.stage0, audio: data.audio });
     A.init(data.audio);
+    if (staleKeyOff) { staleKeyOff(); staleKeyOff = null; }
     const pm = /^today\/practise\/([1-6])-([1-6])$/.exec((location.hash || "").slice(1));
     const rng = Math.random;
     const day = () => ctx.journey.dayKey();
     const before = JSON.parse(JSON.stringify(ctx.state.stats));
     let steps = [], total = 0, idx = 0, answered = 0, answeredNow = false, keyOff = null;
 
+    const lessonOpts = () => ({
+      hasMic: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
+      calibrated: ctx.state.profile != null,
+      audio: data.audio,
+    });
     function build() {
       const stats = ctx.state.stats;
       if (pm) {
         const ds = L.practise(data.stage0, data.audio, stats, Number(pm[1]), Number(pm[2]), rng, 10);
         steps = ds.map((d) => ({ kind: "drill", drill: d })).concat([{ kind: "done" }]);
       } else {
-        const lesson = L.compose(data.stage0, stats, {
-          hasMic: !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia),
-          calibrated: ctx.state.profile != null,
-          audio: data.audio,
-        }, rng);
+        const kept = ctx.state.lesson;
+        const usable = kept && Array.isArray(kept.steps) && kept.steps.length && kept.steps.every((s) => s && typeof s.kind === "string");
+        const lesson = usable ? { steps: kept.steps } : L.compose(data.stage0, stats, lessonOpts(), rng);
+        if (kept) { ctx.state.lesson = null; ctx.save(); } // used once, so the next lesson is composed fresh
         for (const s of lesson.steps) {
           if (s.kind === "gate") {
             s.drills.forEach((d, i) => steps.push({ kind: "drill", drill: d, gate: { i: i + 1, n: s.drills.length } }));
@@ -54,16 +60,18 @@
       if (step.kind === "gateResult") return gateResult();
       return done();
     }
-    const next = () => { idx++; go(); window.scrollTo(0, 0); };
+    let lastNext = 0;
+    const next = () => { const t = Date.now(); if (t - lastNext < 300) return; lastNext = t; idx++; go(); window.scrollTo(0, 0); };
 
     // Playback: A.play is called straight from the tap handler so audio unlocks on the gesture.
     // A clip that will not play skips the drill unscored.
     const say = (syl, voice) => A.play(syl, { voice }).then((r) => ({ r, after: A.afterPlay(r) }));
     function playBtnHandler(b, voice, skipOnFail) {
-      b.addEventListener("click", () => say(b.dataset.syl, voice).then(({ after }) => {
-        if (!after.skip) return;
+      const at = idx; // late results belong to the card that was tapped
+      b.addEventListener("click", () => say(b.dataset.syl, voice).then(({ r, after }) => {
+        if (!after.skip || at !== idx) return;
         ctx.toast(after.message);
-        if (skipOnFail && !answeredNow) next();
+        if (r === "failed" && skipOnFail && !answeredNow) next(); // blocked: stay and tap again
       }));
     }
     async function playSeq(list, voice) {
@@ -88,7 +96,9 @@
         <div class="row"><button type="button" class="btn" id="hear">&#9654; Hear it</button></div><div id="panel"></div>
         <div class="row"><button type="button" class="btn quiet" id="skip">${window.JyutSpeak ? "Skip" : "Continue"}</button></div>`);
       document.getElementById("hear").onclick = () => playSeq(d.target, d.voice);
+      document.getElementById("skip").onclick = next;
       const panel = document.getElementById("panel");
+      let finished = false;
       if (window.JyutSpeak) {
         const expected = [].concat(d.target).map((syl) => ({ syl, tone: J.parse(syl)[2] }));
         window.JyutSpeak.sayPanel(panel, {
@@ -96,20 +106,20 @@
           onProfile(p) { ctx.state.profile = p; ctx.save(); },
           onResult(res) {
             const v = L.sayVerdict(res, window.JyutSpeak.shouldRecord);
-            if (v === "retry") return; // not heard or unsure: the panel lets them try again or skip
+            if (v === "retry" || finished) return;
+            finished = true; // not heard or unsure: the panel lets them try again or skip
             if (v === "right" || v === "wrong") { ctx.state.stats = D.record(ctx.state.stats, d, v, day()); answered++; ctx.save(); }
             next();
           },
         });
       } else panel.innerHTML = `<p class="soft">Speaking practice comes next. For now, listen and say it aloud to yourself.</p>`;
-      document.getElementById("skip").onclick = next;
     }
     function calibrate() {
       shell(`<h2>Set up speaking practice</h2><div id="panel"></div><div class="row"><button type="button" class="btn quiet" id="skip">${window.JyutSpeak ? "Skip for now" : "Continue"}</button></div>`);
       const panel = document.getElementById("panel");
+      document.getElementById("skip").onclick = next;
       if (window.JyutSpeak) window.JyutSpeak.calibrationPanel(panel, { onDone(profile) { ctx.state.profile = profile; ctx.save(); next(); } });
       else panel.innerHTML = `<p class="soft">Speaking practice comes next. You can carry on without it.</p>`;
-      document.getElementById("skip").onclick = next;
     }
 
     // ---- drill cards
@@ -145,6 +155,7 @@
 
       view.querySelectorAll(".playbtn").forEach((b) => playBtnHandler(b, d.voice, true));
       let locked = false;
+      const card = document.getElementById("fb"), myIdx = idx;
       const answer = (a) => {
         if (locked) return;
         const verdict = D.score(d, a);
@@ -161,7 +172,7 @@
       if (form) { form.addEventListener("submit", (e) => { e.preventDefault(); answer(document.getElementById("ans").value); }); document.getElementById("ans").focus(); }
 
       const onKey = (e) => {
-        if (!document.getElementById("fb") || locked || e.ctrlKey || e.metaKey || e.altKey || (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName))) return;
+        if (!document.getElementById("fb") || !view.contains(card) || myIdx !== idx || locked || e.ctrlKey || e.metaKey || e.altKey || (e.target && /^(INPUT|TEXTAREA)$/.test(e.target.tagName))) return;
         const k = e.key.toLowerCase();
         if (d.type === "tone-id" && d.options.map(String).includes(k)) answer(k);
         else if (d.type === "same-diff" && (k === "s" || k === "d")) answer(k === "s" ? "same" : "different");
@@ -169,6 +180,7 @@
       };
       document.addEventListener("keydown", onKey);
       keyOff = () => document.removeEventListener("keydown", onKey);
+      staleKeyOff = keyOff;
     }
 
     function feedback(d, a, verdict) {
@@ -209,12 +221,14 @@
 
     function done() {
       const text = L.summarise(before, ctx.state.stats, answered);
-      if (!pm) { // warm the cache for exactly next lesson's drawn drills
+      if (!pm) { // compose the next lesson now, keep it, and warm the cache for exactly its drills
         try {
-          const nl = L.compose(data.stage0, ctx.state.stats, { hasMic: false, calibrated: true, audio: data.audio }, rng);
+          const nl = L.compose(data.stage0, ctx.state.stats, lessonOpts(), rng);
+          ctx.state.lesson = { steps: nl.steps };
+          ctx.save();
           const byVoice = {};
           const add = (d) => sylsOf(d).forEach((x) => { (byVoice[d.voice] = byVoice[d.voice] || new Set()).add(x); });
-          nl.steps.forEach((s) => { if (s.kind === "drill") add(s.drill); });
+          nl.steps.forEach((s) => { if (s.kind === "drill") add(s.drill); if (s.kind === "gate") s.drills.forEach(add); });
           Object.keys(byVoice).forEach((v) => A.prefetch(Array.from(byVoice[v]), Number(v)));
         } catch (e) { /* prefetch is optional */ }
       }
