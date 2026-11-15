@@ -25,6 +25,7 @@
       audio: data.audio,
       gateLast: ctx.state.gate && typeof ctx.state.gate.offered === "string" ? ctx.state.gate.offered : null,
       today: day(),
+      drills: D,
     });
     function build() {
       const stats = ctx.state.stats;
@@ -34,7 +35,8 @@
       } else {
         const kept = ctx.state.lesson;
         const keptSteps = kept ? L.usableSteps(kept.steps) : null; // a damaged kept lesson is dropped and composed fresh
-        const lesson = keptSteps ? { steps: keptSteps } : L.compose(data.stage0, stats, lessonOpts(), rng);
+        // a kept lesson was composed without the gate; whether the gate is due is decided now, as it starts
+        const lesson = keptSteps ? { steps: L.withGate(data.stage0, keptSteps, stats, lessonOpts(), rng) } : L.compose(data.stage0, stats, lessonOpts(), rng);
         if (kept) { ctx.state.lesson = null; ctx.save(); } // used once, so the next lesson is composed fresh
         if (lesson.steps.some((s) => s.kind === "gate")) { // note the offer, so the gate comes at most once a day
           ctx.state.gate = Object.assign({}, ctx.state.gate, { offered: day() });
@@ -61,7 +63,8 @@
       const step = steps[idx];
       if (!step) return;
       if (step.kind === "teach") return teach(step);
-      if (step.kind === "drill" && step.gate && step.gate.i === 1) { // a new gate starts from an empty log
+      if (step.kind === "drill" && step.gate && step.gate.i === 1 && !step.started) { // a new gate starts from an empty log
+        step.started = true;
         ctx.state.stats = Object.assign({}, ctx.state.stats, { gateLog: [] });
         ctx.save();
       }
@@ -76,13 +79,22 @@
     // Playback: A.play is called straight from the tap handler so audio unlocks on the gesture.
     // A clip that will not play skips the drill unscored.
     const say = (syl, voice) => A.play(syl, { voice }).then((r) => ({ r, after: A.afterPlay(r) }));
+    let swaps = 0; // gate questions replaced this lesson, capped so an offline gate cannot loop
     function playBtnHandler(b, voice, skipOnFail) {
       const at = idx; // late results belong to the card that was tapped
       const v = b.dataset.voice != null && b.dataset.voice !== "" ? Number(b.dataset.voice) : voice;
       b.addEventListener("click", () => say(b.dataset.syl, v).then(({ r, after }) => {
         if (!after.skip || at !== idx) return;
-        ctx.toast(after.message);
-        if (r === "failed" && skipOnFail && !answeredNow) next(); // blocked: stay and tap again
+        if (r === "failed" && skipOnFail && !answeredNow) {
+          const step = steps[idx];
+          // A gate question that will not play is swapped for another, so the gate can still reach 40.
+          const nd = step && step.gate && swaps < 20 ? L.replaceGateDrill(D, ctx.state.stats, step.drill, rng) : null;
+          if (nd) { swaps++; steps[idx] = Object.assign({}, step, { drill: nd }); ctx.toast("That sound would not play, so here is another one."); go(); return; }
+          ctx.toast(after.message);
+          next();
+          return;
+        }
+        ctx.toast(after.message); // blocked: stay and tap again
       }));
     }
     async function playSeq(list, voice) {
@@ -129,7 +141,11 @@
             const v = L.sayVerdict(res, window.JyutSpeak.shouldRecord);
             if (v === "retry" || finished || myIdx !== idx) return; // not heard or unsure: the panel lets them try again or skip
             finished = true;
-            if (v === "right" || v === "wrong") { ctx.state.stats = D.record(ctx.state.stats, d, v, day()); answered++; ctx.save(); }
+            if (v === "right" || v === "wrong") {
+              ctx.state.stats = D.record(ctx.state.stats, d, v, day()); answered++; ctx.save();
+              const again = panel.querySelector("[data-rec]");
+              if (again) again.hidden = true; // recorded: Next is the way forward
+            }
             // The panel keeps its verdict and pitch drawing on screen; the learner moves on when ready.
             const b = document.getElementById("skip");
             if (b && view.contains(b)) { b.textContent = v === "skip" ? "Continue" : "Next"; b.className = "btn primary"; b.focus(); }
@@ -250,7 +266,7 @@
       const text = L.summarise(before, ctx.state.stats, answered);
       if (!pm) { // compose the next lesson now, keep it, and warm the cache for exactly its drills
         try {
-          const nl = L.compose(data.stage0, ctx.state.stats, lessonOpts(), rng);
+          const nl = L.compose(data.stage0, ctx.state.stats, Object.assign(lessonOpts(), { gate: false }), rng); // gate decided when it starts
           ctx.state.lesson = { steps: nl.steps };
           ctx.save();
           const byVoice = {};

@@ -129,9 +129,13 @@ test("gate passes at 34 of 40 and not at 33", () => {
   };
   assert.deepStrictEqual(run(34), { passed: true, right: 34, count: 40 });
   assert.strictEqual(run(33).passed, false);
+  // a question that would not play leaves fewer than 40: 34 right still passes, 33 does not
   let s = Drills.emptyStats();
   for (let i = 0; i < 39; i++) s = Drills.record(s, d, "right", "2026-01-01");
-  assert.strictEqual(Drills.gate(s).passed, false);
+  assert.deepStrictEqual(Drills.gate(s), { passed: true, right: 39, count: 39 });
+  let t = Drills.emptyStats();
+  for (let i = 0; i < 33; i++) t = Drills.record(t, d, "right", "2026-01-01");
+  assert.strictEqual(Drills.gate(t).passed, false);
   const other = D.pick("checked", Drills.emptyStats(), seeded(8), { type: "tone-id" });
   assert.strictEqual(other.gate, false);
 });

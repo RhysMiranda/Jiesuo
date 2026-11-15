@@ -120,6 +120,34 @@ test("usableSteps keeps a sound kept lesson and refuses a damaged one", () => {
     [{ kind: "teach", title: "x" }], [{ kind: "mystery" }], [7]]) assert.strictEqual(L.usableSteps(bad), null, JSON.stringify(bad));
 });
 
+test("an unplayable gate question is replaced, and a short gate is reported honestly", () => {
+  const ready = statsWith(["tones-six", "tones-hear"]);
+  const g = L.compose(stage0, ready, base, seeded(21)).steps.find((s) => s.kind === "gate");
+  const failed = g.drills[0];
+  const rng = seeded(22);
+  for (let i = 0; i < 30; i++) {
+    const nd = L.replaceGateDrill(D, ready, failed, rng);
+    assert.ok(nd && nd.gate === true && nd.type === "tone-id" && nd.options.length === 6 && nd.unit === "tones-hear");
+    assert.ok(!(nd.target === failed.target && nd.voice === failed.voice));
+  }
+  const short = Object.assign({}, ready, { gateLog: Array(39).fill(1) });
+  assert.match(L.gateSummary(short, Drills.gate(short).passed), /39 of the 39 questions you answered.*open to you/);
+  const full = Object.assign({}, ready, { gateLog: Array(40).fill(1).fill(0, 0, 10) });
+  assert.match(L.gateSummary(full, false), /You got 30 of 40 on the tone check/);
+});
+
+test("a kept lesson decides the gate when it starts", () => {
+  const ready = statsWith(["tones-six", "tones-hear"]);
+  const kept = L.compose(stage0, ready, Object.assign({}, base, { gate: false }), seeded(23)).steps;
+  assert.ok(!kept.some((s) => s.kind === "gate"));
+  const day2 = L.withGate(stage0, kept, ready, Object.assign({}, base, { gateLast: "2026-11-14", today: "2026-11-15" }), seeded(24));
+  const gi = day2.findIndex((s) => s.kind === "gate");
+  assert.ok(gi >= 0 && day2.slice(0, gi).every((s) => s.kind === "teach"));
+  assert.strictEqual(day2.length, kept.length + 1);
+  const sameDay = L.withGate(stage0, day2, ready, Object.assign({}, base, { gateLast: "2026-11-15", today: "2026-11-15" }), seeded(25));
+  assert.ok(!sameDay.some((s) => s.kind === "gate")); // an old gate step is dropped when the gate is not due
+});
+
 test("summary never mentions missed days", () => {
   const bad = /miss|streak|lost/i;
   const before = Drills.emptyStats();
