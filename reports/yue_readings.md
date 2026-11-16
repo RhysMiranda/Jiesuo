@@ -6,12 +6,12 @@ Characters considered: 26998
 
 | status | characters |
 |---|---|
-| agreed | 22718 |
-| corpus | 31 |
-| override | 0 |
+| agreed | 22717 |
+| corpus | 30 |
+| override | 2 |
 | unresolved | 4249 |
 
-## Decided by the corpus (31)
+## Decided by the corpus (30)
 
 No dictionary-confirmed rime main; HKCanCor's top one-character reading was chosen.
 
@@ -22,7 +22,6 @@ No dictionary-confirmed rime main; HKCanCor's top one-character reading was chos
 - 𠻺 -> aa6 (hkcancor 548): aa6 [unihan, hkcancor(548)]
 - 嘞 -> laak3 (hkcancor 429): la3 [rime]; laa3 [unihan]; laak3 [rime(5%), cccanto, hkcancor(429)]; lak3 [rime(5%), cccanto]
 - 咪 -> mai6 (hkcancor 416): mai1 [rime(5%), cccanto, hkcancor(2)]; mai5 [rime(5%), cccanto, unihan, hkcancor(2)]; mai6 [rime(5%), cccanto, hkcancor(412)]; mei1 [rime(3%), cccanto]; mi1 [rime(3%)]; miu1 [cccanto]; mui1 [cccanto]
-- 呀 -> aa4 (hkcancor 408): aa1 [cccanto, unihan]; aa3 [cccanto]; aa4 [rime, hkcancor(408)]; aa6 [cccanto]; haa1 [rime(0%), cccanto]; ngaa4 [rime(0%)]
 - 重 -> zung6 (hkcancor 234): cung4 [rime(5%), cccanto, hkcancor(3)]; cung5 [rime(5%), cccanto, unihan, hkcancor(6)]; zung6 [rime(5%), cccanto, hkcancor(225)]
 - 揾 -> wan2 (hkcancor 233): wan2 [unihan, hkcancor(233)]; wan3 [rime]
 - 聽 -> teng1 (hkcancor 178): teng1 [rime(5%), cccanto, hkcancor(178)]; ting1 [rime(3%), cccanto, unihan]; ting3 [rime(5%), cccanto]
@@ -47,7 +46,7 @@ No dictionary-confirmed rime main; HKCanCor's top one-character reading was chos
 - 彈 -> daan6 (hkcancor 5): daan2 [rime(5%), cccanto]; daan6 [rime(5%), cccanto, unihan, hkcancor(5)]; taan4 [rime(5%), cccanto]
 - 褪 -> tan3 (hkcancor 5): tan3 [rime(5%), cccanto, unihan, hkcancor(5)]; teoi3 [rime(5%), cccanto]
 
-## Said differently in speech (62)
+## Said differently in speech (61)
 
 Dictionary-agreed main, but HKCanCor's most frequent one-character reading differs (changed tones, function-word uses; useful for phase 2 teaching).
 
@@ -57,7 +56,6 @@ Dictionary-agreed main, but HKCanCor's most frequent one-character reading diffe
 - 到: main dou3, speech dou2 (x460)
 - 下: main haa6, speech haa5 (x388)
 - 嗯: main ng6, speech m6 (x383)
-- 返: main faan2, speech faan1 (x366)
 - 哦: main o4, speech o5 (x313)
 - 哩: main lei5, speech ni1 (x283)
 - 嘩: main waa1, speech waa3 (x269)
@@ -4374,10 +4372,10 @@ Words considered: 43712. Held-out split: every 5th HKCanCor sentence is test; re
 
 | status | words |
 |---|---|
-| agree | 40380 |
-| corpus | 271 |
+| agree | 40379 |
+| corpus | 270 |
 | wordshk | 897 |
-| override | 0 |
+| override | 2 |
 | unresolved | 2164 |
 
 ### Unresolved among the top 6000 by frequency (141)

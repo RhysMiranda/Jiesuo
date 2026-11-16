@@ -92,3 +92,8 @@ def test_real_known_readings(real):
     assert real["我哋"].jp == "ngo5 dei6"
     assert real["喺"].jp == "hai2"
     assert real["係"].jp == "hai6"
+
+
+def test_real_overrides_keep_alternatives(real):
+    assert real["呀"].jp == "aa3" and real["呀"].status == "override" and "aa4" in real["呀"].alt
+    assert real["返"].jp == "faan1" and real["返"].status == "override" and "faan2" in real["返"].alt
