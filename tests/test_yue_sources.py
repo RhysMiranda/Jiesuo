@@ -95,3 +95,15 @@ def test_real_wordshk():
     entries = sources.load_wordshk()
     assert len(entries) == 59467
     assert sum(e.reviewed for e in entries) == 28964
+
+
+@pytest.mark.parametrize("line,want", [
+    ("風流韻事(fung1 lau4 wan5 si6) 舊指文人吟詩唱歌", ("風流韻事", "fung1 lau4 wan5 si6")),
+    ("科技上嘅突破 (fo1 gei6 soeng6 ge3 dat6 po3))", ("科技上嘅突破", "fo1 gei6 soeng6 ge3 dat6 po3")),
+    ("佢好開心 (笑)", ("佢好開心 (笑)", "")),
+    ("用黑旋風（牌子）就得 (jung6 hak1 zau6 dak1)", ("用黑旋風（牌子）就得", "jung6 hak1 zau6 dak1")),
+    ("我 (eks1)", ("我", "eks1")),
+])
+def test_example_split(line, want):
+    block = "<eg>\nyue:" + line + "\neng:x"
+    assert sources._parse_definitions(block)[4] == [(want[0], want[1], "x")]

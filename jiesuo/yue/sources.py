@@ -196,7 +196,18 @@ class WordsHK:
     published: bool
 
 
-_EG_YUE = re.compile(r"^(.*?)\s*\(([^()]*)\)\s*$")
+_PAREN = re.compile(r"\(([^()]*)\)")
+_JP_LIKE = re.compile(r"[a-z0-9 ]+")
+
+
+def _split_example(text: str):
+    """(text, jyutping): the last parenthetical that looks like Jyutping (a-z, digits, spaces, a tone
+    digit 1-6) is the reading and the text is what precedes it; else (whole line, "")."""
+    for m in reversed(list(_PAREN.finditer(text))):
+        jp = m.group(1).strip()
+        if jp and _JP_LIKE.fullmatch(jp) and re.search(r"[1-6]", jp):
+            return text[: m.start()].strip(), jp
+    return text, ""
 
 
 def _parse_definitions(block: str):
@@ -222,8 +233,7 @@ def _parse_definitions(block: str):
             elif line.startswith("yue:"):
                 text = line[4:].strip()
                 if mode == "eg" and cur is not None:
-                    m = _EG_YUE.match(text)
-                    cur[0], cur[1] = (m.group(1), m.group(2)) if m else (text, "")
+                    cur[0], cur[1] = _split_example(text)
                 else:
                     yue.append(text)
             elif line.startswith("eng:"):
