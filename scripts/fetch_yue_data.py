@@ -3,7 +3,7 @@
 
 Nothing here is executed from the downloads. data/raw/ is not committed; the
 manifest (data/yue/manifest.json) is. Every URL is pinned to a commit or a
-dated release. The words.hk CSVs are not downloaded: they are hashed from
+dated release, except the weekly Tatoeba exports (hashed as fetched). The words.hk CSVs are not downloaded: they are hashed from
 data/raw/wordshk/ if present.
 
 Usage: python scripts/fetch_yue_data.py [--check | --update]
@@ -25,6 +25,7 @@ MANIFEST = ROOT / "data" / "yue" / "manifest.json"
 GH = "https://raw.githubusercontent.com"
 RIME = f"{GH}/rime/rime-cantonese/259f0e48bba840c3a2e0d117539e96937f3d89bc"
 HKC = f"{GH}/fcbond/hkcancor/39aeadf920e0b5ca93d0ad7792c59e740e7bdd65"
+TATOEBA = "https://downloads.tatoeba.org/exports/per_language"
 FONTS = f"{GH}/google/fonts/29b4ec6df2522a8aee279414b78a07910b065874/ofl/notoserifhk"
 CANTONE_REV = "9ae2dec425f472255c1e146cd6b3f428e7c21e80"
 CANTONE_API = f"https://huggingface.co/api/datasets/AlienKevin/cantone/revision/{CANTONE_REV}"
@@ -39,6 +40,11 @@ SOURCES = {
     "Unihan.zip": "https://www.unicode.org/Public/16.0.0/ucd/Unihan.zip",
     "hkcancor-utf8.zip": f"{HKC}/data/hkcancor-utf8.zip",
     "hkcancor_LICENSE.txt": f"{HKC}/data/LICENSE",
+    # Tatoeba's own exports (CC BY 2.0 FR, author names needed). Refreshed weekly upstream and
+    # not pinnable, so the manifest hash records the copy actually used (as in fetch_data.py).
+    "tatoeba/yue_sentences_detailed.tsv.bz2": f"{TATOEBA}/yue/yue_sentences_detailed.tsv.bz2",
+    "tatoeba/yue-eng_links.tsv.bz2": f"{TATOEBA}/yue/yue-eng_links.tsv.bz2",
+    "tatoeba/eng_sentences_detailed.tsv.bz2": f"{TATOEBA}/eng/eng_sentences_detailed.tsv.bz2",
     # Variable font (google/fonts ships no static Regular), for the glyph-coverage test.
     "NotoSerifHK.ttf": f"{FONTS}/NotoSerifHK%5Bwght%5D.ttf",
     "NotoSerifHK_OFL.txt": f"{FONTS}/OFL.txt",
