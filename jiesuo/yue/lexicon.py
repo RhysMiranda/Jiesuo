@@ -22,6 +22,7 @@ ROOT = readings.ROOT
 CACHE = sources.RAW / "cache"
 CEDICT = ROOT / "data" / "raw" / "cedict.json"
 MIN_TOKENS = 3
+CODE_VERSION = 2  # bump when a cached loader's result shape changes
 SECONDARY_WEIGHT = 0.5
 REPORT_TOP = 6000
 
@@ -206,7 +207,6 @@ def _secondary_texts(srcs):
 
 
 def build_lexicon(srcs) -> dict:
-    train = _train(srcs)
     wc = _word_counts(srcs)
     if "chars" not in srcs:
         srcs["chars"] = readings.resolve_all(srcs)
@@ -220,10 +220,7 @@ def build_lexicon(srcs) -> dict:
     forms |= {f for f in _wordshk_index(srcs) if ok(f)}
     forms |= {f for f in srcs.get("cccanto_words", {}) if ok(f)}
 
-    hk_freq: Counter = Counter()
-    for sent in train:
-        for word, _pos, _jp in sent:
-            hk_freq[word] += 1
+    hk_freq = {f: sum(c.values()) for f, c in wc.items()}
     sec: Counter = Counter()
     for text in _secondary_texts(srcs):
         for tok in segment(text, forms):
@@ -240,7 +237,7 @@ def build_lexicon(srcs) -> dict:
 
 def _cached(name, files, fn):
     """Pickle fn()'s result under data/raw/yue/cache/, keyed by the files' sizes and mtimes."""
-    key = [(p.name, p.stat().st_size, p.stat().st_mtime_ns) for p in files]
+    key = [CODE_VERSION] + [(p.name, p.stat().st_size, p.stat().st_mtime_ns) for p in files]
     path = CACHE / f"lexicon_{name}.pickle"
     try:
         with open(path, "rb") as f:
@@ -278,7 +275,8 @@ def load_sources(overrides_path=readings.OVERRIDES) -> dict:
     srcs["tatoeba"] = _cached("tatoeba", tat, sources.load_tatoeba_yue)
     srcs["cedict"] = _cached("cedict", [CEDICT], _cedict)
     srcs["train"], srcs["test"] = split_heldout(srcs["hkcancor"])
-    srcs["chars"] = readings.resolve_all(srcs)
+    # character readings for the lexicon see the train split only (phase 1's readings.json is unchanged)
+    srcs["chars"] = readings.resolve_all({**srcs, "hkcancor": srcs["train"]})
     return srcs
 
 

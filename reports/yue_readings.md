@@ -4368,29 +4368,28 @@ Most frequent first (count = one-character HKCanCor tokens). Each candidate show
 
 ## Words
 
-Words considered: 43712. Held-out split: every 5th HKCanCor sentence is test; readings and frequencies use train only.
+Words considered: 43541. Held-out split: every 5th HKCanCor sentence is test; readings and frequencies use train only.
 
 | status | words |
 |---|---|
-| agree | 40379 |
-| corpus | 270 |
-| wordshk | 897 |
+| agree | 40239 |
+| corpus | 267 |
+| wordshk | 889 |
 | override | 2 |
-| unresolved | 2164 |
+| unresolved | 2144 |
 
-### Unresolved among the top 6000 by frequency (141)
+### Unresolved among the top 6000 by frequency (140)
 
 - 呢啲 (freq 181.5): nei1 di1 [rime]; ni1 di1 [rime, cccanto]; hkcancor ni1 di1 x2
 - 㗎喇 (freq 138): gaa3 laa3 [rime]; gaa2 laa1 [cccanto]
 - 呢度 (freq 135): nei1 dou6 [rime]; ni1 dou6 [rime, cccanto]; hkcancor ni1 dou6 x1
-- 出嚟 (freq 119.5): ceot1 lai4 [rime]; ceot1 lei4 [cccanto]
+- 出嚟 (freq 120): ceot1 lai4 [rime]; ceot1 lei4 [cccanto]
 - 嚟㗎 (freq 75.5): lai4 gaa3 [rime]; lai2 gaa2 [cccanto]
 - 有人 (freq 72): hkcancor jau5 jan4 x1
 - 返嚟 (freq 60): faan1 lai4 [rime]; faan2 lai2 [cccanto]
 - 睇到 (freq 44): tai2 dou2 [rime]; tai2 dou3 [cccanto]
 - 另一個 (freq 38): hkcancor ling6 jat1 go3 x1
 - 呢排 (freq 35.5): ni1 paai2 [rime]; ni1 paai4 [cccanto]
-- 當我 (freq 35.5): dong1 ngo5 [cccanto]; dong3 ngo5 [cccanto]
 - 就嚟 (freq 33): zau6 lai4 [rime]; zau6 lei4 [cccanto]
 - 㗎啦 (freq 29): gaa3 laa1 [rime, cccanto]; gaa3 laa3 [cccanto]; gaa3 laa4 [cccanto]
 - 畀佢 (freq 29): bei2 keoi5 [rime]; bei2 keoi4 [cccanto]

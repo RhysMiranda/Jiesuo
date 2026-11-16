@@ -97,3 +97,8 @@ def test_real_known_readings(real):
 def test_real_overrides_keep_alternatives(real):
     assert real["呀"].jp == "aa3" and real["呀"].status == "override" and "aa4" in real["呀"].alt
     assert real["返"].jp == "faan1" and real["返"].status == "override" and "faan2" in real["返"].alt
+
+
+def test_segment_is_lossless():
+    t = "佢 feed 緊😂 123，我哋Go!？龘去。 ｜x"
+    assert "".join(segment(t, {"佢", "我哋", "去"})) == t
