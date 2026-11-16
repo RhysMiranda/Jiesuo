@@ -102,7 +102,7 @@ Each number is its own item. The table row is shorthand. The particles 呀 and �
 
 ### Grammar points (`data/yue/content/grammar.json`)
 
-(㗎 gaa3 was dropped: words.hk's reviewed gaa3 entry describes a different use than the planned note, so it is left to sentences only.)
+(㗎 gaa3, 吖 aa1 and 嘛 maa3 were dropped: words.hk's reviewed entries don't support the planned notes, so they are left to sentences only.)
 
 Each point has an id, a title, a one- or two-sentence `explain`, a `pattern` regex (the matcher that finds attested examples), `needs` (the words that must be known first), and `cite` (form:jyutping of the words.hk entry).
 
@@ -130,14 +130,12 @@ Each point has an id, a title, a one- or two-sentence `explain`, a `pattern` reg
 | maai4 | 埋 maai4: too, finish off | After a verb, 埋 means "as well" or "finish the rest": 等埋我 "wait for me too", 食埋佢 "finish it off". | 埋:maai4 |
 | faan1asp | 返 faan1: again, back | After a verb, 返 means doing it again or getting back to it: 瞓返覺 "go back to sleep". | 返:faan1 |
 | laa3 | 喇 laa3: now, already | 喇 marks a new situation: 夠喇 "that's enough now". People often write 啦 for it too. | 喇:laa3 |
-| aa1 | 吖 aa1: sure, why not | 吖 agrees or offers: 好吖 "sure!". | 吖:aa1 |
 | wo3 | 喎 wo3 / wo5 | wo3 shows you've just noticed something: 落雨喎 "oh, it's raining". wo5 reports what someone else said. | 喎:wo3 |
 | lo1 | 囉 lo1: obviously | 囉 says "that's how it is, obviously": 噉咪得囉 "then that's fine, isn't it". | 囉:lo1 |
 | me1 | 咩 me1: really? | At the end of a question, 咩 shows surprise or doubt: 真係咩? "really?". | 咩:me1 |
 | ge3fin | 嘅 ge3 at the end | 嘅 at the end of a sentence says "this is so": 佢唔會嚟嘅 "he won't come". | 嘅:ge3 |
 | bo3 | 噃 bo3: mind you | 噃 points something out as a reminder: 好貴噃 "it's pricey, mind you". | 噃:bo3 |
 | gwaa3 | 啩 gwaa3: I guess | 啩 makes a guess: 佢唔嚟啩 "I guess he isn't coming". | 啩:gwaa3 |
-| maa3 | 嘛 maa3: you know | 嘛 says the point is obvious: 佢係老師嘛 "he's a teacher, you know". | 嘛:maa3 |
 
 If a `cite` has no reviewed words.hk entry with exactly that form and jyutping, cite the key word's own reviewed entry (e.g. 有 for 有冇) and list the change in the Task 3 commit. Never cite an unreviewed entry. `pattern` is a regex written by the implementer, e.g. `咗` for zo2. Separate 過 "ever" (verb + 過) from comparison 過 (adjective + 過 + noun or pronoun) by checking the matched examples in `reports/yue_course.md`.
 
