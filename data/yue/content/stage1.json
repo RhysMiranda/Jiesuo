@@ -1,0 +1,258 @@
+{
+  "licence": "MIT: Jiesuo",
+  "lessons": [
+    {
+      "id": "hello",
+      "title": "Hello",
+      "items": [
+        {
+          "form": "你好",
+          "jp": "nei5 hou2",
+          "en": "hello",
+          "note": "A bit formal. Friends often just say the person's name or 早晨."
+        },
+        {
+          "form": "早晨",
+          "jp": "zou2 san4",
+          "en": "good morning"
+        },
+        {
+          "form": "喂",
+          "jp": "wai3",
+          "en": "hey!",
+          "note": "Answering the phone it is usually wai2."
+        },
+        {
+          "form": "拜拜",
+          "jp": "baai1 baai3",
+          "en": "bye"
+        },
+        {
+          "form": "再見",
+          "jp": "zoi3 gin3",
+          "en": "goodbye"
+        }
+      ]
+    },
+    {
+      "id": "thanks",
+      "title": "Thanks",
+      "items": [
+        {
+          "form": "唔該",
+          "jp": "m4 goi1",
+          "en": "thanks (for a service or favour); excuse me; please",
+          "note": "Use for help or service: someone passes you something or holds a door, or when you ask for something."
+        },
+        {
+          "form": "多謝",
+          "jp": "do1 ze6",
+          "en": "thank you (for a gift or a compliment)",
+          "note": "Use when you receive a gift or praise."
+        },
+        {
+          "form": "唔該晒",
+          "jp": "m4 goi1 saai3",
+          "en": "thanks a lot",
+          "note": "晒 adds \"a lot\", \"all\"."
+        },
+        {
+          "form": "唔使",
+          "jp": "m4 sai2",
+          "en": "no need; you're welcome"
+        },
+        {
+          "form": "對唔住",
+          "jp": "deoi3 m4 zyu6",
+          "en": "sorry",
+          "note": "For a real apology."
+        },
+        {
+          "form": "唔好意思",
+          "jp": "m4 hou2 ji3 si1",
+          "en": "sorry; excuse me",
+          "note": "Lighter than 對唔住."
+        }
+      ]
+    },
+    {
+      "id": "is-has",
+      "title": "Is / has",
+      "items": [
+        {
+          "form": "係",
+          "jp": "hai6",
+          "en": "to be; yes"
+        },
+        {
+          "form": "唔",
+          "jp": "m4",
+          "en": "not",
+          "note": "Goes before a verb or adjective."
+        },
+        {
+          "form": "唔係",
+          "jp": "m4 hai6",
+          "en": "not be; no"
+        },
+        {
+          "form": "有",
+          "jp": "jau5",
+          "en": "to have; there is"
+        },
+        {
+          "form": "冇",
+          "jp": "mou5",
+          "en": "not have; there isn't",
+          "note": "Cantonese never says 唔有. 冇 is the negative of 有."
+        },
+        {
+          "form": "好",
+          "jp": "hou2",
+          "en": "good; very"
+        }
+      ]
+    },
+    {
+      "id": "people",
+      "title": "People",
+      "items": [
+        {
+          "form": "我",
+          "jp": "ngo5",
+          "en": "I, me"
+        },
+        {
+          "form": "你",
+          "jp": "nei5",
+          "en": "you"
+        },
+        {
+          "form": "佢",
+          "jp": "keoi5",
+          "en": "he, she, it",
+          "note": "One word for all three."
+        },
+        {
+          "form": "我哋",
+          "jp": "ngo5 dei6",
+          "en": "we, us",
+          "note": "哋 makes a pronoun plural."
+        },
+        {
+          "form": "你哋",
+          "jp": "nei5 dei6",
+          "en": "you (plural)"
+        },
+        {
+          "form": "佢哋",
+          "jp": "keoi5 dei6",
+          "en": "they, them"
+        }
+      ]
+    },
+    {
+      "id": "numbers",
+      "title": "Numbers",
+      "items": [
+        {
+          "form": "零",
+          "jp": "ling4",
+          "en": "0"
+        },
+        {
+          "form": "一",
+          "jp": "jat1",
+          "en": "1"
+        },
+        {
+          "form": "二",
+          "jp": "ji6",
+          "en": "2"
+        },
+        {
+          "form": "三",
+          "jp": "saam1",
+          "en": "3"
+        },
+        {
+          "form": "四",
+          "jp": "sei3",
+          "en": "4"
+        },
+        {
+          "form": "五",
+          "jp": "ng5",
+          "en": "5"
+        },
+        {
+          "form": "六",
+          "jp": "luk6",
+          "en": "6"
+        },
+        {
+          "form": "七",
+          "jp": "cat1",
+          "en": "7"
+        },
+        {
+          "form": "八",
+          "jp": "baat3",
+          "en": "8"
+        },
+        {
+          "form": "九",
+          "jp": "gau2",
+          "en": "9"
+        },
+        {
+          "form": "十",
+          "jp": "sap6",
+          "en": "10",
+          "note": "十一 = 11, 二十 = 20, 二十一 = 21. In speech 二十 often becomes 廿 jaa6 (廿一 = 21)."
+        },
+        {
+          "form": "百",
+          "jp": "baak3",
+          "en": "hundred"
+        },
+        {
+          "form": "千",
+          "jp": "cin1",
+          "en": "thousand"
+        },
+        {
+          "form": "萬",
+          "jp": "maan6",
+          "en": "ten thousand",
+          "note": "萬 is a unit of its own: 一萬 = 10,000."
+        },
+        {
+          "form": "兩",
+          "jp": "loeng5",
+          "en": "two (of something)",
+          "note": "Use 兩 before a measure word (兩個人, two people). Use 二 when counting and inside numbers (十二, 二十)."
+        },
+        {
+          "form": "個",
+          "jp": "go3",
+          "en": "measure word for people and many things"
+        },
+        {
+          "form": "呀",
+          "jp": "aa3",
+          "en": "softens a sentence, friendly",
+          "note": "係呀 (\"yes, that's right\"). Questions with 呀 sound less blunt.",
+          "group": "Two sounds you will hear everywhere"
+        },
+        {
+          "form": "啦",
+          "jp": "laa1",
+          "en": "urges or suggests",
+          "note": "好啦 (\"OK then\"), 嚟啦 (\"come on\").",
+          "group": "Two sounds you will hear everywhere"
+        }
+      ]
+    }
+  ]
+}

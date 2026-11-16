@@ -4368,22 +4368,22 @@ Most frequent first (count = one-character HKCanCor tokens). Each candidate show
 
 ## Words
 
-Words considered: 43541. Held-out split: every 5th HKCanCor sentence is test; readings and frequencies use train only.
+Words considered: 43604. Held-out split: every 5th HKCanCor sentence is test; readings and frequencies use train only.
 
 | status | words |
 |---|---|
-| agree | 40239 |
+| agree | 40285 |
 | corpus | 267 |
-| wordshk | 889 |
-| override | 2 |
-| unresolved | 2144 |
+| wordshk | 891 |
+| override | 4 |
+| unresolved | 2157 |
 
 ### Unresolved among the top 6000 by frequency (140)
 
 - 呢啲 (freq 181.5): nei1 di1 [rime]; ni1 di1 [rime, cccanto]; hkcancor ni1 di1 x2
 - 㗎喇 (freq 138): gaa3 laa3 [rime]; gaa2 laa1 [cccanto]
 - 呢度 (freq 135): nei1 dou6 [rime]; ni1 dou6 [rime, cccanto]; hkcancor ni1 dou6 x1
-- 出嚟 (freq 120): ceot1 lai4 [rime]; ceot1 lei4 [cccanto]
+- 出嚟 (freq 119.5): ceot1 lai4 [rime]; ceot1 lei4 [cccanto]
 - 嚟㗎 (freq 75.5): lai4 gaa3 [rime]; lai2 gaa2 [cccanto]
 - 有人 (freq 72): hkcancor jau5 jan4 x1
 - 返嚟 (freq 60): faan1 lai4 [rime]; faan2 lai2 [cccanto]

@@ -102,8 +102,10 @@ def load_unihan(raw: Path = RAW) -> dict:
     return out
 
 
-def load_hkcancor(raw: Path = RAW) -> list:
-    """Sentences of (word, pos, jyutping), syllables spaced ("mat1je5" -> "mat1 je5").
+def load_hkcancor_located(raw: Path = RAW) -> list:
+    """(file, n, sentence) for every sentence: file is the member name without its folder, n counts the
+    kept sentences of that file from 1. Sentences of (word, pos, jyutping), syllables spaced
+    ("mat1je5" -> "mat1 je5").
 
     Tokens whose jyutping is not made of valid syllables (punctuation codes such as VQ1) are skipped.
     """
@@ -115,6 +117,7 @@ def load_hkcancor(raw: Path = RAW) -> list:
             text = z.read(member).decode("utf8", errors="replace")
             if "<sent_tag>" not in text:
                 continue  # README, LICENSE, PDFs
+            n = 0
             for block in re.findall(r"<sent_tag>(.*?)</sent_tag>", text, flags=re.S):
                 sent = []
                 for line in block.splitlines():
@@ -127,8 +130,14 @@ def load_hkcancor(raw: Path = RAW) -> list:
                         continue
                     sent.append((word, pos, " ".join(syls)))
                 if sent:
-                    sentences.append(sent)
+                    n += 1
+                    sentences.append((member.split("/", 1)[1], n, sent))
     return sentences
+
+
+def load_hkcancor(raw: Path = RAW) -> list:
+    """Sentences of (word, pos, jyutping), syllables spaced; see load_hkcancor_located."""
+    return [sent for _f, _n, sent in load_hkcancor_located(raw)]
 
 
 def load_rime_words(raw: Path = RAW) -> dict:
