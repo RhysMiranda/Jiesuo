@@ -137,11 +137,17 @@ def _changed(form, jp, srcs):
     return out
 
 
-def _english(form, jp, srcs) -> str:
+def _english(form, jp, srcs, alt=()) -> str:
+    """A meaning that belongs to this reading. A CC-Canto gloss counts when its reading equals jp; any other
+    CC-Canto gloss or CC-CEDICT only when the word has one reading (no alternatives) and is resolved. Otherwise ""."""
+    if not jp:
+        return ""
     entries = srcs.get("cccanto_words", {}).get(form, [])
     for rd, en in entries:
         if rd == jp and en:
             return en
+    if alt:
+        return ""
     for _rd, en in entries:
         if en:
             return en
@@ -161,11 +167,10 @@ def resolve_word(form, srcs) -> Word:
         r = _char_res(form, srcs)
         whk = _wordshk_index(srcs).get(form, [])
         if r is None or not r.main:
-            return Word(form, "", list(r.others) if r else [], "unresolved",
-                        en=_english(form, "", srcs))
+            return Word(form, "", list(r.others) if r else [], "unresolved")
         status = "agree" if r.status == "agreed" else r.status
         wid = next((i for rd, i in whk if rd == r.main), None)
-        return Word(form, r.main, list(r.others), status, en=_english(form, r.main, srcs), wordshk_id=wid)
+        return Word(form, r.main, list(r.others), status, en=_english(form, r.main, srcs, r.others), wordshk_id=wid)
 
     rime, canto, whk = _candidates(form, srcs)
     whk_readings = [rd for rd, _i in whk]
@@ -177,7 +182,7 @@ def resolve_word(form, srcs) -> Word:
     def make(jp, status):
         wid = next((i for rd, i in whk if rd == jp), None)
         alt = [c for c in cands if c != jp]
-        return Word(form, jp, alt, status, en=_english(form, jp, srcs), changed=_changed(form, jp, srcs),
+        return Word(form, jp, alt, status, en=_english(form, jp, srcs, alt), changed=_changed(form, jp, srcs),
                     wordshk_id=wid)
 
     if len(cands) == 1:

@@ -337,20 +337,6 @@
       ]
     },
     {
-      "id": "aa1",
-      "title": "吖 aa1: sure, why not",
-      "explain": "吖 agrees or offers: 好吖 \"sure!\".",
-      "pattern": "[^\\s]吖$",
-      "needs": [
-        "吖",
-        "好"
-      ],
-      "cite": "吖:aa1",
-      "entries": [
-        40131
-      ]
-    },
-    {
       "id": "wo3",
       "title": "喎 wo3 / wo5",
       "explain": "wo3 shows you've just noticed something: 落雨喎 \"oh, it's raining\". wo5 reports what someone else said.",
@@ -439,20 +425,6 @@
       "cite": "啩:gwaa3",
       "entries": [
         96788
-      ]
-    },
-    {
-      "id": "maa3",
-      "title": "嘛 maa3: you know",
-      "explain": "嘛 says the point is obvious: 佢係老師嘛 \"he's a teacher, you know\".",
-      "pattern": "嘛",
-      "needs": [
-        "嘛",
-        "老師"
-      ],
-      "cite": "嘛:maa3",
-      "entries": [
-        55806
       ]
     }
   ]

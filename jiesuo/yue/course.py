@@ -42,18 +42,29 @@ _ALNUM = re.compile(r"[0-9A-Za-z０-９Ａ-Ｚａ-ｚ]")
 
 # ---------------------------------------------------------------- order
 
-def order_words(lex, first, n=5000):
+def headword_forms(srcs):
+    """Forms that may be taught: rime characters and words, CC-Canto, or the first form of a reviewed words.hk entry.
+    Forms seen only in HKCanCor or only as words.hk variants are never taught."""
+    out = set(srcs.get("rime", {})) | set(srcs.get("rime_words", {}))
+    out |= set(srcs.get("cccanto", {})) | set(srcs.get("cccanto_words", {}))
+    out |= {e.forms[0][0] for e in srcs.get("wordshk", []) if e.reviewed and e.forms}
+    return out
+
+
+def order_words(lex, first, n=5000, headwords=None):
     """Stage 1 forms in content order, then greedy by spoken frequency, truncated to n.
 
-    A multi-character form needs the characters that are words in lex. Forms already in `first` are known.
+    Only forms with a meaning for their reading (en) and, when `headwords` is given, a headword form can be
+    taught. A multi-character form needs the characters that are teachable words. Forms in `first` are known.
     """
     done = list(dict.fromkeys(first))
     known = set(done)
-    value = {f: w.freq for f, w in lex.items() if w.freq > 0 and f not in known}
+    ok = {f for f, w in lex.items() if w.en and (headwords is None or f in headwords)}
+    value = {f: lex[f].freq for f in ok if lex[f].freq > 0 and f not in known}
     prereq = {}
-    for f in lex:
+    for f in ok:
         if len(f) > 1 and f not in known:
-            need = {c for c in f if c in lex and c not in known and c != f}
+            need = {c for c in f if c in ok and c not in known and c != f}
             if need:
                 prereq[f] = need
     rest = greedy(Model(value=value, prereq=prereq), lookahead=0.0)
@@ -400,7 +411,7 @@ def build(srcs=None, located=None):
     lex = lexicon.build_lexicon(srcs)
     stage1, grammar = load_content()
     first = [it["form"] for les in stage1["lessons"] for it in les["items"]]
-    order = order_words(lex, first)
+    order = order_words(lex, first, headwords=headword_forms(srcs))
     pos = {f: i for i, f in enumerate(order)}
     located = located or sources.load_hkcancor_located()
     train = lexicon.split_heldout(located)[0]

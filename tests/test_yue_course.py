@@ -6,8 +6,8 @@ from jiesuo.yue.lexicon import Word
 from jiesuo.yue.sources import WordsHK
 
 
-def W(form, jp, freq=1.0, alt=(), status="agree"):
-    return Word(form, jp, list(alt), status, freq=freq)
+def W(form, jp, freq=1.0, alt=(), status="agree", en="x"):
+    return Word(form, jp, list(alt), status, freq=freq, en=en)
 
 
 def lexi(*rows):
@@ -36,6 +36,22 @@ def test_a_character_that_is_not_a_word_gets_no_unit():
     lex = lexi(W("我哋", "ngo5 dei6", 100), W("食", "sik6", 50))  # 我 and 哋 are not words
     order = course.order_words(lex, [])
     assert set(order) == {"我哋", "食"}
+
+
+def test_words_without_a_meaning_for_their_reading_are_not_ordered():
+    lex = lexi(W("食", "sik6", 9), W("行", "haang4", 8, en=""), W("行街", "haang4 gaai1", 7), W("飯", "faan6", 5))
+    assert "行" not in course.order_words(lex, [])
+    assert "行街" in course.order_words(lex, [])  # 行 is not a teachable word, so it is no prerequisite
+    assert course.order_words(lex, ["行"])[0] == "行"  # Stage 1 content carries its own meaning
+
+
+def test_only_headword_forms_are_ordered():
+    lex = lexi(W("食", "sik6", 9), W("𡃉", "gaa3", 8), W("囖", "lo1", 7))
+    assert course.order_words(lex, [], headwords={"食", "囖"}) == ["食", "囖"]
+    assert course.order_words(lex, [], headwords={"食"}) == ["食"]
+    srcs = {"rime": {"食": []}, "rime_words": {"飯堂": []}, "cccanto": {}, "cccanto_words": {"食飯": []},
+            "wordshk": [_whk(1, [], forms=(("喇", "laa3"), ("啦", "laa1"))), _whk(2, [], reviewed=False, forms=(("佢", "keoi5"),))]}
+    assert course.headword_forms(srcs) == {"食", "飯堂", "食飯", "喇"}  # variant 啦 and unreviewed 佢 are not headwords
 
 
 def test_order_is_truncated():

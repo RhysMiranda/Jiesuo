@@ -102,3 +102,26 @@ def test_real_overrides_keep_alternatives(real):
 def test_segment_is_lossless():
     t = "佢 feed 緊😂 123，我哋Go!？龘去。 ｜x"
     assert "".join(segment(t, {"佢", "我哋", "去"})) == t
+
+
+def _en_srcs(canto, chars):
+    return {"rime_words": {}, "cccanto_words": {"行": canto}, "wordshk": [], "train": [], "overrides": {},
+            "chars": chars}
+
+
+def test_meaning_matches_the_reading():
+    canto = [("hang4", "to walk"), ("hong4", "row; profession")]
+    w = resolve_word("行", _en_srcs(canto, _chars(行=("hong4", ["hang4"]))))
+    assert (w.jp, w.en) == ("hong4", "row; profession")
+
+
+def test_mismatched_gloss_is_not_used_for_a_polyphonic_char():
+    w = resolve_word("行", _en_srcs([("hang4", "to walk")], _chars(行=("hong4", ["hang4"]))))
+    assert (w.jp, w.en) == ("hong4", "")
+    one = resolve_word("行", _en_srcs([("hang4", "to walk")], _chars(行=("hang4", []))))
+    assert one.en == "to walk"
+    cedict = _en_srcs([], _chars(行=("hang4", [])))
+    cedict["cedict"] = {"行": ["to walk"]}
+    assert resolve_word("行", cedict).en == "to walk"
+    cedict["chars"] = _chars(行=("hong4", ["hang4"]))
+    assert resolve_word("行", cedict).en == ""

@@ -267,7 +267,7 @@ def test_overrides_for_the_three_character_readings_name_a_reviewed_entry(built)
     srcs, b = built
     rows = [ln.split("\t") for ln in (ROOT / "data" / "yue" / "overrides.tsv").read_text(encoding="utf8").splitlines()[1:]]
     by = {r[0]: r for r in rows}
-    for ch, reading in (("撈", "lou1"), ("褪", "tan3")):
+    for ch, reading in (("撈", "lou1"), ("褪", "tan3"), ("當", "dong1")):
         assert by[ch][1] == reading and b["lex"][ch].jp == reading and b["lex"][ch].status == "override"
         ids = [int(x) for x in re.findall(r"wordshk:(\d+)", by[ch][3])]
         assert ids and all(any(e.id == i and e.reviewed and (ch, reading) in e.forms for e in srcs["wordshk"]) for i in ids)
@@ -276,8 +276,8 @@ def test_overrides_for_the_three_character_readings_name_a_reviewed_entry(built)
 def test_every_grammar_cite_is_a_reviewed_words_hk_entry(built):
     srcs, _b = built
     points = _grammar()["points"]
-    assert len(points) == 30
-    assert len({p["id"] for p in points}) == 30
+    assert len(points) == 28 and not {"aa1", "maa3"} & {p["id"] for p in points}
+    assert len({p["id"] for p in points}) == 28
     for p in points:
         form, jp = _course.parse_cite(p["cite"])
         hits = _course.cited_entries(p["cite"], srcs["wordshk"])
@@ -298,10 +298,11 @@ def test_every_grammar_pattern_compiles_and_needs_are_words(built):
 def test_placed_grammar_points_have_two_attested_examples(built):
     _srcs, b = built
     placed = [x[2:] for x in b["placed"] if x.startswith("g:")]
-    assert len(placed) == len(set(placed)) and len(placed) >= 25
+    assert len(placed) == len(set(placed)) and placed
     for p in b["points"]:
         n = len(p["_examples"])
-        assert (p["id"] in placed) == (n >= 2), (p["id"], n)
+        needs_ok = all(w in b["order"] for w in p["needs"])
+        assert (p["id"] in placed) == (n >= 2 and needs_ok), (p["id"], n, needs_ok)
     gs = [i for i, x in enumerate(b["placed"]) if x.startswith("g:")]
     assert all(b - a > 10 for a, b in zip(gs, gs[1:]))
 
@@ -351,3 +352,23 @@ def test_course_content_renders_in_the_font(built):
     text += "".join(ex["text"] for p in b["points"] for ex in p["_examples"])
     missing = sorted({ch for ch in HAN.findall(text) if ord(ch) not in cmap})
     assert not missing, missing
+
+
+def test_placed_examples_carry_the_cited_reading_on_the_key_character(built):
+    _srcs, b = built
+    placed = {x[2:] for x in b["placed"] if x.startswith("g:")}
+    spelling = {"吓": "吓下", "畀": "畀俾"}  # words.hk writes these as 下 and 俾
+    checked = 0
+    for p in b["points"]:
+        if p["id"] not in placed:
+            continue
+        form, jp = _course.parse_cite(p["cite"])
+        want = jp.split()
+        for ex in p["_examples"]:
+            han = "".join(c for c in ex["text"] if _lexicon.is_han(c))
+            syl = ex["jp"].split()
+            ks = [k for k in range(len(han)) if any(han.startswith(f, k) for f in [form] + [
+                form.replace(form[0], v) for v in spelling.get(form[0], "") if len(form) == 1])]
+            assert any(syl[k:k + len(want)] == want for k in ks), (p["id"], ex["id"], ex["text"], ex["jp"])
+            checked += 1
+    assert checked > 50

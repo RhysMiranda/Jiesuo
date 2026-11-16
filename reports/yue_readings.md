@@ -7,11 +7,11 @@ Characters considered: 26998
 | status | characters |
 |---|---|
 | agreed | 22717 |
-| corpus | 30 |
-| override | 2 |
+| corpus | 27 |
+| override | 5 |
 | unresolved | 4249 |
 
-## Decided by the corpus (30)
+## Decided by the corpus (27)
 
 No dictionary-confirmed rime main; HKCanCor's top one-character reading was chosen.
 
@@ -34,7 +34,6 @@ No dictionary-confirmed rime main; HKCanCor's top one-character reading was chos
 - 㗎 -> gaa4 (hkcancor 56): ga3 [rime]; gaa2 [rime(5%), cccanto]; gaa3 [rime(5%), unihan]; gaa4 [cccanto, hkcancor(56)]
 - 掂 -> dim6 (hkcancor 47): dim1 [rime(0%), cccanto, unihan]; dim3 [rime(5%), cccanto, hkcancor(1)]; dim6 [rime(5%), cccanto, hkcancor(46)]
 - 生 -> saang1 (hkcancor 40): saang1 [rime(5%), cccanto, hkcancor(40)]; sang1 [rime(5%), cccanto, unihan]
-- 當 -> dong1 (hkcancor 38): dong1 [rime(5%), cccanto, unihan, hkcancor(20)]; dong3 [rime(5%), cccanto, hkcancor(18)]
 - 長 -> coeng4 (hkcancor 29): coeng4 [rime(5%), cccanto, unihan, hkcancor(29)]; zoeng2 [rime(5%), cccanto]; zoeng6 [rime(0%), cccanto]
 - 咯 -> lok3 (hkcancor 23): gok1 [unihan]; gok3 [rime(3%), cccanto]; haak3 [rime(3%)]; kat1 [rime(3%), cccanto]; lo1 [rime(3%), cccanto]; lo3 [rime(3%), cccanto]; lok3 [rime(3%), cccanto, hkcancor(23)]; lok6 [rime(3%), cccanto]
 - 數 -> sou3 (hkcancor 17): cuk1 [rime(0%), cccanto]; sok3 [rime(3%), cccanto]; sou2 [rime(5%), cccanto, hkcancor(7)]; sou3 [rime(5%), cccanto, unihan, hkcancor(10)]
@@ -42,9 +41,7 @@ No dictionary-confirmed rime main; HKCanCor's top one-character reading was chos
 - 妹 -> mui2 (hkcancor 8): mui1 [rime(5%), cccanto, hkcancor(2)]; mui2 [rime(5%), cccanto, hkcancor(6)]; mui6 [rime(5%), cccanto, unihan]
 - 調 -> diu6 (hkcancor 8): deu6 [rime(3%), cccanto]; diu6 [rime(5%), cccanto, unihan, hkcancor(8)]; tiu4 [rime(5%), cccanto]
 - 淡 -> taam5 (hkcancor 7): daam6 [rime(5%), cccanto, unihan, hkcancor(3)]; jim5 [rime(0%), cccanto]; taam4 [rime(0%), cccanto]; taam5 [rime(5%), cccanto, hkcancor(4)]
-- 撈 -> lou1 (hkcancor 6): laau1 [rime(5%), cccanto]; laau4 [rime(5%), cccanto, unihan]; lou1 [rime(5%), cccanto, hkcancor(6)]; lou4 [rime(0%), cccanto]
 - 彈 -> daan6 (hkcancor 5): daan2 [rime(5%), cccanto]; daan6 [rime(5%), cccanto, unihan, hkcancor(5)]; taan4 [rime(5%), cccanto]
-- 褪 -> tan3 (hkcancor 5): tan3 [rime(5%), cccanto, unihan, hkcancor(5)]; teoi3 [rime(5%), cccanto]
 
 ## Said differently in speech (61)
 
@@ -4368,17 +4365,17 @@ Most frequent first (count = one-character HKCanCor tokens). Each candidate show
 
 ## Words
 
-Words considered: 43604. Held-out split: every 5th HKCanCor sentence is test; readings and frequencies use train only.
+Words considered: 43712. Held-out split: every 5th HKCanCor sentence is test; readings and frequencies use train only.
 
 | status | words |
 |---|---|
-| agree | 40285 |
+| agree | 40379 |
 | corpus | 267 |
-| wordshk | 891 |
-| override | 4 |
-| unresolved | 2157 |
+| wordshk | 897 |
+| override | 5 |
+| unresolved | 2164 |
 
-### Unresolved among the top 6000 by frequency (140)
+### Unresolved among the top 6000 by frequency (141)
 
 - 呢啲 (freq 181.5): nei1 di1 [rime]; ni1 di1 [rime, cccanto]; hkcancor ni1 di1 x2
 - 㗎喇 (freq 138): gaa3 laa3 [rime]; gaa2 laa1 [cccanto]
@@ -4390,6 +4387,7 @@ Words considered: 43604. Held-out split: every 5th HKCanCor sentence is test; re
 - 睇到 (freq 44): tai2 dou2 [rime]; tai2 dou3 [cccanto]
 - 另一個 (freq 38): hkcancor ling6 jat1 go3 x1
 - 呢排 (freq 35.5): ni1 paai2 [rime]; ni1 paai4 [cccanto]
+- 當我 (freq 35.5): dong1 ngo5 [cccanto]; dong3 ngo5 [cccanto]
 - 就嚟 (freq 33): zau6 lai4 [rime]; zau6 lei4 [cccanto]
 - 㗎啦 (freq 29): gaa3 laa1 [rime, cccanto]; gaa3 laa3 [cccanto]; gaa3 laa4 [cccanto]
 - 畀佢 (freq 29): bei2 keoi5 [rime]; bei2 keoi4 [cccanto]
