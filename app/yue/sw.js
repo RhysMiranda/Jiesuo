@@ -4,11 +4,11 @@
 // Everything else (shell, scripts, data) is NETWORK-FIRST: fetch, store a copy, return it. If the network fails, or
 // has not answered within NET_MS while a cached copy exists, the cached copy is used and the fetch still updates the
 // cache in the background. So an update reaches an installed app on the next online visit. Bump VERSION on big changes.
-const VERSION = "jiesuo-yue-v8";
+const VERSION = "jiesuo-yue-v9";
 const AUDIO = "jiesuo-yue-audio-v1"; // never matched by the shell-cache cleanup below
 const NET_MS = 3000;
 const FILES = ["./", "index.html", "yue.css", "../style.css", "../journey.js", "../tone.js",
-  "jyutping.js", "tones.js", "drills.js", "state.js", "lesson.js", "audio.js", "speak.js", "today.js", "sounds.js", "app.js",
+  "jyutping.js", "tones.js", "drills.js", "state.js", "lexicon.js", "course.js", "lesson.js", "audio.js", "speak.js", "today.js", "sounds.js", "app.js",
   "data/stage0.json", "data/audio.json", "data/readings.json", "data/tonecheck.json",
   "manifest.webmanifest", "icons/favicon-32.png", "icons/apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png",
   "licences/", "licences/Jiesuo-LICENSE.txt", "licences/Cantone-LICENSE.txt", "licences/rime-cantonese-LICENSE-CC-BY.txt",
