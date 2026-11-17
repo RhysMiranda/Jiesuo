@@ -144,17 +144,49 @@ def _pinyin_key(py: str) -> str:
     return re.sub(r"\s+", "", py.lower().replace("ü", "u:").replace("v", "u:"))
 
 
+_DROP_START = ("cl:", "surname ", "variant of", "old variant of", "see ", "also pr.", "also written", "taiwan pr.",
+               "abbr. for", "used in", "(tw)")
+_HAN_PAREN = re.compile(r"\([^()]*" + _HAN.pattern + r"[^()]*\)")
+_HAN_PAIR = re.compile("(" + _HAN.pattern + r"+)\|" + _HAN.pattern + "+")
+_PY_BRACKET = re.compile(r"\[[^\[\]]*[a-zA-Z:]+[1-5][^\[\]]*\]")
+_PY_TONE = re.compile(r"[a-zA-Z:]+[1-5]")
+
+
+def clean_senses(senses, limit=3) -> str:
+    """Dictionary senses with the Mandarin taken out (Ruling 12): no classifier / surname / variant / cross-reference
+    senses, no pinyin, no Simplified forms. At most `limit` senses joined with "; "; "" if nothing is left."""
+    out = []
+    for sense in senses:
+        t = sense.strip()
+        if t.lower().startswith(_DROP_START):
+            continue
+        k = t.lower().find("also pr.")
+        if k != -1:
+            t = t[:k].strip()
+        t = _HAN_PAREN.sub("", t)
+        t = _HAN_PAIR.sub(r"", t)
+        t = _PY_BRACKET.sub("", t)
+        if re.search(_HAN.pattern + r"\[", t) or "|" in t or _PY_TONE.search(t):
+            continue
+        t = re.sub(r"\s+", " ", t).strip(" 	;,:/")
+        if t and t not in out:
+            out.append(t)
+    return "; ".join(out[:limit])
+
+
 def _english(form, jp, srcs, alt=()) -> str:
     """A meaning that belongs to this reading, from the first source that has one: a CC-Canto gloss with the same
-    reading, then CC-CEDICT senses whose pinyin the CC-Canto readings file maps to this reading (up to 3).
-    Otherwise "". `alt` is not used: a gloss never has to guess between readings."""
+    reading, then CC-CEDICT senses whose pinyin the CC-Canto readings file maps to this reading (up to 3). Every
+    sense goes through clean_senses, so no Mandarin reaches the app. Otherwise "". `alt` is not used: a gloss never
+    has to guess between readings."""
     if not jp:
         return ""
     for rd, en in srcs.get("cccanto_words", {}).get(form, []):
         if rd == jp and en:
-            return en
-    senses = srcs.get("cedict_jp", {}).get((form, jp))
-    return "; ".join(senses[:3]) if senses else ""
+            got = clean_senses(en.split("/"))
+            if got:
+                return got
+    return clean_senses(srcs.get("cedict_jp", {}).get((form, jp)) or [])
 
 
 def _whk_eng_index(srcs) -> set:

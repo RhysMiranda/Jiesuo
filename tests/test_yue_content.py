@@ -332,16 +332,23 @@ def test_every_example_syllable_is_valid_jyutping(built):
             jyutping.parse(s)
 
 
-def test_lesson_sentences_use_only_known_words(built):
+def test_lesson_sentences_teach_their_item(built):
     _srcs, b = built
-    pos = {f: i for i, f in enumerate(b["order"])}
+    pos = {f: i for i, f in enumerate(b["placed"])}
     pool = {e["id"]: e for e in b["pool"]}
+    pts = {f"g:{p['id']}": {e["id"] for e in p["_examples"]} for p in b["points"]}
     got = 0
     for item, sid in b["lesson"].items():
-        if sid:
-            got += 1
-            assert pool[sid]["en"] and max(pos[w] for w in pool[sid]["words"]) <= pos[item]
-    assert got > 1000
+        got += 1
+        ex = pool[sid]
+        assert ex["en"] and _course.han_len(ex["text"]) >= 4, (item, sid)
+        assert max(pos[w] for w in ex["words"]) <= pos[item], (item, sid)
+        if item.startswith("g:"):
+            assert sid in pts[item], (item, sid)
+        else:
+            assert item in ex["words"], (item, sid)
+    assert got > 500
+    assert b["lesson"].get("再見") is None or "再見" in pool[b["lesson"]["再見"]]["words"]
 
 
 def test_course_content_renders_in_the_font(built):

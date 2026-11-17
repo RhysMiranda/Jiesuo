@@ -1,6 +1,6 @@
 # Cantonese course order
 
-Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Example pool: 20496 sentences ([('wordshk', 16889), ('hkcancor', 3514), ('tatoeba', 93)]).
+Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Example pool: 20495 sentences ([('wordshk', 16889), ('hkcancor', 3514), ('tatoeba', 92)]).
 
 ## First 100 items
 
@@ -113,14 +113,14 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 | ge3 | 嘅:ge3 | 43 | 47 | 3 | 44 | 0 |
 | clf | 隻:zek3 | left out | 1 | 1 | 0 | 0 |
 | zo2 | 咗:zo2 | 451 | 60 | 3 | 48 | 9 |
-| gan2 | 緊:gan2 | 462 | 2 | 1 | 0 | 1 |
+| gan2 | 緊:gan2 | left out | 1 | 1 | 0 | 0 |
 | gwo3 | 過:gwo3 | 79 | 11 | 2 | 9 | 0 |
-| mei6 | 未:mei6 | 556 | 13 | 2 | 10 | 1 |
+| mei6 | 未:mei6 | 555 | 13 | 2 | 10 | 1 |
 | mou5v | 冇:mou5 | 57 | 10 | 0 | 10 | 0 |
 | mhou2 | 咪:mai5 | left out | 1 | 1 | 0 | 0 |
 | anota | 有冇:jau5 mou5 | 68 | 31 | 3 | 28 | 0 |
 | haimai | 係咪:hai6 mai6 | 352 | 3 | 1 | 2 | 0 |
-| qwords | 點解:dim2 gaai2 | 473 | 20 | 1 | 16 | 3 |
+| qwords | 點解:dim2 gaai2 | 462 | 20 | 1 | 16 | 3 |
 | gwo3cmp | 過:gwo3 | 199 | 3 | 1 | 2 | 0 |
 | bei2 | 畀:bei2 | 285 | 2 | 2 | 0 | 0 |
 | dirs | 返:faan1 | 440 | 11 | 1 | 10 | 0 |
@@ -131,7 +131,7 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 | maai4 | 埋:maai4 | 227 | 6 | 2 | 4 | 0 |
 | faan1asp | 返:faan1 | 429 | 3 | 2 | 1 | 0 |
 | laa3 | 喇:laa3 | 328 | 2 | 2 | 0 | 0 |
-| wo3 | 喎:wo3 | 765 | 52 | 4 | 48 | 0 |
+| wo3 | 喎:wo3 | 764 | 52 | 4 | 48 | 0 |
 | lo1 | 囉:lo1 | 311 | 5 | 5 | 0 | 0 |
 | me1 | 咩:me1 | 106 | 23 | 5 | 16 | 2 |
 | ge3fin | 嘅:ge3 | 184 | 26 | 3 | 23 | 0 |
@@ -141,6 +141,7 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 ### Left out
 
 - clf: 1 attested example(s)
+- gan2: 1 attested example(s)
 - mhou2: 1 attested example(s)
 - dak1: 1 attested example(s)
 - hoi1: 1 attested example(s)
@@ -178,7 +179,6 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 
 **gan2** `[^\s]緊(?![要張])`
 - wordshk:13606#2: 我食緊飯 | ngo5 sik6 gan2 faan6 | I am eating.
-- tatoeba:385477: 天氣每日都喺度變緊 | tin1 hei3 mui5 jat6 dou1 hai2 dou6 bin3 gan2 | The weather varies from day to day.
 
 **gwo3** `[去食睇見試聽做玩讀講學用買行搭坐飲到嚟]過`
 - wordshk:49438#2: 你去過美國未啊 | nei5 heoi3 gwo3 mei5 gwok3 mei6 aa3 | Have you ever been to the USA?

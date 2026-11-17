@@ -122,15 +122,33 @@ def test_place_grammar_uses_precomputed_examples():
     assert "g:zo2" in course.place_grammar(["咗"] + ["v"] * 12, pts, [])
 
 
-def test_lesson_sentence_is_the_shortest_with_english_using_known_words():
+def test_lesson_sentence_contains_the_item_and_uses_only_earlier_words():
     order = ["我", "食", "飯", "佢"]
-    exs = [_ex("long", "我食飯", ["我", "食", "飯"]), _ex("short", "我食", ["我", "食"]),
-           _ex("noen", "我", ["我"], en=None), _ex("late", "佢", ["佢"])]
+    exs = [_ex("long", "我食飯我食飯", ["我", "食", "飯"]), _ex("short", "我食我食", ["我", "食"]),
+           _ex("noen", "我我我我", ["我"], en=None), _ex("tiny", "我食", ["我", "食"]),
+           _ex("late", "佢佢佢佢", ["佢"]), _ex("other", "佢食飯食", ["佢", "食", "飯"])]
     got = course.lesson_sentences(order, exs)
-    assert got["我"] is None  # the only sentence on 我 has no English
-    assert got["食"] == "short"
-    assert got["飯"] == "long"  # contains today's word, though "short" is shorter
-    assert got["佢"] == "late"
+    assert "我" not in got  # the only sentence on 我 has no English
+    assert got["食"] == "short"  # "tiny" has fewer than 4 Han characters
+    assert got["飯"] == "long"
+    assert got["佢"] == "late"  # 佢 is last: "other" also qualifies and "late" is shorter
+
+
+def test_lesson_sentence_never_maps_an_item_to_a_sentence_without_it():
+    order = ["拜拜", "再見", "唔使"]
+    exs = [_ex("bye", "拜拜拜拜", ["拜拜"])]
+    got = course.lesson_sentences(order, exs)
+    assert got == {"拜拜": "bye"}  # 再見 and 唔使 have none of their own, so no entry
+    exs.append(_ex("see", "再見再見", ["再見"]))
+    assert course.lesson_sentences(order, exs)["再見"] == "see"
+
+
+def test_lesson_sentence_for_a_grammar_item_is_one_of_its_examples():
+    order = ["我", "食", "g:zo2"]
+    pts = [{"id": "zo2", "_examples": [_ex("a", "我食咗", ["我", "食"]), _ex("b", "我食咗飯", ["我", "食"]),
+                                       _ex("c", "我食", ["我", "食"]), _ex("d", "我食咗飯嗎", ["我", "食", "x"])]}]
+    got = course.lesson_sentences(order, [_ex("z", "我食我食", ["我", "食"])], pts)
+    assert got["g:zo2"] == "b"  # a is too short, c too short, d has a word outside the order
 
 
 def test_split_example_jp_takes_a_punctuated_reading_off_the_text():
@@ -252,7 +270,8 @@ def test_grammar_examples_follow_the_provenance_rule():
 
 def test_lesson_sentence_prefers_wordshk_over_tatoeba():
     order = ["我", "食"]
-    exs = [_ex("tatoeba:1", "我食", ["我", "食"]), _ex("wordshk:2#1", "我食我食", ["我", "食"])]
+    exs = [_ex("tatoeba:1", "我食", ["我", "食"]), _ex("tatoeba:2", "我食我食", ["我", "食"]),
+           _ex("wordshk:2#1", "我食我食我食", ["我", "食"])]
     assert course.lesson_sentences(order, exs)["食"] == "wordshk:2#1"
 
 

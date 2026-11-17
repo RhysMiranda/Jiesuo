@@ -361,31 +361,38 @@ def place_grammar(order, points, examples_, every=10):
     return out
 
 
-def lesson_sentences(order, examples_):
-    """item -> id of the shortest example with English whose words are all at or before the item (words.hk first).
+LESSON_MIN_HAN = 4
 
-    Examples containing the item win when there are any (the day's lesson sentence should use today's word)."""
+
+def lesson_sentences(order, examples_, points=()):
+    """item -> id of its lesson sentence (Ruling 13); items without a qualifying example are left out.
+
+    The sentence for a form X contains X as one of its segmented words, has English and at least LESSON_MIN_HAN Han
+    characters, and every word of it is at or before X in the order. For a grammar item `g:<id>` (in `order`, with
+    `points`) it is one of that point's attested `_examples`, under the same rules. Prefer words.hk, then the
+    shortest, then the id."""
     pos = {f: i for i, f in enumerate(order)}
-    ready = {}
+    key = lambda ex: (not ex["id"].startswith("wordshk"), han_len(ex["text"]), ex["id"])
+    ok = lambda ex: bool(ex["en"]) and han_len(ex["text"]) >= LESSON_MIN_HAN
+    best = {}
     for ex in examples_:
-        if not ex["en"]:
+        if not ok(ex):
             continue
         ps = [pos.get(w) for w in ex["words"]]
         if not ps or None in ps:
             continue
-        ready.setdefault(max(ps), []).append(ex)
-    key = lambda ex: (not ex["id"].startswith("wordshk"), han_len(ex["text"]), ex["id"])  # words.hk first
-    best, with_item, out = None, {}, {}
-    for i, f in enumerate(order):
-        for ex in ready.get(i, ()):
-            if best is None or key(ex) < key(best):
-                best = ex
-            for w in ex["words"]:
-                cur = with_item.get(w)
-                if cur is None or key(ex) < key(cur):
-                    with_item[w] = ex
-        pick = with_item.get(f) or best
-        out[f] = pick["id"] if pick else None
+        x = order[max(ps)]  # the one word of the example that comes last is the item it teaches
+        if x not in best or key(ex) < key(best[x]):
+            best[x] = ex
+    out = {f: best[f]["id"] for f in order if f in best}
+    for p in points:
+        g = f"g:{p['id']}"
+        if g not in pos:
+            continue
+        cands = [ex for ex in p.get("_examples", ()) if ok(ex)
+                 and all(pos.get(w, len(order)) <= pos[g] for w in ex["words"])]
+        if cands:
+            out[g] = min(cands, key=key)["id"]
     return out
 
 
@@ -416,7 +423,7 @@ def build(srcs=None, located=None):
         points.append(q)
     placed = place_grammar(order, points, pool)
     return {"lex": lex, "order": order, "placed": placed, "pool": pool, "points": points, "diffs": diffs,
-            "lesson": lesson_sentences(order, pool), "stage1": stage1}
+            "lesson": lesson_sentences(placed, pool, points), "stage1": stage1}
 
 
 def write_report(b, srcs, path=REPORT):

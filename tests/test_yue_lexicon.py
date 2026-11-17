@@ -155,3 +155,25 @@ def test_cccanto_y_reading_gives_the_word_its_gloss():
             "cccanto_words": {"成日": [(sources.fix_reading("seng4 yat6"), "always")]}}
     w = resolve_word("成日", srcs)
     assert (w.jp, w.status, w.en) == ("seng4 jat6", "agree", "always")
+
+
+def test_clean_senses_removes_the_mandarin_from_real_cedict_senses():
+    from jiesuo.yue.lexicon import clean_senses
+    assert clean_senses(["early morning", "CL:個|个[ge4]", "also pr. [zao3chen5]"]) == "early morning"
+    assert clean_senses(["surname San", "three", "3"]) == "three; 3"
+    assert clean_senses(["you (informal, as opposed to courteous 您[nin2])"]) == "you"
+    assert clean_senses(["person", "people", "CL:個|个[ge4],位[wei4]"]) == "person; people"
+    assert clean_senses(["(loanword) bye-bye; also pr. [bai1 bai1] etc"]) == "(loanword) bye-bye"
+    assert clean_senses(["a", "b", "c", "d"]) == "a; b; c"
+    assert clean_senses(["see 你[ni3]", "variant of x", "(Tw) y"]) == ""
+
+
+def test_no_shipped_meaning_has_mandarin_in_it():
+    import json, re
+    p = ROOT / "app" / "yue" / "data" / "lexicon.json"
+    if not p.exists():
+        pytest.skip("no lexicon.json")
+    bad = re.compile(r"\[[a-z]+[1-5]|CL:|\||also pr\.|surname ")
+    data = json.loads(p.read_text(encoding="utf8"))
+    hits = [w for w in data["words"] if bad.search(w[2])]
+    assert data["words"] and not hits, hits[:5]
