@@ -31,11 +31,12 @@
     return stats;
   }
 
-  const DAY = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
+  const DAY = /^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
   /** words: {item: {h?, r?, t?: [box 1-6, "YYYY-MM-DD"], seen: day}}. Throws "bad-file" on anything else. */
   function checkWords(words) {
     if (!isObj(words)) throw bad();
-    for (const e of Object.values(words)) {
+    for (const [item, e] of Object.entries(words)) {
+      if (item === "__proto__") throw bad();
       if (!isObj(e) || typeof e.seen !== "string") throw bad();
       for (const [k, v] of Object.entries(e)) {
         if (k === "seen") continue;
@@ -52,6 +53,7 @@
    */
   function deserialise(obj) {
     if (!obj || typeof obj !== "object" || obj.lang !== "yue") throw new Error("not-yue");
+    if (obj.v !== undefined && (!Number.isInteger(obj.v) || obj.v > 2)) throw bad();
     const stats = obj.stats === undefined ? D.emptyStats() : checkStats(obj.stats);
     const profile = obj.profile === undefined ? null : obj.profile;
     if (profile !== null && (!isObj(profile) || !Object.values(profile).every(Number.isFinite))) throw bad();
@@ -64,7 +66,7 @@
     const gate = obj.gate === undefined ? null : obj.gate;
     if (gate !== null && !isObj(gate)) throw bad();
     const words = obj.words === undefined ? {} : checkWords(obj.words);
-    return { stats: JSON.parse(JSON.stringify(stats)), profile, voice, lesson, days, gate, words: JSON.parse(JSON.stringify(words)) };
+    return { stats: JSON.parse(JSON.stringify(stats)), profile, voice, lesson, days, gate, words: Object.fromEntries(Object.entries(JSON.parse(JSON.stringify(words)))) };
   }
 
   /** Saved text -> {state, fresh}. A damaged, foreign or unparseable save gives a fresh state and fresh:true. */

@@ -89,7 +89,7 @@
         if (typeof form !== "string") return null;
         const e = byForm.get(form);
         if (!e) return null;
-        const out = { form: e.form, jp: e.jp, en: enOf(e), rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2) };
+        const out = { form: e.form, jp: e.jp, en: enOf(e), rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2), unchecked: !!(e.flags & 4) };
         const w = wkEntry(form);
         if (w) out.wordshk = { id: w[0], eng: w[1], def: w[2] };
         return out;

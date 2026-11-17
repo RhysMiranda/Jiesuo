@@ -128,7 +128,7 @@ test("type check: tones required", () => {
 test("distractors never include the answer or a same-meaning item", () => {
   const words = { "我": { h: [1, T], seen: T } };
   for (const item of course.order.slice(0, 60).filter((x) => !x.startsWith("g:"))) {
-    const en = C.meaning(course, lex, item);
+    const en = C.shortEn(C.meaning(course, lex, item));
     for (const kind of ["hear", "read", "type"]) {
       const st = C.exercises[kind](ctx({ words }), item);
       assert.strictEqual(st.options.length, 4, item + kind);
@@ -139,7 +139,7 @@ test("distractors never include the answer or a same-meaning item", () => {
         assert.strictEqual(st.options.filter((o) => o === en).length, 1);
       } else {
         assert.ok(st.options.includes(item));
-        for (const o of st.options) if (o !== item) assert.notStrictEqual(C.meaning(course, lex, o), en);
+        for (const o of st.options) if (o !== item) assert.notStrictEqual(C.shortEn(C.meaning(course, lex, o)), en);
       }
     }
   }
@@ -154,4 +154,48 @@ test("record: wrong gives box 1 due tomorrow, right climbs, input untouched", ()
   const w2 = C.record(w1, "你好", "r", true, T);
   assert.deepStrictEqual(w2["你好"].r, [1, "2026-11-18"]);
   assert.deepStrictEqual(C.record(w2, "你好", "h", true, "2026-11-18")["你好"].h, [2, "2026-11-20"]);
+});
+
+test("grammar with no English example is marked seen, not offered forever", () => {
+  const c2 = JSON.parse(JSON.stringify(course));
+  c2.grammar.zo2.examples = ["hkcancor:FC-022b_v#204"];
+  const lex2 = { word: lex.word, example: (id) => { const e = lex.example(id); return e && Object.assign({}, e, { en: null }); } };
+  const words = {};
+  for (const it of c2.order.slice(0, c2.order.indexOf("g:zo2"))) words[it] = { h: [1, "2099-01-01"], seen: "2026-11-01" };
+  const { steps } = C.planDay({ course: c2, lex: lex2, words, today: T, rng: rngOf(1), newCount: 1 });
+  const g = steps.filter((x) => x.item === "g:zo2");
+  assert.strictEqual(g.length, 1);
+  assert.strictEqual(g[0].markSeen, true);
+  const w2 = C.markSeen(words, "g:zo2", T);
+  assert.deepStrictEqual(w2["g:zo2"], { seen: T });
+  assert.ok(!("g:zo2" in words));
+  assert.ok(!C.nextNew(c2, w2, 3).includes("g:zo2"));
+  State.deserialise({ lang: "yue", words: w2 });
+});
+
+test("unchecked (flag 4) items are never new, due or drilled", () => {
+  const fx = JyutLex.create({ lexicon: { words: [["你好", "nei5 hou2", "hello", 1, 4], ["早晨", "zou2 san4", "good morning", 2, 0]], alts: {}, chars: {} }, course: {}, wordshk: {}, sentences: {}, hkcancor: {} });
+  assert.strictEqual(fx.word("你好").unchecked, true);
+  assert.strictEqual(fx.word("早晨").unchecked, false);
+  const c3 = { order: ["你好", "早晨"], stage1: { lessons: [] }, grammar: {}, lessonSentence: {} };
+  assert.deepStrictEqual(C.nextNew(c3, {}, 2, fx), ["早晨"]);
+  const words = { "你好": { h: [1, "2026-11-01"], seen: "2026-11-01" }, "早晨": { h: [1, "2026-11-01"], seen: "2026-11-01" } };
+  const { steps } = C.planDay({ course: c3, lex: fx, words, today: T, rng: rngOf(1) });
+  assert.ok(steps.every((x) => x.item !== "你好"));
+  assert.strictEqual(steps.filter((x) => x.item === "早晨").length, 1);
+});
+
+test("options show only the first sense; meet shows the full meaning", () => {
+  const st = C.exercises.read(ctx(), "唔該");
+  assert.strictEqual(st.answer, "thanks (for a service or favour)");
+  assert.ok(st.options.every((o) => !o.includes(";")));
+  assert.strictEqual(C.planDay(ctx({ newCount: 6 })).steps.find((x) => x.item === "唔該").en, "thanks (for a service or favour); excuse me; please");
+});
+
+test("state: proto key, strict dates, newer version refused", () => {
+  const mk = (w) => ({ lang: "yue", v: 2, words: w });
+  assert.throws(() => State.deserialise(mk(JSON.parse('{"__proto__": {"seen": "x"}}'))), { message: "bad-file" });
+  assert.throws(() => State.deserialise(mk({ a: { h: [1, "2026-13-40"], seen: "x" } })), { message: "bad-file" });
+  assert.throws(() => State.deserialise({ lang: "yue", v: 3 }), { message: "bad-file" });
+  assert.doesNotThrow(() => State.deserialise(mk({ a: { h: [1, "2026-12-31"], seen: "x" } })));
 });

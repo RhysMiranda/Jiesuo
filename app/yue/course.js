@@ -40,6 +40,7 @@
     if (typeof item !== "string" || isGrammar(item)) return null;
     const s = stage1Of(course).get(item);
     const w = lex && lex.word(item);
+    if (w && w.unchecked) return null;
     const jp = (s && s.jp) || (w && w.jp);
     const en = meaning(course, lex, item);
     if (!jp || !en) return null;
@@ -47,6 +48,9 @@
     if (s && s.note) out.note = s.note;
     return out;
   }
+
+  /** First sense only, so an option's length does not give the answer away. */
+  const shortEn = (en) => String(en || "").split(";")[0].trim();
 
   const uncheckedSet = (course) => new Set(Array.isArray(course.unchecked) ? course.unchecked : []);
 
@@ -85,10 +89,10 @@
   // ---- reviews -----------------------------------------------------------------------------------------------
 
   /** Due entries, most overdue first within a skill, interleaved across skills: [{item, skill}]. */
-  function due(words, today, limit) {
+  function due(words, today, limit, keep) {
     const per = SKILLS.map((skill) => {
       const entries = [];
-      for (const [item, e] of Object.entries(words || {})) if (e && Array.isArray(e[skill])) entries.push([item, e[skill]]);
+      for (const [item, e] of Object.entries(words || {})) if (e && Array.isArray(e[skill]) && (!keep || keep(item))) entries.push([item, e[skill]]);
       return J.dueReviews(new Map(entries), today, limit).map((item) => ({ item, skill }));
     });
     const out = [];
@@ -105,6 +109,13 @@
     e[skill] = J.schedule(old && old[skill], !!correct, today);
     e.seen = today;
     out[item] = e;
+    return out;
+  }
+
+  /** Mark an item as shown without scheduling any skill (grammar with nothing to drill). Non-mutating. */
+  function markSeen(words, item, today) {
+    const out = Object.assign({}, words);
+    out[item] = Object.assign({}, words && words[item], { seen: today });
     return out;
   }
 
@@ -142,7 +153,7 @@
     const n = sylls(inf.jp).length;
     const tl = toneless(inf.jp);
     const cand = [];
-    const usedEn = new Set([inf.en.toLowerCase()]);
+    const usedEn = new Set([shortEn(inf.en).toLowerCase(), inf.en.toLowerCase()]);
     const tiers = [];
     const mk = (list, test) => shuffled(list, rng).filter(test);
     const infos = new Map();
@@ -154,9 +165,9 @@
       for (const x of tier) {
         if (cand.length >= 3) break;
         const i = get(x);
-        const key = i.en.toLowerCase();
-        if (usedEn.has(key) || i.form === item || cand.some((c) => c.form === i.form)) continue;
-        usedEn.add(key);
+        const key = shortEn(i.en).toLowerCase();
+        if (usedEn.has(key) || usedEn.has(i.en.toLowerCase()) || i.form === item || cand.some((c) => c.form === i.form)) continue;
+        usedEn.add(key); usedEn.add(i.en.toLowerCase());
         cand.push(i);
       }
     }
@@ -195,15 +206,15 @@
     }
     const inf = info(ctx.course, ctx.lex, item);
     if (!inf) return null;
-    const options = shuffled([inf.en].concat(pickDistractors(ctx, item, inf, false).map((d) => d.en)), ctx.rng);
-    return { type: "hear", item, skill: "h", prompt: { text: inf.form, jp: inf.jp }, options, answer: inf.en };
+    const options = shuffled([shortEn(inf.en)].concat(pickDistractors(ctx, item, inf, false).map((d) => shortEn(d.en))), ctx.rng);
+    return { type: "hear", item, skill: "h", prompt: { text: inf.form, jp: inf.jp }, options, answer: shortEn(inf.en) };
   }
 
   function read(ctx, item) {
     const inf = info(ctx.course, ctx.lex, item);
     if (!inf) return null;
-    const options = shuffled([inf.en].concat(pickDistractors(ctx, item, inf, false).map((d) => d.en)), ctx.rng);
-    return { type: "read", item, skill: "r", prompt: { text: inf.form }, options, answer: inf.en };
+    const options = shuffled([shortEn(inf.en)].concat(pickDistractors(ctx, item, inf, false).map((d) => shortEn(d.en))), ctx.rng);
+    return { type: "read", item, skill: "r", prompt: { text: inf.form }, options, answer: shortEn(inf.en) };
   }
 
   /** Type the Jyutping (tones required), then pick the characters: options are 4 forms, answerForm is the item. */
@@ -211,7 +222,7 @@
     const inf = info(ctx.course, ctx.lex, item);
     if (!inf) return null;
     const options = shuffled([item].concat(pickDistractors(ctx, item, inf, true).map((d) => d.form)), ctx.rng);
-    return { type: "type", item, skill: "t", prompt: { en: inf.en, jp: inf.jp, text: inf.form }, options, answer: inf.jp, answerForm: item };
+    return { type: "type", item, skill: "t", prompt: { en: shortEn(inf.en), jp: inf.jp, text: inf.form }, options, answer: inf.jp, answerForm: item };
   }
 
   /** True when the typed Jyutping equals the step's answer syllable by syllable; every tone must be given. */
@@ -234,6 +245,7 @@
       return { type: "meet", item, grammar: true, title: g.title, explain: g.explain, pattern: g.pattern, cite: g.cite, examples };
     }
     const inf = info(ctx.course, ctx.lex, item);
+    if (!inf) return null;
     const w = ctx.lex.word(item);
     const out = { type: "meet", item, form: inf.form, jp: inf.jp, en: inf.en };
     if (inf.note) out.note = inf.note;
@@ -262,12 +274,14 @@
     const fresh = nextNew(ctx.course, ctx.words, newCount, ctx.lex);
     const steps = [];
     for (const item of fresh) {
-      steps.push(meet(ctx, item));
-      if (isGrammar(item)) { const h = hear(ctx, item); if (h) steps.push(h); }
+      const m = meet(ctx, item);
+      if (!m) continue;
+      steps.push(m);
+      if (isGrammar(item)) { const h = hear(ctx, item); if (h) steps.push(h); else m.markSeen = true; }
       else for (const k of ["hear", "read", "type"]) { const s = exercises[k](ctx, item); if (s) steps.push(s); }
     }
     const reviews = [];
-    for (const { item, skill } of due(ctx.words, c.today, reviewLimit)) {
+    for (const { item, skill } of due(ctx.words, c.today, reviewLimit, (it) => isGrammar(it) || !!info(ctx.course, ctx.lex, it))) {
       if (isGrammar(item) && skill !== "h") continue;
       const s = exercises[{ h: "hear", r: "read", t: "type" }[skill]](ctx, item);
       if (s) reviews.push(s);
@@ -285,5 +299,5 @@
     return { steps: body };
   }
 
-  return { SKILLS, wordsUnlocked, nextNew, due, planDay, record, meaning, info, checkTyped, exercises, hear, read, type };
+  return { SKILLS, wordsUnlocked, nextNew, due, planDay, record, markSeen, shortEn, meaning, info, checkTyped, exercises, hear, read, type };
 });
