@@ -149,12 +149,32 @@ _DROP_START = ("cl:", "surname ", "variant of", "old variant of", "see ", "also 
 _HAN_PAREN = re.compile(r"\([^()]*" + _HAN.pattern + r"[^()]*\)")
 _HAN_PAIR = re.compile("(" + _HAN.pattern + r"+)\|" + _HAN.pattern + "+")
 _PY_BRACKET = re.compile(r"\[[^\[\]]*[a-zA-Z:]+[1-5][^\[\]]*\]")
-_PY_TONE = re.compile(r"[a-zA-Z:]+[1-5]")
+_PY_TONE = re.compile(r"[a-zA-Z:]+[1-5]\b")
 
 
-def clean_senses(senses, limit=3) -> str:
+_PR_LABEL = re.compile(r"\b(?:Taiwan|colloquial|also) pr\.\s*(?:\[[^\]]*\])?", re.I)
+_REF = re.compile(r"^(?:old variant of|variant of|see)\s+(" + _HAN.pattern + r"+)", re.I)
+
+
+def _tidy(t: str) -> str:
+    """Punctuation left dangling by the removals: empty brackets, ', ;', trailing commas."""
+    for _ in range(4):
+        t = re.sub(r"\(\s*\)|\[\s*\]", "", t)
+        t = re.sub(r"\(\s*[;,]\s*", "(", t)
+        t = re.sub(r"\s*[;,]\s*([;,)])", r"\1", t)
+        t = re.sub(r"\s+", " ", t).strip(" \t;,:/")
+        t = re.sub(r"\s*\($", "", t).strip(" \t;,:/")
+        if t.count("(") > t.count(")") and t.endswith(("(", ",")):
+            t = t.rstrip("(, ")
+    return t
+
+
+def clean_senses(senses, limit=3, follow=None) -> str:
     """Dictionary senses with the Mandarin taken out (Ruling 12): no classifier / surname / variant / cross-reference
-    senses, no pinyin, no Simplified forms. At most `limit` senses joined with "; "; "" if nothing is left."""
+    senses, no pinyin, no Simplified forms. At most `limit` senses joined with "; "; "" if nothing is left.
+    If every sense was a reference ("see X[..]", "variant of X") and `follow(form)` gives senses for the traditional
+    X, those are used instead (followed once)."""
+    senses = list(senses or [])
     out = []
     for sense in senses:
         t = sense.strip()
@@ -163,15 +183,33 @@ def clean_senses(senses, limit=3) -> str:
         k = t.lower().find("also pr.")
         if k != -1:
             t = t[:k].strip()
+        t = _PR_LABEL.sub("", t)
         t = _HAN_PAREN.sub("", t)
-        t = _HAN_PAIR.sub(r"", t)
+        t = _HAN_PAIR.sub(r"\1", t)
         t = _PY_BRACKET.sub("", t)
         if re.search(_HAN.pattern + r"\[", t) or "|" in t or _PY_TONE.search(t):
             continue
-        t = re.sub(r"\s+", " ", t).strip(" 	;,:/")
+        t = _tidy(t)
         if t and t not in out:
             out.append(t)
+    if not out and follow:
+        for sense in senses:
+            m = _REF.match(sense.strip())
+            if m:
+                got = follow(m.group(1))
+                return clean_senses(got, limit) if got else ""
     return "; ".join(out[:limit])
+
+
+def _cedict_by_form(srcs) -> dict:
+    """traditional form -> every CC-CEDICT sense of it, for following a "see X" reference once."""
+    if "_cedict_trad" not in srcs:
+        out: dict = {}
+        if CEDICT.exists():
+            for e in json.loads(CEDICT.read_text(encoding="utf8")):
+                out.setdefault(e["traditional"], []).extend(e["english"])
+        srcs["_cedict_trad"] = out
+    return srcs["_cedict_trad"]
 
 
 def _english(form, jp, srcs, alt=()) -> str:
@@ -181,12 +219,13 @@ def _english(form, jp, srcs, alt=()) -> str:
     has to guess between readings."""
     if not jp:
         return ""
+    follow = lambda f: _cedict_by_form(srcs).get(f)
     for rd, en in srcs.get("cccanto_words", {}).get(form, []):
         if rd == jp and en:
-            got = clean_senses(en.split("/"))
+            got = clean_senses(en.split("/"), follow=follow)
             if got:
                 return got
-    return clean_senses(srcs.get("cedict_jp", {}).get((form, jp)) or [])
+    return clean_senses(srcs.get("cedict_jp", {}).get((form, jp)) or [], follow=follow)
 
 
 def _whk_eng_index(srcs) -> set:

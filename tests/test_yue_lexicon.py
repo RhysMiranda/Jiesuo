@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -173,7 +174,18 @@ def test_no_shipped_meaning_has_mandarin_in_it():
     p = ROOT / "app" / "yue" / "data" / "lexicon.json"
     if not p.exists():
         pytest.skip("no lexicon.json")
-    bad = re.compile(r"\[[a-z]+[1-5]|CL:|\||also pr\.|surname ")
+    bad = re.compile(r"\[[a-z]+[1-5]|CL:|\||also pr\.|surname |[\x00-\x1f]|Taiwan pr\.|\(\s*\)|, ;|\(;")
     data = json.loads(p.read_text(encoding="utf8"))
     hits = [w for w in data["words"] if bad.search(w[2])]
     assert data["words"] and not hits, hits[:5]
+
+
+def test_clean_senses_keeps_the_traditional_form_of_a_pair_and_tidies():
+    from jiesuo.yue.lexicon import clean_senses
+    got = clean_senses(["Taitung County 臺東縣|台东县[Tai2 dong1 Xian4], x"])
+    assert "臺東縣" in got and not re.search(r"[\x00-\x1f]", got)
+    assert clean_senses(["harmony (Taiwan pr. [he2]) here"]) == "harmony here"
+    assert "()" not in clean_senses(["to sign (Taiwan pr. [shu3])"])
+    fol = lambda f: ["Guangzhou", "capital of Guangdong"] if f == "廣州" else None
+    assert clean_senses(["see 廣州[Guang3 zhou1]"], follow=fol) == "Guangzhou; capital of Guangdong"
+    assert clean_senses(["see 廣州[Guang3 zhou1]"]) == ""
