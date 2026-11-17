@@ -76,6 +76,13 @@
     catch (e) { return { state: emptyState(), fresh: true }; }
   }
 
+  /** load(), but an unreadable non-empty save is handed to backup(text) before anything can overwrite it. */
+  function loadWithBackup(text, backup) {
+    const r = load(text);
+    if (r.fresh && text) { try { backup(text); } catch (e) { /* storage full or blocked */ } }
+    return r;
+  }
+
   /**
    * Draw a screen without ever leaving the app unusable. On an error, draw once more without a kept lesson
    * (dropLesson; always tried, since Today clears the kept lesson itself before it draws); only if that fails
@@ -90,5 +97,5 @@
     try { draw(); return "reset"; } catch (e) { return "broken"; }
   }
 
-  return { serialise, deserialise, emptyState, load, drawSafely };
+  return { serialise, deserialise, emptyState, load, loadWithBackup, drawSafely };
 });

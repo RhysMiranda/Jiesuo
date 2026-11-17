@@ -31,7 +31,7 @@
     return;
   }
 
-  const loaded = JyutState.load(store.get(STORE_KEY));
+  const loaded = JyutState.loadWithBackup(store.get(STORE_KEY), (text) => store.set(BACKUP_KEY, text)); // a fresh start keeps the unreadable text first
   let state = loaded.state; // a damaged or foreign save starts fresh
 
   const FRESH_MSG = "Your saved progress could not be read, so the app started fresh. Restore from a file if you have one.";

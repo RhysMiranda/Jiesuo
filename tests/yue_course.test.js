@@ -199,3 +199,22 @@ test("state: proto key, strict dates, newer version refused", () => {
   assert.throws(() => State.deserialise({ lang: "yue", v: 3 }), { message: "bad-file" });
   assert.doesNotThrow(() => State.deserialise(mk({ a: { h: [1, "2026-12-31"], seen: "x" } })));
 });
+
+test("loadWithBackup keeps the unreadable text before a fresh start", () => {
+  const kept = [];
+  const newer = JSON.stringify({ lang: "yue", v: 3, days: ["2026-11-01"] });
+  const r = State.loadWithBackup(newer, (t) => kept.push(t));
+  assert.strictEqual(r.fresh, true);
+  assert.deepStrictEqual(kept, [newer]);
+  State.loadWithBackup(null, (t) => kept.push(t));
+  State.loadWithBackup(JSON.stringify(State.serialise(State.emptyState())), (t) => kept.push(t));
+  assert.strictEqual(kept.length, 1);
+  assert.doesNotThrow(() => State.loadWithBackup("{nope", () => { throw new Error("full"); }));
+});
+
+test("due honours course.unchecked and Stage 1 unchecked through planDay", () => {
+  const c4 = Object.assign({}, course, { unchecked: ["我"] });
+  const words = { "我": { h: [1, "2026-11-01"], seen: "2026-11-01" }, "你": { h: [1, "2026-11-01"], seen: "2026-11-01" } };
+  const { steps } = C.planDay({ course: c4, lex, words, today: T, rng: rngOf(1), newCount: 0 });
+  assert.ok(steps.every((x) => x.item !== "我") && steps.some((x) => x.item === "你"));
+});

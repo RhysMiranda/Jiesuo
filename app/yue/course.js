@@ -281,7 +281,7 @@
       else for (const k of ["hear", "read", "type"]) { const s = exercises[k](ctx, item); if (s) steps.push(s); }
     }
     const reviews = [];
-    for (const { item, skill } of due(ctx.words, c.today, reviewLimit, (it) => isGrammar(it) || !!info(ctx.course, ctx.lex, it))) {
+    for (const { item, skill } of due(ctx.words, c.today, reviewLimit, (it) => isGrammar(it) || (!uncheckedSet(ctx.course).has(it) && !(stage1Of(ctx.course).get(it) || {}).unchecked && !!info(ctx.course, ctx.lex, it)))) {
       if (isGrammar(item) && skill !== "h") continue;
       const s = exercises[{ h: "hear", r: "read", t: "type" }[skill]](ctx, item);
       if (s) reviews.push(s);
