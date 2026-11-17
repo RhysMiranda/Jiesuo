@@ -88,11 +88,17 @@
     if (current) { try { current.stop(); } catch (e) { /* already stopped */ } current = null; }
   }
 
-  async function playBuffered(ctx, url, rate) {
-    const bytes = await withTimeout(fetch(url).then((r) => { if (!r.ok) throw new Error("status " + r.status); return r.arrayBuffer(); }), LOAD_MS, null);
-    if (!bytes) return "failed";
-    const buf = await withTimeout(new Promise((ok, no) => { const p = ctx.decodeAudioData(bytes, ok, no); if (p && p.then) p.then(ok, no); }), LOAD_MS, null);
-    if (!buf) return "failed";
+  /** Fetches and decodes one clip; null on any failure or timeout. Never rejects. */
+  async function loadBuffer(ctx, url) {
+    try {
+      const bytes = await withTimeout(fetch(url).then((r) => { if (!r.ok) throw new Error("status " + r.status); return r.arrayBuffer(); }), LOAD_MS, null);
+      if (!bytes) return null;
+      return await withTimeout(new Promise((ok, no) => { const p = ctx.decodeAudioData(bytes, ok, no); if (p && p.then) p.then(ok, no); }), LOAD_MS, null);
+    } catch (e) { return null; }
+  }
+
+  /** Plays a decoded buffer on the shared context; "played" | "blocked". */
+  async function startBuffer(ctx, buf, rate) {
     if (ctx.state !== "running") await withTimeout(ctx.resume(), 1500, null);
     if (ctx.state !== "running") return "blocked";
     stopCurrent();
@@ -105,6 +111,12 @@
       src.onended = () => { if (current === src) current = null; resolve("played"); };
       try { src.start(0); } catch (e) { resolve("blocked"); }
     });
+  }
+
+  async function playBuffered(ctx, url, rate) {
+    const buf = await loadBuffer(ctx, url);
+    if (!buf) return "failed";
+    return startBuffer(ctx, buf, rate);
   }
 
   async function playElement(url, rate, el) {
@@ -139,6 +151,44 @@
     } catch (e) { return "failed"; }
   }
 
+  /** Like play, for any MP3 URL (word and sentence clips). Same iOS rule: unlock is synchronous, before any await. */
+  async function playUrl(url, opts) {
+    const o = opts || {};
+    try {
+      if (!url || typeof fetch !== "function") return "failed";
+      const rate = o.rate || 1;
+      const ctx = unlock();
+      if (ctx) return await playBuffered(ctx, url, rate);
+      if (typeof Audio === "undefined") return "failed";
+      return await playElement(url, rate, new Audio());
+    } catch (e) { return "failed"; }
+  }
+
+  /** Plays several URLs back to back. The context is unlocked synchronously from the tap and every clip starts
+      loading at once, so the first begins as soon as it is decoded and the rest follow without a gap.
+      Stops at the first clip that fails or is blocked and returns that result; "played" when all played. */
+  async function playUrls(urls, opts) {
+    const o = opts || {};
+    try {
+      const list = (urls || []).filter(Boolean);
+      if (!list.length || typeof fetch !== "function") return "failed";
+      const rate = o.rate || 1;
+      const ctx = unlock();
+      if (!ctx) {
+        for (const u of list) { const r = await playUrl(u, o); if (r !== "played") return r; }
+        return "played";
+      }
+      const loading = list.map((u) => loadBuffer(ctx, u));
+      for (const p of loading) {
+        const buf = await p;
+        if (!buf) return "failed";
+        const r = await startBuffer(ctx, buf, rate);
+        if (r !== "played") return r;
+      }
+      return "played";
+    } catch (e) { return "failed"; }
+  }
+
   /** Quietly warms the cache for exactly the syllables passed (a lesson's drawn drills). Never the whole list. */
   function prefetch(syls, voice) {
     (syls || []).forEach((s) => {
@@ -156,5 +206,5 @@
     return { skip: false, message: "" };
   }
 
-  return { init, clipUrl, voicesFor, voiceForAll, clipsFromUrls, cachedClips, play, unlock, withTimeout, prefetch, afterPlay };
+  return { init, clipUrl, voicesFor, voiceForAll, clipsFromUrls, cachedClips, play, playUrl, playUrls, unlock, withTimeout, prefetch, afterPlay };
 });
