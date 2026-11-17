@@ -166,3 +166,12 @@ def test_shipped_wordshk_text_is_only_in_wordshk_json():
         s = (APP / name).read_text(encoding="utf8")
         assert not any(len(e[2]) > 12 and e[2] in s for e in w["entries"].values()), name  # shorter ones occur by chance
         assert not any(len(e[1]) > 25 and e[1] in s for e in w["entries"].values()), name
+
+
+def test_keyboards_export_keeps_licence_first_and_every_item_cited():
+    d = ex.build_keyboards()
+    assert list(d)[0] == "licence"
+    assert d["items"] and all(it["url"].startswith("https://") and it["steps"] and it["checked"] for it in d["items"])
+    assert any("Weasel" in it["name"] and "rime-cantonese" in it["name"] for it in d["items"])
+    with pytest.raises(ValueError):
+        ex.build_keyboards({"items": [{"name": "x", "steps": [], "url": "https://x", "checked": "2026-11-17"}]})

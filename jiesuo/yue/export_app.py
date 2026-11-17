@@ -23,6 +23,7 @@ Phase 2 (words and grammar), one file per licence, from the course build (course
     course.json    CC BY-SA 4.0  order, stage1, grammar points with example ids, lessonSentence
     sentences.json  CC BY 2.0 FR  Tatoeba sentences with their authors and translation authors
     hkcancor.json   CC BY 4.0     HKCanCor sentences
+    keyboards.json  MIT: Jiesuo   setup guide for typing Jyutping (items: platform, name, steps, url, checked)
     wordshk.json    words.hk Non-Commercial Open Data Licence 1.0: notice, disclaimer, credits, entries, examples
 """
 import json
@@ -36,6 +37,8 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 CONTENT = ROOT / "data" / "yue" / "content" / "stage0.json"
 APP = ROOT / "app" / "yue" / "data"
 AUDIO = APP / "audio.json"
+KEYBOARDS = ROOT / "data" / "yue" / "content" / "keyboards.json"
+KEYBOARDS_LICENCE = "MIT: Jiesuo (setup steps summarised from the pages cited on each item)"
 
 STAGE0_LICENCE = "MIT: Jiesuo"
 READINGS_LICENCE = ("CC BY-SA 4.0: readings from rime-cantonese (CC BY 4.0), checked against "
@@ -287,6 +290,15 @@ def build_phase2(b, wordshk, chars_for, notice=None):
     }
 
 
+def build_keyboards(content=None):
+    """keyboards.json: the setup guide for the Type screen, licence key first. Every item cites the page it came from."""
+    c = json.loads(KEYBOARDS.read_text(encoding="utf8")) if content is None else content
+    for it in c["items"]:
+        if not (it.get("steps") and it.get("url", "").startswith("https://") and re.fullmatch(r"\d{4}-\d\d-\d\d", it.get("checked", ""))):
+            raise ValueError(f"keyboard item needs steps, an https url and a checked date: {it.get('name')}")
+    return {"licence": KEYBOARDS_LICENCE, "items": c["items"]}
+
+
 def _write(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf8")
 
@@ -305,6 +317,7 @@ def main():
         r = lexicon._char_res(ch, srcs)
         return [r.main, *r.others] if r is not None and r.main else []
 
+    _write(APP / "keyboards.json", build_keyboards())
     for name, data in build_phase2(b, srcs["wordshk"], chars_for).items():
         _write(APP / f"{name}.json", data)
         print(f"{name}.json: {(APP / f'{name}.json').stat().st_size} bytes")

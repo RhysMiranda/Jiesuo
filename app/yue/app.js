@@ -1,11 +1,11 @@
-/* Jiesuo 粵: the shell. Loads the data, keeps progress, routes #today / #sounds / #progress.
+/* Jiesuo 粵: the shell. Loads the data, keeps progress, routes #today / #type / #sounds / #progress.
    Screens register on window.JyutScreens (see today.js); the Progress screen lives here. */
 (async function () {
   "use strict";
   const STORE_KEY = "jiesuo-yue-progress-v1";
   const BACKUP_KEY = "jiesuo-yue-progress-backup"; // the last save before a forced fresh start
   const HOME = "today";
-  const SCREENS = ["today", "sounds", "progress"];
+  const SCREENS = ["today", "type", "sounds", "progress"];
   const view = document.getElementById("view");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 

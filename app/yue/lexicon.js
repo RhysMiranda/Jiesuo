@@ -17,31 +17,71 @@
   }
   const TONE_MAP = { "7": "1", "8": "3", "9": "6" };
 
-  /** "NeiHou", "nei5 hou2", "sik9" -> {syls:[{base, tone|null}]} or null. */
-  function normalise(input) {
+  const MAX_SPLITS = 8;
+  // Tones 7, 8 and 9 are the checked-tone spellings of 1, 3 and 6. We accept them on any syllable, open ones
+  // included (lenient: "nei7" is read as nei1 rather than rejected).
+
+  /** Every way to cut loose input into syllables, longest syllable first, at most MAX_SPLITS: [[{base, tone|null}]] */
+  function splitsOf(input) {
     try {
-      if (typeof input !== "string") return null;
+      if (typeof input !== "string") return [];
       const s = input.toLowerCase().replace(/[\s'’`]+/g, "").replace(/[789]/g, (d) => TONE_MAP[d]);
-      if (!s || s.length > MAX_INPUT || !/^[a-z1-6]+$/.test(s) || /^[1-6]/.test(s)) return null;
-      const memo = new Map();
-      const walk = (i) => {
-        if (i === s.length) return [];
-        if (memo.has(i)) return memo.get(i);
-        let res = null;
-        for (let j = Math.min(s.length, i + 6); j > i && !res; j--) {
+      if (!s || s.length > MAX_INPUT || !/^[a-z1-6]+$/.test(s) || /^[1-6]/.test(s)) return [];
+      const steps = (i) => { // the syllables that can start at i, with where they end
+        const out = [];
+        for (let j = Math.min(s.length, i + 6); j > i; j--) {
           const base = s.slice(i, j);
           if (!SYLLABLES.has(base)) continue;
-          let end = j, tone = null;
-          if (/[1-6]/.test(s[j] || "")) { tone = Number(s[j]); end = j + 1; }
-          const rest = walk(end);
-          if (rest) res = [{ base, tone }].concat(rest);
+          if (/[1-6]/.test(s[j] || "")) out.push({ base, tone: Number(s[j]), end: j + 1 });
+          else out.push({ base, tone: null, end: j });
         }
-        memo.set(i, res);
-        return res;
+        return out;
       };
-      const syls = walk(0);
-      return syls && syls.length ? { syls } : null;
-    } catch (e) { return null; }
+      const can = new Map(); // can the rest from i be cut at all?
+      const finishes = (i) => {
+        if (i === s.length) return true;
+        if (can.has(i)) return can.get(i);
+        const r = steps(i).some((x) => finishes(x.end));
+        can.set(i, r);
+        return r;
+      };
+      const res = [];
+      const walk = (i, acc) => {
+        if (res.length >= MAX_SPLITS) return;
+        if (i === s.length) { res.push(acc); return; }
+        for (const x of steps(i)) if (finishes(x.end)) walk(x.end, acc.concat([{ base: x.base, tone: x.tone }]));
+      };
+      walk(0, []);
+      return res;
+    } catch (e) { return []; }
+  }
+
+  /** "NeiHou", "nei5 hou2", "sik9" -> {syls:[{base, tone|null}]} (the longest-first split) or null. */
+  function normalise(input) {
+    const all = splitsOf(input);
+    return all.length ? { syls: all[0] } : null;
+  }
+
+  /** Target Jyutping ("nei5 hou2") against what was typed. Case, spaces and tone digits 7-9 are forgiven. */
+  function scoreTyping(target, typed) {
+    const res = { ok: false, wrongTones: [], wrongSyls: [] };
+    try {
+      const want = String(target || "").toLowerCase().split(/\s+/).filter(Boolean).map((x) => {
+        const m = /^([a-z]+)([1-6])?$/.exec(x);
+        return m ? { base: m[1], tone: m[2] ? Number(m[2]) : null } : { base: x, tone: null };
+      });
+      const got = splitsOf(typed);
+      if (!want.length || !got.length) { res.wrongSyls = want.map((_, i) => i); return res; }
+      // the split that agrees with the target's own syllables in the most places (the first one on a tie)
+      const hits = (x) => want.reduce((n, w, i) => n + (x[i] && x[i].base === w.base ? 1 : 0), 0) * 100 - Math.abs(x.length - want.length);
+      const g = got.reduce((best, x) => (hits(x) > hits(best) ? x : best), got[0]);
+      want.forEach((w, i) => {
+        if (!g[i] || g[i].base !== w.base) res.wrongSyls.push(i);
+        else if (g[i].tone !== w.tone) res.wrongTones.push(i);
+      });
+      res.ok = !res.wrongSyls.length && !res.wrongTones.length && g.length === want.length;
+    } catch (e) { /* not ok */ }
+    return res;
   }
 
   function words(text) { return (String(text || "").toLowerCase().match(/[a-z0-9]+/g) || []); }
@@ -130,24 +170,48 @@
       return out;
     }
 
-    function candidates(input, k) {
+    // Does the entry's reading start with these split syllables (tone only checked where typed)?
+    const startsWith = (e, syls) => {
+      if (e.syls.length < syls.length) return false;
+      for (let i = 0; i < syls.length; i++) {
+        if (e.syls[i] !== syls[i].base || (syls[i].tone != null && syls[i].tone !== e.tones[i])) return false;
+      }
+      return true;
+    };
+
+    /** Words for typed Jyutping, over every split of the input: same length first, then longer, then (opts.ime) shorter. */
+    function candidates(input, k, opts) {
       try {
-        const n = normalise(input);
-        if (!n) return [];
+        const splits = splitsOf(input);
+        if (!splits.length) return [];
         const limit = k == null ? 9 : k;
-        const pool = byFirst.get(n.syls[0].base) || [];
-        const exact = [], prefix = [];
-        for (const e of pool) {
-          if (e.syls.length < n.syls.length) continue;
-          let ok = true;
-          for (let i = 0; i < n.syls.length && ok; i++) {
-            ok = e.syls[i] === n.syls[i].base && (n.syls[i].tone == null || n.syls[i].tone === e.tones[i]);
+        const ime = !!(opts && opts.ime);
+        const best = new Map(); // form -> {e, kind} with kind 0 same length, 1 longer, 2 shorter
+        const add = (e, kind) => { const o = best.get(e.form); if (!o || kind < o.kind) best.set(e.form, { e, kind }); };
+        for (const sp of splits) {
+          for (const e of byFirst.get(sp[0].base) || []) {
+            if (startsWith(e, sp)) add(e, e.syls.length === sp.length ? 0 : 1);
+            else if (ime && e.syls.length < sp.length && startsWith(e, sp.slice(0, e.syls.length))) add(e, 2);
           }
-          if (!ok) continue;
-          (e.syls.length === n.syls.length ? exact : prefix).push({ form: e.form, jp: e.jp });
         }
-        return exact.concat(prefix).slice(0, limit);
+        return Array.from(best.values())
+          .sort((a, b) => a.kind - b.kind || a.e.rank - b.e.rank)
+          .slice(0, limit).map((x) => ({ form: x.e.form, jp: x.e.jp }));
       } catch (err) { return []; }
+    }
+
+    /** After picking `form` from `input`: {rest, used} (the input text left and used), or null if it does not start it. */
+    function consume(input, form) {
+      try {
+        const e = byForm.get(form);
+        if (!e) return null;
+        const txt = (x) => x.base + (x.tone == null ? "" : x.tone);
+        for (const sp of splitsOf(input)) {
+          if (e.syls.length > sp.length || !startsWith(e, sp.slice(0, e.syls.length))) continue;
+          return { rest: sp.slice(e.syls.length).map(txt).join(""), used: sp.slice(0, e.syls.length).map(txt).join("") };
+        }
+      } catch (err) { /* null */ }
+      return null;
     }
 
     function english(q) {
@@ -212,8 +276,8 @@
       return null;
     }
 
-    return { word, segment, normalise, candidates, search, example };
+    return { word, segment, normalise, candidates, consume, search, example };
   }
 
-  return { create, normalise };
+  return { create, normalise, scoreTyping };
 });

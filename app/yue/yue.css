@@ -55,3 +55,13 @@
 .wordlesson .credit { margin: 4px 0 0; }
 .wordlesson .audiomsg:empty { display: none; }
 .wordlesson .fb:focus { outline: none; }
+
+/* Type screen */
+.typescreen input#ime { font-size: 1.25rem; padding: 10px 12px; width: 100%; box-sizing: border-box; }
+.typescreen .cands { display: flex; flex-direction: column; gap: 6px; }
+.typescreen .btn.opt { display: flex; align-items: center; gap: 10px; text-align: left; min-height: 44px; justify-content: flex-start; }
+.typescreen .btn.opt .num { color: var(--soft); font-weight: 700; min-width: 1.2em; }
+.typescreen .big { font-size: 1.5rem; margin: 4px 0; }
+.typescreen .outline { min-height: 2.4rem; border-bottom: 2px solid var(--soft); margin: 0; }
+.typescreen .kbd ol { padding-left: 1.2em; margin: 6px 0; }
+.typescreen .kbd a { word-break: break-all; }
