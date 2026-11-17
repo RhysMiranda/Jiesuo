@@ -178,7 +178,7 @@ def clean_senses(senses, limit=3, follow=None) -> str:
     out = []
     for sense in senses:
         t = sense.strip()
-        if t.lower().startswith(_DROP_START):
+        if t.lower().startswith(_DROP_START) or "surname " in t.lower():
             continue
         k = t.lower().find("also pr.")
         if k != -1:
@@ -214,18 +214,32 @@ def _cedict_by_form(srcs) -> dict:
 
 def _english(form, jp, srcs, alt=()) -> str:
     """A meaning that belongs to this reading, from the first source that has one: a CC-Canto gloss with the same
-    reading, then CC-CEDICT senses whose pinyin the CC-Canto readings file maps to this reading (up to 3). Every
+    reading, then CC-CEDICT senses whose pinyin the CC-Canto readings file maps to this reading (up to 3); for a single
+    character the order is the other way round (Ruling 14). Every
     sense goes through clean_senses, so no Mandarin reaches the app. Otherwise "". `alt` is not used: a gloss never
     has to guess between readings."""
     if not jp:
         return ""
     follow = lambda f: _cedict_by_form(srcs).get(f)
-    for rd, en in srcs.get("cccanto_words", {}).get(form, []):
-        if rd == jp and en:
+    glosses = [en for rd, en in srcs.get("cccanto_words", {}).get(form, []) if rd == jp and en]
+    cedict = srcs.get("cedict_jp", {}).get((form, jp)) or []
+    if len(form) > 1:
+        for en in glosses:
             got = clean_senses(en.split("/"), follow=follow)
             if got:
                 return got
-    return clean_senses(srcs.get("cedict_jp", {}).get((form, jp)) or [], follow=follow)
+        return clean_senses(cedict, follow=follow)
+    # A single character has many minor senses in CC-Canto ("(verb) to catch"): the dictionary's own come first,
+    # then the CC-Canto glosses, up to 3 senses in all.
+    out = []
+    if not cedict:  # CC-CEDICT marks Cantonese-only senses "(dialect)" under a pinyin the readings file lacks (睇)
+        cedict = [x[len("(dialect)"):].strip() for x in _cedict_by_form(srcs).get(form, [])
+                  if x.lower().startswith("(dialect)")]
+    for sense in [*cedict, *(x for en in glosses for x in en.split("/"))]:
+        c = clean_senses([sense], 1, follow=follow)
+        if c and c not in out:
+            out.append(c)
+    return "; ".join(out[:3])
 
 
 def _whk_eng_index(srcs) -> set:

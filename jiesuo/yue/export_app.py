@@ -200,18 +200,28 @@ GRAMMAR_DROP = {"pattern", "licence", "entries", "exclude", "_examples"}
 
 
 def _wordshk_entries(words, wordshk):
-    """form -> [id, eng, yue_def] from reviewed AND published entries whose form AND jp equal the word's."""
+    """form -> [id, eng, yue_def] from reviewed AND published entries whose form AND jp equal the word's.
+
+    Several such entries: most examples first, then lowest id. The top entry gives the id and yue_def; `eng` is the
+    first English sense of each of up to 3 entries, joined with "; "."""
     want = {(w[0], w[1]) for w in words if w[1]}
-    out = {}
-    for e in sorted(wordshk, key=lambda e: e.id):
+    found = {}
+    for e in wordshk:
         if not (e.reviewed and e.published):
             continue
         for form, jp in e.forms:
             if (form, lexicon._norm(jp, form)) in want:
-                eng = "; ".join(x.strip() for x in e.eng if x.strip())
-                yue = "; ".join(x.strip() for x in e.yue if x.strip())
-                if form not in out or (eng and not out[form][1]):
-                    out[form] = [e.id, eng, yue]
+                found.setdefault(form, {})[e.id] = e
+    out = {}
+    for form, es in found.items():
+        ranked = sorted(es.values(), key=lambda e: (-len(e.examples), e.id))
+        firsts = []
+        for e in ranked:
+            sense = next((x.strip() for x in e.eng if x.strip()), "")
+            if sense and sense not in firsts:
+                firsts.append(sense)
+        top = ranked[0]
+        out[form] = [top.id, "; ".join(firsts[:3]), "; ".join(x.strip() for x in top.yue if x.strip())]
     return out
 
 

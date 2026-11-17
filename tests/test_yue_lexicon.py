@@ -189,3 +189,17 @@ def test_clean_senses_keeps_the_traditional_form_of_a_pair_and_tidies():
     fol = lambda f: ["Guangzhou", "capital of Guangdong"] if f == "廣州" else None
     assert clean_senses(["see 廣州[Guang3 zhou1]"], follow=fol) == "Guangzhou; capital of Guangdong"
     assert clean_senses(["see 廣州[Guang3 zhou1]"]) == ""
+
+
+def test_single_character_meanings_start_with_the_main_sense():
+    import json
+    p = ROOT / "app" / "yue" / "data" / "lexicon.json"
+    if not p.exists():
+        pytest.skip("no lexicon.json")
+    en = {w[0]: w[2] for w in json.loads(p.read_text(encoding="utf8"))["words"]}
+    minor = {"去": "passed away", "睇": "to catch", "走": "to miss", "得": "1. Ok"}
+    for f, m in minor.items():
+        first = en[f].split(";")[0]
+        assert m not in first, (f, en[f])
+    assert "go" in en["去"] and "look" in en["睇"] and "eat" in en["食"]
+    assert any(k in en["講"] for k in ("speak", "say", "talk")), en["講"]
