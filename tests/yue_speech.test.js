@@ -25,17 +25,17 @@ const mk = (o) => SP.create(Object.assign({ audio: A, lex, lexData: data, synth:
 
 test("a clip wins, and slow falls back to the normal clip", () => {
   const s = mk({ speechJson: { clips: { a1: { f: "你好", r: "0%", v: "x" }, a2: { f: "你好", r: "-25%", v: "x" }, b1: { f: "好", r: "0%", v: "x" } } } });
-  assert.deepStrictEqual(s.source("你好"), { kind: "clip", url: "audio/speech/a1.mp3" });
-  assert.deepStrictEqual(s.source("你好", { slow: true }), { kind: "clip", url: "audio/speech/a2.mp3" });
-  assert.deepStrictEqual(s.source("好", { slow: true }), { kind: "clip", url: "audio/speech/b1.mp3" });
+  assert.deepStrictEqual(s.source("你好"), { kind: "clip", url: "audio/speech/a1.mp3", slow: false });
+  assert.deepStrictEqual(s.source("你好", { slow: true }), { kind: "clip", url: "audio/speech/a2.mp3", slow: true });
+  assert.deepStrictEqual(s.source("好", { slow: true }), { kind: "clip", url: "audio/speech/b1.mp3", slow: false });
 });
 
 test("changed tone never uses the device voice", () => {
-  assert.deepStrictEqual(mk().source("個名"), { kind: "syllables", syls: ["go3", "meng2"], voice: 0 });
+  assert.deepStrictEqual(mk().source("個名"), { kind: "syllables", syls: ["go3", "meng2"], voice: 0, slow: false });
 });
 
 test("a safe one-reading word uses the device voice", () => {
-  assert.deepStrictEqual(mk().source("你"), { kind: "device" });
+  assert.deepStrictEqual(mk().source("你"), { kind: "device", slow: false });
 });
 
 test("a word with several character readings or an alt reading is not safe", () => {
@@ -72,4 +72,84 @@ test("play uses the device voice when safe", async () => {
   const s = mk({ synth: { voices: hk.voices, speak: async (t) => { said = t; return "played"; } } });
   assert.strictEqual(await s.play("你"), "played");
   assert.strictEqual(said, "你");
+});
+
+// ---- play(): real playback path against a fake AudioContext ----
+let cur = null; // audio.js keeps one AudioContext, so the fake context reports to whichever test is current
+function installFakes(failUrl) {
+  const started = [];
+  cur = started;
+  class Ctx {
+    constructor() { this.state = "running"; this.destination = {}; }
+    resume() { return Promise.resolve(); }
+    decodeAudioData(bytes, ok) { const b = { url: bytes.url }; ok(b); return Promise.resolve(b); }
+    createBufferSource() {
+      const src = { playbackRate: { value: 1 }, connect() {}, onended: null,
+        start() { cur.push({ url: this.buffer.url, rate: this.playbackRate.value }); this.t = setTimeout(() => this.onended && this.onended(), 5); },
+        stop() { clearTimeout(this.t); if (this.onended) this.onended(); } };
+      return src;
+    }
+  }
+  const saved = { self: global.self, fetch: global.fetch };
+  global.self = { AudioContext: Ctx };
+  global.fetch = async (url) => ({ ok: url !== failUrl, arrayBuffer: async () => ({ url }) });
+  return { started, restore() { global.self = saved.self; global.fetch = saved.fetch; } };
+}
+
+test("a clip plays at rate 1, including a slow (-25%) clip", async () => {
+  const f = installFakes();
+  try {
+    A.init(audioJson);
+    const s = mk({ speechJson: { clips: { a1: { f: "你好", r: "0%", v: "x" }, a2: { f: "你好", r: "-25%", v: "x" } } } });
+    assert.strictEqual(await s.play("你好", { slow: true }), "played");
+    assert.deepStrictEqual(f.started, [{ url: "audio/speech/a2.mp3", rate: 1 }]);
+    const s2 = mk({ speechJson: { clips: { a1: { f: "你好", r: "0%", v: "x" } } } });
+    assert.strictEqual(s2.source("你好", { slow: true }).slow, false);
+    f.started.length = 0;
+    assert.strictEqual(await s2.play("你好", { slow: true }), "played");
+    assert.deepStrictEqual(f.started, [{ url: "audio/speech/a1.mp3", rate: 1 }]);
+  } finally { f.restore(); }
+});
+
+test("a syllable sequence plays in order at rate 1", async () => {
+  const f = installFakes();
+  try {
+    A.init(audioJson);
+    assert.strictEqual(await mk({ synth: noVoice }).play("個名", { slow: true }), "played");
+    assert.deepStrictEqual(f.started, [{ url: "audio/v/go3.mp3", rate: 1 }, { url: "audio/v/meng2.mp3", rate: 1 }]);
+  } finally { f.restore(); }
+});
+
+test("a failed middle clip stops the sequence", async () => {
+  const f = installFakes("audio/v/hou2.mp3");
+  try {
+    A.init({ voices: [{ id: "v" }], clips: { go3: [0], hou2: [0], meng2: [0] } });
+    const data2 = { lexicon: { words: [["個好名", "go3 hou2 meng2", "x", 1, 1]], chars: {} } };
+    const s = SP.create({ audio: A, lex: L.create(data2), lexData: data2, synth: noVoice });
+    assert.strictEqual(await s.play("個好名"), "failed");
+    assert.deepStrictEqual(f.started.map((x) => x.url), ["audio/v/go3.mp3"]);
+  } finally { f.restore(); A.init(audioJson); }
+});
+
+test("an overlapping playUrls cancels the stale sequence", async () => {
+  const f = installFakes();
+  try {
+    const first = A.playUrls(["a1.mp3", "a2.mp3", "a3.mp3"]);
+    await new Promise((r) => setTimeout(r, 1));
+    const second = A.playUrls(["b1.mp3", "b2.mp3"]);
+    const [r1, r2] = await Promise.all([first, second]);
+    assert.strictEqual(r1, "stopped");
+    assert.strictEqual(r2, "played");
+    const urls = f.started.map((x) => x.url);
+    assert.deepStrictEqual(urls.slice(urls.indexOf("b1.mp3")), ["b1.mp3", "b2.mp3"]);
+    assert.ok(!urls.includes("a2.mp3") && !urls.includes("a3.mp3"), urls.join());
+  } finally { f.restore(); }
+});
+
+test("device safety needs matching per-character readings and a checked word", () => {
+  const d = { lexicon: { words: [["你", "nei5", "you", 1, 0], ["我", "ngo5", "me", 2, 0], ["佢", "keoi5", "he", 3, 4]], chars: { 你: ["nei4"], 我: ["ngo5"], 佢: ["keoi5"] } } };
+  const s = SP.create({ audio: A, lex: L.create(d), lexData: d, synth: hk });
+  assert.notStrictEqual(s.source("你").kind, "device"); // char reading differs from the word's
+  assert.strictEqual(s.source("我").kind, "device");
+  assert.notStrictEqual(s.source("佢").kind, "device"); // unchecked
 });

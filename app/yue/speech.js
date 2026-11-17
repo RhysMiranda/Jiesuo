@@ -49,10 +49,12 @@
       clipsByKey.get(c.f)[c.r] = "audio/speech/" + key + ".mp3";
     }
 
+    /** {url, slow}: the slow clip when asked and present, else the normal-rate clip (slow:false). */
     function clipFor(id, slow) {
       const m = clipsByKey.get(id);
       if (!m) return null;
-      return (slow && m[SLOW]) || m[NORMAL] || null;
+      if (slow && m[SLOW]) return { url: m[SLOW], slow: true };
+      return m[NORMAL] ? { url: m[NORMAL], slow: false } : null;
     }
 
     function resolve(item) {
@@ -76,10 +78,10 @@
         every character having exactly one reading. */
     function isSafe(r) {
       const w = r.word;
-      if (!w || w.changed || w.alt) return false;
-      const cs = Array.from(w.form);
-      if (!cs.length) return false;
-      return cs.every((c) => HAN.test(c) && Array.isArray(chars[c]) && chars[c].length === 1);
+      if (!w || w.changed || w.alt || w.unchecked) return false;
+      const cs = Array.from(w.form), syls = syllablesOf(r);
+      if (!cs.length || cs.length !== syls.length) return false;
+      return cs.every((c, i) => HAN.test(c) && Array.isArray(chars[c]) && chars[c].length === 1 && chars[c][0] === syls[i]);
     }
 
     function syllablesOf(r) {
@@ -92,32 +94,33 @@
         const r = resolve(item);
         if (!r) return NONE;
         const slow = !!(opts && opts.slow);
-        const url = clipFor(r.id, slow);
-        if (url) return { kind: "clip", url };
-        if (isSafe(r) && deviceVoice()) return { kind: "device" };
+        const clip = clipFor(r.id, slow);
+        if (clip) return { kind: "clip", url: clip.url, slow: clip.slow };
+        if (isSafe(r) && deviceVoice()) return { kind: "device", slow };
         const syls = syllablesOf(r);
         if (syls.length && audio) {
           const voice = audio.voiceForAll(syls, opts && opts.voice);
-          if (voice !== null && voice !== undefined) return { kind: "syllables", syls, voice };
+          if (voice !== null && voice !== undefined) return { kind: "syllables", syls, voice, slow: false };
         }
         return NONE;
       } catch (e) { return NONE; }
     }
 
-    /** "played" | "failed" | "blocked" | "none"; never throws. Audio starts synchronously from the tap. */
+    /** "played" | "failed" | "blocked" | "none" | "stopped"; never throws. Audio starts synchronously from the tap.
+        Clips are never speeded or slowed (that would shift the pitch and so the tones): a slow request without a
+        slow clip plays the normal one, and source(...).slow tells the UI which it got. */
     async function play(item, opts) {
       try {
         const o = opts || {};
         const src = source(item, o);
-        if (src.kind === "clip") return await audio.playUrl(src.url, { rate: o.slow ? 0.75 : 1 });
+        if (src.kind === "clip") return await audio.playUrl(src.url, { rate: 1 });
         if (src.kind === "device") {
           const r = resolve(item), v = deviceVoice();
           if (!r || !v) return "failed";
-          return (await synth.speak(r.text, v, o.slow ? 0.7 : 1)) === "played" ? "played" : "failed";
+          return (await synth.speak(r.text, v, src.slow ? 0.7 : 1)) === "played" ? "played" : "failed";
         }
         if (src.kind === "syllables") {
-          const urls = src.syls.map((s) => audio.clipUrl(s, src.voice));
-          return await audio.playUrls(urls, { rate: o.slow ? 0.75 : 1 });
+          return await audio.playUrls(src.syls.map((x) => audio.clipUrl(x, src.voice)), { rate: 1 });
         }
         return "none";
       } catch (e) { return "failed"; }
