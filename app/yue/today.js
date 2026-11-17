@@ -21,6 +21,10 @@
     const day = () => ctx.journey.dayKey();
     const before = JSON.parse(JSON.stringify(ctx.state.stats));
     let steps = [], total = 0, idx = 0, answered = 0, answeredNow = false, keyOff = null;
+    // Once the words open (and the content loaded), Today is: sound practice, the word lesson, a closing sentence.
+    const C = window.JyutCourse, W = window.JyutWordLesson;
+    const wordsOn = !pm && !!(ctx.content && C && W && C.wordsUnlocked(ctx.state, D));
+    let wordSummary = null;
 
     const lessonOpts = () => ({
       hasMic: !!(window.JyutSpeak && window.JyutSpeak.canRecord()), // the same test the say panel uses
@@ -31,17 +35,55 @@
       drills: D,
       offlineClips: offline(), // offline, draw only what is cached
     });
+    // Sound practice before the words: 10 drills from the unit in progress while stage 0 is unfinished,
+    // then 6 tone review drills (tone drills keep returning). Say drills are left out: they need a microphone.
+    function soundDrills() {
+      const stats = ctx.state.stats, units = data.stage0.units;
+      const cur = units.find((u) => !D.unitPassed(stats, u.id));
+      const sayOnly = cur && cur.drills.every((x) => x === "say");
+      const unit = cur && !sayOnly ? cur : units.find((u) => u.id === "tones-hear") || units[0];
+      const n = cur && !sayOnly ? 10 : 6, review = !(cur && !sayOnly);
+      const out = [], seen = new Set();
+      for (let t = 0; out.length < n && t < n * 12; t++) {
+        const d = D.pick(unit.id, stats, rng, { review, offlineClips: offline() });
+        if (!d || d.type === "say") continue;
+        const k = JSON.stringify([d.type, d.target]);
+        if (seen.has(k) && t < n * 8) continue;
+        seen.add(k); out.push(d);
+      }
+      return out.map((d) => ({ kind: "drill", drill: d }));
+    }
+    const persist = () => {
+      ctx.state.lesson = { words: true, steps: steps.filter((s) => s.kind !== "done"), idx };
+      ctx.save();
+    };
+    function buildWords() {
+      const kept = ctx.state.lesson;
+      const ks = kept && kept.words && Array.isArray(kept.steps) ? kept.steps : null;
+      const drills = ks ? ks.filter((s) => s && s.kind === "drill") : [], ws = ks ? ks.find((s) => s && s.kind === "words") : null;
+      const ok = ks && ws && ws.plan && W.usableSteps(ws.plan.steps) && (!drills.length || L.usableSteps(drills)) && ks.length === drills.length + 1;
+      if (ok) {
+        steps = (drills.length ? L.usableSteps(drills) : []).concat([ws, { kind: "done" }]);
+        idx = Number.isInteger(kept.idx) ? Math.max(0, Math.min(steps.length - 1, kept.idx)) : 0;
+      } else {
+        const plan = C.planDay({ course: ctx.content.course, lex: ctx.content.lex, words: ctx.state.words, today: day(), rng });
+        steps = soundDrills().concat(plan.steps.length ? [{ kind: "words", plan: { steps: plan.steps, pos: 0 } }] : [], [{ kind: "done" }]);
+        idx = 0;
+        persist();
+      }
+    }
     function build() {
       const stats = ctx.state.stats;
-      if (pm) {
+      if (wordsOn) buildWords();
+      else if (pm) {
         const ds = L.practise(data.stage0, data.audio, stats, Number(pm[1]), Number(pm[2]), rng, 10);
         steps = ds.map((d) => ({ kind: "drill", drill: d })).concat([{ kind: "done" }]);
       } else {
-        const kept = ctx.state.lesson;
+        const kept = ctx.state.lesson && !ctx.state.lesson.words ? ctx.state.lesson : null; // a words lesson is not a sound lesson
         const keptSteps = kept ? L.usableSteps(kept.steps) : null; // a damaged kept lesson is dropped and composed fresh
         // a kept lesson carries its prefetched gate step; whether the gate is due is decided now, as it starts
         const lesson = keptSteps ? { steps: L.withGate(data.stage0, keptSteps, stats, lessonOpts(), rng) } : L.compose(data.stage0, stats, lessonOpts(), rng);
-        if (kept) { ctx.state.lesson = null; ctx.save(); } // used once, so the next lesson is composed fresh
+        if (ctx.state.lesson) { ctx.state.lesson = null; ctx.save(); } // used once, so the next lesson is composed fresh
         if (lesson.steps.some((s) => s.kind === "gate")) { // note the offer, so the gate comes at most once a day
           ctx.state.gate = Object.assign({}, ctx.state.gate, { offered: day() });
           ctx.save();
@@ -67,6 +109,7 @@
       const step = steps[idx];
       if (!step) return;
       if (step.kind === "teach") return teach(step);
+      if (step.kind === "words") return wordsPart(step);
       if (step.kind === "drill" && step.gate && step.gate.i === 1 && !step.started) { // a new gate starts from an empty log
         step.started = true;
         ctx.state.stats = Object.assign({}, ctx.state.stats, { gateLog: [] });
@@ -78,7 +121,17 @@
       return done();
     }
     let lastNext = 0;
-    const next = () => { const t = Date.now(); if (t - lastNext < 300) return; lastNext = t; idx++; go(); window.scrollTo(0, 0); };
+    const next = () => { const t = Date.now(); if (t - lastNext < 300) return; lastNext = t; idx++; if (wordsOn) persist(); go(); window.scrollTo(0, 0); };
+
+    // The word lesson draws itself; its position is kept in state.lesson so a refresh resumes it.
+    function wordsPart(step) {
+      const plan = step.plan, run = W.run(Object.assign(Object.create(ctx), { day }), {
+        steps: plan.steps, pos: plan.pos,
+        onPos(p) { plan.pos = p; persist(); },
+      }, (summary) => { wordSummary = summary; next(); });
+      keyOff = () => run.stop();
+      staleKeyOff = keyOff;
+    }
 
     // Playback: A.play is called straight from the tap handler so audio unlocks on the gesture.
     // A clip that will not play skips the drill unscored.
@@ -267,8 +320,11 @@
     }
 
     function done() {
-      const text = L.summarise(before, ctx.state.stats, answered);
-      if (!pm) { // compose the next lesson now, keep it, and warm the cache for exactly its drills
+      const text = wordsOn
+        ? (wordSummary && wordSummary.answered ? "You answered " + wordSummary.right + " of " + wordSummary.answered + " word questions right." + (wordSummary.fresh ? " " + wordSummary.fresh + " new item" + (wordSummary.fresh === 1 ? "" : "s") + " today." : "") + (answered ? " " + L.summarise(before, ctx.state.stats, answered) : "") : L.summarise(before, ctx.state.stats, answered))
+        : L.summarise(before, ctx.state.stats, answered);
+      if (wordsOn) { ctx.state.lesson = null; ctx.save(); } // the day's lesson is finished; the next visit plans a fresh one
+      if (!pm && !wordsOn) { // compose the next lesson now, keep it, and warm the cache for exactly its drills
         try {
           // keep the gate step whatever the day (withGate decides at the start), so its clips are prefetched now
           const nl = L.compose(data.stage0, ctx.state.stats, Object.assign(lessonOpts(), { gate: "keep" }), rng);
@@ -283,12 +339,12 @@
       const links = pm
         ? `<a class="btn" href="#sounds">Back to Sounds</a><button type="button" class="btn primary" id="again">Practise again</button>`
         : `<a class="btn" href="#sounds">Open Sounds</a><button type="button" class="btn primary" id="again">Keep practising</button>`;
-      shell(`<h1>${answered ? "Nicely done" : "All done"}</h1><p>${esc(text)}</p><div class="row">${links}</div>`);
+      shell(`<h1>${answered || (wordSummary && wordSummary.answered) ? "Nicely done" : "All done"}</h1><p>${esc(text)}</p><div class="row">${links}</div>`);
       const again = document.getElementById("again"); again.onclick = () => ctx.route(); again.focus();
     }
 
     build();
-    if (!steps.length || (!total && !steps.some((s) => s.kind === "teach"))) {
+    if (!steps.length || (!total && !steps.some((s) => s.kind === "teach" || s.kind === "words"))) {
       shell(`<h1>Today</h1><p class="soft">No sounds are available to practise yet. Try <a href="#sounds">Sounds</a>.</p>`);
       return;
     }

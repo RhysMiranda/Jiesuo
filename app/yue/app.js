@@ -31,6 +31,27 @@
     return;
   }
 
+  // The word data is separate: if any of it fails to load, Today stays the phase 1 sound lesson.
+  // speech.json (the neural clip list) is optional: a 404 is fine and means no clips yet.
+  async function loadContent() {
+    try {
+      const [lexicon, course, sentences, hkcancor, wordshk] = await Promise.all(["lexicon.json", "course.json", "sentences.json", "hkcancor.json", "wordshk.json"].map(fetchJson));
+      let speechJson = { clips: {} };
+      try {
+        const r = await fetch("data/speech.json");
+        if (r.ok) { const j = await r.json(); if (j && typeof j === "object" && j.clips && typeof j.clips === "object") speechJson = j; }
+      } catch (e) { /* optional */ }
+      const lexData = { lexicon, course, wordshk, sentences, hkcancor };
+      const lex = JyutLex.create(lexData);
+      JyutAudio.init(data.audio);
+      const speech = JyutSpeech.create({ speechJson, audio: JyutAudio, lex, lexData });
+      const formById = new Map();
+      for (const [form, e] of Object.entries(wordshk.entries || {})) if (Array.isArray(e)) formById.set(String(e[0]), form);
+      return { course, lex, speech, chars: lexicon.chars || {}, formOf: (id) => formById.get(String(id)) || null };
+    } catch (e) { return null; }
+  }
+  data.content = await loadContent();
+
   const loaded = JyutState.loadWithBackup(store.get(STORE_KEY), (text) => store.set(BACKUP_KEY, text)); // a fresh start keeps the unreadable text first
   let state = loaded.state; // a damaged or foreign save starts fresh
 
@@ -53,7 +74,7 @@
   // What every screen gets. `state` is replaced on restore, so read it through ctx.state each time.
   const ctx = {
     view, esc, data, store, toast, save, route: () => route(),
-    drills: JyutDrills, journey: JiesuoJourney,
+    drills: JyutDrills, journey: JiesuoJourney, content: data.content,
     get state() { return state; },
     get storageOk() { return storageOk; },
   };
