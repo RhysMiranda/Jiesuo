@@ -2,7 +2,7 @@
 
     python -m jiesuo.yue.tts --dry-run
     python -m jiesuo.yue.tts --run [--limit N] [--voice V]     (needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION)
-    python -m jiesuo.yue.tts --publish                          (rebuild speech.json after node scripts/yue_clip_check.js)
+    python -m jiesuo.yue.tts --publish                          (write speech.json; needs node scripts/yue_clip_check.js first)
 
 The key is read only from the environment. It is never printed, logged or written.
 """
@@ -28,7 +28,11 @@ SPEECH_JSON = DATA / "speech.json"
 RAW_TTS = ROOT / "data" / "raw" / "yue" / "tts"
 MANIFEST = RAW_TTS / "manifest.json"  # every generated clip: text, jp, voice (the clip check reads this)
 CHECK_RESULT = RAW_TTS / "check.json"  # written by scripts/yue_clip_check.js: {"mismatched": [key...]}
-TTS_OK = ROOT / "data" / "yue" / "tts_ok.txt"  # keys the learner listened to and accepted despite a mismatch
+CALIB_DIR = RAW_TTS / "calib"  # <voice>/<syllable>.wav: the clip check fits each voice's profile from these
+# The voiced six-tone sets (the ji series is the first) that scripts/yue_tone_eval.js fits profiles from.
+CALIB_SETS = ["ji", "jau", "jan", "wai", "maa", "ngaa", "lou"]
+CALIB_FALLBACK_CHAR = "啊"  # the ph attribute decides the reading, so any Han character will do
+TTS_OK = ROOT / "data" / "yue" / "tts_ok.txt"  # keys, or "voice:<name>" lines, the learner listened to and accepted
 
 VOICES = ["zh-HK-HiuMaanNeural", "zh-HK-WanLungNeural"]
 DEFAULT_VOICE = VOICES[0]
@@ -50,7 +54,7 @@ class Job:
     jp: str
     voice: str
     rate: str
-    kind: str  # "word" or "sentence"
+    kind: str  # "word", "sentence" or "calib"
     f: str  # the form, or the example id
 
 
@@ -104,9 +108,14 @@ def _examples(data_dir):
     return out
 
 
-def plan(limit_words=2000, voice=DEFAULT_VOICE, speech_dir=None, data_dir=DATA):
+def calib_syllables():
+    return [f"{x}{t}" for x in CALIB_SETS for t in range(1, 7)]
+
+
+def plan(limit_words=2000, voice=DEFAULT_VOICE, speech_dir=None, data_dir=DATA, calib_dir=None):
     """Jobs for the first `limit_words` course words, Stage 1, lesson sentences and grammar examples, minus existing clips."""
     data_dir, speech_dir = Path(data_dir), Path(speech_dir or SPEECH_DIR)
+    calib_dir = Path(calib_dir or CALIB_DIR)
     course = _load(data_dir / "course.json")
     jp_of = {}
     for w in _load(data_dir / "lexicon.json")["words"]:
@@ -121,6 +130,14 @@ def plan(limit_words=2000, voice=DEFAULT_VOICE, speech_dir=None, data_dir=DATA):
     ids = list(dict.fromkeys(list(course["lessonSentence"].values())
                              + [e for g in course["grammar"].values() for e in g.get("examples", [])]))
     jobs, seen = [], set()
+    # Calibration first: one clip per set syllable, each its own <phoneme>; the check fits the voice's profile from them.
+    char_of = {}
+    for c, readings in _load(data_dir / "lexicon.json")["chars"].items():
+        for r in readings:
+            char_of.setdefault(r, c)
+    for syl in calib_syllables():
+        if not (calib_dir / voice / f"{syl}.wav").exists():
+            jobs.append(Job(clip_key(syl, syl, voice, "0%"), char_of.get(syl, CALIB_FALLBACK_CHAR), syl, voice, "0%", "calib", syl))
 
     def add(kind, f, text, jp, rate):
         key = clip_key(text, jp, voice, rate)
@@ -185,8 +202,15 @@ def synthesise(session, region, key, job, sleep=None):
         sleep(min(30, 2 ** attempt))
 
 
-def _mismatched():
-    return set(_load(CHECK_RESULT)["mismatched"]) if CHECK_RESULT.exists() else set()
+class NotChecked(Exception):
+    pass
+
+
+def _check_result():
+    if not CHECK_RESULT.exists():
+        raise NotChecked("no clip check yet: run node scripts/yue_clip_check.js data/raw/yue/tts first")
+    r = _load(CHECK_RESULT)
+    return set(r["mismatched"]), set(r.get("uncalibrated", []))
 
 
 def _accepted():
@@ -196,20 +220,27 @@ def _accepted():
     return {ln for ln in lines if ln}
 
 
-def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, accepted=None):
-    """Write speech.json from the manifest: only clips whose MP3 exists, minus mismatched clips not in tts_ok.txt."""
+def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, uncalibrated=None, accepted=None):
+    """Write speech.json from the manifest. Left out: clips without an MP3, mismatched clips whose key is not in
+    tts_ok.txt, and every clip of a voice that could not be calibrated unless tts_ok.txt has `voice:<name>`."""
     speech_json, speech_dir = Path(speech_json or SPEECH_JSON), Path(speech_dir or SPEECH_DIR)
     if manifest is None:
         manifest = _load(MANIFEST) if MANIFEST.exists() else {}
-    bad = (_mismatched() if mismatched is None else set(mismatched)) - (_accepted() if accepted is None else set(accepted))
+    if mismatched is None or uncalibrated is None:
+        m, u = _check_result()
+        mismatched = m if mismatched is None else mismatched
+        uncalibrated = u if uncalibrated is None else uncalibrated
+    ok = _accepted() if accepted is None else set(accepted)
+    bad = set(mismatched) - ok
+    bad_voices = {v for v in uncalibrated if f"voice:{v}" not in ok}
     clips = {k: {"f": v["f"], "r": v["r"], "v": v["voice"]} for k, v in sorted(manifest.items())
-             if k not in bad and (speech_dir / f"{k}.mp3").exists()}
+             if k not in bad and v["voice"] not in bad_voices and (speech_dir / f"{k}.mp3").exists()}
     speech_json.parent.mkdir(parents=True, exist_ok=True)
-    speech_json.write_text(json.dumps({"licence": LICENCE, "clips": clips}, ensure_ascii=False, indent=0) + "\n", encoding="utf8")
+    speech_json.write_text(json.dumps({"licence": LICENCE, "clips": clips}, ensure_ascii=False, indent=0) + chr(10), encoding="utf8")
     return clips
 
 
-def run(jobs, session, region, key, speech_dir=None, raw_dir=None, sleep=None, out=print):
+def run(jobs, session, region, key, speech_dir=None, raw_dir=None, sleep=None, out=print, calib_dir=None):
     raw_dir, speech_dir = Path(raw_dir or RAW_TTS), Path(speech_dir or SPEECH_DIR)
     raw_dir.mkdir(parents=True, exist_ok=True)
     speech_dir.mkdir(parents=True, exist_ok=True)
@@ -223,6 +254,12 @@ def run(jobs, session, region, key, speech_dir=None, raw_dir=None, sleep=None, o
             except ValueError as e:
                 failed += 1
                 out(f"skip {job.f} ({job.rate}): {e}")
+                continue
+            if job.kind == "calib":
+                cp = (calib_dir or raw_dir / "calib") / job.voice / f"{job.f}.wav"
+                cp.parent.mkdir(parents=True, exist_ok=True)
+                cp.write_bytes(wav)
+                done += 1
                 continue
             wp = raw_dir / f"{job.key}.wav"
             wp.write_bytes(wav)
@@ -249,11 +286,15 @@ def main(argv=None, env=None, session=None, out=print):
     a = ap.parse_args(argv)
     env = os.environ if env is None else env
     if a.publish:
-        out(f"speech.json: {len(publish())} clips")
+        try:
+            out(f"speech.json: {len(publish())} clips")
+        except NotChecked as e:
+            out(str(e))
+            return 1
         return 0
     jobs = plan(a.words, a.voice)
     if a.dry_run:
-        out(f"{len(jobs)} jobs, {sum(len(j.text) for j in jobs)} characters")
+        out(f"{len(jobs)} jobs ({sum(j.kind == 'calib' for j in jobs)} calibration), {sum(len(j.text) for j in jobs)} characters")
         return 0
     key, region = env.get("AZURE_SPEECH_KEY"), env.get("AZURE_SPEECH_REGION")
     missing = [n for n, v in (("AZURE_SPEECH_KEY", key), ("AZURE_SPEECH_REGION", region)) if not v]
@@ -267,7 +308,7 @@ def main(argv=None, env=None, session=None, out=print):
     except FatalError as e:
         out(str(e))
         return 1
-    out(f"made {done} clips, {failed} failed; speech.json: {len(publish(manifest))} clips")
+    out(f"made {done} clips, {failed} failed; speech.json is only written by --publish, after the clip check")
     out("next: node scripts/yue_clip_check.js data/raw/yue/tts, then python -m jiesuo.yue.tts --publish")
     return 1 if failed else 0
 
