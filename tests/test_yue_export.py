@@ -22,6 +22,7 @@ def _pool(id_, text, jp, en, words, author=None, hk=None):
     e = {"id": id_, "text": text, "jp": jp, "en": en, "source": id_, "words": words}
     if author:
         e["author"] = author
+        e["en_id"], e["en_author"] = 77, "bob"
     if hk:
         e["hk"] = hk
     return e
@@ -109,7 +110,7 @@ def test_every_referenced_example_id_is_in_exactly_one_file():
     for g in out["course"]["grammar"].values():
         refs += g["examples"]
     assert refs and all(len(where.get(i, [])) == 1 for i in refs)
-    assert out["sentences"]["items"]["tatoeba:1"] == ["我食", "ngo5 sik6", "I eat.", "amy"]
+    assert out["sentences"]["items"]["tatoeba:1"] == ["我食", "ngo5 sik6", "I eat.", "amy", "bob", 77]
     assert out["hkcancor"]["items"]["hkcancor:f#3"][2] is None
     assert list(out["sentences"]["items"]) == ["tatoeba:1"]
     assert out["course"]["grammar"]["p1"]["group"] == "g"
@@ -148,18 +149,20 @@ def test_shipped_references_resolve_once():
         refs += g["examples"]
     assert all(i in allids for i in refs)
     assert all(i.startswith("tatoeba:") for i in homes[0]) and all(i.startswith("hkcancor:") for i in homes[1])
-    assert all(len(v) == 4 and v[3] for v in _load("sentences.json")["items"].values())
+    assert all(len(v) == 6 and v[3] and v[4] and v[5] for v in _load("sentences.json")["items"].values())
     assert all(isinstance(v, list) for v in lex["chars"].values())
 
 
 def test_shipped_wordshk_text_is_only_in_wordshk_json():
+    """Every lexicon meaning is exactly what lexicon._english computes from CC-Canto / CC-CEDICT, so no words.hk
+    text can have been copied in; the other files hold no words.hk gloss or definition either."""
+    from jiesuo.yue import lexicon
     w = _load("wordshk.json")
     assert w["notice"] and w["disclaimer"] and w["credits"] and w["link"] == "https://words.hk"
-    # a gloss that CC-CEDICT also happens to give for a word is the CC gloss; the rule is about words whose only
-    # meaning is words.hk's, which ship en "" in the lexicon
-    blank = {r[0] for r in _load("lexicon.json")["words"] if not r[2]}
-    engs = [e[1] for f, e in w["entries"].items() if f in blank and len(e[1]) > 25]
-    assert engs
-    for name in ("lexicon.json", "course.json", "sentences.json", "hkcancor.json"):
+    srcs = lexicon.load_sources()
+    for form, jp, en, _r, _f in _load("lexicon.json")["words"]:
+        assert en == lexicon._english(form, jp, srcs), form
+    for name in ("course.json", "sentences.json", "hkcancor.json"):
         s = (APP / name).read_text(encoding="utf8")
-        assert not any(e in s for e in engs), name
+        assert not any(len(e[2]) > 12 and e[2] in s for e in w["entries"].values()), name  # shorter ones occur by chance
+        assert not any(len(e[1]) > 25 and e[1] in s for e in w["entries"].values()), name

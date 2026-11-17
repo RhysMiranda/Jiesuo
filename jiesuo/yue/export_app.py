@@ -21,7 +21,7 @@ Syllabic m4 and ng5 have no recordings in Cantone, so they are taught in text on
 Phase 2 (words and grammar), one file per licence, from the course build (course.build):
     lexicon.json    CC BY-SA 4.0  words [form, jp, en, freqRank, flags], alts, chars {char: [jp, main first]}
     course.json    CC BY-SA 4.0  order, stage1, grammar points with example ids, lessonSentence
-    sentences.json  CC BY 2.0 FR  Tatoeba sentences with their authors
+    sentences.json  CC BY 2.0 FR  Tatoeba sentences with their authors and translation authors
     hkcancor.json   CC BY 4.0     HKCanCor sentences
     wordshk.json    words.hk Non-Commercial Open Data Licence 1.0: notice, disclaimer, credits, entries, examples
 """
@@ -256,13 +256,14 @@ def build_phase2(b, wordshk, chars_for, notice=None):
         e = pool[i]
         kind = i.split(":")[0]
         if kind == "tatoeba":
-            tat[i] = [e["text"], e["jp"], e["en"], e.get("author", "")]
+            tat[i] = [e["text"], e["jp"], e["en"], e.get("author", ""), e.get("en_author", ""), e.get("en_id", 0)]
         elif kind == "hkcancor":
             hkc[i] = [e["text"], e["jp"], None]
         else:
             whk_ex[i] = [e["text"], e["jp"], e["en"]]
     credits = ("Sentences from Tatoeba (https://tatoeba.org/), CC BY 2.0 FR. Each item is [Cantonese, Jyutping, "
-               "English, author of the Cantonese sentence]; Jyutping added by Jiesuo.")
+               "English, author of the Cantonese sentence, author of the English translation, Tatoeba id of the "
+               "translation]; Jyutping added by Jiesuo.")
     return {
         "lexicon": {"licence": LEXICON_LICENCE, "words": words, "alts": alts, "chars": chars},
         "course": {"licence": COURSE_LICENCE, "order": list(b["placed"]), "stage1": b["stage1"],

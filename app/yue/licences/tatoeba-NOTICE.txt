@@ -3,7 +3,8 @@ Source: https://tatoeba.org/ (Cantonese sentences with English translations, fro
 https://downloads.tatoeba.org/exports/).
 Licence: Creative Commons Attribution 2.0 France (CC BY 2.0 FR), https://creativecommons.org/licenses/by/2.0/fr/
 
-Each sentence is shown with its Cantonese text and its English translation. The contributor who wrote each
-Cantonese sentence is named in app/yue/data/sentences.json (the fourth value of each item). The English text is the
-translation Tatoeba links to that sentence; its contributor can be found on tatoeba.org. We added Jyutping to each
-sentence ourselves (built from the app's word list) and changed nothing else.
+Each sentence is shown with its Cantonese text and its English translation. Both are separate Tatoeba sentences and
+both authors are named in app/yue/data/sentences.json: the fourth value of each item is the contributor of the
+Cantonese sentence, the fifth the contributor of the English translation, the sixth the translation's Tatoeba id
+(https://tatoeba.org/sentences/show/<id>). Sentences whose translation has no named contributor are not shipped.
+We added Jyutping to each Cantonese sentence ourselves (built from the app's word list) and changed nothing else.

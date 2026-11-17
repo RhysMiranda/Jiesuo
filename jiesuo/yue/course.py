@@ -165,10 +165,13 @@ def split_example_jp(text, jp):
     return text, jp
 
 
-def _mk(id_, text, jp, en, source, words, author=None):
+def _mk(id_, text, jp, en, source, words, author=None, en_id=None, en_author=None):
     ex = {"id": id_, "text": text, "jp": jp, "en": en or None, "source": source, "words": words}
     if author:
         ex["author"] = author
+    if en_id:
+        ex["en_id"] = en_id
+        ex["en_author"] = en_author
     return ex
 
 
@@ -223,9 +226,12 @@ def examples(lex, tatoeba, wordshk, hkcancor, diffs=None):
             continue
         if any((len(t) == 1 and lex[t].alt) or (len(t) > 1 and train_count[t] < TATOEBA_MIN_TRAIN) for t in built[1]):
             continue
-        eid, etext, _ea = s["eng"][0]
+        owned = [e for e in s["eng"] if e[2]]  # CC BY needs the translation's author too
+        if not owned:
+            continue
+        eid, etext, ea = owned[0]
         sid = f"tatoeba:{s['id']}"
-        add(_mk(sid, text, built[0], etext, sid, built[1], s["author"]))
+        add(_mk(sid, text, built[0], etext, sid, built[1], s["author"], eid, ea))
 
     for fname, n, sent in hkcancor:
         text = "".join(w for w, _p, _j in sent)

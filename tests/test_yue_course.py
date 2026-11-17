@@ -267,3 +267,11 @@ def test_particle_points_need_the_key_character_at_the_end_of_a_clause():
 
 def test_pattern_helper_strips_final_punctuation():
     assert re.search("嘅$", "我嘅。".rstrip("。")) and course._strip("我嘅。 ") == "我嘅"
+
+
+def test_examples_tatoeba_carries_the_translation_author_and_skips_ownerless_translations():
+    lex = lexi(W("我", "ngo5"), W("食", "sik6"), W("飯", "faan6"))
+    tat = [{"id": 1, "text": "我食飯", "author": "a", "eng": [(8, "x", ""), (9, "I eat.", "bob")]},
+           {"id": 2, "text": "我食", "author": "a", "eng": [(8, "x", "")]}]
+    pool = course.examples(lex, tat, [], [])
+    assert [(x["id"], x["en"], x["en_id"], x["en_author"]) for x in pool] == [("tatoeba:1", "I eat.", 9, "bob")]
