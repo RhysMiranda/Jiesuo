@@ -107,3 +107,22 @@ def test_real_wordshk():
 def test_example_split(line, want):
     block = "<eg>\nyue:" + line + "\neng:x"
     assert sources._parse_definitions(block)[4] == [(want[0], want[1], "x")]
+
+
+def test_cccanto_y_for_j_is_normalised(tmp_path):
+    with zipfile.ZipFile(tmp_path / "cccanto.zip", "w") as z:
+        z.writestr("a.txt", "成日 成日 [cheng2 ri4] {seng4 yat6} /always; all the time/\n"
+                            "油 油 [you2] {yau4} /oil/\n日 日 [ri4] {yat6} /sun/\n")
+    with zipfile.ZipFile(tmp_path / "cccedict_canto_readings.zip", "w") as z:
+        z.writestr("b.txt", "")
+    got = sources.load_cccanto_words(tmp_path)
+    assert got["成日"] == [("seng4 jat6", "always; all the time")]
+    assert got["油"] == [("jau4", "oil")]
+    assert sources.load_cccanto_chars(tmp_path)["日"] == {"jat6"}
+
+
+def test_fix_syllable_only_changes_what_becomes_valid():
+    assert sources.fix_syllable("yat6") == "jat6"
+    assert sources.fix_syllable("yu5") == "yu5"  # already a Jyutping syllable
+    assert sources.fix_syllable("yx9") == "yx9"
+    assert sources.fix_reading("seng4 yat6") == "seng4 jat6"

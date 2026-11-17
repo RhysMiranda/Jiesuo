@@ -4369,17 +4369,15 @@ Words considered: 43712. Held-out split: every 5th HKCanCor sentence is test; re
 
 | status | words |
 |---|---|
-| agree | 40379 |
+| agree | 40382 |
 | corpus | 267 |
 | wordshk | 897 |
-| override | 5 |
-| unresolved | 2164 |
+| override | 7 |
+| unresolved | 2159 |
 
-### Unresolved among the top 6000 by frequency (141)
+### Unresolved among the top 6000 by frequency (139)
 
-- 呢啲 (freq 181.5): nei1 di1 [rime]; ni1 di1 [rime, cccanto]; hkcancor ni1 di1 x2
 - 㗎喇 (freq 138): gaa3 laa3 [rime]; gaa2 laa1 [cccanto]
-- 呢度 (freq 135): nei1 dou6 [rime]; ni1 dou6 [rime, cccanto]; hkcancor ni1 dou6 x1
 - 出嚟 (freq 119.5): ceot1 lai4 [rime]; ceot1 lei4 [cccanto]
 - 嚟㗎 (freq 75.5): lai4 gaa3 [rime]; lai2 gaa2 [cccanto]
 - 有人 (freq 72): hkcancor jau5 jan4 x1

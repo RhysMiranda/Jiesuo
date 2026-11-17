@@ -146,3 +146,12 @@ def test_published_reviewed_wordshk_gloss_makes_a_form_teachable_without_copying
                       (e(3, False, True, ["row"]), False), (e(4, True, True, [""]), False)):
         w = resolve_word("行", {**base, "wordshk": [ent]})
         assert w.whk_eng is flag and w.en == ""
+
+
+def test_cccanto_y_reading_gives_the_word_its_gloss():
+    from jiesuo.yue import sources
+    srcs = {"rime_words": {"成日": ["seng4 jat6"]}, "wordshk": [], "train": [], "overrides": {},
+            "chars": _chars(成=("seng4", []), 日=("jat6", [])),
+            "cccanto_words": {"成日": [(sources.fix_reading("seng4 yat6"), "always")]}}
+    w = resolve_word("成日", srcs)
+    assert (w.jp, w.status, w.en) == ("seng4 jat6", "agree", "always")

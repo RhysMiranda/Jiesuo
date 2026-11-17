@@ -293,7 +293,7 @@ def _cedict_jp() -> dict:
             for line in z.read(member).decode("utf8").splitlines():
                 m = _READING_LINE.match(line)
                 if m:
-                    jp = " ".join(jyutping.split(m.group(3)))
+                    jp = sources.fix_reading(m.group(3))
                     if jp:
                         jp_of.setdefault((m.group(1), _pinyin_key(m.group(2))), set()).add(jp)
     out: dict = {}

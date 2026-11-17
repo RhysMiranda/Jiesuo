@@ -20,9 +20,22 @@ def _valid(syl: str) -> bool:
         return False
 
 
+def fix_syllable(syl: str) -> str:
+    """CC-Canto sometimes writes Jyutping j as y (成日 seng4 yat6). A syllable that does not parse and starts
+    with y is kept as j+rest only if that parses; anything else is returned unchanged."""
+    if syl and syl[0] == "y" and not _valid(syl) and _valid("j" + syl[1:]):
+        return "j" + syl[1:]
+    return syl
+
+
+def fix_reading(text: str) -> str:
+    """Space-joined syllables of a CC-Canto reading, with fix_syllable applied to each."""
+    return " ".join(fix_syllable(s) for s in jyutping.split(text))
+
+
 def _one_syllable(text: str):
     """The single valid syllable in text, else None."""
-    parts = jyutping.split(text)
+    parts = [fix_syllable(p) for p in jyutping.split(text)]
     if len(parts) == 1 and _valid(parts[0]):
         return parts[0]
     return None
@@ -185,7 +198,7 @@ def load_cccanto_words(raw: Path = RAW) -> dict:
                     m = _CANTO_FULL.match(line)
                     if not m:
                         continue
-                    entry = (" ".join(jyutping.split(m.group(3))), m.group(4).strip("/"))
+                    entry = (fix_reading(m.group(3)), m.group(4).strip("/"))
                     lst = out.setdefault(m.group(1), [])
                     if entry not in lst:
                         lst.append(entry)

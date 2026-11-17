@@ -37,7 +37,8 @@ def load_overrides(path=OVERRIDES) -> dict:
         cols = line.split("\t")
         if len(cols) != 4 or not all(c.strip() for c in cols):
             raise ValueError(f"{path}:{n}: need form, reading, reason, source")
-        jyutping.parse(cols[1])
+        for syl in jyutping.split(cols[1]):  # one syllable per character of the form
+            jyutping.parse(syl)
         out[cols[0]] = cols[1]
     return out
 
