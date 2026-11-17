@@ -1,6 +1,6 @@
 # Cantonese course order
 
-Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Example pool: 23032 sentences ([('wordshk', 16889), ('hkcancor', 3902), ('tatoeba', 2241)]).
+Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Example pool: 20496 sentences ([('wordshk', 16889), ('hkcancor', 3514), ('tatoeba', 93)]).
 
 ## First 100 items
 
@@ -101,46 +101,48 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 95. 返 (faan1)
 96. 隻 (zek3)
 97. 食 (sik6)
-98. g:dak1
-99. 嗎 (maa3)
-100. 買 (maai5)
+98. 嗎 (maa3)
+99. 買 (maai5)
+100. 大 (daai6)
 
 ## Grammar points
 
 | id | cite | position | attested | words.hk | HKCanCor | Tatoeba |
 |---|---|---|---|---|---|---|
-| hai2 | 喺:hai2 | 298 | 69 | 5 | 22 | 42 |
-| ge3 | 嘅:ge3 | 43 | 48 | 3 | 45 | 0 |
-| clf | 隻:zek3 | 485 | 14 | 1 | 0 | 13 |
-| zo2 | 咗:zo2 | 452 | 175 | 3 | 51 | 121 |
-| gan2 | 緊:gan2 | 463 | 39 | 1 | 0 | 38 |
-| gwo3 | 過:gwo3 | 79 | 14 | 2 | 12 | 0 |
-| mei6 | 未:mei6 | 558 | 24 | 2 | 14 | 8 |
+| hai2 | 喺:hai2 | 297 | 32 | 5 | 21 | 6 |
+| ge3 | 嘅:ge3 | 43 | 47 | 3 | 44 | 0 |
+| clf | 隻:zek3 | left out | 1 | 1 | 0 | 0 |
+| zo2 | 咗:zo2 | 451 | 60 | 3 | 48 | 9 |
+| gan2 | 緊:gan2 | 462 | 2 | 1 | 0 | 1 |
+| gwo3 | 過:gwo3 | 79 | 11 | 2 | 9 | 0 |
+| mei6 | 未:mei6 | 556 | 13 | 2 | 10 | 1 |
 | mou5v | 冇:mou5 | 57 | 10 | 0 | 10 | 0 |
 | mhou2 | 咪:mai5 | left out | 1 | 1 | 0 | 0 |
-| anota | 有冇:jau5 mou5 | 68 | 34 | 3 | 30 | 1 |
-| haimai | 係咪:hai6 mai6 | 353 | 5 | 1 | 2 | 2 |
-| qwords | 點解:dim2 gaai2 | 474 | 37 | 1 | 17 | 19 |
-| gwo3cmp | 過:gwo3 | 200 | 3 | 1 | 2 | 0 |
-| bei2 | 畀:bei2 | 286 | 2 | 2 | 0 | 0 |
-| dirs | 返:faan1 | 441 | 11 | 1 | 10 | 0 |
-| dak1 | 得:dak1 | 98 | 3 | 0 | 3 | 0 |
+| anota | 有冇:jau5 mou5 | 68 | 31 | 3 | 28 | 0 |
+| haimai | 係咪:hai6 mai6 | 352 | 3 | 1 | 2 | 0 |
+| qwords | 點解:dim2 gaai2 | 473 | 20 | 1 | 16 | 3 |
+| gwo3cmp | 過:gwo3 | 199 | 3 | 1 | 2 | 0 |
+| bei2 | 畀:bei2 | 285 | 2 | 2 | 0 | 0 |
+| dirs | 返:faan1 | 440 | 11 | 1 | 10 | 0 |
+| dak1 | 得:dak1 | left out | 1 | 0 | 1 | 0 |
 | hoi1 | 開:hoi1 | left out | 1 | 1 | 0 | 0 |
-| zyu6 | 住:zyu6 | 249 | 2 | 0 | 2 | 0 |
-| haa5 | 吓:haa5 | 415 | 2 | 2 | 0 | 0 |
-| maai4 | 埋:maai4 | 228 | 7 | 2 | 5 | 0 |
-| faan1asp | 返:faan1 | 430 | 3 | 2 | 1 | 0 |
-| laa3 | 喇:laa3 | 329 | 2 | 2 | 0 | 0 |
-| wo3 | 喎:wo3 | 767 | 83 | 5 | 78 | 0 |
-| lo1 | 囉:lo1 | 312 | 6 | 5 | 1 | 0 |
-| me1 | 咩:me1 | 109 | 39 | 5 | 20 | 14 |
-| ge3fin | 嘅:ge3 | 185 | 29 | 3 | 26 | 0 |
+| zyu6 | 住:zyu6 | 248 | 2 | 0 | 2 | 0 |
+| haa5 | 吓:haa5 | 414 | 2 | 2 | 0 | 0 |
+| maai4 | 埋:maai4 | 227 | 6 | 2 | 4 | 0 |
+| faan1asp | 返:faan1 | 429 | 3 | 2 | 1 | 0 |
+| laa3 | 喇:laa3 | 328 | 2 | 2 | 0 | 0 |
+| wo3 | 喎:wo3 | 765 | 52 | 4 | 48 | 0 |
+| lo1 | 囉:lo1 | 311 | 5 | 5 | 0 | 0 |
+| me1 | 咩:me1 | 106 | 23 | 5 | 16 | 2 |
+| ge3fin | 嘅:ge3 | 184 | 26 | 3 | 23 | 0 |
 | bo3 | 噃:bo3 | left out | 0 | 0 | 0 | 0 |
 | gwaa3 | 啩:gwaa3 | left out | 0 | 0 | 0 | 0 |
 
 ### Left out
 
+- clf: 1 attested example(s)
 - mhou2: 1 attested example(s)
+- dak1: 1 attested example(s)
 - hoi1: 1 attested example(s)
 - bo3: 0 attested example(s)
 - gwaa3: 0 attested example(s)
@@ -153,55 +155,46 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:49899#1: 喺餐廳門口等啦 | hai2 caan1 teng1 mun4 hau2 dang2 laa1 | Let's meet outside the restaurant!
 - wordshk:49899#2: 我喺香港讀書嘅 | ngo5 hai2 hoeng1 gong2 duk6 syu1 ge3 | I used to study in Hong Kong.
 - wordshk:49899#3: 我哋喺舊年識嘅 | ngo5 dei6 hai2 gau6 nin2 sik1 ge3 | We met each other last year.
-- hkcancor:FC-106a_v2#9: 喺邊度啊 | hai2 bin1 dou6 aa3 | None
+- hkcancor:FC-022b_v#204: 分別喺邊呢 | fan1 bit6 hai2 bin1 ne1 | None
 
 **ge3** `嘅(?![咩囖啦喇啊呀嘛呢吖喎噃咋啫㗎]|$)`
 - wordshk:13550#3: 嗰本係我嘅書 | go2 bun2 hai6 ngo5 ge3 syu1 | That is my book.
 - wordshk:13550#7: 佢係呢度最靚嘅女仔 | keoi5 hai6 ni1 dou6 zeoi3 leng3 ge3 neoi5 zai2 | She is the prettiest girl here.
 - wordshk:13550#5: 呢間公司嘅員工好後生 | ni1 gaan1 gung1 si1 ge3 jyun4 gung1 hou2 hau6 saang1 | The employees of this company are so young.
-- hkcancor:FC-029_v#116: 嘅保險囖 | ge3 bou2 him2 lo1 | None
 - hkcancor:FC-025_v#61: 貨櫃嘅公司 | fo3 gwai6 ge3 gung1 si1 | None
 - hkcancor:FC-045_v2#73: 十嘅中間咋 | sap6 ge3 zung1 gaan1 zaa3 | None
+- hkcancor:FC-045_v2#84: 真嘅一樣喎 | zan1 ge3 jat1 joeng6 wo3 | None
 
 **clf** `[我你佢][部隻本架間條張對個支枝]`
 - wordshk:87739#2: 我隻鞋唔知去咗邊 | ngo5 zek3 haai4 m4 zi1 heoi3 zo2 bin1 | I don't know where my shoe is.
-- tatoeba:6469325: 你隻狗喺邊 | nei5 zek3 gau2 hai2 bin1 | Where's your dog?
-- tatoeba:7045360: 我隻錶好準 | ngo5 zek3 biu1 hou2 zeon2 | My watch keeps good time.
-- tatoeba:1882026: 佢偷咗我隻表 | keoi5 tau1 zo2 ngo5 zek3 biu2 | He stole my watch.
-- tatoeba:393208: 佢捉實我隻手 | keoi5 zuk1 sat6 ngo5 zek3 sau2 | She held on to my hand tightly.
-- tatoeba:4778603: 佢隻襪有個窿 | keoi5 zek3 mat6 jau5 go3 lung1 | There is a hole in his sock.
 
 **zo2** `咗`
 - wordshk:13605#3: 佢結咗婚喇 | keoi5 git3 zo2 fan1 laa3 | He is married.
 - wordshk:13605#2: 佢去咗邊度呀 | keoi5 heoi3 zo2 bin1 dou6 aa3 | Where did he go?
 - wordshk:13605#4: 你瘦咗又靚咗喎 | nei5 sau3 zo2 jau6 leng3 zo2 wo3 | You have become slimmer and prettier!
-- hkcancor:FC-046_v2#172: 過咗去先 | gwo3 zo2 heoi3 sin1 | None
-- hkcancor:FC-106b_v2#3: 去咗邊啊 | heoi3 zo2 bin1 aa3 | None
-- hkcancor:FC-108d_v2#25: 傻咗啊你 | so4 zo2 aa3 nei5 | None
+- hkcancor:FC-048_v2#235: 唔記得咗考 | m4 gei3 dak1 zo2 haau2 | None
+- hkcancor:FC-108a_v2#46: 做咗幾耐啊 | zou6 zo2 gei2 noi6 aa3 | None
+- hkcancor:FC-R010a_v#81: 又唔記得咗 | jau6 m4 gei3 dak1 zo2 | None
 
 **gan2** `[^\s]緊(?![要張])`
 - wordshk:13606#2: 我食緊飯 | ngo5 sik6 gan2 faan6 | I am eating.
-- tatoeba:1071620: 落緊雪 | lok6 gan2 syut3 | It's snowing.
-- tatoeba:5359781: 我等緊佢 | ngo5 dang2 gan2 keoi5 | I'm waiting for him.
-- tatoeba:5360862: 我出緊嚟 | ngo5 ceot1 gan2 lai4 | I'm on my way out.
-- tatoeba:795404: 佢仲嬲緊 | keoi5 zung6 nau1 gan2 | He is still angry.
-- tatoeba:1096787: 嗰男仔跳緊 | go2 naam4 zai2 tiu3 gan2 | The boy is jumping.
+- tatoeba:385477: 天氣每日都喺度變緊 | tin1 hei3 mui5 jat6 dou1 hai2 dou6 bin3 gan2 | The weather varies from day to day.
 
 **gwo3** `[去食睇見試聽做玩讀講學用買行搭坐飲到嚟]過`
 - wordshk:49438#2: 你去過美國未啊 | nei5 heoi3 gwo3 mei5 gwok3 mei6 aa3 | Have you ever been to the USA?
 - wordshk:49438#1: 我琴日去過間學校 | ngo5 kam4 jat6 heoi3 gwo3 gaan1 hok6 haau6 | I went to the school yesterday.
-- hkcancor:FC-012_v#309: 香港做過 | hoeng1 gong2 zou6 gwo3 | None
-- hkcancor:FC-045_v2#294: 睇過未吖 | tai2 gwo3 mei6 aa1 | None
-- hkcancor:FC-048_v2#165: 我都試過 | ngo5 dou1 si3 gwo3 | None
 - hkcancor:FC-001_v2#106: 真係未試過喎 | zan1 hai6 mei6 si3 gwo3 wo3 | None
+- hkcancor:FC-108d_v2#108: 唉我都冇睇過 | aai5 ngo5 dou1 mou5 tai2 gwo3 | None
+- hkcancor:FC-001_v2#136: 噉你重去過邊度 | gam2 nei5 zung6 heoi3 gwo3 bin1 dou6 | None
+- hkcancor:FC-026_v2#178: 見過梗係見過喇 | gin3 gwo3 gang2 hai6 gin3 gwo3 laa1 | None
 
 **mei6** `未(?![必來])`
 - wordshk:80547#3: 搞掂未呀 | gaau2 dim6 mei6 aa3 | Are you done yet?
 - wordshk:80547#1: 我仲未食飯啊，而家好肚餓 | ngo5 zung6 mei6 sik6 faan6 aa3 ji4 gaa1 hou2 tou5 ngo6 | I haven't had my meal yet, I feel so hungry now.
-- hkcancor:FC-005b_v2#93: 未摺過嘅 | mei6 zip3 gwo3 ge3 | None
-- hkcancor:FC-013_v#105: 講完未啊 | gong2 jyun4 mei6 aa3 | None
-- hkcancor:FC-029_v#162: 係囖未問 | hai6 lo1 mei6 man6 | None
-- hkcancor:FC-045_v2#294: 睇過未吖 | tai2 gwo3 mei6 aa1 | None
+- hkcancor:FC-108a_v2#127: 聖誕未知啊 | sing3 daan3 mei6 zi1 aa3 | None
+- hkcancor:FC-R005_v2#102: 未開啊係嘞 | mei6 hoi1 aa3 hai6 laak3 | None
+- hkcancor:FC-001_v2#106: 真係未試過喎 | zan1 hai6 mei6 si3 gwo3 wo3 | None
+- hkcancor:FC-027_v2#71: 未諗啊都都冇想 | mei6 nam2 aa3 dou1 dou1 mou5 soeng2 | None
 
 **mou5v** `(?<!有)冇[去食睇見嚟返買講做聽搵打話答知問]`
 - hkcancor:FC-012_v#305: 佢冇睇電視 | keoi5 mou5 tai2 din6 si6 | None
@@ -218,24 +211,22 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:90172#1: 你有冇筆呀 | nei5 jau5 mou5 bat1 aa3 | Have you got a pen?
 - wordshk:90172#2: 有冇都講聲吖 | jau5 mou5 dou1 gong2 seng1 aa1 | Let me know, no matter you have or have not!
 - wordshk:90172#3: 你有冇去過泰國呀 | nei5 jau5 mou5 heoi3 gwo3 taai3 gwok3 aa3 | Have you ever been to Thailand before?
-- hkcancor:FC-012_v#76: 噉你有冇 | gam2 nei5 jau5 mou5 | None
-- hkcancor:FC-029_v#422: 有冇水啊 | jau5 mou5 seoi2 aa3 | None
 - hkcancor:FC-012_v#84: 你有冇養啊 | nei5 jau5 mou5 joeng5 aa3 | None
+- hkcancor:FC-027_v2#420: 有冇睇戲啊 | jau5 mou5 tai2 hei3 aa3 | None
+- hkcancor:FC-104_v2#50: 十年有冇啊 | sap6 nin4 jau5 mou5 aa3 | None
 
 **haimai** `係咪`
 - wordshk:89962#2: 係咪去行街呀 | hai6 mai6 heoi3 haang4 gaai1 aa3 | Are we going shopping?
 - hkcancor:FC-025_v#47: 爭少少係咪 | zaang1 siu2 siu2 hai6 mai6 | None
 - hkcancor:FC-025_v#35: 係好似唔知係咪呢 | hai6 hou2 ci5 m4 zi1 hai6 mai6 ne1 | None
-- tatoeba:13107947: 呢幅圖係咪真嘅 | ne1 fuk1 tou4 hai6 mai6 zan1 ge3 | Is this picture real?
-- tatoeba:5355363: 「佢係咪病得好犀利？」「希望唔係啦。」 | keoi5 hai6 mai6 beng6 dak1 hou2 sai1 lei6 hei1 mong6 m4 hai6 laa1 | "Is he seriously ill?" "I hope not."
 
 **qwords** `乜嘢|邊個|邊度|點解|幾時|幾多`
 - wordshk:44715#1: 你上個星期日點解唔嚟嘅 | nei5 soeng6 go3 sing1 kei4 jat6 dim2 gaai2 m4 lai4 ge2 | Why didn't you come last Sunday?
-- hkcancor:FC-028_v2#108: 哦點解啊 | o5 dim2 gaai2 aa3 | None
 - hkcancor:FC-020_v#277: 係呀點解啊 | hai6 aa4 dim2 gaai2 aa3 | None
 - hkcancor:FC-025_v#180: 點解請佢啊 | dim2 gaai2 ceng2 keoi5 aa3 | None
 - hkcancor:FC-027_v2#406: 點解啊好忙 | dim2 gaai2 aa3 hou2 mong4 | None
 - hkcancor:FC-108a_v2#50: 點解變態啊 | dim2 gaai2 bin3 taai3 aa3 | None
+- hkcancor:FC-020_v#152: 點解啊跟住佢 | dim2 gaai2 aa3 gan1 zyu6 keoi5 | None
 
 **gwo3cmp** `[高大矮細快慢靚平貴長短多少遠近重輕難易叻]過[我你佢]`
 - wordshk:49438#5: 我高過佢 | ngo5 gou1 gwo3 keoi5 | I am taller than she is.
@@ -255,8 +246,6 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - hkcancor:FC-R017_v#101: 即係唔返去俾佢捉啊即係 | zik1 hai6 m4 faan1 heoi3 bei2 keoi5 zuk1 aa3 zik1 hai6 | None
 
 **dak1** `唔[食去睇做行講買玩用試聽見飲坐]得|[食去睇做行講買玩用試聽見飲坐]得(?:晒|$|呀|啊|嘅|喎)|[食去睇做行講買玩用試聽見飲坐]得唔得`
-- hkcancor:FC-005a_v2#41: 唔用得呀 | m4 jung6 dak1 aa4 | None
-- hkcancor:FC-R002a_v2#24: 唔去得住啊 | m4 heoi3 dak1 zyu6 aa3 | None
 - hkcancor:FC-109a_v2#173: 買得唔得啊買得唔得啊 | maai5 dak1 m4 dak1 aa3 maai5 dak1 m4 dak1 aa3 | None
 
 **hoi1** `[用食睇做買玩]開(?![會工學門車])`
@@ -273,10 +262,10 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 **maai4** `[等食攞買做帶講]埋`
 - wordshk:100323#8: 做埋份功課就走得 | zou6 maai4 fan6 gung1 fo3 zau6 zau2 dak1 | I can leave after finishing the assignment.
 - wordshk:100323#7: 我講埋呢句，之後先到你 | ngo5 gong2 maai4 ni1 geoi3 zi1 hau6 sin1 dou3 nei5 | You will have your chance to speak after I have finished my sentence.
-- hkcancor:FC-107_v2#25: 買埋件衫 | maai5 maai4 gin6 saam1 | None
 - hkcancor:FC-012_v#241: 講埋啲商業秘密 | gong2 maai4 di1 soeng1 jip6 bei3 mat6 | None
 - hkcancor:FC-R002b_v2#25: 齊晒自己做埋低成本 | cai4 saai3 zi6 gei2 zou6 maai4 dai1 sing4 bun2 | None
 - hkcancor:FC-108c_v2#159: 我哋嗰啲講埋啲廣東話呢 | ngo5 dei6 go2 di1 gong2 maai4 di1 gwong2 dung1 waa2 ne1 | None
+- hkcancor:FC-028_v2#419: 嘩你講埋啲噉嘅嘢我點譯呢 | waa3 nei5 gong2 maai4 di1 gam2 ge3 je5 ngo5 dim2 jik6 ne1 | None
 
 **faan1asp** `[瞓睇食講做買]返`
 - wordshk:90214#6: 食返餐好嘅 | sik6 faan1 caan1 hou2 ge3 | Let's eat something good!
@@ -292,8 +281,8 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:63362#6: 夠鐘喇喎 | gau3 zung1 laa3 wo3 | It's almost time.
 - wordshk:63362#7: 佢遲到喎 | keoi5 ci4 dou3 wo3 | He's late though!
 - wordshk:63362#4: 喂！睇唔出喎 | wai3 tai2 m4 ceot1 wo3 | Hey! I didn’t see that coming!
-- wordshk:63362#9: 咁辣都食到喎我 | gam3 laat6 dou1 sik6 dou2 wo3 ngo5 | Even I was able to handle this spiciness.
-- hkcancor:FC-025_v#202: 冇喎反而 | mou5 wo3 faan2 ji4 | None
+- hkcancor:FC-020_v#189: 又報唔到喎 | jau6 bou3 m4 dou2 wo3 | None
+- hkcancor:FC-028_v2#304: 我好開心喎 | ngo5 hou2 hoi1 sam1 wo3 | None
 
 **lo1** `囉`
 - wordshk:55295#8: 唔係囉 | m4 hai6 lo1 | I quite disagree.
@@ -301,7 +290,6 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:55295#11: 你鍾意點咪點囉 | nei5 zung1 ji3 dim2 mai6 dim2 lo1 | Do whatever you like!
 - wordshk:55295#10: 佢一定唔會鍾意你囉 | keoi5 jat1 ding6 m4 wui5 zung1 ji3 nei5 lo1 | I really don't think she will like you.
 - wordshk:55295#3: 架車咪喺對面囉，噉都睇唔到 | gaa3 ce1 mai6 hai2 deoi3 min6 lo1 gam2 dou1 tai2 m4 dou2 | The car is right opposite to you. You didn't even notice it?
-- hkcancor:FC-R018_v#11: 會玩盡囉 | wui5 waan2 zeon6 lo1 | None
 
 **me1** `[^\s]咩$`
 - wordshk:98798#2: 咁做好咩 | gam2 zou6 hou2 me1 | Is that really a good idea?
@@ -309,15 +297,15 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:98798#6: 乜你唔去咩 | mat1 nei5 m4 heoi3 me1 | Aren't you going?
 - wordshk:98798#3: 你唔驚佢嬲咩 | nei5 m4 geng1 keoi5 nau1 me1 | Aren't you worried that he may get mad at you?
 - wordshk:98798#5: 乜你今日唔駛返學咩 | mat1 nei5 gam1 jat6 m4 sai2 faan1 hok6 me1 | Don't you have to go to school today?
-- hkcancor:FC-026_v2#379: 嗰次係咩 | go2 ci3 hai6 me1 | None
+- hkcancor:FC-038a_v2#137: 啊係咩係咩 | aa3 hai6 me1 hai6 me1 | None
 
 **ge3fin** `嘅$`
 - wordshk:98364#4: 冇事嘅 | mou5 si6 ge3 | It'll be fine.
 - wordshk:98364#3: 係我叫佢咁做嘅 | hai6 ngo5 giu3 keoi5 gam2 zou6 ge3 | I'm the one that told her to do it.
 - wordshk:98364#1: 我知道你一定會幫我嘅 | ngo5 zi1 dou3 nei5 jat1 ding6 wui5 bong1 ngo5 ge3 | I knew you would help me.
-- hkcancor:FC-005b_v2#93: 未摺過嘅 | mei6 zip3 gwo3 ge3 | None
-- hkcancor:FC-022b_v#124: 係關於嘅 | hai6 gwaan1 jyu1 ge3 | None
-- hkcancor:FC-R007_v2#45: 全部靚嘅 | cyun4 bou6 leng3 ge3 | None
+- hkcancor:FC-005b_v2#27: 就係唔齊嘅 | zau6 hai6 m4 cai4 ge3 | None
+- hkcancor:FC-022b_v#98: 係有八冊嘅 | hai6 jau5 baat3 caak3 ge3 | None
+- hkcancor:FC-025_v#240: 因為佢做嘅 | jan1 wai6 keoi5 zou6 ge3 | None
 
 **bo3** `噃`
 
@@ -325,42 +313,42 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 
 ## words.hk / HKCanCor Jyutping that differs from the lexicon
 
-7275 token(s), 1024 distinct. words.hk's own Jyutping is kept in the example; HKCanCor's only when it is a recorded alternative of the word. Most frequent first (token, lexicon, example reading, count, first example).
+7103 token(s), 1023 distinct. words.hk's own Jyutping is kept in the example; HKCanCor's only when it is a recorded alternative of the word. Most frequent first (token, lexicon, example reading, count, first example).
 
 - 㗎: lexicon gaa4, example gaa3 x636 (wordshk:71170#6)
 - 呢: lexicon ne1, example ni1 x541 (wordshk:85360#2)
-- 喇: lexicon laa3, example laa1 x412 (wordshk:84901#2)
-- 下: lexicon haa6, example haa5 x228 (wordshk:70766#3)
-- 呀: lexicon aa3, example aa4 x211 (wordshk:98746#1)
+- 喇: lexicon laa3, example laa1 x392 (wordshk:84901#2)
+- 下: lexicon haa6, example haa5 x225 (wordshk:70766#3)
 - 到: lexicon dou3, example dou2 x196 (wordshk:108754#3)
-- 喀: lexicon haak3, example haak6 x150 (hkcancor:FC-005b_v2#40)
+- 呀: lexicon aa3, example aa4 x193 (wordshk:98746#1)
 - 嘅: lexicon ge3, example ge2 x129 (wordshk:100971#1)
-- 唔到: lexicon m4 dou3, example m4 dou2 x129 (wordshk:114493#15)
-- 嘩: lexicon waa1, example waa3 x117 (wordshk:93826#1)
-- 來: lexicon loi4, example lai4 x104 (wordshk:108365#1)
+- 唔到: lexicon m4 dou3, example m4 dou2 x127 (wordshk:114493#15)
+- 嘩: lexicon waa1, example waa3 x111 (wordshk:93826#1)
+- 來: lexicon loi4, example lai4 x99 (wordshk:108365#1)
+- 喀: lexicon haak3, example haak6 x99 (hkcancor:FC-005b_v2#40)
 - 請: lexicon cing2, example ceng2 x93 (wordshk:82553#3)
-- 哦: lexicon o4, example o5 x88 (wordshk:97050#24)
-- 嗯: lexicon ng6, example m6 x88 (wordshk:108852#1)
 - 唔會: lexicon m4 wui2, example m4 wui5 x87 (wordshk:116504#2)
-- 驚: lexicon ging1, example geng1 x78 (wordshk:116129#1)
+- 哦: lexicon o4, example o5 x84 (wordshk:97050#24)
 - 成: lexicon sing4, example seng4 x77 (wordshk:71170#10)
+- 驚: lexicon ging1, example geng1 x76 (wordshk:116129#1)
 - 咁: lexicon gam3, example gam2 x72 (wordshk:68161#3)
 - 着: lexicon zoek6, example zoek3 x71 (wordshk:104248#1)
-- 樣: lexicon joeng6, example joeng2 x64 (wordshk:118864#1)
-- 上: lexicon soeng5, example soeng6 x61 (wordshk:111999#1)
+- 樣: lexicon joeng6, example joeng2 x63 (wordshk:118864#1)
+- 上: lexicon soeng5, example soeng6 x60 (wordshk:111999#1)
 - 位: lexicon wai6, example wai2 x59 (wordshk:123891#1)
-- 哦: lexicon o4, example o3 x58 (wordshk:117603#1)
+- 嗯: lexicon ng6, example m6 x59 (wordshk:108852#1)
 - 吓: lexicon haa2, example haa5 x57 (wordshk:80836#2)
-- 哩: lexicon lei5, example ni1 x52 (hkcancor:FC-005a_v2#3)
 - 呢: lexicon ne1, example nei1 x51 (wordshk:72261#1)
-- 平: lexicon ping4, example peng4 x50 (wordshk:97205#1)
+- 哦: lexicon o4, example o3 x51 (wordshk:117603#1)
 - 聲: lexicon sing1, example seng1 x50 (wordshk:13689#1)
+- 哩: lexicon lei5, example ni1 x50 (hkcancor:FC-005a_v2#3)
+- 平: lexicon ping4, example peng4 x49 (wordshk:97205#1)
 - 今年: lexicon gam1 nin4, example gam1 nin2 x42 (wordshk:110011#1)
 - 會: lexicon wui5, example wui2 x40 (wordshk:72935#4)
 - 為: lexicon wai6, example wai4 x40 (wordshk:89391#1)
 - 嚟: lexicon lai4, example lei4 x39 (wordshk:108760#1)
-- 唉: lexicon aai1, example aai5 x38 (hkcancor:FC-012_v#256)
 - 粒: lexicon lap1, example nap1 x36 (wordshk:80830#5)
+- 唉: lexicon aai1, example aai5 x36 (hkcancor:FC-012_v#256)
 - 嗰陣: lexicon go2 zan6, example go2 zan2 x35 (wordshk:123923#1)
 - 處: lexicon cyu3, example cyu5 x33 (wordshk:82624#2)
 - 成個: lexicon sing4 go3, example seng4 go3 x32 (wordshk:13626#1)
@@ -372,18 +360,18 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 爭: lexicon zang1, example zaang1 x26 (wordshk:100906#1)
 - 名: lexicon ming4, example meng2 x25 (wordshk:95191#1)
 - 撚: lexicon nan2, example lan2 x25 (wordshk:66587#1)
-- 啱: lexicon ngaam1, example aam1 x25 (wordshk:78916#6)
 - 文: lexicon man4, example man2 x24 (wordshk:119607#1)
 - 哋: lexicon dei6, example dei2 x24 (wordshk:96599#1)
-- 當: lexicon dong1, example dong3 x24 (wordshk:95931#1)
 - 生: lexicon saang1, example sang1 x24 (wordshk:76572#3)
-- 係呀: lexicon hai6 aa3, example hai6 aa4 x24 (hkcancor:FC-019_v#47)
+- 當: lexicon dong1, example dong3 x23 (wordshk:95931#1)
 - 片: lexicon pin3, example pin2 x23 (wordshk:70578#1)
 - 樓: lexicon lau4, example lau2 x23 (wordshk:90940#3)
-- 嗱: lexicon naa4, example laa4 x23 (wordshk:40153#2)
-- 度: lexicon dou6, example dou2 x23 (hkcancor:FC-005b_v2#102)
-- 正: lexicon zing3, example zeng3 x22 (wordshk:90740#1)
+- 啱: lexicon ngaam1, example aam1 x23 (wordshk:78916#6)
+- 嗱: lexicon naa4, example laa4 x22 (wordshk:40153#2)
 - 房: lexicon fong4, example fong2 x21 (wordshk:123000#1)
+- 正: lexicon zing3, example zeng3 x21 (wordshk:90740#1)
+- 度: lexicon dou6, example dou2 x21 (hkcancor:FC-005b_v2#102)
+- 係呀: lexicon hai6 aa3, example hai6 aa4 x21 (hkcancor:FC-019_v#47)
 - 隊: lexicon deoi6, example deoi2 x20 (wordshk:72617#1)
 - 中: lexicon zung1, example zung3 x20 (wordshk:84393#1)
 - 重: lexicon zung6, example cung5 x20 (wordshk:76303#2)
@@ -406,7 +394,6 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 面: lexicon min6, example min2 x15 (wordshk:85263#1)
 - 得喇: lexicon dak1 laa1, example dak1 laa3 x15 (wordshk:114493#8)
 - 呃: lexicon ngaak1, example aak1 x15 (wordshk:51047#9)
-- 呃: lexicon ngaak1, example aak3 x14 (wordshk:98623#1)
 - 過嚟: lexicon gwo3 lai2, example gwo3 lai4 x14 (wordshk:67962#3)
 - 間: lexicon gaan1, example gaan3 x14 (wordshk:70159#4)
 - 掂: lexicon dim6, example dim3 x13 (wordshk:102114#4)
@@ -414,6 +401,7 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 話: lexicon waa6, example waa2 x13 (wordshk:74365#1)
 - 即刻: lexicon zik1 hak1, example zik1 haak1 x13 (wordshk:75544#2)
 - 應: lexicon jing1, example jing3 x13 (wordshk:110718#12)
+- 呃: lexicon ngaak1, example aak3 x13 (wordshk:98623#1)
 - 友: lexicon jau5, example jau2 x13 (wordshk:51047#9)
 - 糖: lexicon tong4, example tong2 x13 (wordshk:86247#1)
 - 嘿: lexicon hei1, example hei3 x13 (hkcancor:FC-012_v#205)
@@ -426,7 +414,6 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 牌: lexicon paai4, example paai2 x11 (wordshk:82907#15)
 - 賊: lexicon caak6, example caak2 x11 (wordshk:13751#1)
 - 倒數: lexicon dou2 sou3, example dou3 sou2 x11 (wordshk:81076#3)
-- 儲: lexicon cyu5, example cou5 x11 (wordshk:69038#1)
 - 盒: lexicon hap6, example hap2 x11 (wordshk:103118#1)
 - 長: lexicon coeng4, example zoeng2 x10 (wordshk:73084#3)
 - 命: lexicon ming6, example meng6 x10 (wordshk:54277#5)
@@ -434,8 +421,8 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 掉: lexicon diu6, example deu6 x10 (wordshk:78916#3)
 - 做到: lexicon zou6 dou2, example zou6 dou3 x10 (wordshk:80067#1)
 - 呢: lexicon ne1, example le1 x10 (wordshk:39927#6)
+- 儲: lexicon cyu5, example cou5 x10 (wordshk:69038#1)
 - 碟: lexicon dip6, example dip2 x10 (wordshk:54896#2)
-- 零: lexicon ling4, example leng4 x10 (wordshk:96875#1)
 - 彈: lexicon daan6, example taan4 x10 (wordshk:90440#1)
 - 咯: lexicon lok3, example lo3 x10 (wordshk:96541#2)
 - 哎: lexicon aai1, example aai5 x10 (hkcancor:FC-026_v2#40)
@@ -444,6 +431,7 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 遇到: lexicon jyu6 dou3, example jyu6 dou2 x9 (wordshk:54356#4)
 - 佢哋嘅: lexicon keoi5 dei2 ge3, example keoi5 dei6 ge3 x9 (wordshk:71031#5)
 - 斷: lexicon dyun6, example tyun5 x9 (wordshk:40146#1)
+- 零: lexicon ling4, example leng4 x9 (wordshk:96875#1)
 - 抖: lexicon dau2, example tau2 x9 (wordshk:13620#2)
 - 啱啱: lexicon ngaam1 ngaam1, example aam1 aam1 x9 (wordshk:86102#1)
 - 會同: lexicon wui6 tung4, example wui5 tung4 x8 (wordshk:82518#2)
@@ -474,7 +462,6 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 話: lexicon waa6, example waa5 x7 (wordshk:85075#5)
 - 橋: lexicon kiu4, example kiu2 x7 (wordshk:111475#1)
 - 啄: lexicon doek3, example doek1 x7 (hkcancor:FC-012_v#182)
-- 舋: lexicon jan3, example man3 x7 (hkcancor:FC-045_v2#60)
 - 味: lexicon mei6, example mei2 x6 (wordshk:98092#1)
 - 校: lexicon haau6, example gaau3 x6 (wordshk:47401#1)
 - 行: lexicon haang4, example hong2 x6 (wordshk:110612#1)
@@ -485,9 +472,9 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 咁多位: lexicon gam2 do1 wai6, example gam3 do1 wai2 x6 (wordshk:96956#1)
 - 園: lexicon jyun4, example jyun2 x6 (wordshk:77778#3)
 - 棘: lexicon gik1, example kik1 x6 (wordshk:96210#1)
-- 近: lexicon gan6, example kan5 x6 (wordshk:111061#1)
 - 朝朝: lexicon ciu4 ciu4, example ziu1 ziu1 x6 (wordshk:79679#2)
 - 地: lexicon dei6, example dei2 x6 (wordshk:111963#4)
+- 舋: lexicon jan3, example man3 x6 (hkcancor:FC-045_v2#60)
 - 地下: lexicon dei6 haa2, example dei6 haa6 x5 (wordshk:23592#3)
 - 上頭: lexicon soeng5 tau4, example soeng6 tau4 x5 (wordshk:85158#1)
 - 頭: lexicon tau4, example tau2 x5 (wordshk:109001#1)
@@ -498,6 +485,7 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 估唔到: lexicon gu2 m4 dou2, example gu2 m4 dou3 x5 (wordshk:79029#5)
 - 唉: lexicon aai1, example aai2 x5 (wordshk:13757#1)
 - 油: lexicon jau4, example jau2 x5 (wordshk:96210#2)
+- 近: lexicon gan6, example kan5 x5 (wordshk:111061#1)
 - 燶: lexicon lung1, example nung1 x5 (wordshk:85655#17)
 - 腍: lexicon jam6, example nam4 x5 (wordshk:116223#3)
 - 相: lexicon soeng1, example soeng3 x5 (wordshk:100412#6)
@@ -523,7 +511,6 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 疊: lexicon dip6, example daap6 x4 (wordshk:108714#17)
 - 倒: lexicon dou2, example dou3 x4 (wordshk:67285#4)
 - 難: lexicon naan4, example naan6 x4 (wordshk:97797#1)
-- 姐: lexicon ze2, example ze1 x4 (wordshk:80271#1)
 - 好奇: lexicon hou3 kei4, example hou2 kei4 x4 (wordshk:83269#4)
 - 犯: lexicon faan6, example faan2 x4 (wordshk:76282#1)
 - 差: lexicon caa1, example caai1 x4 (wordshk:78435#1)
@@ -577,10 +564,10 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 撑: lexicon caang1, example zaang6 x3 (wordshk:96515#1)
 - 背: lexicon bui3, example bui6 x3 (wordshk:96493#3)
 - 呢鋪: lexicon li1 pou1, example ni1 pou1 x3 (wordshk:40133#3)
+- 姐: lexicon ze2, example ze1 x3 (wordshk:80271#1)
 - 見到: lexicon gin3 dou2, example gin3 dou3 x3 (wordshk:74061#6)
 - 息: lexicon sik1, example sak1 x3 (wordshk:59015#1)
 - 揞住: lexicon ngam2 zyu6, example am2 zyu6 x3 (wordshk:69054#1)
-- 呻: lexicon san1, example san3 x3 (wordshk:59244#2)
 - 釘: lexicon ding1, example deng1 x3 (wordshk:71973#3)
 - 呢啲: lexicon ni1 di1, example nei1 di1 x3 (wordshk:40607#1)
 - 成年: lexicon sing4 nin4, example seng4 nin4 x3 (wordshk:96867#1)
@@ -679,6 +666,7 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 男人: lexicon naam4 jan2, example naam4 jan4 x2 (wordshk:80146#1)
 - 聯: lexicon lyun4, example lyun2 x2 (wordshk:18261#1)
 - 林: lexicon lam4, example lam2 x2 (wordshk:101477#1)
+- 呻: lexicon san1, example san3 x2 (wordshk:59244#2)
 - 相好: lexicon soeng1 hou2, example soeng2 hou2 x2 (wordshk:99401#2)
 - 拿: lexicon naa4, example laa4 x2 (wordshk:10353#1)
 - 好好: lexicon hou2 hou2, example hou2 hou3 x2 (wordshk:86534#1)

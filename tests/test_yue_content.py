@@ -372,3 +372,41 @@ def test_placed_examples_carry_the_cited_reading_on_the_key_character(built):
             assert any(syl[k:k + len(want)] == want for k in ks), (p["id"], ex["id"], ex["text"], ex["jp"])
             checked += 1
     assert checked > 50
+
+
+def test_no_tatoeba_example_rests_on_an_unsafe_token(built):
+    srcs, b = built
+    from collections import Counter
+    train = Counter(w for sent in srcs["train"] for w, _p, _j in sent)
+    lex = b["lex"]
+    seen = 0
+    for ex in b["pool"]:
+        if not ex["id"].startswith("tatoeba"):
+            continue
+        seen += 1
+        for t in ex["words"]:
+            assert not (len(t) == 1 and lex[t].alt), (ex["id"], t)
+            assert not (len(t) > 1 and train[t] < 3), (ex["id"], t)
+    assert seen > 50
+
+
+def test_particle_point_examples_end_a_clause_on_the_key_character(built):
+    _srcs, b = built
+    n = 0
+    for p in b["points"]:
+        if p["id"] in _course.PARTICLE_POINTS:
+            key = _course.parse_cite(p["cite"])[0]
+            for ex in p["_examples"]:
+                assert _course.clause_final(ex["text"], key), (p["id"], ex["id"], ex["text"])
+                n += 1
+    assert n > 20
+
+
+def test_known_bad_examples_are_not_shipped(built):
+    _srcs, b = built
+    bad = {"tatoeba:13107947", "tatoeba:5761094", "tatoeba:5735143", "tatoeba:12077986", "tatoeba:12099574",
+           "hkcancor:FC-026_v2#379", "hkcancor:FC-R002a_v2#24"}
+    shipped = {ex["id"] for p in b["points"] for ex in p["_examples"]}
+    assert not bad & shipped
+    assert not {i for i in bad if i.startswith("tatoeba")} & {ex["id"] for ex in b["pool"]}
+    assert all(_course.han_len(ex["text"]) >= 5 for p in b["points"] for ex in p["_examples"] if ex["id"].startswith("hkcancor"))

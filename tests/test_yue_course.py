@@ -187,23 +187,29 @@ def test_examples_drop_unresolved_and_unknown_tokens():
     assert pool[0]["author"] == "a" and pool[0]["jp"] == "ngo5 sik6 faan6" and pool[0]["en"] == "I eat."
 
 
-def test_examples_tatoeba_drops_a_character_with_two_reviewed_readings():
-    tat = [{"id": 1, "text": "我食好飯", "author": "a", "eng": [(9, "x", "b")]}]
-    two = [_whk(1, [], forms=(("好", "hou2"),)), _whk(2, [], forms=(("好", "hou3"),))]
-    assert course.examples(LEX, tat, two, []) == []
-    assert len(course.examples(LEX, tat, [two[0]], [])) == 1  # one reading only
-    sure = [[("好", "ADJ", "hou2")] * 200 + [("好", "ADJ", "hou3")]]  # 99.5% hou2 over 200 tokens
-    assert len(course.examples(LEX, tat, two, [("f", 1, s) for s in sure])) == 1
-    unsure = [[("好", "ADJ", "hou2")] * 150 + [("好", "ADJ", "hou3")] * 100]
-    assert course.examples(LEX, tat, two, [("f", 1, s) for s in unsure]) == []
+def test_examples_tatoeba_drops_a_single_character_token_with_alt_readings():
+    tat = [{"id": 1, "text": "我食好飯", "author": "a", "eng": [(9, "x", "b")]}]  # 好 has alt hou3
+    assert course.examples(LEX, tat, [], []) == []
+    sure = [("f", 1, [("好", "ADJ", "hou2")] * 500)]  # no exemption, however clear the corpus is
+    assert course.examples(LEX, tat, [], sure) == []
+    assert len(course.examples(lexi(W("我", "ngo5"), W("食", "sik6"), W("好", "hou2"), W("飯", "faan6")), tat, [], [])) == 1
+
+
+def test_examples_tatoeba_drops_a_multi_character_token_without_spoken_evidence():
+    lex = lexi(W("我", "ngo5"), W("離開", "lei4 hoi1"), W("間房", "gaan3 fong2"), W("間", "gaan1"), W("房", "fong2"))
+    tat = [{"id": 1, "text": "我離開間房", "author": "a", "eng": [(9, "x", "b")]}]
+    train = [("f", i, [("離開", "V", "lei4 hoi1")] * 1) for i in range(3)]
+    assert course.examples(lex, tat, [], train) == []  # 間房 is fused and has no train tokens
+    train += [("f", 9 + i, [("間房", "N", "gaan3 fong2")]) for i in range(3)]
+    assert len(course.examples(lex, tat, [], train)) == 1
 
 
 def test_examples_hkcancor_use_its_reading_only_when_it_is_a_known_alternative():
-    keep = [("f1", 5, [("我", "R", "ngo5"), ("食", "V", "sik6"), ("飯", "N", "faan6"), ("呢", "Y", "ni1")])]
-    bad = [("f1", 6, [("我", "R", "ngo5"), ("食", "V", "sik6"), ("飯", "N", "faan1"), ("呢", "Y", "ne1")])]
+    keep = [("f1", 5, [("我", "R", "ngo5"), ("食", "V", "sik6"), ("飯", "N", "faan6"), ("呢", "Y", "ni1"), ("我", "R", "ngo5")])]
+    bad = [("f1", 6, [("我", "R", "ngo5"), ("食", "V", "sik6"), ("飯", "N", "faan1"), ("呢", "Y", "ne1"), ("我", "R", "ngo5")])]
     pool = course.examples(LEX, [], [], keep + bad)
     assert [x["id"] for x in pool] == ["hkcancor:f1#5"]
-    assert pool[0]["jp"] == "ngo5 sik6 faan6 ni1" and pool[0]["en"] is None
+    assert pool[0]["jp"] == "ngo5 sik6 faan6 ni1 ngo5" and pool[0]["en"] is None
 
 
 def test_examples_drop_formal_forms_and_short_hkcancor_fragments():
@@ -212,7 +218,7 @@ def test_examples_drop_formal_forms_and_short_hkcancor_fragments():
     pool = course.examples(lex, [{"id": 1, "text": "他食飯", "author": "a", "eng": [(9, "x", "b")]}], [], [])
     assert pool == []
     frag = [("f", 1, [("我", "R", "ngo5"), ("食", "V", "sik6")])]
-    assert course.examples(LEX, [], [], frag) == []  # fewer than 4 characters
+    assert course.examples(LEX, [], [], frag) == []  # fewer than 5 characters
 
 
 def test_examples_are_kept_short():
@@ -242,6 +248,21 @@ def test_grammar_examples_follow_the_provenance_rule():
     assert "tatoeba:1" not in [x["id"] for x in course.grammar_examples(point, pool, pos, lex, wk)]
     point["entries"] = [8]  # an entry that is not a citation of this point is ignored
     assert not any(x["id"].startswith("wordshk") for x in course.grammar_examples(point, pool, pos, lex, wk))
+
+
+def test_lesson_sentence_prefers_wordshk_over_tatoeba():
+    order = ["我", "食"]
+    exs = [_ex("tatoeba:1", "我食", ["我", "食"]), _ex("wordshk:2#1", "我食我食", ["我", "食"])]
+    assert course.lesson_sentences(order, exs)["食"] == "wordshk:2#1"
+
+
+def test_particle_points_need_the_key_character_at_the_end_of_a_clause():
+    assert course.clause_final("你係咩", "咩") and course.clause_final("你係咩，好", "咩")
+    assert not course.clause_final("咩事呀", "咩")
+    point = {"id": "me1", "pattern": "咩", "cite": "咩:me1"}
+    assert course._matches(point, _ex("a", "你係咩", ["我"]), {"我": 0})
+    assert not course._matches(point, _ex("a", "咩事呀", ["我"]), {"我": 0})
+    assert course._matches({**point, "id": "zo2"}, _ex("a", "咩事呀", ["我"]), {"我": 0})
 
 
 def test_pattern_helper_strips_final_punctuation():

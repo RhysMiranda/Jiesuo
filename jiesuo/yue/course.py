@@ -8,8 +8,9 @@ HKCanCor train sentence, with Jyutping built per token from the lexicon (spec se
 * a token with no resolved reading, or an unknown character, drops the sentence;
 * words.hk's own Jyutping for an example wins over the lexicon; the disagreement is recorded;
 * a HKCanCor reading is used only when it is the lexicon's or one of its alternatives, else the sentence is dropped;
-* Tatoeba sentences are also dropped when a one-character token has two or more readings in reviewed words.hk
-  entries, unless HKCanCor train shows its main reading in at least 99.5% of 200 or more tokens.
+* Tatoeba sentences are also dropped when any one-character token has alternative readings in the lexicon (no
+  exemption: HKCanCor labels everything with the main reading), or any multi-character token has fewer than 3
+  HKCanCor train tokens (greedy segmentation can fuse words, e.g. 間房).
 """
 import json
 import re
@@ -30,11 +31,12 @@ FORMAL_TOKENS = ("他", "在", "的")
 FORMAL_SUBSTRING = "沒有"
 POOL_MAX_HAN = 20  # lesson sentences
 GRAMMAR_MAX_HAN = 14  # grammar examples
-HKCANCOR_MIN_HAN = 4  # fragments such as 未 or 好啦 teach nothing
+HKCANCOR_MIN_HAN = 5  # fragments such as 未, 好啦 or 係關於嘅 teach nothing
+TATOEBA_MIN_TRAIN = 3  # a multi-character token needs this many HKCanCor train tokens (spoken evidence it is a word)
+PARTICLE_POINTS = {"laa3", "wo3", "lo1", "me1", "ge3fin", "bo3", "gwaa3"}  # the key character ends a clause
 NOT_HK = "渠"  # Tatoeba yue sentences sometimes write 佢 as 渠 keoi4; not Hong Kong writing
 GRAMMAR_WITHIN = 3000  # all words within this many items of the order
 MIN_ATTESTED = 2
-AMBIG_SHARE, AMBIG_TOKENS = 0.995, 200
 _TRAIL = "。？！?!.，,、~… \t　"
 _PUNCT = _TRAIL + "「」『』（）"
 _ALNUM = re.compile(r"[0-9A-Za-z０-９Ａ-Ｚａ-ｚ]")
@@ -163,30 +165,6 @@ def split_example_jp(text, jp):
     return text, jp
 
 
-def _ambiguous_chars(wordshk, counts, lex):
-    """One-character forms Tatoeba may not use: two reviewed words.hk readings and no overwhelming main reading."""
-    reads = {}
-    for e in wordshk:
-        if not e.reviewed:
-            continue
-        for form, jp in e.forms:
-            if len(form) == 1:
-                syls = _split_valid(jp)
-                if syls and len(syls) == 1:
-                    reads.setdefault(form, set()).add(syls[0])
-    out = set()
-    for form, rs in reads.items():
-        if len(rs) < 2:
-            continue
-        c = counts.get(form)
-        total = sum(c.values()) if c else 0
-        main = lex[form].jp if form in lex else ""
-        if total >= AMBIG_TOKENS and main and c[main] / total >= AMBIG_SHARE:
-            continue
-        out.add(form)
-    return out
-
-
 def _mk(id_, text, jp, en, source, words, author=None):
     ex = {"id": id_, "text": text, "jp": jp, "en": en or None, "source": source, "words": words}
     if author:
@@ -201,12 +179,7 @@ def examples(lex, tatoeba, wordshk, hkcancor, diffs=None):
     (source id, token, lexicon jp, used jp) for every disagreement kept or noted.
     """
     forms = set(lex)
-    counts = {}
-    for _f, _n, sent in hkcancor:
-        for word, _pos, jp in sent:
-            if len(word) == 1:
-                counts.setdefault(word, Counter())[jp] += 1
-    ambiguous = _ambiguous_chars(wordshk, counts, lex)
+    train_count = Counter(word for _f, _n, sent in hkcancor for word, _pos, _jp in sent)
     seen, out = set(), []
 
     def add(ex):
@@ -248,7 +221,7 @@ def examples(lex, tatoeba, wordshk, hkcancor, diffs=None):
         built = _align(text, None, lex, forms, "alt")
         if built is None:
             continue
-        if any(len(t) == 1 and t in ambiguous for t in built[1]):
+        if any((len(t) == 1 and lex[t].alt) or (len(t) > 1 and train_count[t] < TATOEBA_MIN_TRAIN) for t in built[1]):
             continue
         eid, etext, _ea = s["eng"][0]
         sid = f"tatoeba:{s['id']}"
@@ -294,9 +267,22 @@ def cited_entries(cite, wordshk):
     return [e for e in wordshk if e.reviewed and any(f == form and _split_valid(j) == want for f, j in e.forms)]
 
 
+def clause_final(text, key):
+    """True if `key` occurs with no Han character right after it (punctuation or the end follows)."""
+    k = text.find(key)
+    while k != -1:
+        j = k + len(key)
+        if j >= len(text) or not is_han(text[j]):
+            return True
+        k = text.find(key, k + 1)
+    return False
+
+
 def _matches(point, ex, pos):
     t = _strip(ex["text"])
     if han_len(t) > GRAMMAR_MAX_HAN or not re.search(point["pattern"], t):
+        return False
+    if point["id"] in PARTICLE_POINTS and not clause_final(t, parse_cite(point["cite"])[0]):
         return False
     return all(pos.get(w, GRAMMAR_WITHIN) < GRAMMAR_WITHIN for w in ex["words"])
 
@@ -370,7 +356,7 @@ def place_grammar(order, points, examples_, every=10):
 
 
 def lesson_sentences(order, examples_):
-    """item -> id of the shortest example with English whose words are all at or before the item.
+    """item -> id of the shortest example with English whose words are all at or before the item (words.hk first).
 
     Examples containing the item win when there are any (the day's lesson sentence should use today's word)."""
     pos = {f: i for i, f in enumerate(order)}
@@ -382,7 +368,7 @@ def lesson_sentences(order, examples_):
         if not ps or None in ps:
             continue
         ready.setdefault(max(ps), []).append(ex)
-    key = lambda ex: (han_len(ex["text"]), ex["id"])
+    key = lambda ex: (not ex["id"].startswith("wordshk"), han_len(ex["text"]), ex["id"])  # words.hk first
     best, with_item, out = None, {}, {}
     for i, f in enumerate(order):
         for ex in ready.get(i, ()):
