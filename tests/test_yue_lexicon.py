@@ -203,3 +203,15 @@ def test_single_character_meanings_start_with_the_main_sense():
         assert m not in first, (f, en[f])
     assert "go" in en["去"] and "look" in en["睇"] and "eat" in en["食"]
     assert any(k in en["講"] for k in ("speak", "say", "talk")), en["講"]
+
+
+def test_clean_senses_strips_part_of_speech_tags_and_splits_enumerations():
+    from jiesuo.yue.lexicon import clean_senses
+    assert clean_senses(["(verb) please; thanks"]) == "please; thanks"
+    assert clean_senses(["(adverb) 1. no; 2. nothing"]) == "no; nothing"
+    assert clean_senses(["(adverb) 1. Ok 2. Yes"]) == "Ok; Yes"
+    assert clean_senses(["(phrase; adverb; noun) no, not."]) == "no, not."
+    assert clean_senses(["(Phrase) sorry."]) == "sorry."
+    assert clean_senses(["(pronoun \u2013 plural) we"]) == "we"
+    assert clean_senses(["(coll.) to part ways"]) == "(coll.) to part ways"
+    assert clean_senses(["3.5 metres"]) == "3.5 metres"

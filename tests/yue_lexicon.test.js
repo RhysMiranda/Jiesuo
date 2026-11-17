@@ -10,7 +10,7 @@ const lexicon = {
   ],
   alts: {}, chars: { "𠮶": ["gwo2"], "我": ["ngo5"] },
 };
-const wordshk = { entries: { "食": [11, "to eat", "def"] }, examples: { "9": ["你好", "nei5 hou2", "hello"] } };
+const wordshk = { entries: { "食": [11, "to eat", "def"], "緊": [12, "in the middle of", "d2"] }, examples: { "9": ["你好", "nei5 hou2", "hello"] } };
 const sentences = { items: { "5": ["你好", "nei5 hou2", "Hi", "au", "enau", 77] } };
 const hkcancor = { items: { "f#1": ["我食", "ngo5 sik6", null] } };
 const L = JyutLex.create({ lexicon, course: {}, wordshk, sentences, hkcancor });
@@ -54,13 +54,17 @@ test("search", () => {
   const f = L.search("好").map((r) => r.form);
   assert.ok(f.includes("好") && f.includes("你好"));
   assert.ok(L.search("EAT").some((r) => r.form === "食"));
-  assert.strictEqual(L.search("to eat")[0].en, "to eat");
+  assert.strictEqual(L.search("to eat")[0].en, "eat");  // words.hk text is still searchable
   assert.deepStrictEqual(L.search("😂"), []);
   assert.deepStrictEqual(L.search(null), []);
 });
 
 test("word and example", () => {
-  assert.strictEqual(L.word("食").en, "to eat");
+  assert.strictEqual(L.word("食").en, "eat");  // the cleaned lexicon meaning wins
+  assert.strictEqual(L.word("食").whkEn, "to eat");
+  assert.strictEqual(L.word("緊").en, "in the middle of");  // only words.hk has one
+  assert.strictEqual(L.word("緊").whkEn, "in the middle of");
+  assert.strictEqual(L.word("你").whkEn, null);
   assert.strictEqual(L.word("食").wordshk.id, 11);
   assert.strictEqual(L.word("你").en, "you");
   assert.strictEqual(L.word("名").changed, true);

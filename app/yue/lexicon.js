@@ -68,7 +68,7 @@
     }
     function enOf(e) {
       const w = wkEntry(e.form);
-      return (w && w[1]) || e.en || "";
+      return e.en || (w && w[1]) || "";
     }
 
     // Indexes, built once.
@@ -89,7 +89,8 @@
         if (typeof form !== "string") return null;
         const e = byForm.get(form);
         if (!e) return null;
-        const out = { form: e.form, jp: e.jp, en: enOf(e), rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2), unchecked: !!(e.flags & 4) };
+        const w0 = wkEntry(form);
+        const out = { form: e.form, jp: e.jp, en: enOf(e), whkEn: (w0 && w0[1]) || null, rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2), unchecked: !!(e.flags & 4) };
         const w = wkEntry(form);
         if (w) out.wordshk = { id: w[0], eng: w[1], def: w[2] };
         return out;

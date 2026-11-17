@@ -169,6 +169,20 @@ def _tidy(t: str) -> str:
     return t
 
 
+_POS = (r"(?:verb|adverb|adjective|noun|phrase|pronoun|plural|conjunction|preposition|prep\.|interjection|particle|"
+        r"classifier|measure word|idiom|expression|adj\.|adv\.|n\.|v\.)")
+_POS_TAG = re.compile(r"^\(\s*" + _POS + r"(?:[\s;,–-]+" + _POS + r")*\s*\)\s*", re.I)
+_ENUM = re.compile(r"(?:^|\s)\d+\.\s+")
+
+
+def _expand(sense: str) -> list:
+    """One sense without its leading part-of-speech tag; "1. x; 2. y" becomes separate senses."""
+    t = _POS_TAG.sub("", sense.strip())
+    if re.match(r"1\.\s", t):
+        return [x.strip(" ;,") for x in _ENUM.split(t) if x.strip(" ;,")]
+    return [t]
+
+
 def clean_senses(senses, limit=3, follow=None) -> str:
     """Dictionary senses with the Mandarin taken out (Ruling 12): no classifier / surname / variant / cross-reference
     senses, no pinyin, no Simplified forms. At most `limit` senses joined with "; "; "" if nothing is left.
@@ -176,7 +190,7 @@ def clean_senses(senses, limit=3, follow=None) -> str:
     X, those are used instead (followed once)."""
     senses = list(senses or [])
     out = []
-    for sense in senses:
+    for sense in [x for raw in senses for x in _expand(raw)]:
         t = sense.strip()
         if t.lower().startswith(_DROP_START) or "surname " in t.lower():
             continue
