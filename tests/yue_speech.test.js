@@ -124,7 +124,7 @@ test("a failed middle clip stops the sequence", async () => {
   const f = installFakes("audio/v/hou2.mp3");
   try {
     A.init({ voices: [{ id: "v" }], clips: { go3: [0], hou2: [0], meng2: [0] } });
-    const data2 = { lexicon: { words: [["個好名", "go3 hou2 meng2", "x", 1, 1]], chars: {} } };
+    const data2 = { lexicon: { words: [["個好名", "go3 hou2 meng2", "x", 1, 0]], chars: {} } };
     const s = SP.create({ audio: A, lex: L.create(data2), lexData: data2, synth: noVoice });
     assert.strictEqual(await s.play("個好名"), "failed");
     assert.deepStrictEqual(f.started.map((x) => x.url), ["audio/v/go3.mp3"]);
@@ -152,4 +152,75 @@ test("device safety needs matching per-character readings and a checked word", (
   assert.notStrictEqual(s.source("你").kind, "device"); // char reading differs from the word's
   assert.strictEqual(s.source("我").kind, "device");
   assert.notStrictEqual(s.source("佢").kind, "device"); // unchecked
+});
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+function spySynth() {
+  const log = { cancels: 0, said: [] };
+  return { log, voices: () => [{ lang: "zh-HK" }], cancel() { log.cancels++; }, speak: async (t, v, rate) => { log.said.push([t, rate]); return "played"; } };
+}
+
+test("device speech after a syllable sequence stops the sequence and cancels synth", async () => {
+  const f = installFakes();
+  try {
+    A.init(audioJson);
+    const syn = spySynth();
+    const s = mk({ synth: syn });
+    const seq = mk({ synth: noVoice }).play("個名");
+    await sleep(1);
+    assert.strictEqual(await s.play("你"), "played");
+    assert.strictEqual(await seq, "stopped");
+    assert.deepStrictEqual(f.started.map((x) => x.url), ["audio/v/go3.mp3"]);
+    assert.ok(syn.log.cancels >= 1);
+  } finally { f.restore(); }
+});
+
+test("a clip after device speech cancels the synth", async () => {
+  const f = installFakes();
+  try {
+    A.init(audioJson);
+    const syn = spySynth();
+    let release; syn.speak = () => new Promise((r) => { release = r; });
+    const s = mk({ synth: syn, speechJson: { clips: { c1: { f: "個名", r: "0%", v: "x" } } } });
+    const dev = s.play("你");
+    const before = syn.log.cancels;
+    assert.strictEqual(await s.play("個名"), "played");
+    assert.ok(syn.log.cancels > before);
+    assert.deepStrictEqual(f.started.map((x) => x.url), ["audio/speech/c1.mp3"]);
+    release("played"); await dev;
+  } finally { f.restore(); }
+});
+
+test("slow device speech uses rate 0.7", async () => {
+  const syn = spySynth();
+  await mk({ synth: syn }).play("你", { slow: true });
+  assert.deepStrictEqual(syn.log.said, [["你", 0.7]]);
+});
+
+test("stop() cancels a running sequence", async () => {
+  const f = installFakes();
+  try {
+    A.init(audioJson);
+    const p = A.playUrls(["a1.mp3", "a2.mp3", "a3.mp3"]);
+    await sleep(1);
+    A.stop();
+    assert.strictEqual(await p, "stopped");
+    assert.deepStrictEqual(f.started.map((x) => x.url), ["a1.mp3"]);
+  } finally { f.restore(); }
+});
+
+test("an interrupted single clip is stopped, not played", async () => {
+  const f = installFakes();
+  try {
+    const first = A.playUrl("x1.mp3");
+    await sleep(1);
+    const second = A.playUrl("x2.mp3");
+    assert.strictEqual(await first, "stopped");
+    assert.strictEqual(await second, "played");
+  } finally { f.restore(); }
+});
+
+test("a word whose syllable count differs from its characters is not device-safe", () => {
+  const d = { lexicon: { words: [["我", "ngo5 dei6", "x", 1, 0]], chars: { 我: ["ngo5"] } } };
+  assert.notStrictEqual(SP.create({ audio: A, lex: L.create(d), lexData: d, synth: hk }).source("我").kind, "device");
 });

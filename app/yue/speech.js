@@ -14,8 +14,9 @@
   function deviceSynth() {
     const ss = typeof self !== "undefined" && self.speechSynthesis;
     const Utt = typeof self !== "undefined" && self.SpeechSynthesisUtterance;
-    if (!ss || !Utt) return { voices: () => [], speak: () => Promise.resolve("failed") };
+    if (!ss || !Utt) return { voices: () => [], speak: () => Promise.resolve("failed"), cancel() {} };
     return {
+      cancel: () => { try { ss.cancel(); } catch (e) { /* ignore */ } },
       voices: () => { try { return Array.from(ss.getVoices() || []); } catch (e) { return []; } },
       speak: (text, voice, rate) => new Promise((resolve) => {
         try {
@@ -112,6 +113,9 @@
     async function play(item, opts) {
       try {
         const o = opts || {};
+        // One sound at a time across both channels, stopped synchronously from the tap.
+        try { if (audio && audio.stop) audio.stop(); } catch (e) { /* ignore */ }
+        try { if (synth.cancel) synth.cancel(); } catch (e) { /* ignore */ }
         const src = source(item, o);
         if (src.kind === "clip") return await audio.playUrl(src.url, { rate: 1 });
         if (src.kind === "device") {

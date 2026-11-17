@@ -58,7 +58,7 @@
   }
 
   const LOAD_MS = 8000;
-  let actx = null, current = null, gen = 0; // gen: bumped by every play/stop; a stale call never starts more sound
+  let actx = null, current = null, currentEl = null, gen = 0; // gen: bumped by every play/stop; a stale call never starts more sound
 
   /** Resolves with the promise's value, or `fallback` if it has not settled within ms. Never rejects. */
   function withTimeout(promise, ms, fallback) {
@@ -86,6 +86,11 @@
 
   function stopCurrent() {
     if (current) { try { current.stop(); } catch (e) { /* already stopped */ } current = null; }
+    if (currentEl) { // no-AudioContext fallback: pause, and let the waiting promise settle
+      const el = currentEl; currentEl = null;
+      try { el.pause(); } catch (e) { /* ignore */ }
+      try { if (el.onended) el.onended(); } catch (e) { /* ignore */ }
+    }
   }
 
   /** Fetches and decodes one clip; null on any failure or timeout. Never rejects. */
@@ -118,7 +123,8 @@
     const buf = await loadBuffer(ctx, url);
     if (gen !== my) return "stopped";
     if (!buf) return "failed";
-    return startBuffer(ctx, buf, rate, my);
+    const r = await startBuffer(ctx, buf, rate, my);
+    return gen !== my ? "stopped" : r; // an interrupted clip was not heard
   }
 
   async function playElement(url, rate, el) {
@@ -126,6 +132,8 @@
     if (!blob) return "failed";
     const objectUrl = URL.createObjectURL(blob);
     try {
+      stopCurrent();
+      currentEl = el;
       el.src = objectUrl;
       el.playbackRate = rate;
       const ended = new Promise((resolve) => { el.onended = () => resolve("played"); el.onerror = () => resolve("failed"); });
@@ -133,7 +141,7 @@
       return await ended;
     } catch (e) {
       return e && e.name === "NotAllowedError" ? "blocked" : "failed";
-    } finally { try { URL.revokeObjectURL(objectUrl); } catch (e) { /* ignore */ } }
+    } finally { if (currentEl === el) currentEl = null; try { URL.revokeObjectURL(objectUrl); } catch (e) { /* ignore */ } }
   }
 
   /** Plays one clip; resolves "played", "blocked" (the browser wanted a fresh tap), "failed", or "stopped" (a newer
@@ -150,7 +158,8 @@
       const ctx = unlock();
       if (ctx) return await playBuffered(ctx, url, rate, my);
       if (typeof Audio === "undefined") return "failed";
-      return await playElement(url, rate, new Audio());
+      const r = await playElement(url, rate, new Audio());
+      return gen !== my ? "stopped" : r;
     } catch (e) { return "failed"; }
   }
 
