@@ -215,3 +215,28 @@ def test_clean_senses_strips_part_of_speech_tags_and_splits_enumerations():
     assert clean_senses(["(pronoun \u2013 plural) we"]) == "we"
     assert clean_senses(["(coll.) to part ways"]) == "(coll.) to part ways"
     assert clean_senses(["3.5 metres"]) == "3.5 metres"
+
+
+def test_clean_senses_other_varieties_brackets_and_slash_tags():
+    from jiesuo.yue.lexicon import clean_senses, _split_gloss
+    assert clean_senses(_split_gloss("(phrase / adverb / noun) no, not.")) == "no, not."
+    assert clean_senses(["thousand", "(Beijing dialect) stupid"]) == "thousand"
+    assert clean_senses(["a (Taiwan) b", "(archaic) c", "(literary) d", "(Tw) e", "Taiwan"]) == "Taiwan"
+    assert clean_senses(["swindler; gambling games)"]) == "swindler; gambling games"
+    assert clean_senses(["(coll.) fine"]) == "(coll.) fine"
+
+
+def test_no_shipped_meaning_has_an_unbalanced_bracket_or_a_leading_pos_tag():
+    import json
+    from jiesuo.yue.lexicon import _POS_TAG
+    p = ROOT / "app" / "yue" / "data" / "lexicon.json"
+    if not p.exists():
+        pytest.skip("no lexicon.json")
+    words = json.loads(p.read_text(encoding="utf8"))["words"]
+    en = {w[0]: w[2] for w in words}
+    for form, e in en.items():
+        assert e.count("(") == e.count(")") and e.count("[") == e.count("]"), (form, e)
+        for sense in e.split("; "):
+            assert not _POS_TAG.match(sense), (form, e)
+        assert "Beijing dialect" not in e, (form, e)
+    assert en["唔係"] == "no, not."

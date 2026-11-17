@@ -156,6 +156,41 @@ _PR_LABEL = re.compile(r"\b(?:Taiwan|colloquial|also) pr\.\s*(?:\[[^\]]*\])?", r
 _REF = re.compile(r"^(?:old variant of|variant of|see)\s+(" + _HAN.pattern + r"+)", re.I)
 
 
+_OTHER_VARIETY = re.compile(r"beijing dialect|\((?:[^()]*[\s;,/])?(?:taiwan|tw|mainland|archaic|old|literary|classical)(?:[\s;,/][^()]*)?\)",
+                            re.I)
+
+
+def _split_gloss(en: str) -> list:
+    """A CC-Canto gloss split on "/" outside brackets ("(phrase / adverb) no" is one sense)."""
+    out, depth, cur = [], 0, ""
+    for c in en:
+        depth += (c in "([") - (c in ")]")
+        if c == "/" and depth <= 0:
+            out.append(cur)
+            cur = ""
+        else:
+            cur += c
+    return [*out, cur]
+
+
+def _balanced(t: str) -> str:
+    """Drop the brackets that have no partner."""
+    for open_, close in ("()", "[]"):
+        keep, stack = [True] * len(t), []
+        for i, c in enumerate(t):
+            if c == open_:
+                stack.append(i)
+            elif c == close:
+                if stack:
+                    stack.pop()
+                else:
+                    keep[i] = False
+        for i in stack:
+            keep[i] = False
+        t = "".join(c for c, k in zip(t, keep) if k)
+    return t
+
+
 def _tidy(t: str) -> str:
     """Punctuation left dangling by the removals: empty brackets, ', ;', trailing commas."""
     for _ in range(4):
@@ -171,7 +206,8 @@ def _tidy(t: str) -> str:
 
 _POS = (r"(?:verb|adverb|adjective|noun|phrase|pronoun|plural|conjunction|preposition|prep\.|interjection|particle|"
         r"classifier|measure word|idiom|expression|adj\.|adv\.|n\.|v\.)")
-_POS_TAG = re.compile(r"^\(\s*" + _POS + r"(?:[\s;,–-]+" + _POS + r")*\s*\)\s*", re.I)
+_POS_TAG = re.compile(r"^\(\s*" + _POS + r"(?:[\s;,/–-]+" + _POS + r")*\s*\)\s*", re.I)
+_POS_MID = re.compile(r"(^|;\s*)\(\s*" + _POS + r"(?:[\s;,/–-]+" + _POS + r")*\s*\)\s*", re.I)
 _ENUM = re.compile(r"(?:^|\s)\d+\.\s+")
 
 
@@ -198,12 +234,16 @@ def clean_senses(senses, limit=3, follow=None) -> str:
         if k != -1:
             t = t[:k].strip()
         t = _PR_LABEL.sub("", t)
+        if _OTHER_VARIETY.search(t):
+            continue
         t = _HAN_PAREN.sub("", t)
         t = _HAN_PAIR.sub(r"\1", t)
         t = _PY_BRACKET.sub("", t)
         if re.search(_HAN.pattern + r"\[", t) or "|" in t or _PY_TONE.search(t):
             continue
-        t = _tidy(t)
+        t = _tidy(_balanced(t))
+        t = _POS_MID.sub(r"\1", t)  # a tag after a ";" inside a sense ("that time; (adverb) then")
+        t = _tidy(_POS_TAG.sub("", t))  # a tag that only became leading, or alone, after the removals
         if t and t not in out:
             out.append(t)
     if not out and follow:
@@ -239,7 +279,7 @@ def _english(form, jp, srcs, alt=()) -> str:
     cedict = srcs.get("cedict_jp", {}).get((form, jp)) or []
     if len(form) > 1:
         for en in glosses:
-            got = clean_senses(en.split("/"), follow=follow)
+            got = clean_senses(_split_gloss(en), follow=follow)
             if got:
                 return got
         return clean_senses(cedict, follow=follow)
@@ -249,7 +289,7 @@ def _english(form, jp, srcs, alt=()) -> str:
     if not cedict:  # CC-CEDICT marks Cantonese-only senses "(dialect)" under a pinyin the readings file lacks (睇)
         cedict = [x[len("(dialect)"):].strip() for x in _cedict_by_form(srcs).get(form, [])
                   if x.lower().startswith("(dialect)")]
-    for sense in [*cedict, *(x for en in glosses for x in en.split("/"))]:
+    for sense in [*cedict, *(x for en in glosses for x in _split_gloss(en))]:
         c = clean_senses([sense], 1, follow=follow)
         if c and c not in out:
             out.append(c)
