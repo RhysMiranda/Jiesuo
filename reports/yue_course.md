@@ -45,118 +45,103 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 39. 個 (go3)
 40. 呀 (aa3)
 41. 啦 (laa1)
-42. 都 (dou1)
-43. 呢 (ne1)
-44. 咗 (zo2)
-45. 就 (zau6)
-46. 啲 (di1)
-47. 喺 (hai2)
-48. 到 (dou3)
-49. 去 (heoi3)
-50. g:mou5v
-51. 同 (tung4)
-52. 咁 (gam3)
-53. 話 (waa6)
-54. 又 (jau6)
-55. 做 (zou6)
-56. 講 (gong2)
-57. 嘢 (je5)
-58. 得 (dak1)
-59. 即 (zik1)
-60. 即係 (zik1 hai6)
-61. g:anota
-62. 幾 (gei2)
-63. 過 (gwo3)
-64. 呢個 (ni1 go3)
-65. 嗰啲 (go2 di1)
-66. 可以 (ho2 ji5)
-67. 睇 (tai2)
-68. 一個 (jat1 go3)
-69. 覺得 (gok3 dak1)
-70. 而家 (ji4 gaa1)
-71. 知 (zi1)
-72. g:gwo3
-73. 噉樣 (gam2 joeng2)
-74. 想 (soeng2)
-75. 乜嘢 (mat1 je5)
-76. 住 (zyu6)
-77. 多 (do1)
-78. 好多 (hou2 do1)
-79. 咩 (me1)
-80. 嚟 (lai4)
-81. 但 (daan6)
-82. 但係 (daan6 hai6)
-83. 唔好 (m4 hou2)
-84. 隻 (zek3)
-85. 買 (maai5)
-86. 晒 (saai3)
-87. 間 (gaan1)
-88. 用 (jung6)
-89. 真 (zan1)
-90. 真係 (zan1 hai6)
-91. g:me1
-92. 對 (deoi3)
-93. 年 (nin4)
-94. 點 (dim2)
-95. 嗰個 (go2 go3)
-96. 嘞 (laak3)
-97. 緊 (gan2)
-98. 可能 (ho2 nang4)
-99. 最 (zeoi3)
-100. 埋 (maai4)
+42. 嘅 (ge3)
+43. g:ge3
+44. 啊 (aa3)
+45. 都 (dou1)
+46. 呢 (ne1)
+47. 咗 (zo2)
+48. 噉 (gam2)
+49. 就 (zau6)
+50. 啲 (di1)
+51. 喺 (hai2)
+52. 喇 (laa3)
+53. 人 (jan4)
+54. 會 (wui5)
+55. 到 (dou3)
+56. 去 (heoi3)
+57. g:mou5v
+58. 同 (tung4)
+59. 要 (jiu3)
+60. 囖 (lo1)
+61. 咁 (gam3)
+62. 話 (waa6)
+63. 又 (jau6)
+64. 做 (zou6)
+65. 講 (gong2)
+66. 喎 (wo3)
+67. 嘢 (je5)
+68. g:anota
+69. 得 (dak1)
+70. 即 (zik1)
+71. 即係 (zik1 hai6)
+72. 俾 (bei2)
+73. 幾 (gei2)
+74. 過 (gwo3)
+75. 吖 (aa1)
+76. 呢個 (ni1 go3)
+77. 睇 (tai2)
+78. 一個 (jat1 go3)
+79. g:gwo3
+80. 嗰 (go2)
+81. 嗰啲 (go2 di1)
+82. 下 (haa6)
+83. 知 (zi1)
+84. 先 (sin1)
+85. 想 (soeng2)
+86. 住 (zyu6)
+87. 多 (do1)
+88. 好多 (hou2 do1)
+89. 咩 (me1)
+90. 嚹 (laa3)
+91. 嚟 (lai4)
+92. 但 (daan6)
+93. 但係 (daan6 hai6)
+94. 唔好 (m4 hou2)
+95. 返 (faan1)
+96. 隻 (zek3)
+97. 食 (sik6)
+98. g:dak1
+99. 嗎 (maa3)
+100. 買 (maai5)
 
 ## Grammar points
 
 | id | cite | position | attested | words.hk | HKCanCor | Tatoeba |
 |---|---|---|---|---|---|---|
-| hai2 | 喺:hai2 | 132 | 40 | 2 | 7 | 31 |
-| ge3 | 嘅:ge3 | left out | 1 | 0 | 1 | 0 |
-| clf | 隻:zek3 | 369 | 4 | 1 | 0 | 3 |
-| zo2 | 咗:zo2 | left out | 61 | 1 | 6 | 54 |
-| gan2 | 緊:gan2 | left out | 14 | 0 | 0 | 14 |
-| gwo3 | 過:gwo3 | 72 | 6 | 1 | 5 | 0 |
-| mei6 | 未:mei6 | left out | 6 | 1 | 2 | 3 |
-| mou5v | 冇:mou5 | 50 | 3 | 0 | 3 | 0 |
-| mhou2 | 咪:mai5 | left out | 0 | 0 | 0 | 0 |
-| anota | 有冇:jau5 mou5 | 61 | 3 | 2 | 1 | 0 |
-| haimai | 係咪:hai6 mai6 | 270 | 3 | 1 | 1 | 1 |
-| qwords | 點解:dim2 gaai2 | 358 | 8 | 0 | 2 | 6 |
-| gwo3cmp | 過:gwo3 | 151 | 2 | 1 | 1 | 0 |
-| bei2 | 畀:bei2 | left out | 1 | 1 | 0 | 0 |
-| dirs | 返:faan1 | left out | 1 | 1 | 0 | 0 |
-| dak1 | 得:dak1 | left out | 1 | 0 | 1 | 0 |
-| hoi1 | 開:hoi1 | left out | 0 | 0 | 0 | 0 |
-| zyu6 | 住:zyu6 | left out | 1 | 0 | 1 | 0 |
-| haa5 | 吓:haa5 | left out | 0 | 0 | 0 | 0 |
-| maai4 | 埋:maai4 | left out | 2 | 0 | 2 | 0 |
-| faan1asp | 返:faan1 | left out | 0 | 0 | 0 | 0 |
-| laa3 | 喇:laa3 | left out | 0 | 0 | 0 | 0 |
-| wo3 | 喎:wo3 | left out | 0 | 0 | 0 | 0 |
-| lo1 | 囉:lo1 | left out | 3 | 3 | 0 | 0 |
-| me1 | 咩:me1 | 91 | 15 | 2 | 6 | 7 |
-| ge3fin | 嘅:ge3 | left out | 2 | 1 | 1 | 0 |
+| hai2 | 喺:hai2 | 296 | 67 | 5 | 22 | 40 |
+| ge3 | 嘅:ge3 | 43 | 47 | 2 | 45 | 0 |
+| clf | 隻:zek3 | 482 | 14 | 1 | 0 | 13 |
+| zo2 | 咗:zo2 | 449 | 174 | 3 | 50 | 121 |
+| gan2 | 緊:gan2 | 460 | 39 | 1 | 0 | 38 |
+| gwo3 | 過:gwo3 | 79 | 14 | 2 | 12 | 0 |
+| mei6 | 未:mei6 | 555 | 23 | 2 | 14 | 7 |
+| mou5v | 冇:mou5 | 57 | 10 | 0 | 10 | 0 |
+| mhou2 | 咪:mai5 | left out | 1 | 1 | 0 | 0 |
+| anota | 有冇:jau5 mou5 | 68 | 34 | 3 | 30 | 1 |
+| haimai | 係咪:hai6 mai6 | 350 | 5 | 1 | 2 | 2 |
+| qwords | 點解:dim2 gaai2 | 471 | 37 | 1 | 17 | 19 |
+| gwo3cmp | 過:gwo3 | 198 | 3 | 1 | 2 | 0 |
+| bei2 | 畀:bei2 | 284 | 2 | 2 | 0 | 0 |
+| dirs | 返:faan1 | 438 | 11 | 1 | 10 | 0 |
+| dak1 | 得:dak1 | 98 | 3 | 0 | 3 | 0 |
+| hoi1 | 開:hoi1 | left out | 1 | 1 | 0 | 0 |
+| zyu6 | 住:zyu6 | 247 | 2 | 0 | 2 | 0 |
+| haa5 | 吓:haa5 | 412 | 2 | 2 | 0 | 0 |
+| maai4 | 埋:maai4 | 227 | 7 | 2 | 5 | 0 |
+| faan1asp | 返:faan1 | 427 | 3 | 2 | 1 | 0 |
+| laa3 | 喇:laa3 | 326 | 2 | 2 | 0 | 0 |
+| wo3 | 喎:wo3 | 764 | 81 | 5 | 76 | 0 |
+| lo1 | 囉:lo1 | 309 | 6 | 5 | 1 | 0 |
+| me1 | 咩:me1 | 109 | 39 | 5 | 20 | 14 |
+| ge3fin | 嘅:ge3 | 183 | 28 | 3 | 25 | 0 |
 | bo3 | 噃:bo3 | left out | 0 | 0 | 0 | 0 |
 | gwaa3 | 啩:gwaa3 | left out | 0 | 0 | 0 | 0 |
 
 ### Left out
 
-- ge3: 1 attested example(s)
-- zo2: 61 attested example(s)
-- gan2: 14 attested example(s)
-- mei6: 6 attested example(s)
-- mhou2: 0 attested example(s)
-- bei2: 1 attested example(s)
-- dirs: 1 attested example(s)
-- dak1: 1 attested example(s)
-- hoi1: 0 attested example(s)
-- zyu6: 1 attested example(s)
-- haa5: 0 attested example(s)
-- maai4: 2 attested example(s)
-- faan1asp: 0 attested example(s)
-- laa3: 0 attested example(s)
-- wo3: 0 attested example(s)
-- lo1: 3 attested example(s)
-- ge3fin: 2 attested example(s)
+- mhou2: 1 attested example(s)
+- hoi1: 1 attested example(s)
 - bo3: 0 attested example(s)
 - gwaa3: 0 attested example(s)
 
@@ -165,123 +150,174 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 **hai2** `喺`
 - wordshk:49900#1: 你喺邊呀 | nei5 hai2 bin1 aa3 | Where are you?
 - wordshk:49900#2: 我喺屋企 | ngo5 hai2 uk1 kei2 | I am at home.
-- hkcancor:FC-022b_v#204: 分別喺邊呢 | fan1 bit6 hai2 bin1 ne1 | None
-- hkcancor:FC-026_v2#243: 喺屋企睇呀 | hai2 uk1 kei2 tai2 aa4 | None
-- hkcancor:FC-025_v#380: 應該都喺香港 | jing1 goi1 dou1 hai2 hoeng1 gong2 | None
-- hkcancor:FC-048_v2#118: 嘩我上次呢喺 | waa3 ngo5 soeng6 ci3 ne1 hai2 | None
+- wordshk:49899#1: 喺餐廳門口等啦 | hai2 caan1 teng1 mun4 hau2 dang2 laa1 | Let's meet outside the restaurant!
+- wordshk:49899#2: 我喺香港讀書嘅 | ngo5 hai2 hoeng1 gong2 duk6 syu1 ge3 | I used to study in Hong Kong.
+- wordshk:49899#3: 我哋喺舊年識嘅 | ngo5 dei6 hai2 gau6 nin2 sik1 ge3 | We met each other last year.
+- hkcancor:FC-106a_v2#9: 喺邊度啊 | hai2 bin1 dou6 aa3 | None
 
 **ge3** `嘅(?![咩囖啦喇啊呀嘛呢吖喎噃咋啫㗎]|$)`
-- hkcancor:FC-045_v2#273: 你嘅水平都好 | nei5 ge3 seoi2 ping4 dou1 hou2 | None
+- wordshk:13550#3: 嗰本係我嘅書 | go2 bun2 hai6 ngo5 ge3 syu1 | That is my book.
+- wordshk:13550#5: 呢間公司嘅員工好後生 | ni1 gaan1 gung1 si1 ge3 jyun4 gung1 hou2 hau6 saang1 | The employees of this company are so young.
+- hkcancor:FC-029_v#116: 嘅保險囖 | ge3 bou2 him2 lo1 | None
+- hkcancor:FC-025_v#61: 貨櫃嘅公司 | fo3 gwai6 ge3 gung1 si1 | None
+- hkcancor:FC-045_v2#73: 十嘅中間咋 | sap6 ge3 zung1 gaan1 zaa3 | None
+- hkcancor:FC-045_v2#84: 真嘅一樣喎 | zan1 ge3 jat1 joeng6 wo3 | None
 
 **clf** `[我你佢][部隻本架間條張對個支枝]`
 - wordshk:87739#2: 我隻鞋唔知去咗邊 | ngo5 zek3 haai4 m4 zi1 heoi3 zo2 bin1 | I don't know where my shoe is.
 - tatoeba:6469325: 你隻狗喺邊 | nei5 zek3 gau2 hai2 bin1 | Where's your dog?
-- tatoeba:1393435: 我唔想整污糟我隻手 | ngo5 m4 soeng2 zing2 wu1 zou1 ngo5 zek3 sau2 | I don't want to get my hands dirty.
-- tatoeba:9536305: 我隻腳個傷慢慢好緊 | ngo5 zek3 goek3 go3 soeng1 maan6 maan2 hou2 gan2 | The wound on my leg is healing.
+- tatoeba:7045360: 我隻錶好準 | ngo5 zek3 biu1 hou2 zeon2 | My watch keeps good time.
+- tatoeba:1882026: 佢偷咗我隻表 | keoi5 tau1 zo2 ngo5 zek3 biu2 | He stole my watch.
+- tatoeba:393208: 佢捉實我隻手 | keoi5 zuk1 sat6 ngo5 zek3 sau2 | She held on to my hand tightly.
+- tatoeba:4778603: 佢隻襪有個窿 | keoi5 zek3 mat6 jau5 go3 lung1 | There is a hole in his sock.
 
 **zo2** `咗`
+- wordshk:13605#3: 佢結咗婚喇 | keoi5 git3 zo2 fan1 laa3 | He is married.
 - wordshk:13605#2: 佢去咗邊度呀 | keoi5 heoi3 zo2 bin1 dou6 aa3 | Where did he go?
-- hkcancor:FC-048_v2#235: 唔記得咗考 | m4 gei3 dak1 zo2 haau2 | None
-- hkcancor:FC-R010a_v#81: 又唔記得咗 | jau6 m4 gei3 dak1 zo2 | None
-- hkcancor:FC-012_v#2: 有養咗兩隻狗 | jau5 joeng5 zo2 loeng5 zek3 gau2 | None
-- hkcancor:FC-027_v2#29: 去咗農場餐廳 | heoi3 zo2 nung4 coeng4 caan1 teng1 | None
-- hkcancor:FC-R006_v2#5: 就彈咗落地球 | zau6 daan6 zo2 lok6 dei6 kau4 | None
+- wordshk:13605#4: 你瘦咗又靚咗喎 | nei5 sau3 zo2 jau6 leng3 zo2 wo3 | You have become slimmer and prettier!
+- hkcancor:FC-046_v2#172: 過咗去先 | gwo3 zo2 heoi3 sin1 | None
+- hkcancor:FC-106b_v2#3: 去咗邊啊 | heoi3 zo2 bin1 aa3 | None
+- hkcancor:FC-108d_v2#25: 傻咗啊你 | so4 zo2 aa3 nei5 | None
 
 **gan2** `[^\s]緊(?![要張])`
+- wordshk:13606#2: 我食緊飯 | ngo5 sik6 gan2 faan6 | I am eating.
 - tatoeba:1071620: 落緊雪 | lok6 gan2 syut3 | It's snowing.
+- tatoeba:5359781: 我等緊佢 | ngo5 dang2 gan2 keoi5 | I'm waiting for him.
 - tatoeba:5360862: 我出緊嚟 | ngo5 ceot1 gan2 lai4 | I'm on my way out.
-- tatoeba:1323312: 佢學緊游水 | keoi5 hok6 gan2 jau4 seoi2 | She's learning to swim.
-- tatoeba:4778615: 太陽落緊山 | taai3 joeng4 lok6 gan2 saan1 | The sun is going down.
-- tatoeba:6005131: 佢仲係懷疑緊 | keoi5 zung6 hai6 waai4 ji4 gan2 | He is still having doubts.
-- tatoeba:1081503: 佢哋而家去緊邊 | keoi5 dei6 ji4 gaa1 heoi3 gan2 bin1 | Where are they going to right now?
+- tatoeba:795404: 佢仲嬲緊 | keoi5 zung6 nau1 gan2 | He is still angry.
+- tatoeba:1096787: 嗰男仔跳緊 | go2 naam4 zai2 tiu3 gan2 | The boy is jumping.
 
 **gwo3** `[去食睇見試聽做玩讀講學用買行搭坐飲到嚟]過`
+- wordshk:49438#2: 你去過美國未啊 | nei5 heoi3 gwo3 mei5 gwok3 mei6 aa3 | Have you ever been to the USA?
 - wordshk:49438#1: 我琴日去過間學校 | ngo5 kam4 jat6 heoi3 gwo3 gaan1 hok6 haau6 | I went to the school yesterday.
-- hkcancor:FC-001_v2#126: 我未見過 | ngo5 mei6 gin3 gwo3 | None
 - hkcancor:FC-012_v#309: 香港做過 | hoeng1 gong2 zou6 gwo3 | None
+- hkcancor:FC-045_v2#294: 睇過未吖 | tai2 gwo3 mei6 aa1 | None
 - hkcancor:FC-048_v2#165: 我都試過 | ngo5 dou1 si3 gwo3 | None
-- hkcancor:FC-001_v2#132: 但係我未見過 | daan6 hai6 ngo5 mei6 gin3 gwo3 | None
-- hkcancor:FC-108d_v2#108: 唉我都冇睇過 | aai5 ngo5 dou1 mou5 tai2 gwo3 | None
+- hkcancor:FC-001_v2#106: 真係未試過喎 | zan1 hai6 mei6 si3 gwo3 wo3 | None
 
 **mei6** `未(?![必來])`
 - wordshk:80547#3: 搞掂未呀 | gaau2 dim6 mei6 aa3 | Are you done yet?
-- hkcancor:FC-001_v2#126: 我未見過 | ngo5 mei6 gin3 gwo3 | None
-- hkcancor:FC-001_v2#132: 但係我未見過 | daan6 hai6 ngo5 mei6 gin3 gwo3 | None
-- tatoeba:4322100: 佢未應承我 | keoi5 mei6 jing1 sing4 ngo5 | He has yet to promise me.
-- tatoeba:4322104: 我哋未食飯 | ngo5 dei6 mei6 sik6 faan6 | We haven't eaten yet.
-- tatoeba:12065346: 聽朝會議準備好未 | ting1 ziu1 wui6 ji5 zeon2 bei6 hou2 mei6 | Are you ready for today's meeting?
+- wordshk:80547#1: 我仲未食飯啊，而家好肚餓 | ngo5 zung6 mei6 sik6 faan6 aa3 ji4 gaa1 hou2 tou5 ngo6 | I haven't had my meal yet, I feel so hungry now.
+- hkcancor:FC-005b_v2#93: 未摺過嘅 | mei6 zip3 gwo3 ge3 | None
+- hkcancor:FC-013_v#105: 講完未啊 | gong2 jyun4 mei6 aa3 | None
+- hkcancor:FC-029_v#162: 係囖未問 | hai6 lo1 mei6 man6 | None
+- hkcancor:FC-045_v2#294: 睇過未吖 | tai2 gwo3 mei6 aa1 | None
 
 **mou5v** `(?<!有)冇[去食睇見嚟返買講做聽搵打話答知問]`
 - hkcancor:FC-012_v#305: 佢冇睇電視 | keoi5 mou5 tai2 din6 si6 | None
 - hkcancor:FC-108d_v2#108: 唉我都冇睇過 | aai5 ngo5 dou1 mou5 tai2 gwo3 | None
-- hkcancor:FC-022b_v#194: 不過我自己呢就都冇買到 | bat1 gwo3 ngo5 zi6 gei2 ne1 zau6 dou1 mou5 maai5 dou3 | None
+- hkcancor:FC-108d_v2#22: 哦你都冇去呀 | o5 nei5 dou1 mou5 heoi3 aa4 | None
+- hkcancor:FC-028_v2#238: 冇做喇係唔係啊 | mou5 zou6 laa1 hai6 m4 hai6 aa3 | None
+- hkcancor:FC-104_v2#155: 但三年冇見過喎 | daan6 saam1 nin4 mou5 gin3 gwo3 wo3 | None
+- hkcancor:FC-108d_v2#21: 我冇去啊我今日 | ngo5 mou5 heoi3 aa3 ngo5 gam1 jat6 | None
 
 **mhou2** `唔好(?!意思)|(?<!係)咪.`
+- wordshk:56011#3: 咪聽佢講呀，佢想要你啲錢咋 | mai5 teng1 keoi5 gong2 aa3 keoi5 soeng2 jiu3 nei5 di1 cin2 zaa3 | Don't listen to her! She only wants your money!
 
 **anota** `([^唔\s])唔|有冇`
 - wordshk:90172#1: 你有冇筆呀 | nei5 jau5 mou5 bat1 aa3 | Have you got a pen?
+- wordshk:90172#2: 有冇都講聲吖 | jau5 mou5 dou1 gong2 seng1 aa1 | Let me know, no matter you have or have not!
 - wordshk:90172#3: 你有冇去過泰國呀 | nei5 jau5 mou5 heoi3 gwo3 taai3 gwok3 aa3 | Have you ever been to Thailand before?
-- hkcancor:FC-R018_v#71: 有冇啲嗰啲 | jau5 mou5 di1 go2 di1 | None
+- hkcancor:FC-012_v#76: 噉你有冇 | gam2 nei5 jau5 mou5 | None
+- hkcancor:FC-029_v#422: 有冇水啊 | jau5 mou5 seoi2 aa3 | None
+- hkcancor:FC-012_v#84: 你有冇養啊 | nei5 jau5 mou5 joeng5 aa3 | None
 
 **haimai** `係咪`
 - wordshk:89962#2: 係咪去行街呀 | hai6 mai6 heoi3 haang4 gaai1 aa3 | Are we going shopping?
+- hkcancor:FC-025_v#47: 爭少少係咪 | zaang1 siu2 siu2 hai6 mai6 | None
 - hkcancor:FC-025_v#35: 係好似唔知係咪呢 | hai6 hou2 ci5 m4 zi1 hai6 mai6 ne1 | None
+- tatoeba:13107947: 呢幅圖係咪真嘅 | ne1 fuk1 tou4 hai6 mai6 zan1 ge3 | Is this picture real?
 - tatoeba:5355363: 「佢係咪病得好犀利？」「希望唔係啦。」 | keoi5 hai6 mai6 beng6 dak1 hou2 sai1 lei6 hei1 mong6 m4 hai6 laa1 | "Is he seriously ill?" "I hope not."
 
 **qwords** `乜嘢|邊個|邊度|點解|幾時|幾多`
-- hkcancor:FC-028_v2#448: 點解冇呢噉樣 | dim2 gaai2 mou5 ne1 gam2 joeng2 | None
-- hkcancor:FC-R010a_v#13: 我唔明點解佢 | ngo5 m4 ming4 dim2 gaai2 keoi5 | None
-- tatoeba:1555120: 點解 | dim2 gaai2 | Why?
-- tatoeba:1532168: 點解係我 | dim2 gaai2 hai6 ngo5 | Why me?
-- tatoeba:14038255: 你點解唔答 | nei5 dim2 gaai2 m4 daap3 | Why didn't you answer?
-- tatoeba:11071803: 點解你學廣東話 | dim2 gaai2 nei5 hok6 gwong2 dung1 waa2 | Why did you learn Cantonese?
+- wordshk:44715#1: 你上個星期日點解唔嚟嘅 | nei5 soeng6 go3 sing1 kei4 jat6 dim2 gaai2 m4 lai4 ge2 | Why didn't you come last Sunday?
+- hkcancor:FC-028_v2#108: 哦點解啊 | o5 dim2 gaai2 aa3 | None
+- hkcancor:FC-020_v#277: 係呀點解啊 | hai6 aa4 dim2 gaai2 aa3 | None
+- hkcancor:FC-025_v#180: 點解請佢啊 | dim2 gaai2 ceng2 keoi5 aa3 | None
+- hkcancor:FC-027_v2#406: 點解啊好忙 | dim2 gaai2 aa3 hou2 mong4 | None
+- hkcancor:FC-108a_v2#50: 點解變態啊 | dim2 gaai2 bin3 taai3 aa3 | None
 
 **gwo3cmp** `[高大矮細快慢靚平貴長短多少遠近重輕難易叻]過[我你佢]`
 - wordshk:49438#5: 我高過佢 | ngo5 gou1 gwo3 keoi5 | I am taller than she is.
+- hkcancor:FC-025_v#327: 噉咪大過我 | gam2 mai6 daai6 gwo3 ngo5 | None
 - hkcancor:FC-044_v2#292: 我驚佢細過我 | ngo5 geng1 keoi5 sai3 gwo3 ngo5 | None
 
 **bei2** `[畀俾][^我你佢\s]{1,6}[我你佢]`
 - wordshk:10853#2: 你未俾錢我 | nei5 mei6 bei2 cin2 ngo5 | You haven't given me money yet.
+- wordshk:10853#1: 我俾一百蚊你 | ngo5 bei2 jat1 baak3 man1 nei5 | I give you 100 dollars.
 
 **dirs** `返(?:屋|工|學|去|嚟|到)`
 - wordshk:19169#2: 夠鐘返學嘞 | gau3 zung1 faan1 hok6 laak3 | It's time to go to school.
+- hkcancor:FC-048_v2#60: 唔係會飲完返工 | m4 hai6 wui5 jam2 jyun4 faan1 gung1 | None
+- hkcancor:FC-044_v2#153: 因為我我哋都要返工喇 | jan1 wai6 ngo5 ngo5 dei6 dou1 jiu3 faan1 gung1 laa1 | None
+- hkcancor:FC-044_v2#85: 費事要你送我返屋企喇 | fai3 si6 jiu3 nei5 sung3 ngo5 faan1 uk1 kei2 laa1 | None
+- hkcancor:FC-026_v2#318: 你覺唔覺得返工好辛苦啊 | nei5 gok3 m4 gok3 dak1 faan1 gung1 hou2 san1 fu2 aa3 | None
+- hkcancor:FC-R017_v#101: 即係唔返去俾佢捉啊即係 | zik1 hai6 m4 faan1 heoi3 bei2 keoi5 zuk1 aa3 zik1 hai6 | None
 
 **dak1** `唔[食去睇做行講買玩用試聽見飲坐]得|[食去睇做行講買玩用試聽見飲坐]得(?:晒|$|呀|啊|嘅|喎)|[食去睇做行講買玩用試聽見飲坐]得唔得`
 - hkcancor:FC-005a_v2#41: 唔用得呀 | m4 jung6 dak1 aa4 | None
+- hkcancor:FC-R002a_v2#24: 唔去得住啊 | m4 heoi3 dak1 zyu6 aa3 | None
+- hkcancor:FC-109a_v2#173: 買得唔得啊買得唔得啊 | maai5 dak1 m4 dak1 aa3 maai5 dak1 m4 dak1 aa3 | None
 
 **hoi1** `[用食睇做買玩]開(?![會工學門車])`
+- wordshk:13607#1: 阿明做開運動，身體好健康 | aa3 ming4 zou6 hoi1 wan6 dung6 san1 tai2 hou2 gin6 hong1 | Ah Ming is used to doing exercise and has a healthy body.
 
 **zyu6** `[等坐企拎揸帶睇留]住`
 - hkcancor:FC-009b_v#63: 冇老師睇住你哋即係 | mou5 lou5 si1 tai2 zyu6 nei5 dei6 zik1 hai6 | None
+- hkcancor:FC-045_v2#270: 啊我覺得係拎住嘢嗰啲呢 | aa3 ngo5 gok3 dak1 hai6 ling1 zyu6 je5 go2 di1 ne1 | None
 
 **haa5** `[試睇聽揀問望諗等學講跑行]吓|[試睇聽揀問望諗等學講跑行]下`
+- wordshk:23204#2: 我想跟你學下嘢 | ngo5 soeng2 gan1 nei5 hok6 haa5 je5 | I want to learn from you.
+- wordshk:23204#5: 不如你試下跑慢啲 | bat1 jyu4 nei5 si3 haa5 paau2 maan6 di1 | Try running at a slower speed.
 
 **maai4** `[等食攞買做帶講]埋`
+- wordshk:100323#8: 做埋份功課就走得 | zou6 maai4 fan6 gung1 fo3 zau6 zau2 dak1 | I can leave after finishing the assignment.
+- wordshk:100323#7: 我講埋呢句，之後先到你 | ngo5 gong2 maai4 ni1 geoi3 zi1 hau6 sin1 dou3 nei5 | You will have your chance to speak after I have finished my sentence.
+- hkcancor:FC-107_v2#25: 買埋件衫 | maai5 maai4 gin6 saam1 | None
 - hkcancor:FC-012_v#241: 講埋啲商業秘密 | gong2 maai4 di1 soeng1 jip6 bei3 mat6 | None
+- hkcancor:FC-R002b_v2#25: 齊晒自己做埋低成本 | cai4 saai3 zi6 gei2 zou6 maai4 dai1 sing4 bun2 | None
 - hkcancor:FC-108c_v2#159: 我哋嗰啲講埋啲廣東話呢 | ngo5 dei6 go2 di1 gong2 maai4 di1 gwong2 dung1 waa2 ne1 | None
 
 **faan1asp** `[瞓睇食講做買]返`
+- wordshk:90214#6: 食返餐好嘅 | sik6 faan1 caan1 hou2 ge3 | Let's eat something good!
+- wordshk:90214#1: 做返你應該做嘅嘢 | zou6 faan1 nei5 jing1 goi1 zou6 ge3 je5 | Go back to work on whatever you should be doing.
+- hkcancor:FC-013_v#50: 要睇返啲旅行書 | jiu3 tai2 faan1 di1 leoi5 hang4 syu1 | None
 
 **laa3** `喇`
+- wordshk:78884#3: 我做埋今日就退休喇 | ngo5 zou6 maai4 gam1 jat6 zau6 teoi3 jau1 laa3 | I will be retired after today's work.
+- wordshk:78884#4: 今日我唔返工喇，有啲唔舒服 | gam1 jat6 ngo5 m4 faan1 gung1 laa3 jau5 di1 m4 syu1 fuk6 | I think I'm not going to work today. I don't feel very well.
 
 **wo3** `喎`
+- wordshk:63362#1: 又係喎 | jau6 hai6 wo3 | Oh yeah, that’s right!
+- wordshk:63362#6: 夠鐘喇喎 | gau3 zung1 laa3 wo3 | It's almost time.
+- wordshk:63362#7: 佢遲到喎 | keoi5 ci4 dou3 wo3 | He's late though!
+- wordshk:63362#4: 喂！睇唔出喎 | wai3 tai2 m4 ceot1 wo3 | Hey! I didn’t see that coming!
+- wordshk:63362#9: 咁辣都食到喎我 | gam3 laat6 dou1 sik6 dou2 wo3 ngo5 | Even I was able to handle this spiciness.
+- hkcancor:FC-025_v#202: 冇喎反而 | mou5 wo3 faan2 ji4 | None
 
 **lo1** `囉`
 - wordshk:55295#8: 唔係囉 | m4 hai6 lo1 | I quite disagree.
 - wordshk:55295#9: 我唔同意囉 | ngo5 m4 tung4 ji3 lo1 | I don't agree at all!
+- wordshk:55295#11: 你鍾意點咪點囉 | nei5 zung1 ji3 dim2 mai6 dim2 lo1 | Do whatever you like!
 - wordshk:55295#10: 佢一定唔會鍾意你囉 | keoi5 jat1 ding6 m4 wui5 zung1 ji3 nei5 lo1 | I really don't think she will like you.
+- wordshk:55295#3: 架車咪喺對面囉，噉都睇唔到 | gaa3 ce1 mai6 hai2 deoi3 min6 lo1 gam2 dou1 tai2 m4 dou2 | The car is right opposite to you. You didn't even notice it?
+- hkcancor:FC-R018_v#11: 會玩盡囉 | wui5 waan2 zeon6 lo1 | None
 
 **me1** `[^\s]咩$`
 - wordshk:98798#2: 咁做好咩 | gam2 zou6 hou2 me1 | Is that really a good idea?
 - wordshk:98798#4: 你鍾意佢咩 | nei5 zung1 ji3 keoi5 me1 | You like him?
+- wordshk:98798#6: 乜你唔去咩 | mat1 nei5 m4 heoi3 me1 | Aren't you going?
+- wordshk:98798#3: 你唔驚佢嬲咩 | nei5 m4 geng1 keoi5 nau1 me1 | Aren't you worried that he may get mad at you?
+- wordshk:98798#5: 乜你今日唔駛返學咩 | mat1 nei5 gam1 jat6 m4 sai2 faan1 hok6 me1 | Don't you have to go to school today?
 - hkcancor:FC-026_v2#379: 嗰次係咩 | go2 ci3 hai6 me1 | None
-- hkcancor:FC-029_v#102: 你唔知咩 | nei5 m4 zi1 me1 | None
-- hkcancor:FC-048_v2#102: 係咩正啲咩 | hai6 me1 zeng3 di1 me1 | None
-- hkcancor:FC-055_v2#59: 你知邊個咩 | nei5 zi1 bin1 go3 me1 | None
 
 **ge3fin** `嘅$`
+- wordshk:98364#4: 冇事嘅 | mou5 si6 ge3 | It'll be fine.
+- wordshk:98364#3: 係我叫佢咁做嘅 | hai6 ngo5 giu3 keoi5 gam2 zou6 ge3 | I'm the one that told her to do it.
 - wordshk:98364#1: 我知道你一定會幫我嘅 | ngo5 zi1 dou3 nei5 jat1 ding6 wui5 bong1 ngo5 ge3 | I knew you would help me.
-- hkcancor:FC-R010b_v#36: 我就唔接你嘅 | ngo5 zau6 m4 zip3 nei5 ge3 | None
+- hkcancor:FC-005b_v2#93: 未摺過嘅 | mei6 zip3 gwo3 ge3 | None
+- hkcancor:FC-022b_v#124: 係關於嘅 | hai6 gwaan1 jyu1 ge3 | None
+- hkcancor:FC-R007_v2#45: 全部靚嘅 | cyun4 bou6 leng3 ge3 | None
 
 **bo3** `噃`
 

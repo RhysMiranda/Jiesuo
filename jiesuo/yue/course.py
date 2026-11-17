@@ -54,12 +54,12 @@ def headword_forms(srcs):
 def order_words(lex, first, n=5000, headwords=None):
     """Stage 1 forms in content order, then greedy by spoken frequency, truncated to n.
 
-    Only forms with a meaning for their reading (en) and, when `headwords` is given, a headword form can be
+    Only forms with a meaning for their reading (en, or a published reviewed words.hk gloss) and, when `headwords` is given, a headword form can be
     taught. A multi-character form needs the characters that are teachable words. Forms in `first` are known.
     """
     done = list(dict.fromkeys(first))
     known = set(done)
-    ok = {f for f, w in lex.items() if w.en and (headwords is None or f in headwords)}
+    ok = {f for f, w in lex.items() if (w.en or w.whk_eng) and (headwords is None or f in headwords)}
     value = {f: lex[f].freq for f in ok if lex[f].freq > 0 and f not in known}
     prereq = {}
     for f in ok:

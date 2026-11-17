@@ -120,8 +120,29 @@ def test_mismatched_gloss_is_not_used_for_a_polyphonic_char():
     assert (w.jp, w.en) == ("hong4", "")
     one = resolve_word("行", _en_srcs([("hang4", "to walk")], _chars(行=("hang4", []))))
     assert one.en == "to walk"
-    cedict = _en_srcs([], _chars(行=("hang4", [])))
-    cedict["cedict"] = {"行": ["to walk"]}
-    assert resolve_word("行", cedict).en == "to walk"
-    cedict["chars"] = _chars(行=("hong4", ["hang4"]))
-    assert resolve_word("行", cedict).en == ""
+
+
+def test_cedict_sense_is_taken_through_the_pinyin_that_maps_to_the_reading():
+    srcs = _en_srcs([], _chars(行=("hong4", ["hang4"])))
+    srcs["cedict_jp"] = {("行", "hong4"): ["row", "profession", "firm", "extra"], ("行", "hang4"): ["to walk"]}
+    w = resolve_word("行", srcs)
+    assert w.en == "row; profession; firm"  # only the hong4 senses, at most three
+    srcs["cedict_jp"] = {("行", "hang4"): ["to walk"]}
+    assert resolve_word("行", srcs).en == ""
+
+
+def test_pinyin_key_and_cedict_mapping():
+    from jiesuo.yue.lexicon import _pinyin_key
+    assert _pinyin_key("Lu:4") == _pinyin_key("lü4") == _pinyin_key("lv4") == "lu:4"
+    assert _pinyin_key("yi1 lu:4") == "yi1lu:4"
+
+
+def test_published_reviewed_wordshk_gloss_makes_a_form_teachable_without_copying_it():
+    from jiesuo.yue.sources import WordsHK
+    def e(id_, rev, pub, eng):
+        return WordsHK(id_, [("行", "hong4")], [], [], [], eng, [], rev, pub)
+    base = _en_srcs([], _chars(行=("hong4", ["hang4"])))
+    for ent, flag in ((e(1, True, True, ["row"]), True), (e(2, True, False, ["row"]), False),
+                      (e(3, False, True, ["row"]), False), (e(4, True, True, [""]), False)):
+        w = resolve_word("行", {**base, "wordshk": [ent]})
+        assert w.whk_eng is flag and w.en == ""

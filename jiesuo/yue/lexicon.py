@@ -12,6 +12,7 @@ import json
 import pickle
 import re
 import sys
+import zipfile
 from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -22,7 +23,7 @@ ROOT = readings.ROOT
 CACHE = sources.RAW / "cache"
 CEDICT = ROOT / "data" / "raw" / "cedict.json"
 MIN_TOKENS = 3
-CODE_VERSION = 2  # bump when a cached loader's result shape changes
+CODE_VERSION = 3  # bump when a cached loader's result shape changes
 SECONDARY_WEIGHT = 0.5
 REPORT_TOP = 6000
 
@@ -40,6 +41,7 @@ class Word:
     en: str = ""
     changed: list = field(default_factory=list)
     wordshk_id: int | None = None
+    whk_eng: bool = False  # a reviewed, published words.hk entry with this form and reading has an English gloss
 
 
 def is_han(ch: str) -> bool:
@@ -137,22 +139,36 @@ def _changed(form, jp, srcs):
     return out
 
 
+def _pinyin_key(py: str) -> str:
+    """Pinyin normalised the same way on both sides: lower case, no spaces, ü / v as u:."""
+    return re.sub(r"\s+", "", py.lower().replace("ü", "u:").replace("v", "u:"))
+
+
 def _english(form, jp, srcs, alt=()) -> str:
-    """A meaning that belongs to this reading. A CC-Canto gloss counts when its reading equals jp; any other
-    CC-Canto gloss or CC-CEDICT only when the word has one reading (no alternatives) and is resolved. Otherwise ""."""
+    """A meaning that belongs to this reading, from the first source that has one: a CC-Canto gloss with the same
+    reading, then CC-CEDICT senses whose pinyin the CC-Canto readings file maps to this reading (up to 3).
+    Otherwise "". `alt` is not used: a gloss never has to guess between readings."""
     if not jp:
         return ""
-    entries = srcs.get("cccanto_words", {}).get(form, [])
-    for rd, en in entries:
+    for rd, en in srcs.get("cccanto_words", {}).get(form, []):
         if rd == jp and en:
             return en
-    if alt:
-        return ""
-    for _rd, en in entries:
-        if en:
-            return en
-    ced = srcs.get("cedict", {}).get(form)
-    return "; ".join(ced[:3]) if ced else ""
+    senses = srcs.get("cedict_jp", {}).get((form, jp))
+    return "; ".join(senses[:3]) if senses else ""
+
+
+def _whk_eng_index(srcs) -> set:
+    """(form, reading) of reviewed AND published words.hk entries that have an English gloss."""
+    if "_whk_eng" not in srcs:
+        out = set()
+        for e in srcs.get("wordshk", []):
+            if e.reviewed and e.published and any(x.strip() for x in e.eng):
+                for form, jp in e.forms:
+                    r = _norm(jp, form)
+                    if r:
+                        out.add((form, r))
+        srcs["_whk_eng"] = out
+    return srcs["_whk_eng"]
 
 
 def _candidates(form, srcs):
@@ -170,7 +186,8 @@ def resolve_word(form, srcs) -> Word:
             return Word(form, "", list(r.others) if r else [], "unresolved")
         status = "agree" if r.status == "agreed" else r.status
         wid = next((i for rd, i in whk if rd == r.main), None)
-        return Word(form, r.main, list(r.others), status, en=_english(form, r.main, srcs, r.others), wordshk_id=wid)
+        return Word(form, r.main, list(r.others), status, en=_english(form, r.main, srcs, r.others), wordshk_id=wid,
+                    whk_eng=(form, r.main) in _whk_eng_index(srcs))
 
     rime, canto, whk = _candidates(form, srcs)
     whk_readings = [rd for rd, _i in whk]
@@ -183,7 +200,7 @@ def resolve_word(form, srcs) -> Word:
         wid = next((i for rd, i in whk if rd == jp), None)
         alt = [c for c in cands if c != jp]
         return Word(form, jp, alt, status, en=_english(form, jp, srcs, alt), changed=_changed(form, jp, srcs),
-                    wordshk_id=wid)
+                    wordshk_id=wid, whk_eng=(form, jp) in _whk_eng_index(srcs))
 
     if len(cands) == 1:
         return make(cands[0], "agree")
@@ -261,10 +278,31 @@ def _cached(name, files, fn):
     return data
 
 
-def _cedict():
+_READING_LINE = re.compile(r"^(\S+) \S+ \[([^\]]*)\] \{([^}]*)\}")
+CANTO_READINGS = sources.RAW / "cccedict_canto_readings.zip"
+
+
+def _cedict_jp() -> dict:
+    """(traditional form, Jyutping) -> CC-CEDICT senses, matched through CC-Canto's readings file
+    (lines like `食 食 [shi2] {sik6}`) on the pinyin of each CEDICT entry."""
+    jp_of: dict = {}
+    with zipfile.ZipFile(CANTO_READINGS) as z:
+        for member in z.namelist():
+            if member.endswith("/"):
+                continue
+            for line in z.read(member).decode("utf8").splitlines():
+                m = _READING_LINE.match(line)
+                if m:
+                    jp = " ".join(jyutping.split(m.group(3)))
+                    if jp:
+                        jp_of.setdefault((m.group(1), _pinyin_key(m.group(2))), set()).add(jp)
     out: dict = {}
     for e in json.loads(CEDICT.read_text(encoding="utf8")):
-        out.setdefault(e["traditional"], []).extend(e["english"])
+        for jp in sorted(jp_of.get((e["traditional"], _pinyin_key(e["pinyin"])), ())):
+            for sense in e["english"]:
+                lst = out.setdefault((e["traditional"], jp), [])
+                if sense not in lst:
+                    lst.append(sense)
     return out
 
 
@@ -278,7 +316,7 @@ def load_sources(overrides_path=readings.OVERRIDES) -> dict:
     tat = [raw / "tatoeba" / n for n in ("eng_sentences_detailed.tsv.bz2", "yue-eng_links.tsv.bz2",
                                          "yue_sentences_detailed.tsv.bz2")]
     srcs["tatoeba"] = _cached("tatoeba", tat, sources.load_tatoeba_yue)
-    srcs["cedict"] = _cached("cedict", [CEDICT], _cedict)
+    srcs["cedict_jp"] = _cached("cedict_jp", [CEDICT, CANTO_READINGS], _cedict_jp)
     srcs["train"], srcs["test"] = split_heldout(srcs["hkcancor"])
     # character readings for the lexicon see the train split only (phase 1's readings.json is unchanged)
     srcs["chars"] = readings.resolve_all({**srcs, "hkcancor": srcs["train"]})

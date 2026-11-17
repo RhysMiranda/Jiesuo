@@ -42,6 +42,8 @@ def test_words_without_a_meaning_for_their_reading_are_not_ordered():
     lex = lexi(W("食", "sik6", 9), W("行", "haang4", 8, en=""), W("行街", "haang4 gaai1", 7), W("飯", "faan6", 5))
     assert "行" not in course.order_words(lex, [])
     assert "行街" in course.order_words(lex, [])  # 行 is not a teachable word, so it is no prerequisite
+    lex["行"].whk_eng = True  # a published reviewed words.hk gloss keeps it teachable
+    assert "行" in course.order_words(lex, [])
     assert course.order_words(lex, ["行"])[0] == "行"  # Stage 1 content carries its own meaning
 
 
