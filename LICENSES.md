@@ -35,11 +35,16 @@ in `jiesuo/grammar.py`. It does not cover the data below.
 
 Note: rime-cantonese's ODbL `.maps` file is not used; only the CC BY 4.0 data is.
 
-### Used from phase 2 (downloaded locally, not used or shipped in phase 1)
+### Phase 2 (words and grammar), shipped in `app/yue/data/`
 
-| Source | Licence | Conditions |
-|---|---|---|
-| [words.hk](https://words.hk/) | Non-Commercial Open Data Licence 1.0 | Non-commercial use only; no sublicensing; ship the notice and disclaimer, a credits list and a link to the licence |
+| Source | Licence | Used for | Conditions |
+|---|---|---|---|
+| [Tatoeba](https://tatoeba.org/) yue sentences with English translations | CC BY 2.0 FR (`app/yue/licences/tatoeba-NOTICE.txt`) | Example sentences in `sentences.json`, Jyutping added by us | Name each sentence's author: met, the author is the fourth value of every item |
+| [words.hk](https://words.hk/) | Non-Commercial Open Data Licence 1.0 (`app/yue/licences/wordshk-NOTICE.txt`, text from https://words.hk/base/hoifong/) | Published, reviewed entries and examples in `wordshk.json`; reviewed readings for checking | Not covered by this repo's MIT licence. Non-commercial use only; no sublicensing; ship the copyright notice, disclaimer and credits list and link https://words.hk (all in `wordshk.json` and the licences page) |
+| HKCanCor sentences | CC BY 4.0 (`app/yue/licences/HKCanCor-LICENSE.txt`) | Spoken example sentences in `hkcancor.json` | Credit, link the licence |
+
+`lexicon.json` and `course.json` are CC BY-SA 4.0 and hold no words.hk text. Meanings that only words.hk supplies are
+in `wordshk.json`, never in the lexicon.
 
 Shown to the learner at `app/yue/licences/`.
 

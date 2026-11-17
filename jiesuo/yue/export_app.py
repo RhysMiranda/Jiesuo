@@ -17,12 +17,19 @@ MIN_VOICES shipped voices have recorded:
     say         the tone and checked anchors; minimalSets holds two-syllable pairs to say, si + fan
                 in every tone combination
 Syllabic m4 and ng5 have no recordings in Cantone, so they are taught in text only.
+
+Phase 2 (words and grammar), one file per licence, from the course build (course.build):
+    lexicon.json    CC BY-SA 4.0  words [form, jp, en, freqRank, flags], alts, chars {char: [jp, main first]}
+    course.json    CC BY-SA 4.0  order, stage1, grammar points with example ids, lessonSentence
+    sentences.json  CC BY 2.0 FR  Tatoeba sentences with their authors
+    hkcancor.json   CC BY 4.0     HKCanCor sentences
+    wordshk.json    words.hk Non-Commercial Open Data Licence 1.0: notice, disclaimer, credits, entries, examples
 """
 import json
 import re
 from pathlib import Path
 
-from . import jyutping
+from . import course, jyutping, lexicon
 from .readings import load_sources, resolve_char
 
 ROOT = Path(__file__).resolve().parent.parent.parent
@@ -180,6 +187,94 @@ def build(srcs=None, content=None, audio=None):
     return stage0, {"licence": READINGS_LICENCE, "chars": chars}
 
 
+LEXICON_LICENCE = ("CC BY-SA 4.0: Jyutping from rime-cantonese (CC BY 4.0) checked against CC-Canto (CC BY-SA 3.0), "
+                   "CC-CEDICT (CC BY-SA 4.0), Unihan and HKCanCor (CC BY 4.0); meanings from CC-Canto and CC-CEDICT")
+COURSE_LICENCE = "CC BY-SA 4.0: Jiesuo course order and grammar notes, built on the lexicon's sources"
+SENTENCES_LICENCE = "CC BY 2.0 FR: Tatoeba (https://tatoeba.org/), each sentence with its author"
+HKCANCOR_LICENCE = "CC BY 4.0: HKCanCor, the Hong Kong Cantonese Corpus (https://github.com/fcbond/hkcancor)"
+WORDSHK_LICENCE = ("words.hk Non-Commercial Open Data Licence 1.0 (https://words.hk/base/hoifong/): non-commercial use "
+                   "only, no sublicensing; not covered by this repository's MIT licence")
+NOTICE = ROOT / "data" / "yue" / "content" / "wordshk_notice.json"
+MAX_WORDS = 5000
+GRAMMAR_DROP = {"pattern", "licence", "entries", "exclude", "_examples"}
+
+
+def _wordshk_entries(words, wordshk):
+    """form -> [id, eng, yue_def] from reviewed AND published entries whose form AND jp equal the word's."""
+    want = {(w[0], w[1]) for w in words if w[1]}
+    out = {}
+    for e in sorted(wordshk, key=lambda e: e.id):
+        if not (e.reviewed and e.published):
+            continue
+        for form, jp in e.forms:
+            if (form, lexicon._norm(jp, form)) in want:
+                eng = "; ".join(x.strip() for x in e.eng if x.strip())
+                yue = "; ".join(x.strip() for x in e.yue if x.strip())
+                if form not in out or (eng and not out[form][1]):
+                    out[form] = [e.id, eng, yue]
+    return out
+
+
+def build_phase2(b, wordshk, chars_for, notice=None):
+    """The five phase 2 data files as dicts, from a course.build() result `b`, the words.hk entries and
+    `chars_for(char) -> [jp, ...]` (main reading first)."""
+    if notice is None:
+        notice = json.loads(NOTICE.read_text(encoding="utf8"))
+    lex, pool = b["lex"], {e["id"]: e for e in b["pool"]}
+    grammar = {}
+    placed = set(b["placed"])
+    for p in b["points"]:
+        if f"g:{p['id']}" in placed:
+            g = {k: v for k, v in p.items() if k not in GRAMMAR_DROP}
+            g["examples"] = [e["id"] for e in p["_examples"]]
+            cited = course.cited_entries(p["cite"], wordshk) if p.get("cite") else []
+            g["citeId"] = cited[0].id if cited else None  # the reviewed words.hk entry, resolved at build time
+            grammar[p["id"]] = g
+    lesson = {f: i for f, i in b["lesson"].items() if i and f in set(b["order"][:MAX_WORDS])}
+    shipped = list(dict.fromkeys([*lesson.values(), *(i for g in grammar.values() for i in g["examples"])]))
+    forms = list(dict.fromkeys([*b["order"][:MAX_WORDS], *(w for i in shipped for w in pool[i]["words"])]))
+    forms = [f for f in forms if f in lex and lex[f].jp]
+    ranked = sorted((f for f in forms if lex[f].freq > 0), key=lambda f: -lex[f].freq)
+    rank = {f: i for i, f in enumerate(ranked, 1)}
+    words, alts = [], {}
+    for f in forms:
+        w = lex[f]
+        flags = (1 if w.changed else 0) | (2 if w.alt else 0) | (4 if w.status == "unresolved" else 0)
+        words.append([f, w.jp, w.en, rank.get(f, 0), flags])
+        if w.alt:
+            alts[f] = list(w.alt)
+    chars = {}
+    for ch in sorted({c for f in forms for c in f if lexicon.is_han(c)}):
+        jps = list(chars_for(ch) or [])
+        own = lex.get(ch)
+        if own is not None and own.jp and own.jp not in jps:
+            jps.append(own.jp)
+        if jps:
+            chars[ch] = jps
+    tat, hkc, whk_ex = {}, {}, {}
+    for i in shipped:
+        e = pool[i]
+        kind = i.split(":")[0]
+        if kind == "tatoeba":
+            tat[i] = [e["text"], e["jp"], e["en"], e.get("author", "")]
+        elif kind == "hkcancor":
+            hkc[i] = [e["text"], e["jp"], None]
+        else:
+            whk_ex[i] = [e["text"], e["jp"], e["en"]]
+    credits = ("Sentences from Tatoeba (https://tatoeba.org/), CC BY 2.0 FR. Each item is [Cantonese, Jyutping, "
+               "English, author of the Cantonese sentence]; Jyutping added by Jiesuo.")
+    return {
+        "lexicon": {"licence": LEXICON_LICENCE, "words": words, "alts": alts, "chars": chars},
+        "course": {"licence": COURSE_LICENCE, "order": list(b["placed"]), "stage1": b["stage1"],
+                   "grammar": grammar, "lessonSentence": lesson},
+        "sentences": {"licence": SENTENCES_LICENCE, "credits": credits, "items": tat},
+        "hkcancor": {"licence": HKCANCOR_LICENCE, "items": hkc},
+        "wordshk": {"licence": WORDSHK_LICENCE, "notice": notice["notice"], "disclaimer": notice["disclaimer"],
+                    "credits": notice["credits"], "link": "https://words.hk",
+                    "entries": _wordshk_entries(words, wordshk), "examples": whk_ex},
+    }
+
+
 def _write(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf8")
 
@@ -191,6 +286,16 @@ def main():
     for u in stage0["units"]:
         print(f"{u['id']}: {len(u['syllables'])} syllables, {len(u['minimalSets'])} sets")
     print(f"readings: {len(readings['chars'])} characters")
+    srcs = lexicon.load_sources()
+    b = course.build(srcs)
+
+    def chars_for(ch):
+        r = lexicon._char_res(ch, srcs)
+        return [r.main, *r.others] if r is not None and r.main else []
+
+    for name, data in build_phase2(b, srcs["wordshk"], chars_for).items():
+        _write(APP / f"{name}.json", data)
+        print(f"{name}.json: {(APP / f'{name}.json').stat().st_size} bytes")
 
 
 if __name__ == "__main__":
