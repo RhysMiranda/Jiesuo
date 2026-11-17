@@ -3,7 +3,7 @@
    Run: node scripts/yue_clip_check.js data/raw/yue/tts   (the folder `python -m jiesuo.yue.tts --run` wrote)
    Each clip is split with tone.js runs; when the natural run count equals the syllable count, every run is classified
    with the tones.js classifier against a profile fitted on THAT voice's own Azure calibration clips (calib/<voice>/, made by --run; Cantone clips only if those are missing), and compared
-   with the tones of the Jyutping we sent. Writes reports/yue_tts_check.md and <dir>/check.json (the mismatched keys and the voices that could not be calibrated,
+   with the tones of the Jyutping we sent. Writes reports/yue_tts_check.md and <dir>/check.json (the mismatched keys, the keys the check covered, the missing ones and the voices that could not be calibrated,
    which `python -m jiesuo.yue.tts --publish` keeps out of speech.json until listed in data/yue/tts_ok.txt). */
 "use strict";
 const fs = require("fs");
@@ -112,7 +112,7 @@ function main(dir) {
   md.push("");
   fs.mkdirSync(path.join(ROOT, "reports"), { recursive: true });
   fs.writeFileSync(path.join(ROOT, "reports/yue_tts_check.md"), md.join("\n"));
-  fs.writeFileSync(path.join(dir, "check.json"), JSON.stringify({ mismatched: out.mismatch.map((x) => x.key).sort(), uncalibrated: uncal }, null, 1) + "\n");
+  fs.writeFileSync(path.join(dir, "check.json"), JSON.stringify({ mismatched: out.mismatch.map((x) => x.key).sort(), uncalibrated: uncal, checked: [...out.match, ...out.unsure, ...out.mismatch, ...out.unsegmented].map((x) => x.key).sort(), missing: out.missing.slice().sort() }, null, 1) + "\n");
   console.log(`clips ${Object.keys(manifest).length}  checked ${checked}  matched ${out.match.length}  unsure ${out.unsure.length}  mismatched ${out.mismatch.length}  unsegmented ${out.unsegmented.length}  uncalibrated ${out.uncalibrated.length}`);
 }
 

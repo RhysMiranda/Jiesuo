@@ -15,6 +15,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+import wave
 from dataclasses import dataclass
 from pathlib import Path
 from xml.sax.saxutils import escape
@@ -32,6 +33,7 @@ CALIB_DIR = RAW_TTS / "calib"  # <voice>/<syllable>.wav: the clip check fits eac
 # The voiced six-tone sets (the ji series is the first) that scripts/yue_tone_eval.js fits profiles from.
 CALIB_SETS = ["ji", "jau", "jan", "wai", "maa", "ngaa", "lou"]
 CALIB_FALLBACK_CHAR = "啊"  # the ph attribute decides the reading, so any Han character will do
+REPORT_PUBLISH = ROOT / "reports" / "yue_tts_publish.md"
 TTS_OK = ROOT / "data" / "yue" / "tts_ok.txt"  # keys, or "voice:<name>" lines, the learner listened to and accepted
 
 VOICES = ["zh-HK-HiuMaanNeural", "zh-HK-WanLungNeural"]
@@ -189,7 +191,7 @@ def synthesise(session, region, key, job, sleep=None):
         try:
             r = session.post(url, headers=headers, data=body, timeout=60)
             status, note = r.status_code, r.status_code
-        except OSError as e:  # network trouble: retry; say only the error class
+        except Exception as e:  # transport trouble (even a malformed header): retry; say only the error class, never its text
             r, status, note = None, None, type(e).__name__
         if status == 200:
             return r.content
@@ -210,7 +212,7 @@ def _check_result():
     if not CHECK_RESULT.exists():
         raise NotChecked("no clip check yet: run node scripts/yue_clip_check.js data/raw/yue/tts first")
     r = _load(CHECK_RESULT)
-    return set(r["mismatched"]), set(r.get("uncalibrated", []))
+    return set(r["mismatched"]), set(r.get("uncalibrated", [])), set(r.get("checked", []))
 
 
 def _accepted():
@@ -220,23 +222,39 @@ def _accepted():
     return {ln for ln in lines if ln}
 
 
-def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, uncalibrated=None, accepted=None):
-    """Write speech.json from the manifest. Left out: clips without an MP3, mismatched clips whose key is not in
-    tts_ok.txt, and every clip of a voice that could not be calibrated unless tts_ok.txt has `voice:<name>`."""
+def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, uncalibrated=None, accepted=None,
+            checked=None, stats=None):
+    """Write speech.json from the manifest. A clip ships only if the clip check covered it (matched, unsure or
+    unsegmented; mismatched only when its key is in tts_ok.txt) and its MP3 exists. Voices that could not be calibrated
+    ship only with a `voice:<name>` line in tts_ok.txt. `stats` (a dict) receives the counts of what was withheld."""
     speech_json, speech_dir = Path(speech_json or SPEECH_JSON), Path(speech_dir or SPEECH_DIR)
     if manifest is None:
         manifest = _load(MANIFEST) if MANIFEST.exists() else {}
-    if mismatched is None or uncalibrated is None:
-        m, u = _check_result()
+    if mismatched is None or uncalibrated is None or checked is None:
+        m, u, c = _check_result()
         mismatched = m if mismatched is None else mismatched
         uncalibrated = u if uncalibrated is None else uncalibrated
+        checked = c if checked is None else checked
     ok = _accepted() if accepted is None else set(accepted)
     bad = set(mismatched) - ok
-    bad_voices = {v for v in uncalibrated if f"voice:{v}" not in ok}
-    clips = {k: {"f": v["f"], "r": v["r"], "v": v["voice"]} for k, v in sorted(manifest.items())
-             if k not in bad and v["voice"] not in bad_voices and (speech_dir / f"{k}.mp3").exists()}
+    voice_ok = {v for v in uncalibrated if f"voice:{v}" in ok}
+    clips, held = {}, {"mismatched": 0, "uncalibrated voice": 0, "not checked": 0, "no mp3": 0}
+    for k, v in sorted(manifest.items()):
+        if k in bad:
+            held["mismatched"] += 1
+        elif v["voice"] in uncalibrated and v["voice"] not in voice_ok:
+            held["uncalibrated voice"] += 1
+        elif k not in checked and v["voice"] not in voice_ok:
+            held["not checked"] += 1  # generated after the check, a voice added later, or its WAV was missing
+        elif not (speech_dir / f"{k}.mp3").exists():
+            held["no mp3"] += 1
+        else:
+            clips[k] = {"f": v["f"], "r": v["r"], "v": v["voice"]}
     speech_json.parent.mkdir(parents=True, exist_ok=True)
     speech_json.write_text(json.dumps({"licence": LICENCE, "clips": clips}, ensure_ascii=False, indent=0) + chr(10), encoding="utf8")
+    if stats is not None:
+        stats["held"] = held
+        stats["unreferenced"] = sorted(p.name for p in speech_dir.glob("*.mp3") if p.stem not in clips) if speech_dir.exists() else []
     return clips
 
 
@@ -251,7 +269,9 @@ def run(jobs, session, region, key, speech_dir=None, raw_dir=None, sleep=None, o
         for n, job in enumerate(jobs, 1):
             try:
                 wav = synthesise(session, region, key, job, sleep)
-            except ValueError as e:
+                if not wav:
+                    raise ValueError("empty audio in the response")
+            except ValueError as e:  # our own messages only; they never carry transport text, the key or headers
                 failed += 1
                 out(f"skip {job.f} ({job.rate}): {e}")
                 continue
@@ -263,7 +283,14 @@ def run(jobs, session, region, key, speech_dir=None, raw_dir=None, sleep=None, o
                 continue
             wp = raw_dir / f"{job.key}.wav"
             wp.write_bytes(wav)
-            (speech_dir / f"{job.key}.mp3").write_bytes(encode(wp, WAV_RATE))
+            try:
+                mp3 = encode(wp, WAV_RATE)
+            except (AssertionError, wave.Error, EOFError) as e:  # not the 24 kHz mono 16-bit WAV we asked for
+                failed += 1
+                out(f"skip {job.f} ({job.rate}): unusable audio ({type(e).__name__})")
+                wp.unlink()
+                continue
+            (speech_dir / f"{job.key}.mp3").write_bytes(mp3)
             manifest[job.key] = {"f": job.f, "r": job.rate, "voice": job.voice, "text": job.text, "jp": job.jp}
             done += 1
             if n % 25 == 0:
@@ -286,11 +313,23 @@ def main(argv=None, env=None, session=None, out=print):
     a = ap.parse_args(argv)
     env = os.environ if env is None else env
     if a.publish:
+        stats = {}
         try:
-            out(f"speech.json: {len(publish())} clips")
+            n = len(publish(stats=stats))
         except NotChecked as e:
             out(str(e))
             return 1
+        out(f"speech.json: {n} clips")
+        for why, c in stats["held"].items():
+            if c:
+                out(f"withheld {c} clips: {why}" + (" - not checked, rerun the clip check (node scripts/yue_clip_check.js data/raw/yue/tts)" if why == "not checked" else ""))
+        if stats["unreferenced"]:
+            out(f"{len(stats['unreferenced'])} MP3s in app/yue/audio/speech/ are not in speech.json (do not commit them); listed in reports/yue_tts_publish.md")
+        nl = chr(10)
+        REPORT_PUBLISH.parent.mkdir(parents=True, exist_ok=True)
+        REPORT_PUBLISH.write_text("# Azure clips publish" + nl + nl + "".join(f"- withheld, {w}: {c}" + nl for w, c in stats["held"].items())
+                                  + nl + "MP3s in app/yue/audio/speech/ not referenced by speech.json (do not commit):" + nl + nl
+                                  + "".join(f"- {u}" + nl for u in stats["unreferenced"]), encoding="utf8")
         return 0
     jobs = plan(a.words, a.voice)
     if a.dry_run:
@@ -300,6 +339,13 @@ def main(argv=None, env=None, session=None, out=print):
     missing = [n for n, v in (("AZURE_SPEECH_KEY", key), ("AZURE_SPEECH_REGION", region)) if not v]
     if missing:
         out("missing environment variable(s): " + ", ".join(missing))
+        return 2
+    key, region = key.strip(), region.strip()
+    if not re.fullmatch(r"[\x21-\x7e]+", key):  # no whitespace, control or non-ASCII characters in a header value
+        out("AZURE_SPEECH_KEY contains characters that are not allowed in a key (whitespace or control characters); re-set the variable")
+        return 2
+    if not re.fullmatch(r"[A-Za-z0-9-]+", region):
+        out("AZURE_SPEECH_REGION is not a plain region name such as eastasia; re-set the variable")
         return 2
     if a.limit is not None:
         jobs = jobs[:a.limit]
