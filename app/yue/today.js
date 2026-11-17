@@ -53,22 +53,36 @@
       }
       return out.map((d) => ({ kind: "drill", drill: d }));
     }
+    // The kept words lesson stores its steps with any gate step unexpanded (so its drills still count toward the gate),
+    // the day, the position, and `ans`: the position already graded, so a refresh never grades it twice.
+    let base = [], lessonDay = null, ansIdx = -1;
     const persist = () => {
-      ctx.state.lesson = { words: true, steps: steps.filter((s) => s.kind !== "done"), idx };
+      ctx.state.lesson = { words: true, day: lessonDay, steps: base, idx, ans: ansIdx };
       ctx.save();
     };
     function buildWords() {
       const kept = ctx.state.lesson;
-      const ks = kept && kept.words && Array.isArray(kept.steps) ? kept.steps : null;
-      const drills = ks ? ks.filter((s) => s && s.kind === "drill") : [], ws = ks ? ks.find((s) => s && s.kind === "words") : null;
-      const ok = ks && ws && ws.plan && W.usableSteps(ws.plan.steps) && (!drills.length || L.usableSteps(drills)) && ks.length === drills.length + 1;
-      if (ok) {
-        steps = (drills.length ? L.usableSteps(drills) : []).concat([ws, { kind: "done" }]);
+      const ks = kept && kept.words && kept.day === day() && Array.isArray(kept.steps) ? kept.steps : null; // an earlier day's lesson is dropped
+      const ws = ks ? ks.filter((s) => s && s.kind === "words") : [];
+      const rest = ks ? ks.filter((s) => s && s.kind !== "words") : [];
+      const restOk = ks && (rest.length === 0 || L.usableSteps(rest));
+      const wsSteps = ws.length === 1 && ws[0].plan && Array.isArray(ws[0].plan.steps) ? W.usableSteps(ws[0].plan.steps) : null;
+      if (ks && restOk && wsSteps && ks[ks.length - 1] === ws[0] && ks.length === rest.length + 1) {
+        ws[0].plan.steps = wsSteps;
+        base = (rest.length ? L.usableSteps(rest) : []).concat([ws[0]]);
+        steps = W.expandGate(base).concat([{ kind: "done" }]);
         idx = Number.isInteger(kept.idx) ? Math.max(0, Math.min(steps.length - 1, kept.idx)) : 0;
+        ansIdx = Number.isInteger(kept.ans) ? kept.ans : -1;
+        if (ansIdx === idx && steps[idx].kind === "drill") idx++; // already graded: go on, never grade twice
+        lessonDay = kept.day;
       } else {
+        // The tone check stays reachable after moving on: the phase 1 rule (once a day, stage 0 tones-hear passed) decides.
+        const gate = L.withGate(data.stage0, [], ctx.state.stats, lessonOpts(), rng);
+        if (gate.some((s) => s.kind === "gate")) ctx.state.gate = Object.assign({}, ctx.state.gate, { offered: day() });
         const plan = C.planDay({ course: ctx.content.course, lex: ctx.content.lex, words: ctx.state.words, today: day(), rng });
-        steps = soundDrills().concat(plan.steps.length ? [{ kind: "words", plan: { steps: plan.steps, pos: 0 } }] : [], [{ kind: "done" }]);
-        idx = 0;
+        base = gate.concat(soundDrills(), [{ kind: "words", plan: { steps: plan.steps, pos: 0 } }]); // kept even when empty, so a refresh does not redraw
+        steps = W.expandGate(base).concat([{ kind: "done" }]);
+        idx = 0; ansIdx = -1; lessonDay = day();
         persist();
       }
     }
@@ -121,14 +135,19 @@
       return done();
     }
     let lastNext = 0;
-    const next = () => { const t = Date.now(); if (t - lastNext < 300) return; lastNext = t; idx++; if (wordsOn) persist(); go(); window.scrollTo(0, 0); };
+    const advance = () => { idx++; if (wordsOn) persist(); go(); window.scrollTo(0, 0); };
+    const next = () => { const t = Date.now(); if (t - lastNext < 300) return; lastNext = t; advance(); };
 
     // The word lesson draws itself; its position is kept in state.lesson so a refresh resumes it.
     function wordsPart(step) {
-      const plan = step.plan, run = W.run(Object.assign(Object.create(ctx), { day }), {
-        steps: plan.steps, pos: plan.pos,
+      const plan = step.plan;
+      if (!plan.steps.length) { advance(); return; } // nothing new or due today: straight on
+      const mine = idx;
+      const run = W.run(Object.assign(Object.create(ctx), { day }), {
+        steps: plan.steps, pos: plan.pos, ans: plan.ans,
         onPos(p) { plan.pos = p; persist(); },
-      }, (summary) => { wordSummary = summary; next(); });
+        onAnswer(p) { plan.ans = p; persist(); },
+      }, (summary) => { wordSummary = summary; Promise.resolve().then(() => { if (idx === mine && keyOff) advance(); }); }); // after run() returns, so keyOff is set
       keyOff = () => run.stop();
       staleKeyOff = keyOff;
     }
@@ -261,6 +280,7 @@
         ctx.state.stats = D.record(ctx.state.stats, d, { verdict, answer: a }, day());
         answered++;
         ctx.save();
+        if (wordsOn) { ansIdx = idx; persist(); } // graded: a refresh goes on from here, never grading it again
         feedback(d, a, verdict);
       };
       view.querySelectorAll("button.choice").forEach((b) => b.addEventListener("click", () => answer(b.dataset.a)));

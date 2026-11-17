@@ -84,11 +84,15 @@
   /** Steps kept in storage, made safe to run: the same list, or null if anything is damaged. */
   function usableSteps(steps) {
     if (!Array.isArray(steps)) return null;
-    for (const s of steps) {
+    const out = [];
+    for (let s of steps) {
       if (!isObj(s) || !isStr(s.type)) return null;
       if (s.type === "meet") {
         if (!isStr(s.item)) return null;
-        if (s.grammar) { if (!isStr(s.title) || !isStr(s.explain) || !Array.isArray(s.examples)) return null; }
+        if (s.grammar) {
+          if (!isStr(s.title) || !isStr(s.explain) || !Array.isArray(s.examples)) return null;
+          s = Object.assign({}, s, { examples: s.examples.filter((x) => isObj(x) && isStr(x.id) && isStr(x.text) && typeof x.jp === "string") }); // a damaged example is dropped, not shown
+        }
         else if (!isStr(s.form) || !isStr(s.jp) || !isStr(s.en)) return null;
       } else if (s.type === "hear" || s.type === "read" || s.type === "type") {
         if (!isStr(s.item) || !isObj(s.prompt) || !Array.isArray(s.options) || s.options.length < 2 || !s.options.every(isStr) || !isStr(s.answer)) return null;
@@ -96,8 +100,29 @@
         if (!["h", "r", "t"].includes(s.skill)) return null;
       } else if (s.type === "sentence") { if (!isStr(s.id)) return null; }
       else return null;
+      out.push(s);
     }
-    return steps;
+    return out;
+  }
+
+  /** Where a kept plan resumes: its position, or the next one when the step there was already graded (never graded twice). */
+  function resumePos(plan) {
+    const n = plan && Array.isArray(plan.steps) ? plan.steps.length : 0;
+    let p = plan && Number.isInteger(plan.pos) ? Math.max(0, Math.min(n, plan.pos)) : 0;
+    if (plan && plan.ans === p && p < n && plan.steps[p].type !== "meet" && plan.steps[p].type !== "sentence") p++;
+    return p;
+  }
+
+  /** A composed lesson's steps with each gate step turned into its numbered drills and a result step (as phase 1 shows it). */
+  function expandGate(list) {
+    const out = [];
+    for (const s of list) {
+      if (s.kind === "gate") {
+        s.drills.forEach((d, i) => out.push({ kind: "drill", drill: d, gate: { i: i + 1, n: s.drills.length } }));
+        out.push({ kind: "gateResult" });
+      } else out.push(s);
+    }
+    return out;
   }
 
   // ---- the lesson on screen -------------------------------------------------------------------------------------
@@ -113,7 +138,8 @@
     const K = ctx.content, view = ctx.view, esc = ctx.esc;
     const steps = plan.steps;
     const freshItems = new Set(steps.filter((s) => s.type === "meet").map((s) => s.item));
-    let pos = Math.max(0, Math.min(steps.length, Number.isInteger(plan.pos) ? plan.pos : 0));
+    let pos = resumePos(plan);
+    if (pos !== plan.pos && plan.onPos) plan.onPos(pos);
     let keyOff = null, token = 0, lastNext = 0, stopped = false;
     const tally = { answered: 0, right: 0, fresh: freshItems.size };
 
@@ -174,6 +200,7 @@
       ctx.state.words = C.record(ctx.state.words, step.item, step.skill, correct, ctx.day());
       tally.answered++; if (correct) tally.right++;
       ctx.save();
+      if (plan.onAnswer) plan.onAnswer(pos); // kept now, so a refresh cannot grade this step again
     };
 
     function go() {
@@ -332,7 +359,7 @@
     // ---- the closing sentence: hear it, then the characters and Jyutping, then the English, then the credit
     function sentence(step) {
       const ex = K.lex.example(step.id);
-      if (!ex) { next(); return; }
+      if (!ex) { pos++; if (plan.onPos) plan.onPos(pos); go(); return; } // nothing to show: skip, no debounce
       const none = noAudio(step.id);
       shell(`${head(step)}<h1>One more sentence</h1><p class="soft">Listen first, then look.</p>
         <div class="row">${playBtn(step.id, "Play")}${playBtn(step.id, "Slower", true)}</div>${audioMsg}
@@ -366,5 +393,5 @@
     return { stop() { stopped = true; token++; clearKeys(); } };
   }
 
-  return { run, stepLabel, feedbackFor, changedNote, creditParts, usableSteps, clean };
+  return { run, resumePos, expandGate, stepLabel, feedbackFor, changedNote, creditParts, usableSteps, clean };
 });

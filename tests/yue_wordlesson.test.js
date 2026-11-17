@@ -53,3 +53,32 @@ test("usableSteps accepts planDay steps and refuses damage", () => {
   assert.strictEqual(W.usableSteps("no"), null);
   assert.strictEqual(W.usableSteps([{ type: "wat" }]), null);
 });
+
+test("resumePos never lands on a step that was already graded", () => {
+  const steps = [{ type: "meet" }, { type: "hear" }, { type: "read" }, { type: "sentence" }];
+  assert.strictEqual(W.resumePos({ steps, pos: 1, ans: 1 }), 2); // graded, so go on
+  assert.strictEqual(W.resumePos({ steps, pos: 1 }), 1);
+  assert.strictEqual(W.resumePos({ steps, pos: 1, ans: 0 }), 1);
+  assert.strictEqual(W.resumePos({ steps, pos: 3, ans: 3 }), 3); // a sentence is not graded
+  assert.strictEqual(W.resumePos({ steps, pos: 99 }), 4);
+  assert.strictEqual(W.resumePos({ steps: [] }), 0);
+});
+test("the tone check is offered in words mode when it is due, and expands to numbered drills", () => {
+  const Drills = require("../app/yue/drills.js"), L = require("../app/yue/lesson.js");
+  const stage0 = require("../app/yue/data/stage0.json"), audio = require("../app/yue/data/audio.json");
+  const stats = Drills.emptyStats();
+  stats.byUnit["tones-hear"] = Array.from({ length: 20 }, () => ({ r: 1, d: "2026-01-01" }));
+  const opts = { audio, today: "2026-11-17", gateLast: null };
+  const g = L.withGate(stage0, [], stats, opts, Math.random);
+  assert.ok(g.some((s) => s.kind === "gate"), "due: no gate passed, tones-hear passed, not offered today");
+  const ex = W.expandGate(g);
+  assert.strictEqual(ex.filter((s) => s.kind === "drill").length, 40);
+  assert.deepStrictEqual(ex[0].gate, { i: 1, n: 40 });
+  assert.strictEqual(ex[ex.length - 1].kind, "gateResult");
+  assert.deepStrictEqual(L.withGate(stage0, [], stats, Object.assign({}, opts, { gateLast: "2026-11-17" }), Math.random), [], "at most once a day");
+});
+test("usableSteps drops damaged grammar examples", () => {
+  const g = { type: "meet", item: "g:x", grammar: true, title: "t", explain: "e", examples: [null, { id: "a", text: "嘅", jp: "ge3" }, { id: 3 }] };
+  const out = W.usableSteps([g]);
+  assert.strictEqual(out[0].examples.length, 1);
+});
