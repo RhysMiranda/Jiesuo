@@ -117,6 +117,7 @@ def test_run_mocked_never_leaks_key(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(tts, "CALIB_DIR", tmp_path / "raw" / "calib")
     monkeypatch.setattr(tts, "MANIFEST", tmp_path / "raw" / "manifest.json")
     monkeypatch.setattr(tts, "CHECK_RESULT", tmp_path / "raw" / "check.json")
+    monkeypatch.setattr(tts, "REPORT_PUBLISH", tmp_path / "pub.md")
     monkeypatch.setattr(tts, "TTS_OK", tmp_path / "ok.txt")
     sess = FakeSession([429, 503], _wav_bytes(tmp_path))
     sleeps = []
@@ -165,6 +166,7 @@ def test_publish_skips_uncalibrated_voice_unless_accepted(tmp_path):
 
 def test_publish_reads_tts_ok_file_and_needs_check(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(tts, "CHECK_RESULT", tmp_path / "check.json")
+    monkeypatch.setattr(tts, "REPORT_PUBLISH", tmp_path / "pub.md")
     monkeypatch.setattr(tts, "TTS_OK", tmp_path / "ok.txt")
     monkeypatch.setattr(tts, "MANIFEST", tmp_path / "m.json")
     monkeypatch.setattr(tts, "SPEECH_DIR", tmp_path)
@@ -208,11 +210,11 @@ def test_publish_withholds_clips_the_check_did_not_cover(tmp_path):
 
 def test_publish_cli_says_rerun_check(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(tts, "CHECK_RESULT", tmp_path / "check.json")
+    monkeypatch.setattr(tts, "REPORT_PUBLISH", tmp_path / "pub.md")
     monkeypatch.setattr(tts, "TTS_OK", tmp_path / "ok.txt")
     monkeypatch.setattr(tts, "MANIFEST", tmp_path / "m.json")
     monkeypatch.setattr(tts, "SPEECH_DIR", tmp_path)
     monkeypatch.setattr(tts, "SPEECH_JSON", tmp_path / "s.json")
-    monkeypatch.setattr(tts, "REPORT_PUBLISH", tmp_path / "pub.md")
     (tmp_path / "m.json").write_text(json.dumps({"a": {"f": "f", "r": "0%", "voice": HIU}}))
     (tmp_path / "a.mp3").write_bytes(b"x")
     (tmp_path / "check.json").write_text(json.dumps({"mismatched": [], "uncalibrated": [], "checked": []}))
