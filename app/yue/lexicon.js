@@ -15,6 +15,7 @@
       try { JP.parse(ini + fin + "1"); SYLLABLES.add(ini + fin); } catch (e) { /* not a syllable */ }
     }
   }
+  const STATUS = { a: "agree", c: "corpus", w: "wordshk", o: "override" }; // row[5]: how the reading was settled
   const TONE_MAP = { "7": "1", "8": "3", "9": "6" };
 
   const MAX_SPLITS = 8;
@@ -94,7 +95,7 @@
     const byForm = new Map();
     for (const row of lex.words || []) {
       if (!Array.isArray(row) || typeof row[0] !== "string") continue;
-      const e = { form: row[0], jp: row[1] || "", en: row[2] || "", rank: row[3] == null ? 1e9 : row[3], flags: row[4] | 0 };
+      const e = { form: row[0], jp: row[1] || "", en: row[2] || "", rank: row[3] == null ? 1e9 : row[3], flags: row[4] | 0, status: STATUS[row[5]] || null };
       const parts = JP.split(e.jp);
       e.syls = parts.map((x) => x.replace(/[0-9]+$/, ""));
       e.tones = parts.map((x) => { const m = /[0-9]+$/.exec(x); return m ? Number(m[0]) : null; });
@@ -130,7 +131,7 @@
         const e = byForm.get(form);
         if (!e) return null;
         const w0 = wkEntry(form);
-        const out = { form: e.form, jp: e.jp, en: enOf(e), whkEn: (w0 && w0[1]) || null, rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2), unchecked: !!(e.flags & 4) };
+        const out = { form: e.form, jp: e.jp, en: enOf(e), whkEn: (w0 && w0[1]) || null, rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2), unchecked: !!(e.flags & 4), status: e.status, alts: Array.isArray(lex.alts && lex.alts[form]) ? lex.alts[form].slice() : [] };
         const w = wkEntry(form);
         if (w) out.wordshk = { id: w[0], eng: w[1], def: w[2] };
         return out;
@@ -276,7 +277,47 @@
       return null;
     }
 
-    return { word, segment, normalise, candidates, consume, search, example };
+    /** Read-screen summary: Han tokens counted, those in `words` (the learner's progress) known, and up to 5 unseen,
+     *  checked lexicon words by rank to learn next. Never throws. */
+    function readReport(segments, wordsState) {
+      const out = { known: 0, total: 0, learnNext: [] };
+      try {
+        const seen = wordsState && typeof wordsState === "object" ? wordsState : {};
+        const next = new Map();
+        for (const s of Array.isArray(segments) ? segments : []) {
+          if (!s || s.kind !== "han") continue;
+          out.total++;
+          if (Object.prototype.hasOwnProperty.call(seen, s.t) && seen[s.t]) { out.known++; continue; }
+          const e = byForm.get(s.t);
+          if (e && !(e.flags & 4) && !next.has(s.t)) next.set(s.t, e.rank || 1e9); // rank 0 means unranked
+        }
+        out.learnNext = Array.from(next.entries()).sort((a, b) => a[1] - b[1]).slice(0, 5).map((x) => x[0]);
+      } catch (err) { /* keep what we have */ }
+      return out;
+    }
+
+    // Attested sentences by form, built on first use: [{id, text, rank}] over all three pools.
+    let pool = null;
+    function buildPool() {
+      pool = [];
+      const add = (items, pri) => { for (const [id, r] of Object.entries(items || {})) pool.push({ id, text: r[0], en: !!r[2], pri }); };
+      add(d.sentences && d.sentences.items, 0);
+      add(d.wordshk && d.wordshk.examples, 1);
+      add(d.hkcancor && d.hkcancor.items, 2);
+    }
+    /** Up to k example ids that contain `form`: the word's own words.hk examples first, then those with an English line, Tatoeba before the rest, short first. */
+    function examplesFor(form, k) {
+      try {
+        if (typeof form !== "string" || !form) return [];
+        if (!pool) buildPool();
+        const w = wkEntry(form), own = w ? "wordshk:" + w[0] + "#" : null;
+        const hits = pool.filter((p) => p.text.includes(form));
+        const score = (p) => (own && p.id.startsWith(own) ? 0 : 1) * 1000 + (p.en ? 0 : 500) + p.pri * 100 + p.text.length;
+        return hits.sort((a, b) => score(a) - score(b)).slice(0, k == null ? 3 : k).map((p) => p.id);
+      } catch (err) { return []; }
+    }
+
+    return { word, segment, readReport, examplesFor, normalise, candidates, consume, search, example };
   }
 
   return { create, normalise, scoreTyping };

@@ -371,5 +371,6 @@
     go();
   }
 
+  render.stop = () => { if (staleKeyOff) { staleKeyOff(); staleKeyOff = null; } }; // called by the router when Today is left
   window.JyutScreens.today = render;
 })();

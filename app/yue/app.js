@@ -1,11 +1,11 @@
-/* Jiesuo 粵: the shell. Loads the data, keeps progress, routes #today / #type / #sounds / #progress.
+/* Jiesuo 粵: the shell. Loads the data, keeps progress, routes #today / #type / #sounds / #read / #search / #word/<form> / #progress.
    Screens register on window.JyutScreens (see today.js); the Progress screen lives here. */
 (async function () {
   "use strict";
   const STORE_KEY = "jiesuo-yue-progress-v1";
   const BACKUP_KEY = "jiesuo-yue-progress-backup"; // the last save before a forced fresh start
   const HOME = "today";
-  const SCREENS = ["today", "type", "sounds", "progress"];
+  const SCREENS = ["today", "type", "sounds", "read", "search", "progress"]; // #word/<form> is also a screen (under Search)
   const view = document.getElementById("view");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -185,14 +185,18 @@
   }
 
   // ---- Routing: a plain #name, the only hash form every host preserves
+  let current = null; // the screen drawn last; its `stop` hook (screen.stop) runs when the route changes
   function route() {
     const h = (location.hash || "#" + HOME).slice(1);
-    const tab = SCREENS.includes(h) ? h : HOME;
-    document.querySelectorAll(".tabs a").forEach((a) => (a.dataset.tab === tab ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
+    const name = h.split("/")[0];
+    const tab = SCREENS.includes(h) ? h : name === "word" ? "word" : HOME;
     const screens = window.JyutScreens || {};
+    if (current && screens[current] && typeof screens[current].stop === "function") { try { screens[current].stop(); } catch (e) { /* a cleanup must never block navigation */ } }
+    current = tab;
+    document.querySelectorAll(".tabs a").forEach((a) => (a.dataset.tab === (tab === "word" ? "search" : tab) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
     const draw = () => {
       if (tab === "progress") renderProgress();
-      else if (typeof screens[tab] === "function") screens[tab](ctx);
+      else if (typeof screens[tab] === "function") screens[tab](ctx, h);
       else view.innerHTML = `<p class="soft">This screen is not ready yet.</p>`;
     };
     // A kept lesson is the likeliest culprit and costs nothing to drop, so that is tried first. Never leave the

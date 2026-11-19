@@ -19,7 +19,7 @@ MIN_VOICES shipped voices have recorded:
 Syllabic m4 and ng5 have no recordings in Cantone, so they are taught in text only.
 
 Phase 2 (words and grammar), one file per licence, from the course build (course.build):
-    lexicon.json    CC BY-SA 4.0  words [form, jp, en, freqRank, flags], alts, chars {char: [jp, main first]}
+    lexicon.json    CC BY-SA 4.0  words [form, jp, en, freqRank, flags, status], status a/c/w/o = agree/corpus/words.hk/override, alts, chars {char: [jp, main first]}
     course.json    CC BY-SA 4.0  order, stage1, grammar points with example ids, lessonSentence
     sentences.json  CC BY 2.0 FR  Tatoeba sentences with their authors and translation authors
     hkcancor.json   CC BY 4.0     HKCanCor sentences
@@ -47,6 +47,7 @@ MIN_VOICES = 2
 MIN_SOURCES = 2  # an "other" reading ships only if at least this many sources list it
 HAN = re.compile(r"[㐀-鿿\U00020000-\U0003ffff]")
 
+STATUS_CODE = {"agree": "a", "corpus": "c", "wordshk": "w", "override": "o"}  # how the reading was settled (lexicon row[5])
 ASPIRATION = [("b", "p"), ("d", "t"), ("g", "k"), ("gw", "kw"), ("z", "c")]
 ENDINGS = [("m", "n", "ng"), ("p", "t", "k")]
 ROUNDED = [("i", "yu"), ("in", "yun"), ("it", "yut"), ("e", "oe"), ("eng", "oeng"), ("ek", "oek"), ("ei", "eoi")]
@@ -254,7 +255,7 @@ def build_phase2(b, wordshk, chars_for, notice=None):
     for f in forms:
         w = lex[f]
         flags = (1 if w.changed else 0) | (2 if w.alt else 0) | (4 if w.status == "unresolved" else 0)
-        words.append([f, w.jp, w.en, rank.get(f, 0), flags])
+        words.append([f, w.jp, w.en, rank.get(f, 0), flags, STATUS_CODE.get(w.status, "")])
         if w.alt:
             alts[f] = list(w.alt)
     chars = {}

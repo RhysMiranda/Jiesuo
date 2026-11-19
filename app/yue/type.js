@@ -55,8 +55,7 @@
       const got = picked.map((p) => p.form).join("");
       if (got === target) {
         done = true;
-        ctx.state.words = C.record(ctx.state.words, target, "t", true, day());
-        ctx.save();
+        if (!shown) { ctx.state.words = C.record(ctx.state.words, target, "t", true, day()); ctx.save(); } // a peeked answer does not count
         play(target);
       } else tried = true;
       paint();
@@ -123,7 +122,7 @@
 
     function wire() {
       view.querySelectorAll("[data-mode]").forEach((b) => { b.onclick = () => { mode = b.dataset.mode; pickTarget(); setField(""); paint(); }; });
-      view.querySelectorAll(".cand").forEach((b) => { b.onclick = () => pick(Number(b.dataset.i)); });
+      view.querySelectorAll(".cand").forEach((b) => { b.onclick = () => { pick(Number(b.dataset.i)); refocus(); }; });
       const $ = (id) => view.querySelector("#" + id);
       if ($("hear")) $("hear").onclick = () => play(target);
       if ($("reveal")) $("reveal").onclick = () => { shown = !shown; paint(); };
@@ -136,7 +135,7 @@
         setField(f.value);
         const box = view.querySelector(".cands");
         box.innerHTML = candList();
-        box.querySelectorAll(".cand").forEach((b) => { b.onclick = () => { pick(Number(b.dataset.i)); const g = view.querySelector("#ime"); if (g) g.focus(); }; });
+        box.querySelectorAll(".cand").forEach((b) => { b.onclick = () => { pick(Number(b.dataset.i)); refocus(); }; });
       };
       f.onkeydown = (e) => {
         if (e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
