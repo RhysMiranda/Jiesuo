@@ -131,6 +131,7 @@ Tone check: guide mode; on held-out recordings it is right on 85.1% of the sylla
 - **Map** (圖, from the Progress screen) shows the whole course in bands of 50: new, learning, or strong (box 4 or more in all three skills). **Progress** also counts words per skill and what is due today.
 - Data: a lexicon with checked Jyutping readings, the course order and grammar notes, example sentences from Tatoeba and HKCanCor, and published, reviewed entries from [words.hk](https://words.hk). See [LICENSES.md](LICENSES.md).
 - Progress files are `v: 2` (words included). A `v: 1` file from phase 1 still loads.
+- Held-out evaluation (readings, word splitting, course coverage; run `python -m jiesuo.yue.evaluate`): [reports/yue_accuracy.md](reports/yue_accuracy.md).
 
 Optional neural audio (Azure Speech, zh-HK voices, with our own Jyutping sent as SSML). Until it is made the app uses the recorded syllables and your device's voice. Run these in your own terminal, and set the key there; it is read only from the environment and is never written to a file or a log:
 
