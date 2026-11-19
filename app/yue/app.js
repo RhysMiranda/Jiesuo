@@ -5,7 +5,7 @@
   const STORE_KEY = "jiesuo-yue-progress-v1";
   const BACKUP_KEY = "jiesuo-yue-progress-backup"; // the last save before a forced fresh start
   const HOME = "today";
-  const SCREENS = ["today", "type", "sounds", "read", "search", "progress"]; // #word/<form> is also a screen (under Search)
+  const SCREENS = ["today", "type", "sounds", "read", "search", "progress", "map"]; // #word/<form> is also a screen (under Search)
   const view = document.getElementById("view");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -91,6 +91,24 @@
     }).join("");
   }
 
+  // Word progress: counts per skill, what is due today, and the link to the Map. "" when the word data did not load.
+  function wordRows() {
+    const K = data.content;
+    if (!K || !window.JyutCourse) return "";
+    const lib = JyutCourse.library(K.course, state.words, JiesuoJourney.dayKey());
+    const due = lib.bands.reduce((n, b) => n + b.due, 0);
+    const learned = lib.bands.reduce((n, b) => n + b.learned, 0);
+    const total = (K.course.order || []).length;
+    const row = ([k, label]) => `<tr><th scope="row">${label}</th><td>${lib.skills[k].learned} learned</td><td>${lib.skills[k].strong} strong</td></tr>`;
+    return `<section class="stack">
+        <h2>Words and grammar</h2>
+        <p>${learned} of ${total} items started. ${due ? `<strong>${due} due today.</strong>` : "Nothing due today."}</p>
+        <table class="wordcounts"><tbody>${[["h", "Hearing"], ["r", "Reading"], ["t", "Typing"]].map(row).join("")}</tbody></table>
+        <p class="soft small">Strong means box 4 or more.</p>
+        <p><a class="btn" href="#map" style="display:inline-block">Open the Map 圖</a></p>
+      </section>`;
+  }
+
   function renderProgress() {
     const g = JyutDrills.gate(state.stats);
     const gateLine = g.passed
@@ -111,6 +129,7 @@
         <p>${esc(gateLine)}</p>
         ${guide}
       </section>
+      ${wordRows()}
       <details class="whole" open>
         <summary>Save, restore or move your progress</summary>
         <div class="stack">
@@ -135,6 +154,7 @@
       </details>
       <section class="credits">
         <p>Learning Mandarin too? <a href="../">Open Jiesuo 解锁</a>. It keeps its own progress.</p>
+        <p class="small">Words and example sentences: <a href="https://words.hk" target="_blank" rel="noopener">words.hk</a> (Hong Kong Lexicography Limited, non-commercial open data licence) and <a href="https://tatoeba.org/" target="_blank" rel="noopener">Tatoeba</a> contributors (CC BY 2.0 FR), with HKCanCor and rime-cantonese.</p>
         <p><a href="licences/">Licences and where the data comes from</a></p>
       </section>`;
 
@@ -193,7 +213,7 @@
     const screens = window.JyutScreens || {};
     if (current && screens[current] && typeof screens[current].stop === "function") { try { screens[current].stop(); } catch (e) { /* a cleanup must never block navigation */ } }
     current = tab;
-    document.querySelectorAll(".tabs a").forEach((a) => (a.dataset.tab === (tab === "word" ? "search" : tab) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
+    document.querySelectorAll(".tabs a").forEach((a) => (a.dataset.tab === (tab === "word" ? "search" : tab === "map" ? "progress" : tab) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
     const draw = () => {
       if (tab === "progress") renderProgress();
       else if (typeof screens[tab] === "function") screens[tab](ctx, h);

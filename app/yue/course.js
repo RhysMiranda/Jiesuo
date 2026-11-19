@@ -299,5 +299,43 @@
     return { steps: body };
   }
 
-  return { SKILLS, wordsUnlocked, nextNew, due, planDay, record, markSeen, shortEn, meaning, info, checkTyped, exercises, hear, read, type };
+  // ---- the library (Map and Progress) -------------------------------------------------------------------------
+
+  const BAND = 50;
+  const STRONG_BOX = 4;
+
+  /**
+   * The course as bands of 50 items (1-based, inclusive from/to), each cell {item, state: new|learning|strong, due, grammar},
+   * with per-band learned and due counts, plus per-skill {learned, strong} over every entry in words.
+   * An item is strong when every skill it is drilled in (hearing only for grammar) is in box 4 or higher.
+   */
+  function library(course, words, today) {
+    const w = words && typeof words === "object" ? words : {};
+    const skills = {};
+    for (const k of SKILLS) skills[k] = { learned: 0, strong: 0 };
+    for (const e of Object.values(w)) {
+      if (!e) continue;
+      for (const k of SKILLS) if (Array.isArray(e[k])) { skills[k].learned++; if (e[k][0] >= STRONG_BOX) skills[k].strong++; }
+    }
+    const order = (course && course.order) || [];
+    const bands = [];
+    for (let at = 0; at < order.length; at += BAND) {
+      const cells = [];
+      let learned = 0, dueN = 0;
+      for (const item of order.slice(at, at + BAND)) {
+        const e = Object.prototype.hasOwnProperty.call(w, item) ? w[item] : null;
+        const grammar = isGrammar(item);
+        const need = grammar ? ["h"] : SKILLS;
+        const isDue = !!e && SKILLS.some((k) => Array.isArray(e[k]) && e[k][1] <= today);
+        const state = !e ? "new" : need.every((k) => Array.isArray(e[k]) && e[k][0] >= STRONG_BOX) ? "strong" : "learning";
+        if (e) learned++;
+        if (isDue) dueN++;
+        cells.push({ item, state, due: isDue, grammar });
+      }
+      bands.push({ from: at + 1, to: at + cells.length, learned, due: dueN, cells });
+    }
+    return { bands, skills };
+  }
+
+  return { SKILLS, library, wordsUnlocked, nextNew, due, planDay, record, markSeen, shortEn, meaning, info, checkTyped, exercises, hear, read, type };
 });

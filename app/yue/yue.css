@@ -85,3 +85,19 @@
 .wordpage .ex-text { font-size: 1.3rem; }
 .wordpage .audiomsg:empty { display: none; }
 .wordpage .mem { margin: 0; padding-left: 1.2em; }
+
+/* Map 圖 and the Progress word counts */
+.mapgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); gap: 4px; }
+.mapcell { position: relative; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 2px; overflow: hidden; border: 1px solid var(--grid); background: var(--sheet); color: var(--ink); font: 500 .95rem/1.1 var(--zh); text-decoration: none; white-space: nowrap; }
+.mapcell.new { border-style: dashed; color: var(--soft); background: transparent; }
+.mapcell.learning { background: var(--pen-wash); border-color: var(--pen); }
+.mapcell.strong { background: var(--pen); border-color: var(--pen); color: var(--paper); }
+.mapcell.due::after { content: ""; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); }
+.mapcell .gmark { font: 700 1rem var(--zh); }
+.mapcell:is(a):hover, .mapcell:is(a):focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+.legend { display: inline-flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+.legend .mapcell { display: inline-flex; min-height: 0; width: 18px; height: 18px; padding: 0; vertical-align: middle; font-size: .7rem; }
+.legend .mapcell.gram { width: 22px; }
+.wordcounts { width: 100%; border-collapse: collapse; }
+.wordcounts th, .wordcounts td { padding: 4px 8px; text-align: left; border-bottom: 1px dashed var(--grid); font-weight: 400; }
+.wordcounts td { text-align: right; }
