@@ -60,3 +60,46 @@ def test_table_reading_is_the_lexicon_reading():
             assert v["jp"] == rows[form][1], form
     flagged = {f for f, r in rows.items() if r[4] & 8}
     assert flagged == set(TABLE["items"]) & set(rows)
+
+
+def _words():
+    return {r[0]: r for r in _load("lexicon.json")["words"]}
+
+
+def test_tam5_taam_meaning_is_not_taken_from_tam3():
+    en = _words()["氹"][2]
+    assert "happy" not in en and "puddle" in en
+
+
+def _example(i):
+    kind = i.split(":")[0]
+    if kind == "wordshk":
+        return _load("wordshk.json")["examples"][i]
+    return _load("hkcancor.json" if kind == "hkcancor" else "sentences.json")["items"][i]
+
+
+def _example_text(i):
+    return _example(i)[0]
+
+
+def test_lesson_sentence_does_not_read_a_tone_variant_as_the_word():
+    ls = _load("course.json")["lessonSentence"]
+    for form, bad in (("地下", "地下音樂"), ("氹", "氹佢入局"), ("走廊", "加沙走廊")):
+        if form in ls:
+            assert bad not in _example_text(ls[form]), form
+    if "掂" in ls:
+        assert "dim3" not in _example(ls["掂"])[1].split()
+
+
+def test_no_profane_example_or_drilled_form():
+    c = _load("course.json")
+    ids = list(c["lessonSentence"].values()) + [i for g in c["grammar"].values() for i in g["examples"]]
+    for i in ids:
+        assert not set("撚屌鳩閪") & set(_example_text(i)), i
+    assert not [f for f in c["order"] if not f.startswith("g:") and set("撚屌鳩閪") & set(f)]
+
+
+def test_anota_has_an_example_that_is_not_you_mou():
+    ex = _load("course.json")["grammar"]["anota"]["examples"]
+    assert any("有冇" not in _example_text(i) for i in ex)
+    assert any("有冇" not in _example_text(i) for i in ex[:5])

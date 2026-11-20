@@ -362,6 +362,30 @@ def own_syllables(ex):
     return " ".join(jp for _t, jp in ex.get("toks", ())).split()
 
 
+PROFANE = frozenset("撚屌鳩閪")
+
+
+def profane(text):
+    """True if the text has one of the four vulgar characters 撚 屌 鳩 閪: never an example, never drilled."""
+    return any(c in PROFANE for c in text)
+
+
+def _aa_ok(point, ex):
+    """A唔A half of an A唔A point: the example has verb唔verb whose Jyutping (the example's own) repeats the syllable
+    around m4, so 去唔去 qualifies without having the cite key 有冇."""
+    if point["id"] != "anota":
+        return False
+    syls = own_syllables(ex)
+    han = [c for c in ex["text"] if is_han(c)]
+    if syls is None or len(syls) != len(han):
+        return False
+    text = "".join(han)
+    for k in range(len(text) - 2):
+        if text[k + 1] == "唔" and text[k] == text[k + 2] and syls[k + 1] == "m4" and syls[k] == syls[k + 2]:
+            return True
+    return False
+
+
 def _key_ok(point, ex, lex, wordshk_ids):
     """Provenance rule (R4b): a words.hk example from the cited entries, or (not for a sentence-final particle point)
     from any reviewed published entry when its own Jyutping gives the key word the cited reading; HKCanCor needs the cited reading on the key token;
@@ -404,11 +428,22 @@ def grammar_examples(point, pool, pos, lex, wordshk):
     ids = set(point.get("entries") or cited) & cited  # the sense entries whose examples may be used
     skip = set(point.get("exclude") or ())
     rank = {"wordshk": 0, "hkcancor": 1, "tatoeba": 2}
-    found = [ex for ex in pool if ex["id"] not in skip and _matches(point, ex, pos) and _key_ok(point, ex, lex, ids)]
+    cands = [ex for ex in pool if ex["id"] not in skip and _matches(point, ex, pos)]
+    found = [ex for ex in cands if _key_ok(point, ex, lex, ids)]
+    aa = [ex for ex in cands if ex not in found and _aa_ok(point, ex)]
 
     def cited_first(ex):
         return 0 if ex["id"].startswith("wordshk:") and int(ex["id"].split(":")[1].split("#")[0]) in ids else 1
-    return sorted(found, key=lambda ex: (rank[ex["id"].split(":")[0]], cited_first(ex), han_len(ex["text"]), ex["id"]))
+    srt = lambda xs: sorted(xs, key=lambda ex: (rank[ex["id"].split(":")[0]], cited_first(ex), han_len(ex["text"]), ex["id"]))
+    found = srt(found)
+    if not aa:
+        return found
+    # the cite key's examples and the A唔A half's alternate, so the few an app shows (English first) have both
+    aa = srt(aa)
+    out = []
+    for i in range(max(len(found), len(aa))):
+        out += found[i:i + 1] + aa[i:i + 1]
+    return out
 
 
 def attested(point, examples_, pos):
@@ -452,6 +487,16 @@ def place_grammar(order, points, examples_, every=10):
 LESSON_MIN_HAN = 4
 
 
+def _reading_ok(w, jp):
+    """The word's own reading, or a tone-only alternative only when an overrides.tsv `same_word` row links it. A
+    changed-tone word's own reading is the changed one: its base-tone alternative is another word (地下 dei6 haa2 is
+    not 地下音樂 haa6; 氹 tam5 is not 氹佢 tam3)."""
+    if jp == w.jp:
+        return True
+    return (jp in w.alt and jyutping.toneless(jp) == jyutping.toneless(w.jp)
+            and jp in (w.labels or {}))
+
+
 def reads_as(ex, form, lex):
     """True if the example says `form` as that word: every token equal to it is read with the word's reading (or a
     recorded alternative that differs only in tone, a changed tone), and, for HKCanCor, the corpus's own word
@@ -464,7 +509,7 @@ def reads_as(ex, form, lex):
     if not got:
         return False
     for jp in got:
-        if jp != w.jp and not (jp in w.alt and jyutping.toneless(jp) == jyutping.toneless(w.jp)):
+        if not _reading_ok(w, jp):
             return False
     if "hk" in ex and form not in {t for t, _jp in ex["hk"]}:
         return False
@@ -476,7 +521,7 @@ def read_right(ex, lex):
     in tone): a split that the source's own Jyutping contradicts (你呢|排 for 你|呢排, nei5 ni1) fails."""
     for tok, jp in ex.get("toks") or ():
         w = lex.get(tok)
-        if w is not None and jp != w.jp and not (jp in w.alt and jyutping.toneless(jp) == jyutping.toneless(w.jp)):
+        if w is not None and not _reading_ok(w, jp):
             return False
     return True
 
@@ -570,10 +615,11 @@ def build(srcs=None, located=None):
     # greedy order; the order of everything else is unchanged. Stage 1 and grammar needs were chosen by hand and stay.
     skip = set(table["skip"]) - named
     skipped = [f for f in order if f in skip]
-    order = [f for f in order if f not in skip]
+    vulgar = [f for f in order if f not in skip and f not in named and profane(f)]
+    order = [f for f in order if f not in skip and f not in vulgar]
     pos = {f: i for i, f in enumerate(order)}
     diffs = []
-    pool = examples(lex, srcs["tatoeba"], srcs["wordshk"], train, diffs)
+    pool = [e for e in examples(lex, srcs["tatoeba"], srcs["wordshk"], train, diffs) if not profane(e["text"])]
     points = []
     for p in grammar["points"]:
         q = dict(p)
@@ -582,7 +628,7 @@ def build(srcs=None, located=None):
     placed = place_grammar(order, points, pool)
     return {"lex": lex, "order": order, "placed": placed, "pool": pool, "points": points, "diffs": diffs,
             "lesson": lesson_sentences(placed, pool, points, lex, by_parts=skipped), "stage1": stage1,
-            "skipped": skipped}
+            "skipped": skipped, "profane": vulgar}
 
 
 def write_report(b, srcs, path=REPORT):

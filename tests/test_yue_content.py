@@ -261,7 +261,7 @@ def test_order_starts_with_stage1(built):
     _srcs, b = built
     assert b["order"][:len(STAGE1_FORMS)] == STAGE1_FORMS
     # 5000 greedy items, less the forms the meaning table leaves out (data/yue/content/meanings.json "skip")
-    assert len(b["order"]) == len(set(b["order"])) and len(b["order"]) + len(b["skipped"]) == 5000
+    assert len(b["order"]) == len(set(b["order"])) and len(b["order"]) + len(b["skipped"]) + len(b.get("profane", ())) == 5000
     assert not set(b["skipped"]) & set(b["order"]) and not set(b["skipped"]) & set(STAGE1_FORMS)
 
 
@@ -420,6 +420,9 @@ def test_placed_examples_carry_the_cited_reading_on_the_key_character(built):
         for ex in p["_examples"]:
             han = "".join(c for c in ex["text"] if _lexicon.is_han(c))
             syl = ex["jp"].split()
+            if p["id"] == "anota" and "有冇" not in han:
+                assert _course._aa_ok(p, ex), ex["id"]  # the A唔A half, confirmed by its own Jyutping
+                continue
             ks = [k for k in range(len(han)) if any(han.startswith(f, k) for f in [form] + [
                 form.replace(form[0], v) for v in spelling.get(form[0], "") if len(form) == 1])]
             assert any(syl[k:k + len(want)] == want for k in ks), (p["id"], ex["id"], ex["text"], ex["jp"])

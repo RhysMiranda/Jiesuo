@@ -120,7 +120,9 @@ def test_reads_as_rejects_another_word_or_reading():
     tone = {"toks": [["地下", "dei6 haa6"]], "id": "wordshk:3#1"}
     hk = {"toks": [["你呢", "nei5 ne1"]], "hk": [["你", "nei5"], ["呢", "ne1"]], "id": "hkcancor:f#1"}
     assert not course.reads_as(other, "你呢", lex) and course.reads_as(same, "你呢", lex)
-    assert course.reads_as(tone, "地下", lex)  # a recorded alternative that differs only in tone (a changed tone)
+    assert not course.reads_as(tone, "地下", lex)  # a tone-only alternative is another word unless same_word links it
+    lex["地下"].labels = {"dei6 haa6": "ground floor"}
+    assert course.reads_as(tone, "地下", lex)
     assert not course.reads_as(dict(tone, toks=[["地下", "dei6 haa1"]]), "地下", lex)
     assert not course.reads_as(hk, "你呢", lex)  # HKCanCor's own tokens are 你 + 呢
     order = ["你呢", "排"]

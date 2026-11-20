@@ -1,6 +1,6 @@
 # Cantonese course order
 
-Order: 4965 words (Stage 1 first, then greedy by HKCanCor train frequency). Example pool: 21865 sentences ([('wordshk', 17946), ('hkcancor', 3827), ('tatoeba', 92)]).
+Order: 4961 words (Stage 1 first, then greedy by HKCanCor train frequency). Example pool: 21805 sentences ([('wordshk', 17886), ('hkcancor', 3827), ('tatoeba', 92)]).
 
 ## First 100 items
 
@@ -121,8 +121,8 @@ Order: 4965 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 | gwo3 | 過:gwo3 | 78 | 34 | 25 | 9 | 0 |
 | mei6 | 未:mei6 | 515 | 39 | 32 | 6 | 1 |
 | mou5v | 冇:mou5 | 56 | 21 | 16 | 5 | 0 |
-| mhou2 | 咪:mai5 | 113 | 9 | 9 | 0 | 0 |
-| anota | 有冇:jau5 mou5 | 67 | 27 | 20 | 7 | 0 |
+| mhou2 | 咪:mai5 | 113 | 8 | 8 | 0 | 0 |
+| anota | 有冇:jau5 mou5 | 67 | 104 | 74 | 30 | 0 |
 | haimai | 係咪:hai6 mai6 | 323 | 16 | 14 | 2 | 0 |
 | qwords | 點解:dim2 gaai2 | 439 | 20 | 11 | 6 | 3 |
 | gwo3cmp | 過:gwo3 | 197 | 4 | 2 | 2 | 0 |
@@ -216,19 +216,19 @@ Order: 4965 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 
 **mhou2** `唔好(?!意思)|(?<!係)咪.`
 - wordshk:56011#3: 咪聽佢講呀，佢想要你啲錢咋 | mai5 teng1 keoi5 gong2 aa3 keoi5 soeng2 jiu3 nei5 di1 cin2 zaa3 | Don't listen to her! She only wants your money!
-- wordshk:90411#5: 咪撚嘈啦 | mai5 lan2 cou4 laa1 | Please be quiet!
 - wordshk:97496#20: 咪鬼嘈啦 | mai5 gwai2 cou4 laa1 | Please shut up.
 - wordshk:54841#3: 咪鬼理佢啦 | mai5 gwai2 lei5 keoi5 laa1 | Just ignore him.
 - wordshk:66531#6: 諗好就咪轉喇 | nam2 hou2 zau6 mai5 zyun3 laa3 | Don't change your mind after making a decision.
 - wordshk:90780#2: 咪過份緊張啦 | mai5 gwo3 fan6 gan2 zoeng1 laa1 | Don't be too nervous.
+- wordshk:90904#1: 咪成日打機咁毒啦 | mai5 seng4 jat6 daa2 gei1 gam3 duk6 laa1 | Stop playing video games all day like a geek.
 
 **anota** `([^唔\s])唔\1|有冇`
 - wordshk:90172#1: 你有冇筆呀 | nei5 jau5 mou5 bat1 aa3 | Have you got a pen?
+- wordshk:42218#1: 買唔買隨你 | maai5 m4 maai5 ceoi4 nei5 | Whether you buy it or not is up to you.
 - wordshk:90172#2: 有冇都講聲吖 | jau5 mou5 dou1 gong2 seng1 aa1 | Let me know, no matter you have or have not!
+- wordshk:60493#1: 你識唔識佢 | nei5 sik1 m4 sik1 keoi5 | Do you know him?
 - wordshk:90172#3: 你有冇去過泰國呀 | nei5 jau5 mou5 heoi3 gwo3 taai3 gwok3 aa3 | Have you ever been to Thailand before?
-- wordshk:57279#10: 有冇女先 | jau5 mou5 neoi2 sin1 | Are there any girls there?
-- wordshk:57279#4: 你有冇女 | nei5 jau5 mou5 neoi2 | Do you have a girlfriend?
-- wordshk:110903#13: 今晚有冇局 | gam1 maan1 jau5 mou5 guk6 | Any gathering tonight?
+- wordshk:72060#18: 你喺唔喺街 | nei5 hai2 m4 hai2 gaai1 | Are you outside?
 
 **haimai** `係咪`
 - wordshk:89962#2: 係咪去行街呀 | hai6 mai6 heoi3 haang4 gaai1 aa3 | Are we going shopping?
