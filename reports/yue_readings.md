@@ -6,12 +6,12 @@ Characters considered: 26998
 
 | status | characters |
 |---|---|
-| agreed | 22717 |
-| corpus | 27 |
-| override | 5 |
+| agreed | 22684 |
+| corpus | 26 |
+| override | 39 |
 | unresolved | 4249 |
 
-## Decided by the corpus (27)
+## Decided by the corpus (26)
 
 No dictionary-confirmed rime main; HKCanCor's top one-character reading was chosen.
 
@@ -31,7 +31,6 @@ No dictionary-confirmed rime main; HKCanCor's top one-character reading was chos
 - 行 -> haang4 (hkcancor 86): haang4 [rime(5%), cccanto, hkcancor(75)]; hang4 [rime(5%), cccanto, unihan]; hang6 [rime(5%), cccanto]; hong2 [rime(3%), cccanto, hkcancor(3)]; hong4 [rime(5%), cccanto, hkcancor(8)]; hong6 [rime(0%), cccanto]
 - 上 -> soeng5 (hkcancor 83): soeng5 [rime(5%), cccanto, hkcancor(44)]; soeng6 [rime(5%), cccanto, unihan, hkcancor(39)]
 - 種 -> zung2 (hkcancor 71): zung2 [rime(5%), cccanto, unihan, hkcancor(71)]; zung3 [rime(5%), cccanto]
-- 㗎 -> gaa4 (hkcancor 56): ga3 [rime]; gaa2 [rime(5%), cccanto]; gaa3 [rime(5%), unihan]; gaa4 [cccanto, hkcancor(56)]
 - 掂 -> dim6 (hkcancor 47): dim1 [rime(0%), cccanto, unihan]; dim3 [rime(5%), cccanto, hkcancor(1)]; dim6 [rime(5%), cccanto, hkcancor(46)]
 - 生 -> saang1 (hkcancor 40): saang1 [rime(5%), cccanto, hkcancor(40)]; sang1 [rime(5%), cccanto, unihan]
 - 長 -> coeng4 (hkcancor 29): coeng4 [rime(5%), cccanto, unihan, hkcancor(29)]; zoeng2 [rime(5%), cccanto]; zoeng6 [rime(0%), cccanto]
@@ -43,46 +42,22 @@ No dictionary-confirmed rime main; HKCanCor's top one-character reading was chos
 - 淡 -> taam5 (hkcancor 7): daam6 [rime(5%), cccanto, unihan, hkcancor(3)]; jim5 [rime(0%), cccanto]; taam4 [rime(0%), cccanto]; taam5 [rime(5%), cccanto, hkcancor(4)]
 - 彈 -> daan6 (hkcancor 5): daan2 [rime(5%), cccanto]; daan6 [rime(5%), cccanto, unihan, hkcancor(5)]; taan4 [rime(5%), cccanto]
 
-## Said differently in speech (61)
+## Said differently in speech (34)
 
 Dictionary-agreed main, but HKCanCor's most frequent one-character reading differs (changed tones, function-word uses; useful for phase 2 teaching).
 
-- 喇: main laa3, speech laa1 (x1693)
 - 喀: main haak3, speech haak6 (x703)
-- 來: main loi4, speech lai4 (x502)
-- 到: main dou3, speech dou2 (x460)
-- 下: main haa6, speech haa5 (x388)
-- 嗯: main ng6, speech m6 (x383)
-- 哦: main o4, speech o5 (x313)
 - 哩: main lei5, speech ni1 (x283)
-- 嘩: main waa1, speech waa3 (x269)
-- 驚: main ging1, speech geng1 (x111)
-- 成: main sing4, speech seng4 (x110)
-- 唉: main aai1, speech aai5 (x109)
 - 嗱: main naa4, speech laa4 (x96)
 - 啱: main ngaam1, speech aam1 (x89)
-- 請: main cing2, speech ceng2 (x79)
-- 平: main ping4, speech peng4 (x69)
-- 樣: main joeng6, speech joeng2 (x63)
-- 正: main zing3, speech zeng3 (x53)
 - 呃: main ngaak1, speech aak3 (x50)
 - 使: main si2, speech sai2 (x44)
-- 着: main zoek6, speech zoek3 (x43)
-- 儲: main cyu5, speech cou5 (x38)
-- 碟: main dip6, speech dip2 (x37)
 - 嘿: main hei1, speech hei3 (x34)
-- 位: main wai6, speech wai2 (x33)
-- 爭: main zang1, speech zaang1 (x33)
 - 嘍: main lau4, speech lo3 (x32)
 - 零: main ling4, speech leng4 (x28)
-- 名: main ming4, speech meng2 (x27)
-- 袋: main doi6, speech doi2 (x27)
-- 聲: main sing1, speech seng1 (x23)
 - 訂: main ding6, speech deng6 (x23)
 - 哎: main aai1, speech aai5 (x20)
 - 雀: main zoek3, speech zoek2 (x18)
-- 房: main fong4, speech fong2 (x13)
-- 相: main soeng1, speech soeng2 (x13)
 - 假: main gaa2, speech gaa3 (x11)
 - 哋: main dei6, speech dei2 (x11)
 - 噏: main ngap1, speech ap1 (x11)
@@ -103,11 +78,8 @@ Dictionary-agreed main, but HKCanCor's most frequent one-character reading diffe
 - 喳: main zaa1, speech zaa4 (x5)
 - 斜: main ce4, speech ce3 (x5)
 - 晾: main long6, speech long3 (x5)
-- 梨: main lei4, speech lei2 (x5)
 - 讕: main laan4, speech laan2 (x5)
 - 㗳: main dap1, speech dep1 (x4)
-- 片: main pin3, speech pin2 (x4)
-- 被: main bei6, speech pei5 (x3)
 
 ## Unresolved (4249 in total)
 
@@ -4369,150 +4341,19 @@ Words considered: 43712. Held-out split: every 5th HKCanCor sentence is test; re
 
 | status | words |
 |---|---|
-| agree | 40382 |
-| corpus | 267 |
-| wordshk | 897 |
-| override | 7 |
-| unresolved | 2159 |
+| agree | 39884 |
+| corpus | 265 |
+| attested | 346 |
+| wordshk | 865 |
+| override | 127 |
+| unresolved | 2225 |
 
-### Unresolved among the top 6000 by frequency (139)
+### Unresolved among the top 6000 by frequency (7)
 
-- 㗎喇 (freq 138): gaa3 laa3 [rime]; gaa2 laa1 [cccanto]
-- 出嚟 (freq 119.5): ceot1 lai4 [rime]; ceot1 lei4 [cccanto]
-- 嚟㗎 (freq 75.5): lai4 gaa3 [rime]; lai2 gaa2 [cccanto]
-- 有人 (freq 72): hkcancor jau5 jan4 x1
-- 返嚟 (freq 60): faan1 lai4 [rime]; faan2 lai2 [cccanto]
-- 睇到 (freq 44): tai2 dou2 [rime]; tai2 dou3 [cccanto]
-- 另一個 (freq 38): hkcancor ling6 jat1 go3 x1
-- 呢排 (freq 35.5): ni1 paai2 [rime]; ni1 paai4 [cccanto]
-- 當我 (freq 35.5): dong1 ngo5 [cccanto]; dong3 ngo5 [cccanto]
-- 就嚟 (freq 33): zau6 lai4 [rime]; zau6 lei4 [cccanto]
-- 㗎啦 (freq 29): gaa3 laa1 [rime, cccanto]; gaa3 laa3 [cccanto]; gaa3 laa4 [cccanto]
-- 畀佢 (freq 29): bei2 keoi5 [rime]; bei2 keoi4 [cccanto]
-- 睇下 (freq 29): tai2 haa5 [rime]; tai2 haa6 [cccanto]
-- 行去 (freq 27.5): hkcancor haang4 heoi3 x1
-- 嚟自 (freq 27): lai4 zi6 [rime]; lei4 zi6 [cccanto]
-- 用嚟 (freq 25): jung6 lai4 [rime]; jung6 lei4 [cccanto]
-- 下個 (freq 24.5): hkcancor haa6 go3 x1
-- 講得 (freq 21.5): hkcancor gong2 dak1 x1
-- 嚟緊 (freq 20.5): lai4 gan2 [rime]; lei4 gan2 [cccanto]
-- 調查 (freq 20.5): diu6 caa4 [rime]; tiu4 caa4 [rime]; hkcancor tiu4 caa4 x1, diu6 caa4 x1
-- 建立 (freq 20): gin3 laap6 [rime]; gin3 lap6 [rime]; hkcancor gin3 laap6 x1
-- 咩呀 (freq 19.5): me1 aa4 [rime]; me1 aa3 [cccanto]
-- 呢樣 (freq 18.5): nei1 joeng6 [rime]; nei4 joeng6 [cccanto]
-- 獨立 (freq 18): duk6 laap6 [rime]; duk6 lap6 [rime]; hkcancor duk6 laap6 x1
-- 結構 (freq 17): git3 gau3 [rime]; git3 kau3 [rime]; hkcancor git3 kau3 x1
-- 呢次 (freq 16.5): ni1 ci3 [rime]; nei1 ci3 [cccanto]
-- 入嚟 (freq 16): jap6 lai4 [rime]; jap6 lei4 [cccanto]
-- 使用 (freq 15): sai2 jung6 [rime]; si2 jung6 [rime]; hkcancor sai2 jung6 x1
 - 美國人 (freq 15): hkcancor mei5 gwok3 jan4 x1
-- 機構 (freq 14.5): gei1 gau3 [rime]; gei1 kau3 [rime]; hkcancor gei1 kau3 x2
-- 隨便 (freq 14.5): ceoi4 bin2 [rime]; ceoi4 bin6 [rime]; hkcancor ceoi4 bin2 x2
-- 幾多錢 (freq 14): gei2 do1 cin2 [rime]; gei2 do1 cin4 [cccanto]
-- 請問 (freq 14): ceng2 man6 [rime]; cing2 man6 [rime]; hkcancor cing2 man6 x1
-- 測試 (freq 13.5): caak1 si3 [rime]; cak1 si3 [rime]; hkcancor caak1 si3 x2
-- 網絡 (freq 13.5): mong5 lok3 [rime]; mong5 lok6 [rime]; hkcancor mong5 lok6 x2
-- 尼斯 (freq 12.5): hkcancor nei4 si1 x1
-- 上嚟 (freq 11.5): soeng5 lai4 [rime]; soeng5 lai2 [cccanto]
-- 好冇 (freq 11.5): hou2 mou2 [rime, cccanto]; hou2 mou5 [rime]
-- 人物 (freq 11): jan4 mat2 [rime]; jan4 mat6 [rime]; hkcancor jan4 mat2 x1
-- 做生意 (freq 11): hkcancor zou6 saang1 ji3 x1
-- 十萬 (freq 11): hkcancor sap6 maan6 x2
-- 成立 (freq 11): sing4 laap6 [rime]; sing4 lap6 [rime]; hkcancor sing4 laap6 x1
-- 運動員 (freq 10.5): hkcancor wan6 dung6 jyun4 x1
-- 十點 (freq 9): hkcancor sap6 dim2 x1
 - 提到 (freq 9): hkcancor tai4 dou3 x1
 - 聽聞 (freq 9): teng1 man4 [rime]; ting1 man4 [cccanto]; hkcancor teng1 man4 x2, ting3 man4 x2
-- 行出 (freq 9): hkcancor haang4 ceot1 x1
-- 驚訝 (freq 9): ging1 ngaa5 [rime]; ging1 ngaa6 [cccanto]; hkcancor ging1 ngaa6 x1
-- 一刻 (freq 8.5): jat1 hak1 [rime]; jat1 haak1 [cccanto]
-- 吖嗱 (freq 8.5): aa1 laa4 [rime]; aa1 naa4 [rime, cccanto]
-- 黑社會 (freq 8.5): hak1 se5 wui2 [rime, cccanto]; hak1 se5 wui6 [rime]
-- 點呀 (freq 8.5): dim2 aa4 [rime]; dim2 aa1 [cccanto]
-- 八點 (freq 8): hkcancor baat3 dim2 x1
-- 講出 (freq 8): hkcancor gong2 ceot1 x1
-- 購物 (freq 8): gau3 mat6 [rime]; kau3 mat6 [rime]; hkcancor kau3 mat6 x2
-- 身份證 (freq 8): san1 fan2 zing3 [rime]; san1 fan6 zing3 [rime]; hkcancor san1 fan2 zing3 x1
-- 陳生 (freq 8): hkcancor can4 saang1 x2
-- 亂咁 (freq 7.5): lyun2 gam3 [rime]; lyun6 gam3 [rime, cccanto]
-- 六十 (freq 7.5): hkcancor luk6 sap6 x2
-- 利是 (freq 7.5): lai6 si6 [rime]; lei6 si6 [cccanto]; hkcancor lei6 si6 x1
-- 宿舍 (freq 7.5): suk1 se3 [rime]; suk1 se5 [rime]; hkcancor suk1 se5 x2
-- 拎去 (freq 7.5): hkcancor ling1 heoi3 x1
-- 豬肉 (freq 7.5): hkcancor zyu1 juk6 x1
-- 一九 (freq 7): hkcancor jat1 gau2 x1
-- 兩三 (freq 7): hkcancor loeng5 saam1 x1
-- 囡囡 (freq 7): neoi4 neoi1 [rime]; naam4 naam4 [cccanto]
-- 幾百萬 (freq 7): hkcancor gei2 baak3 maan6 x1
-- 提醒 (freq 7): tai4 seng2 [rime]; tai4 sing2 [rime]; hkcancor tai4 seng2 x2
-- 九十 (freq 6.5): hkcancor gau2 sap6 x2
-- 四點 (freq 6.5): hkcancor sei3 dim2 x2
-- 幾咁 (freq 6.5): gei2 gam3 [rime]; gei2 gam2 [cccanto]; hkcancor gei2 gam3 x1
-- 幾大 (freq 6.5): gei2 daai2 [rime]; gei2 daai6 [cccanto]; hkcancor gei2 daai6 x1
-- 每人 (freq 6.5): hkcancor mui5 jan4 x1
-- 藉口 (freq 6.5): ze3 hau2 [rime]; zik6 hau2 [rime]; hkcancor ze3 hau2 x1
-- 預測 (freq 6.5): jyu6 caak1 [rime]; jyu6 cak1 [rime]; hkcancor jyu6 caak1 x2
-- 搬去 (freq 6): hkcancor bun1 heoi3 x1
 - 瞓晏覺 (freq 6): fan3 aan3 gaau3 [rime]; fan3 ngaan3 gaau3 [cccanto]
-- 處境 (freq 6): cyu2 ging2 [rime]; cyu5 ging2 [rime]; hkcancor cyu5 ging2 x2
-- 製成 (freq 6): hkcancor zai3 sing4 x2
-- 跌落 (freq 6): hkcancor dit3 lok6 x1
-- 企起身 (freq 5.5): kei5 hei2 san1 [rime]; kei2 hei2 san1 [cccanto]; hkcancor kei5 hei2 san1 x1
-- 判斷 (freq 5.5): pun3 dyun3 [rime]; pun3 dyun6 [rime, cccanto]
-- 十一點 (freq 5.5): hkcancor sap6 jat1 dim2 x2
-- 幾錢 (freq 5.5): gei2 cin2 [rime]; gei2 cin4 [cccanto]
-- 由得 (freq 5.5): jau2 dak1 [rime]; jau4 dak1 [cccanto]
-- 第五 (freq 5.5): hkcancor dai6 ng5 x1
-- 粒鐘 (freq 5.5): nap1 zung1 [rime]; lap1 zung1 [cccanto]
-- 蓬勃 (freq 5.5): fung4 but6 [rime]; pung4 but6 [rime]; hkcancor fung4 but6 x2
-- 行人路 (freq 5.5): haang4 jan4 lou6 [rime]; hang4 jan4 lou6 [rime, cccanto]
-- 買返 (freq 5.5): hkcancor maai5 faan1 x1
-- 起嚟 (freq 5.5): hei2 lei4 [rime]; hei2 lai4 [cccanto]
-- 順便 (freq 5.5): seon6 bin2 [rime]; seon6 bin6 [rime]; hkcancor seon6 bin2 x1
-- 人面 (freq 5): jan4 min2 [rime]; jan4 min6 [cccanto]
-- 六百 (freq 5): hkcancor luk6 baak3 x2
 - 冇耐 (freq 5): mou5 noi2 [rime]; mou5 noi6 [cccanto]
-- 出生 (freq 5): ceot1 sang1 [rime]; ceot1 saang1 [cccanto]
-- 十六 (freq 5): hkcancor sap6 luk6 x1
 - 哎呀 (freq 5): aai1 aa4 [rime]; ai1 jaa4 [rime]; hkcancor aai1 aa4 x1
-- 天生 (freq 5): tin1 saang1 [rime, cccanto]; tin1 sang1 [rime]
-- 攞去 (freq 5): hkcancor lo2 heoi3 x1
-- 有禮貌 (freq 5): hkcancor jau5 lai5 maau6 x1
-- 瑪麗 (freq 5): hkcancor maa5 lai6 x1
-- 金魚 (freq 5): gam1 jyu2 [rime]; gam1 jyu4 [rime]; hkcancor gam1 jyu2 x1, gam1 jyu4 x1
-- 露出 (freq 5): hkcancor lou6 ceot1 x2
-- 不能 (freq 4.5): hkcancor bat1 nang4 x1
-- 出到 (freq 4.5): hkcancor ceot1 dou3 x1
-- 十三 (freq 4.5): hkcancor sap6 saam1 x2
-- 好事 (freq 4.5): hkcancor hou2 si6 x2
-- 實踐 (freq 4.5): sat6 cin2 [rime]; sat6 cin5 [rime]; hkcancor sat6 cin2 x1
-- 廿八 (freq 4.5): hkcancor jaa6 baat3 x2
-- 憑住 (freq 4.5): hkcancor pang4 zyu6 x2
-- 提過 (freq 4.5): hkcancor tai4 gwo3 x1
-- 架構 (freq 4.5): gaa3 gau3 [rime]; gaa3 kau3 [rime]; hkcancor gaa3 kau3 x2
 - 細細聲 (freq 4.5): hkcancor sai3 sai3 seng1 x1
-- 話咁快 (freq 4.5): waa6 gam3 faai3 [rime]; waa6 gam2 faai3 [cccanto]
-- 起上嚟 (freq 4.5): hei2 soeng5 lei4 [rime]; hei2 soeng5 lai4 [cccanto]
-- 一輪 (freq 4): hkcancor jat1 leon4 x1
-- 中六 (freq 4): hkcancor zung1 luk6 x1
-- 二十四 (freq 4): hkcancor ji6 sap6 sei3 x1
-- 兩份 (freq 4): loeng5 fan2 [rime]; loeng5 fan6 [cccanto]
-- 千幾 (freq 4): hkcancor cin1 gei2 x2
-- 厲害 (freq 4): lai6 hoi6 [rime]; lei6 hoi6 [rime]; hkcancor lai6 hoi6 x1
-- 四十幾 (freq 4): hkcancor sei3 sap6 gei2 x2
-- 小龍 (freq 4): hkcancor siu2 lung4 x1
-- 廿三 (freq 4): hkcancor jaa6 saam1 x2
-- 廿幾 (freq 4): hkcancor jaa6 gei2 x1
-- 擴大 (freq 4): kwok3 daai6 [rime]; kwong3 daai6 [rime]; kong3 daai6 [cccanto]
-- 新娘 (freq 4): san1 noeng2 [rime]; san1 noeng4 [rime]; hkcancor san1 noeng4 x1
-- 普通人 (freq 4): hkcancor pou2 tung1 jan4 x1
-- 環繞 (freq 4): waan4 jiu2 [rime]; waan4 jiu5 [rime]; hkcancor waan4 jiu2 x1
-- 細路哥 (freq 4): sai3 lou6 go1 [rime]; sai3 lou2 go1 [cccanto]; hkcancor sai3 lou6 go1 x2
-- 聽晚 (freq 4): ting1 maan1 [rime]; ting1 maan5 [rime]
-- 講起 (freq 4): hkcancor gong2 hei2 x1
-- 走入 (freq 4): hkcancor zau2 jap6 x1
-- 高處 (freq 4): hkcancor gou1 cyu3 x1
-- 三分一 (freq 3.5): hkcancor saam1 fan6 jat1 x2
-- 三四 (freq 3.5): hkcancor saam1 sei3 x1
-- 三成 (freq 3.5): hkcancor saam1 sing4 x1
-- 五萬 (freq 3.5): hkcancor ng5 maan6 x1
