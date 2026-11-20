@@ -1,3 +1,4 @@
+import json
 import re
 from pathlib import Path
 
@@ -47,7 +48,7 @@ def test_unreviewed_wordshk_is_not_a_source():
     from jiesuo.yue.sources import WordsHK
     e = WordsHK(8, [("甲乙", "gaap3 jyut3")], [], [], [], [], [], False, True)
     srcs = {"rime_words": {"甲乙": ["gaap3 jyut6"]}, "cccanto_words": {}, "wordshk": [e], "train": [],
-            "overrides": {}, "chars": {}}
+            "overrides": {}, "chars": _chars(甲=("gaap3", []), 乙=("jyut6", []))}
     assert resolve_word("甲乙", srcs).status == "agree"
 
 
@@ -240,3 +241,113 @@ def test_no_shipped_meaning_has_an_unbalanced_bracket_or_a_leading_pos_tag():
             assert not _POS_TAG.match(sense), (form, e)
         assert "Beijing dialect" not in e, (form, e)
     assert en["唔係"] == "no, not."
+
+
+def _whk_ex(id_, form, jp, examples):
+    from jiesuo.yue.sources import WordsHK
+    return WordsHK(id_, [(form, jp)], [], [], [], ["x"], examples, True, True)
+
+
+def test_single_source_reading_with_an_unusual_syllable_needs_an_attestation():
+    chars = _chars(唔=("m4", []), 會=("wui5", []))
+    base = {"rime_words": {}, "cccanto_words": {"唔會": [("m4 wui2", "would not")]}, "wordshk": [], "train": [],
+            "overrides": {}, "chars": chars}
+    assert resolve_word("唔會", dict(base)).status == "unresolved"  # CC-Canto only, wui2 is no reading of 會 we ship
+    # attested: speech and words.hk examples say m4 wui5, so that is the reading
+    srcs = dict(base, train=[[("唔會", "V", "m4 wui5")]] * 2,
+                wordshk=[_whk_ex(1, "會", "wui5", [("我唔會去", "ngo5 m4 wui5 heoi3", "I won't go")])])
+    w = resolve_word("唔會", srcs)
+    assert (w.jp, w.status) == ("m4 wui5", "attested") and "m4 wui2" not in w.alt
+    # an override names the same word's dictionary reading: its meaning is used
+    srcs["same_word"] = {"唔會": [("m4 wui2", "")]}
+    srcs["overrides"] = {"唔會": "m4 wui5"}
+    w = resolve_word("唔會", srcs)
+    assert (w.jp, w.status, w.en) == ("m4 wui5", "override", "would not")
+
+
+def test_attested_majority_beats_the_dictionaries_and_needs_three():
+    chars = _chars(今=("gam1", []), 年=("nin4", ["nin2"]))
+    base = {"rime_words": {"今年": ["gam1 nin4"]}, "cccanto_words": {"今年": [("gam1 nin4", "this year")]},
+            "wordshk": [], "overrides": {}, "chars": chars}
+    assert resolve_word("今年", dict(base, train=[[("今年", "T", "gam1 nin2")]] * 2)).jp == "gam1 nin4"  # 2 < 3
+    w = resolve_word("今年", dict(base, train=[[("今年", "T", "gam1 nin2")]] * 3 + [[("今年", "T", "gam1 nin4")]]))
+    assert (w.jp, w.status, w.alt) == ("gam1 nin2", "attested", ["gam1 nin4"])
+    labelled = dict(base, train=[[("今年", "T", "gam1 nin2")]] * 3, same_word={"今年": [("gam1 nin4", "citation")]},
+                    overrides={"今年": "gam1 nin2"})
+    w = resolve_word("今年", labelled)
+    assert w.en == "this year" and w.labels == {"gam1 nin4": "citation"}
+
+
+def test_example_runs_align_on_the_examples_own_jyutping():
+    from jiesuo.yue.lexicon import example_runs
+    assert example_runs("你呢排點呀？", "nei5 ni1 paai4 dim2 aa3") == [
+        [("你", "nei5"), ("呢", "ni1"), ("排", "paai4"), ("點", "dim2"), ("呀", "aa3")]]
+    assert example_runs("我買iPad", "ngo5 maai5 aai1 pet1") is None  # Latin letters: no alignment
+    assert example_runs("我食", "ngo5") is None
+
+
+def test_proper_noun_cedict_entries_and_place_senses_are_skipped():
+    from jiesuo.yue.lexicon import _NOT_A_CHAR_SENSE, _proper
+    assert _proper({"pinyin": "Cheng2 du1"}) and not _proper({"pinyin": "cheng2"})
+    assert _NOT_A_CHAR_SENSE.search("short name for Chengdu") and _NOT_A_CHAR_SENSE.search("Tang dynasty")
+    assert not _NOT_A_CHAR_SENSE.search("to succeed")
+
+
+def test_clean_senses_of_enumerations_tags_and_repeats():
+    from jiesuo.yue.lexicon import clean_senses
+    assert clean_senses(["(of a person) 1. tall; 2. thin"]) == "(of a person) tall; (of a person) thin"
+    assert clean_senses(["(n. / appellation) teacher"]) == "teacher"
+    assert clean_senses(["Tutor; Tutor; 2. Tutorial class"]) == "Tutor; Tutorial class"
+    assert clean_senses(["Tutor", "tutor"]) == "Tutor"
+
+
+def test_a_characters_meaning_never_comes_from_another_reading():
+    srcs = {"rime_words": {}, "cccanto_words": {"平": [("ping4", "flat")]}, "wordshk": [], "train": [], "rime": {},
+            "cccanto": {}, "overrides": {"平": "peng4"}, "same_word": {"平": [("ping4", "literary")]},
+            "chars": {"平": Resolution("平", "peng4", ["ping4"], "override", {})}}
+    w = resolve_word("平", srcs)
+    assert (w.jp, w.en, w.labels) == ("peng4", "", {"ping4": "literary"})
+
+
+def test_real_no_word_contradicts_the_majority_of_its_attestations(real_srcs):
+    """C1 guard: no shipped word of two or more characters disagrees with a strict majority of 3 or more of its
+    attestations (HKCanCor train tokens + words.hk example spans) unless overrides.tsv says why."""
+    from jiesuo.yue import lexicon
+    srcs, lex = real_srcs
+    shipped = json.loads((ROOT / "app" / "yue" / "data" / "lexicon.json").read_text(encoding="utf8"))["words"]
+    bad = []
+    for form, jp, *_ in shipped:
+        if len(form) < 2 or form in srcs["overrides"]:
+            continue
+        major = lexicon.attested_majority(form, srcs)
+        if major and major != jp:
+            bad.append((form, jp, major))
+    assert not bad, bad[:20]
+
+
+def test_real_colloquial_characters_have_a_hand_decision(real_srcs):
+    """C3 guard: a taught character whose HKCanCor-train one-character top reading differs from its reading with
+    at least 50 tokens has an overrides.tsv row (the spoken reading, or the reason it is not taught)."""
+    from jiesuo.yue import readings
+    srcs, _lex = real_srcs
+    shipped = json.loads((ROOT / "app" / "yue" / "data" / "lexicon.json").read_text(encoding="utf8"))["words"]
+    counts = readings.corpus_counts(srcs["train"])
+    bad = []
+    for form, jp, *_ in shipped:
+        c = counts.get(form)
+        if len(form) == 1 and c:
+            top, n = c.most_common(1)[0]
+            if top != jp and n >= 50 and form not in srcs["overrides"]:
+                bad.append((form, jp, top, n))
+    assert not bad, bad
+    for ch, want in (("驚", "geng1"), ("聲", "seng1"), ("請", "ceng2"), ("平", "peng4"), ("名", "meng2")):
+        assert _lex[ch].jp == want and _lex[ch].status == "override", ch
+
+
+@pytest.fixture(scope="module")
+def real_srcs():
+    if not (ROOT / "data" / "raw" / "yue" / "rime_words.dict.yaml").exists() or not (ROOT / "data" / "raw" / "cedict.json").exists():
+        pytest.skip("raw data missing")
+    from jiesuo.yue.lexicon import build_lexicon, load_sources
+    srcs = load_sources()
+    return srcs, build_lexicon(srcs)

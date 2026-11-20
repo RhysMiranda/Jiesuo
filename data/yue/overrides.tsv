@@ -1,4 +1,4 @@
-form	reading	reason	source
+form	reading	reason	source	same_word
 呀	aa3	default sentence-final particle; HKCanCor writes aa3 as 啊 and keeps 呀 for aa4, so its 呀 counts do not reflect usage	wordshk:13852
 返	faan1	faan1 when used as a word of its own; faan2 only in words from written Chinese	wordshk:19169, wordshk:90213; HKCanCor train 307x faan1
 撈	lou1	lou1 in three reviewed words.hk entries; laau4 only in one; HKCanCor train lou1 x4, no other reading seen	wordshk:120533, wordshk:55486, wordshk:108762
@@ -6,3 +6,123 @@ form	reading	reason	source
 當	dong1	rime main reading; HKCanCor train tie 14/14	wordshk:45061, wordshk:45062
 呢啲	ni1 di1	rime + CC-Canto give ni1 di1; nei1 di1 is a variant (rime)	rime, CC-Canto
 呢度	ni1 dou6	rime + CC-Canto give ni1 dou6; nei1 dou6 is a variant (rime)	rime, CC-Canto
+驚	geng1	to be afraid: geng1 in speech; ging1 is the literary reading (驚喜, 驚訝)	wordshk:21794; HKCanCor train geng1 x83	ging1 literary
+聲	seng1	voice, sound: seng1 in speech; sing1 is the literary reading (聲音)	wordshk:119581; HKCanCor train seng1 x18	sing1 literary
+請	ceng2	to invite, to treat: ceng2 in speech; cing2 is the literary reading (請問)	wordshk:89777; HKCanCor train ceng2 x64	cing2 literary
+平	peng4	cheap: peng4 in speech; ping4 (flat, level, peace) is the literary reading (平安, 和平)	wordshk:58270, wordshk:58355; HKCanCor train peng4 x57, ping4 x1	ping4 literary
+正	zeng3	great, good quality: zeng3 in speech; zing3 (exact, upright) in compounds (正式)	wordshk:64325, wordshk:90754; HKCanCor train zeng3 x39, zing3 x2	
+成	seng4	whole, complete: seng4 in speech (成日, 成個); sing4 (to succeed, ten percent) is the literary reading (成功)	wordshk:107800, wordshk:107801; HKCanCor train seng4 x91, sing4 x45	sing4 literary
+爭	zaang1	to compete, to owe: zaang1 in speech; zang1 is the literary reading (競爭, 戰爭)	wordshk:37646, wordshk:97756; HKCanCor train zaang1 x29	zang1 literary
+名	meng2	name: meng2 in speech; ming4 when reading text and in compounds (名字)	wordshk:56444, wordshk:112802; HKCanCor train meng2 x19, ming4 x3	ming4 literary
+命	meng6	life: meng6 in speech; ming6 is the literary reading	wordshk:109668, wordshk:56534; HKCanCor train: no one-character tokens	ming6 literary
+醒	seng2	to wake up: seng2 in speech; sing2 is the citation reading and the word for smart (好醒)	wordshk:34374, wordshk:107788; HKCanCor train sing2 x8, seng2 x4	sing2 citation
+位	wai2	seat; measure word for people: wai2; wai6 is the original tone (position, rank)	wordshk:36835, wordshk:90122, wordshk:108673; HKCanCor train wai2 x31	wai6 citation
+片	pin2	film, movie: pin2 in speech (睇片); pin3 is a slice (a different sense)	wordshk:58322, wordshk:110616; HKCanCor train pin2 x4	
+相	soeng2	photo: soeng2 in speech (影相); soeng1 (mutual) is bound (相信, 互相)	wordshk:61255, wordshk:61123; HKCanCor train soeng2 x4	
+袋	doi2	bag: doi2; doi6 is the verb (to put in a pocket) and the measure word	wordshk:45050, wordshk:97210; HKCanCor train doi2 x21, doi6 x4	
+房	fong2	room: fong2 in speech (入房, 間房); fong4 is house, wife (literary senses); no reviewed words.hk entry for fong2	rime, CC-Canto; HKCanCor train fong2 x9	
+碟	dip2	plate: dip2; dip6 is the citation reading	wordshk:44884, wordshk:98256; HKCanCor train dip2 x27, dip6 x2	dip6 citation
+腸	coeng2	intestines, sausage: coeng2; coeng4 is the classical reading	wordshk:16754, wordshk:114316; HKCanCor train coeng2 x1	coeng4 literary
+樓	lau2	flat, building: lau2 in speech (買樓); lau4 in compounds (大樓, 酒樓) and the surname	wordshk:28409; HKCanCor train lau2 x2	
+賊	caak2	thief: caak2; caak6 is the original reading	wordshk:15295, wordshk:106962; HKCanCor train caak2 x3	caak6 citation
+巷	hong2	alley: hong2; hong6 only in certain collocations	wordshk:24648, wordshk:119932; HKCanCor train hong2 x1	
+梨	lei2	pear: lei2; lei4 is the citation reading	wordshk:28452, wordshk:107958; HKCanCor train lei2 x5, lei4 x4	lei4 citation
+樣	joeng2	look, appearance (個樣): joeng2; joeng6 is type, kind (一樣, 呢樣)	wordshk:53121, wordshk:53190; HKCanCor train joeng2 x52, joeng6 x32	
+着	zoek3	to wear: zoek3 in speech (着衫); zoek6 in other senses (着數, 着火)	wordshk:97030, wordshk:102586; HKCanCor train zoek3 x28, zoek6 x9	
+被	pei5	quilt: pei5 in speech (張被); bei6 is the passive marker of written Chinese (speech uses 畀)	wordshk:58260, wordshk:14477; HKCanCor train pei5 x3, bei6 x2	
+儲	cou5	to save up: cou5 in speech (儲錢); cyu5 is the literary reading; no reviewed words.hk entry	rime; HKCanCor train cou5 x29, cyu5 x3	cyu5 literary
+嘩	waa3	wow: waa3 (interjection); waa1 is hubbub (a different sense)	wordshk:62937, wordshk:62935; HKCanCor train waa3 x213	
+哦	o5	oh, I see: o5 (realisation) is the usual one in speech; o4 acknowledges, o3 criticises	wordshk:117604, wordshk:57911, wordshk:117603; HKCanCor train o5 x249, o3 x106, o4 x15	
+嗯	m6	mm (yes, I'm listening): m6 in speech; no reviewed words.hk entry for m6 (80020 is m2, what?)	wordshk:80020; HKCanCor train m6 x322	
+唉	aai5	sigh: aai5 in speech; aai1 is the dictionary reading; no reviewed words.hk entry	rime, CC-Canto; HKCanCor train aai5 x82	
+㗎	gaa3	sentence-final particle: gaa3 is the usual one; HKCanCor writes gaa3 as 架 and keeps 㗎 for gaa4; words.hk examples write 㗎 with gaa3 636 times	wordshk:47031, wordshk:92598; HKCanCor train gaa4 x47	
+喇	laa3	particle of a new situation: laa3 (words.hk); HKCanCor writes laa1 as 喇 and laa3 as 嚹 (x547), so its 喇 counts are 啦	wordshk:78884; HKCanCor train laa1 x1400	
+到	dou3	to arrive: dou3 as a word on its own; dou2 is the verb complement after another verb (搵到), taught with those words	wordshk:45174, wordshk:45131; HKCanCor train dou2 x357, dou3 x352	
+下	haa6	down, below, next: haa6 as a word on its own; haa5 is the measure 'a time' and the verb suffix (一下, 睇吓), taught with those words and the haa5 grammar point	wordshk:102591, wordshk:91246, wordshk:23204; HKCanCor train haa5 x319, haa6 x17	
+來	loi4	to come: loi4 is the reading of 來; HKCanCor writes 嚟 lai4 as 來. The spoken word is 嚟 lai4, taught on its own	wordshk:79702; HKCanCor train lai4 x401	
+你呢	nei5 ne1	how about you?: the particle 呢 ne1; example spans read ni1 are 你 + 呢 ni1 'this' (你呢排, 你呢個), another word	wordshk:90155; rime; words.hk example spans nei5 ni1 x32, nei5 ne1 x10, nei5 nei1 x5	nei5 nei1
+返來	faan1 lai4	written form of 返嚟, said like it (嚟 lai4); faan1 lei4 is as common	rime, CC-Canto; HKCanCor train faan1 lei4 x33, faan1 lai4 x30	faan1 lei4
+會同	wui6 tung4	jointly with; example spans read wui5 are 會 'will' + 同 'with', other words	wordshk:102419; rime; words.hk example spans wui5 tung4 x16, wui6 tung4 x4, wui2 tung4 x1	
+會見	wui6 gin3	to meet formally; example spans read wui5 are 會 'will' + 見 'see', other words	wordshk:87120; rime; words.hk example spans wui5 gin3 x8, wui6 gin3 x3, wui2 gin3 x1	
+以上	ji5 soeng6	above, over; example spans read soeng5 are 可以 + 上 (可以上網), other words	wordshk:77013; rime, CC-Canto; HKCanCor train ji5 soeng6 x2; words.hk example spans ji5 soeng5 x9, ji5 soeng6 x5	
+仔細	zi2 sai3	careful, in detail; example spans read zai2 are 仔 'son' + 細 'small' (人仔細細), other words	wordshk:88032; rime, CC-Canto; HKCanCor train zi2 sai3 x2; words.hk example spans zai2 sai3 x8, zi2 sai3 x4	
+人參	jan4 sam1	ginseng; example spans read caam1 are 人 + 參加 'take part', other words	wordshk:76239; rime; words.hk example spans jan4 caam1 x11, jan4 sam1 x4	
+桂味	gwai3 mei2	a lychee variety: gwai3 mei2 in rime, CC-Canto, words.hk and its examples	wordshk:99103; rime, CC-Canto; HKCanCor train gwai3 mei6 x4; words.hk example spans gwai3 mei2 x2	
+唔會	m4 wui5	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under m4 wui2, the same word	HKCanCor train m4 wui5 x1; words.hk example spans m4 wui5 x220, m4 wui2 x3, m4 wui6 x2, m4 wui3 x1	m4 wui2
+㗎喇	gaa3 laa3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gaa2 laa1, the same word	words.hk example spans gaa3 laa3 x180, gaa3 laa1 x2, ga3 laa3 x1	gaa2 laa1
+出嚟	ceot1 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under ceot1 lei4, the same word	words.hk example spans ceot1 lai4 x135, ceot1 lei4 x31	ceot1 lei4
+出來	ceot1 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under ceot1 loi4, the same word	HKCanCor train ceot1 lai4 x115; words.hk example spans ceot1 lai4 x2	ceot1 loi4 literary
+佢哋嘅	keoi5 dei6 ge3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under keoi5 dei2 ge3, the same word	words.hk example spans keoi5 dei6 ge3 x37	keoi5 dei2 ge3
+今年	gam1 nin2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gam1 nin4, the same word	HKCanCor train gam1 nin2 x27; words.hk example spans gam1 nin2 x70, gam1 nin4 x29	gam1 nin4 citation
+嚟㗎	lai4 gaa3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under lai2 gaa2, the same word	words.hk example spans lai4 gaa3 x84, lei4 gaa3 x14, lai4 gaa4 x5, lai4 gaa2 x2	lai2 gaa2
+即刻	zik1 haak1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under zik1 hak1, the same word	HKCanCor train zik1 haak1 x34; words.hk example spans zik1 hak1 x30, zik1 haak1 x20, zik1 kaak1 x1	zik1 hak1
+成個	seng4 go3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under sing4 go3, the same word	HKCanCor train seng4 go3 x2; words.hk example spans seng4 go3 x75, sing4 go3 x14	sing4 go3 literary
+返嚟	faan1 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under faan2 lai2, the same word	words.hk example spans faan1 lai4 x61, faan1 lei4 x17	faan2 lai2
+爸爸	baa4 baa1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under baa1 baa1, the same word	HKCanCor train baa4 baa1 x2; words.hk example spans baa4 baa1 x63, baa1 baa1 x1	baa1 baa1
+睇到	tai2 dou2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under tai2 dou3, the same word	words.hk example spans tai2 dou2 x29, tai2 dou3 x14	tai2 dou3
+得到	dak1 dou2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under dak1 dou3, the same word	HKCanCor train dak1 dou2 x7, dak1 dou3 x5; words.hk example spans dak1 dou3 x20, dak1 dou2 x19	dak1 dou3
+睇吓	tai2 haa5	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under tai2 haa3, the same word	words.hk example spans tai2 haa5 x16	tai2 haa3
+就嚟	zau6 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under zau6 lei4, the same word	words.hk example spans zau6 lai4 x41, zau6 lei4 x10	zau6 lei4
+乜都	mat1 dou1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under me1 dou1, the same word	words.hk example spans mat1 dou1 x44	me1 dou1
+畀佢	bei2 keoi5	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under bei2 keoi4, the same word	words.hk example spans bei2 keoi5 x31	bei2 keoi4
+睇下	tai2 haa5	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under tai2 haa6, the same word	words.hk example spans tai2 haa5 x46, tai2 haa6 x3, tai2 haa2 x1	tai2 haa6
+呢位	ni1 wai2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under nei4 wai6, the same word	words.hk example spans ni1 wai2 x38, ne1 wai6 x4, nei1 wai2 x2, le4 wai2 x1, ni1 wai6 x1	nei4 wai6
+嚟自	lai4 zi6	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under lei4 zi6, the same word	words.hk example spans lai4 zi6 x5	lei4 zi6
+撞到	zong6 dou2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under zong6 dou3, the same word	words.hk example spans zong6 dou2 x26, zong6 dou3 x11	zong6 dou3
+過嚟	gwo3 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gwo3 lai2, the same word	words.hk example spans gwo3 lai4 x29, gwo3 lei4 x10	gwo3 lai2
+用嚟	jung6 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jung6 lei4, the same word	words.hk example spans jung6 lai4 x22, jung6 lei4 x5	jung6 lei4
+遇到	jyu6 dou2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jyu6 dou3, the same word	words.hk example spans jyu6 dou2 x21, jyu6 dou3 x15	jyu6 dou3
+希臘	hei1 lip6	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under hei1 laap6, the same word	HKCanCor train hei1 lip6 x1; words.hk example spans hei1 lip6 x5, hei1 laap6 x3	hei1 laap6
+嚟緊	lai4 gan2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under lei4 gan2, the same word	words.hk example spans lai4 gan2 x15, lei4 gan2 x4	lei4 gan2
+呢樣	ni1 joeng6	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under nei4 joeng6, the same word	words.hk example spans ni1 joeng6 x16, nei1 joeng6 x2, ni1 joeng2 x1	nei4 joeng6
+呢次	ni1 ci3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under nei1 ci3, the same word	words.hk example spans ni1 ci3 x29, nei1 ci3 x1, ni1 ci5 x1	nei1 ci3
+估唔到	gu2 m4 dou3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gu2 m4 dou2, the same word	words.hk example spans gu2 m4 dou3 x22, gu2 m4 dou2 x10	gu2 m4 dou2
+入嚟	jap6 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jap6 lei4, the same word	words.hk example spans jap6 lai4 x12, jap6 lei4 x3	jap6 lei4
+同樣	tung4 joeng2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under tung4 joeng6, the same word	HKCanCor train tung4 joeng6 x2, tung4 joeng2 x2; words.hk example spans tung4 joeng2 x4, tung4 joeng6 x2	tung4 joeng6
+更多	gang3 do1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gang1 do1, the same word	words.hk example spans gang3 do1 x10	gang1 do1
+越來越	jyut6 lai4 jyut6	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jyut6 loi4 jyut6, the same word	HKCanCor train jyut6 lai4 jyut6 x11; words.hk example spans jyut6 loi4 jyut6 x3, jyut6 lai4 jyut6 x2, jyut6 lei4 jyut6 x1	jyut6 loi4 jyut6 literary
+上來	soeng5 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under soeng5 loi4, the same word	HKCanCor train soeng5 lai4 x14	soeng5 loi4 literary
+幾多錢	gei2 do1 cin2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gei2 do1 cin4, the same word	words.hk example spans gei2 do1 cin2 x17	gei2 do1 cin4 citation
+測試	caak1 si3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under cak1 si3, the same word	HKCanCor train caak1 si3 x2; words.hk example spans caak1 si3 x12, cak1 si3 x2	cak1 si3
+網絡	mong5 lok6	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under mong5 lok3, the same word	HKCanCor train mong5 lok6 x2; words.hk example spans mong5 lok6 x13	mong5 lok3
+入來	jap6 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jap6 loi4, the same word	HKCanCor train jap6 lai4 x12; words.hk example spans jap6 loi4 x1	jap6 loi4 literary
+上嚟	soeng5 lai4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under soeng5 lai2, the same word	words.hk example spans soeng5 lai4 x23, soeng5 lei4 x4, soeng6 lai4 x1, soeng6 lei4 x1	soeng5 lai2
+好冇	hou2 mou5	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under hou2 mou2, the same word	words.hk example spans hou2 mou5 x13, hou2 mou2 x3	hou2 mou2
+得喇	dak1 laa3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under dak1 laa1, the same word	words.hk example spans dak1 laa3 x23, dak1 laa1 x1	dak1 laa1
+近排	gan6 paai2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gan6 paai4, the same word	HKCanCor train gan6 paai2 x4; words.hk example spans gan6 paai2 x9, gan6 paai4 x4	gan6 paai4
+人物	jan4 mat2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jan4 mat6, the same word	HKCanCor train jan4 mat2 x1; words.hk example spans jan4 mat2 x22, jan4 mat6 x6	jan4 mat6
+學到	hok6 dou2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under hok6 dou3, the same word	words.hk example spans hok6 dou2 x4, hok6 dou3 x3	hok6 dou3
+草地	cou2 dei2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under cou2 dei6, the same word	HKCanCor train cou2 dei6 x1; words.hk example spans cou2 dei2 x6, cou2 dei6 x3	cou2 dei6
+驚訝	ging1 ngaa5	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under ging1 ngaa6, the same word	HKCanCor train ging1 ngaa6 x1; words.hk example spans ging1 ngaa5 x3, ging1 ngaa6 x1	ging1 ngaa6
+黑社會	haak1 se5 wui2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under hak1 se5 wui2, the same word	words.hk example spans haak1 se5 wui2 x10, hak1 se5 wui2 x6, hak1 se5 wui5 x1	hak1 se5 wui2
+深刻	sam1 haak1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under sam1 hak1, the same word	HKCanCor train sam1 haak1 x1; words.hk example spans sam1 haak1 x4, sam1 hak1 x1	sam1 hak1
+身份證	san1 fan2 zing3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under san1 fan6 zing3, the same word	HKCanCor train san1 fan2 zing3 x1; words.hk example spans san1 fan2 zing3 x13	san1 fan6 zing3
+亂咁	lyun2 gam3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under lyun6 gam3, the same word	words.hk example spans lyun2 gam3 x10, lyun6 gam3 x3	lyun6 gam3
+利是	lai6 si6	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under lei6 si6, the same word	HKCanCor train lei6 si6 x1; words.hk example spans lai6 si6 x13, lei6 si6 x1	lei6 si6
+宿舍	suk1 se5	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under suk1 se3, the same word	HKCanCor train suk1 se5 x2; words.hk example spans suk1 se5 x9, suk1 se3 x4	suk1 se3
+時刻	si4 haak1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under si4 hak1, the same word	HKCanCor train si4 haak1 x1; words.hk example spans si4 haak1 x5, si4 hak1 x4	si4 hak1
+來到	lai4 dou3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under loi4 dou3, the same word	HKCanCor train lai4 dou3 x6	loi4 dou3 literary
+入到	jap6 dou2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jap6 dou3, the same word	words.hk example spans jap6 dou2 x6, jap6 dou3 x4	jap6 dou3
+幾咁	gei2 gam3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gei2 gam2, the same word	HKCanCor train gei2 gam3 x1; words.hk example spans gei2 gam3 x5	gei2 gam2
+得㗎喇	dak1 gaa3 laa3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under dak1 gaa2 laa3, the same word	words.hk example spans dak1 gaa3 laa3 x12	dak1 gaa2 laa3
+你哋嘅	nei5 dei6 ge3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under nei5 dei2 ge3, the same word	words.hk example spans nei5 dei6 ge3 x3	nei5 dei2 ge3
+朝朝	ziu1 ziu1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under ciu4 ciu4, the same word	HKCanCor train ziu1 ziu1 x1; words.hk example spans ziu1 ziu1 x10	ciu4 ciu4
+鋼線	gong3 sin2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gong3 sin3, the same word	HKCanCor train gong3 sin2 x6; words.hk example spans gong3 sin2 x2	gong3 sin3
+企起身	kei5 hei2 san1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under kei2 hei2 san1, the same word	HKCanCor train kei5 hei2 san1 x1; words.hk example spans kei5 hei2 san1 x7	kei2 hei2 san1
+咁多位	gam3 do1 wai2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gam2 do1 wai6, the same word	words.hk example spans gam3 do1 wai2 x9, gam3 do1 wai6 x1	gam2 do1 wai6
+幾錢	gei2 cin2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under gei2 cin4, the same word	words.hk example spans gei2 cin2 x10	gei2 cin4 citation
+把握	baa2 aak1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under baa2 ak1, the same word	HKCanCor train baa2 aak1 x1; words.hk example spans baa2 aak1 x4, baa2 ak1 x3	baa2 ak1
+由得	jau2 dak1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jau4 dak1, the same word	words.hk example spans jau2 dak1 x9, jau5 dak1 x1	jau4 dak1
+粒鐘	nap1 zung1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under lap1 zung1, the same word	words.hk example spans nap1 zung1 x8	lap1 zung1
+上個禮拜	soeng6 go3 lai5 baai3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under soeng5 go3 lai5 baai3, the same word	words.hk example spans soeng6 go3 lai5 baai3 x3	soeng5 go3 lai5 baai3
+出生	ceot1 sang1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under ceot1 saang1, the same word	words.hk example spans ceot1 sang1 x9	ceot1 saang1
+剩低	sing6 dai1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under zing6 dai1, the same word	HKCanCor train zing1 dai1 x1; words.hk example spans sing6 dai1 x3	zing6 dai1
+黑幫	haak1 bong1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under hak1 bong1, the same word	words.hk example spans haak1 bong1 x6, hak1 bong1 x4	hak1 bong1
+嗰位	go2 wai2	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under go2 wai6, the same word	words.hk example spans go2 wai2 x4, go2 wai6 x1	go2 wai6
+話咁快	waa6 gam3 faai3	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under waa6 gam2 faai3, the same word	words.hk example spans waa6 gam3 faai3 x6	waa6 gam2 faai3
+隊員	deoi2 jyun4	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under deoi6 jyun4, the same word	HKCanCor train deoi2 jyun4 x1; words.hk example spans deoi2 jyun4 x4, deoi6 jyun4 x2	deoi6 jyun4
+中文字	zung1 man2 zi6	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under zung1 man4 zi6, the same word	words.hk example spans zung1 man2 zi6 x4, zung1 man4 zi6 x3	zung1 man4 zi6
+厲害	lei6 hoi6	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under lai6 hoi6, the same word	HKCanCor train lai6 hoi6 x1; words.hk example spans lei6 hoi6 x4, lai6 hoi6 x2	lai6 hoi6
+細路哥	sai3 lou6 go1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under sai3 lou2 go1, the same word	HKCanCor train sai3 lou6 go1 x2; words.hk example spans sai3 lou6 go1 x3	sai3 lou2 go1
+一刻	jat1 hak1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jat1 haak1, the same word	words.hk example spans jat1 hak1 x6, jat1 haak1 x4	jat1 haak1
+預測	jyu6 caak1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jyu6 cak1, the same word	HKCanCor train jyu6 caak1 x2; words.hk example spans jyu6 caak1 x7	jyu6 cak1

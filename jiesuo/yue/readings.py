@@ -27,20 +27,48 @@ MIN_TOKENS = 5
 Resolution = namedtuple("Resolution", "form main others status evidence")
 
 
-def load_overrides(path=OVERRIDES) -> dict:
-    """form -> reading. Every line needs a reading that parses, a reason and a source."""
-    out = {}
+LABELS = ("literary", "citation")
+
+
+def _override_rows(path):
+    """(form, reading, [(other reading, label)]) per row. Column 5 (optional) lists other readings of the same word,
+    comma-separated, each optionally followed by a label: `ging1 literary`, `gam1 nin4 citation`, `m4 wui2`."""
     lines = Path(path).read_text(encoding="utf8").splitlines()
     for n, line in enumerate(lines[1:], 2):
         if not line.strip() or line.startswith("#"):
             continue
         cols = line.split("\t")
-        if len(cols) != 4 or not all(c.strip() for c in cols):
-            raise ValueError(f"{path}:{n}: need form, reading, reason, source")
-        for syl in jyutping.split(cols[1]):  # one syllable per character of the form
+        if len(cols) not in (4, 5) or not all(c.strip() for c in cols[:4]):
+            raise ValueError(f"{path}:{n}: need form, reading, reason, source (and optionally the same word's other "
+                             "readings)")
+        syls = jyutping.split(cols[1])
+        if len(syls) != len(cols[0]):
+            raise ValueError(f"{path}:{n}: one syllable per character")
+        for syl in syls:
             jyutping.parse(syl)
-        out[cols[0]] = cols[1]
-    return out
+        same = []
+        for item in (cols[4].split(",") if len(cols) == 5 else []):
+            words = item.split()
+            if not words:
+                continue
+            label = words.pop() if words[-1] in LABELS else ""
+            if len(words) != len(cols[0]):
+                raise ValueError(f"{path}:{n}: {item!r} is not a reading of {cols[0]}")
+            for syl in words:
+                jyutping.parse(syl)
+            same.append((" ".join(words), label))
+        yield cols[0], cols[1], same
+
+
+def load_overrides(path=OVERRIDES) -> dict:
+    """form -> reading. Every line needs a reading that parses, a reason and a source."""
+    return {form: reading for form, reading, _same in _override_rows(path)}
+
+
+def load_same_word(path=OVERRIDES) -> dict:
+    """form -> [(reading, label)]: column 5 of overrides.tsv, other readings of the same word. Their meaning is the
+    word's meaning; a label ("literary", "citation") is shown with the reading."""
+    return {form: same for form, _reading, same in _override_rows(path) if same}
 
 
 def corpus_counts(hkcancor) -> dict:

@@ -1,11 +1,16 @@
 """Word lexicon: one resolved Jyutping reading per word, changed tones, spoken frequency, meanings.
 
-Reading order for a word (spec section 6):
-1. rime words, CC-Canto and reviewed words.hk (the available sources) give one distinct reading: "agree".
+Reading order for a word of two or more characters (spec section 6):
+0. A row of data/yue/overrides.tsv (a hand decision with its reason and source) wins: "override".
+1. rime words, CC-Canto and reviewed words.hk (the available sources) give one distinct reading: "agree". A reading
+   that only one source lists, with a syllable that is neither its character's main reading nor a shipped alternative
+   of it (唔會 m4 wui2, 朝朝 ciu4 ciu4), is accepted only when an attestation (below) supports it; else "unresolved".
 2. Otherwise the HKCanCor train-split majority (at least MIN_TOKENS tokens, a unique top): "corpus".
 3. Otherwise the reviewed words.hk reading: "wordshk".
-4. Otherwise a row of data/yue/overrides.tsv: "override".
-5. Otherwise "unresolved".
+4. Otherwise "unresolved".
+Attestations are the form's HKCanCor train tokens and the spans of reviewed words.hk examples that spell the form,
+each with its own Jyutping. When a strict majority of them gives a reading other than the one chosen above, the
+attested reading is used instead ("attested"): it is how people were heard, or written down, saying the word.
 Single characters take their reading from readings.resolve_char.
 """
 import json
@@ -23,7 +28,8 @@ ROOT = readings.ROOT
 CACHE = sources.RAW / "cache"
 CEDICT = ROOT / "data" / "raw" / "cedict.json"
 MIN_TOKENS = 3
-CODE_VERSION = 3  # bump when a cached loader's result shape changes
+MIN_ATTESTED = 3  # attestations (HKCanCor train tokens + words.hk example spans) before their majority counts
+CODE_VERSION = 4  # bump when a cached loader's result shape changes
 SECONDARY_WEIGHT = 0.5
 REPORT_TOP = 6000
 
@@ -42,6 +48,7 @@ class Word:
     changed: list = field(default_factory=list)
     wordshk_id: int | None = None
     whk_eng: bool = False  # a reviewed, published words.hk entry with this form and reading has an English gloss
+    labels: dict = field(default_factory=dict)  # alternative reading -> "literary" / "citation" (overrides.tsv col 5)
 
 
 def is_han(ch: str) -> bool:
@@ -89,6 +96,47 @@ def _norm(jp: str, form: str):
     return " ".join(syls)
 
 
+_TAIL_JP = re.compile(r"^(.*?)\s*\(([a-z0-9 ,.!?;:~'…-]*[1-6][a-z0-9 ,.!?;:~'…-]*)\)\s*$", re.S)
+
+
+def split_example_jp(text, jp):
+    """(text, jp). The words.hk loader only takes a parenthetical of bare syllables as the reading; one with
+    punctuation inside ("ngo5 zi1 dou3, ...") is left on the text. Take it off here."""
+    if jp:
+        return text, jp
+    m = _TAIL_JP.match(text.strip())
+    if m and m.group(1):
+        return m.group(1), re.sub(r"[,.!?;:~'…-]+", " ", m.group(2))
+    return text, jp
+
+
+def example_runs(text, jp):
+    """A words.hk example's Han runs as [[(char, syllable), ...], ...], aligned on its own Jyutping (one syllable
+    per Han character), or None when it does not align (Latin letters or digits in the text, a bad syllable)."""
+    text, jp = split_example_jp(text, jp)
+    syls = jyutping.split(jp or "")
+    if not syls or "".join(syls) != (jp or "").lower().replace(" ", "") or re.search(r"[0-9A-Za-z０-９Ａ-Ｚａ-ｚ]", text):
+        return None
+    for x in syls:
+        try:
+            jyutping.parse(x)
+        except ValueError:
+            return None
+    if sum(1 for c in text if is_han(c)) != len(syls):
+        return None
+    runs, cur, k = [], [], 0
+    for c in text:
+        if is_han(c):
+            cur.append((c, syls[k]))
+            k += 1
+        elif cur:
+            runs.append(cur)
+            cur = []
+    if cur:
+        runs.append(cur)
+    return runs
+
+
 def _wordshk_index(srcs) -> dict:
     """form -> [(reading, entry id)] over reviewed words.hk entries only."""
     if "_whk" not in srcs:
@@ -119,6 +167,83 @@ def _word_counts(srcs) -> dict:
                 wc.setdefault(word, Counter())[jp] += 1
         srcs["_wc"] = wc
     return srcs["_wc"]
+
+
+def _example_spans(srcs) -> dict:
+    """form -> Counter(reading): every 2-4 character span of a reviewed words.hk example that spells a form some
+    source lists, with the example's own Jyutping for it."""
+    if "_whk_spans" not in srcs:
+        want = set(srcs.get("rime_words", {})) | set(srcs.get("cccanto_words", {})) | set(_wordshk_index(srcs))
+        want |= set(_word_counts(srcs))
+        want = {f for f in want if 2 <= len(f) <= 4}
+        out: dict = {}
+        for e in srcs.get("wordshk", []):
+            if not e.reviewed:
+                continue
+            for ex in e.examples:
+                for run in example_runs(ex[0], ex[1]) or ():
+                    for i in range(len(run)):
+                        for L in range(2, min(4, len(run) - i) + 1):
+                            piece = "".join(c for c, _ in run[i:i + L])
+                            if piece in want:
+                                out.setdefault(piece, Counter())[" ".join(x for _, x in run[i:i + L])] += 1
+        srcs["_whk_spans"] = out
+    return srcs["_whk_spans"]
+
+
+def attestations(form, srcs) -> Counter:
+    """Readings people were heard or written with: the form's HKCanCor train tokens, plus (two or more characters)
+    the spans of reviewed words.hk examples that spell it."""
+    out = Counter()
+    for rd, n in (_word_counts(srcs).get(form) or {}).items():
+        r = _norm(rd, form)
+        if r:
+            out[r] += n
+    if len(form) > 1:
+        out.update(_example_spans(srcs).get(form) or {})
+    return out
+
+
+def attested_majority(form, srcs):
+    """The reading a strict majority of the form's attestations give (at least MIN_ATTESTED of them), else None."""
+    att = attestations(form, srcs)
+    if sum(att.values()) < MIN_ATTESTED:
+        return None
+    rd, n = att.most_common(1)[0]
+    return rd if 2 * n > sum(att.values()) else None
+
+
+def _plain(form, jp, srcs) -> bool:
+    """Every syllable is its character's main reading or one of its alternatives that ship (2 or more sources)."""
+    for ch, syl in zip(form, jp.split()):
+        r = _char_res(ch, srcs)
+        if r is None or not r.main:
+            return False
+        known = {r.main} | {o for o in r.others if len([x for x in r.evidence.get(o, ()) if x != "override"]) >= 2}
+        if syl not in known:
+            return False
+    return True
+
+
+def _same_word(form, srcs) -> list:
+    """[(reading, label)]: other readings of the same word, from overrides.tsv column 5."""
+    return list(srcs.get("same_word", {}).get(form, ()))
+
+
+def _labels(form, jp, srcs) -> dict:
+    return {rd: lab for rd, lab in _same_word(form, srcs) if lab and rd != jp}
+
+
+def _meaning(form, jp, srcs, alt=()) -> str:
+    """_english for the reading, else (a word of two or more characters) for another reading of the same word
+    (overrides.tsv column 5). A single character's readings often carry different senses (平 peng4 cheap, ping4
+    flat), so a character only ever takes the meanings of its own reading."""
+    en = _english(form, jp, srcs, alt)
+    for rd, _lab in (_same_word(form, srcs) if len(form) > 1 else ()):
+        if en:
+            break
+        en = _english(form, rd, srcs, alt)
+    return en
 
 
 def _char_res(ch, srcs):
@@ -211,10 +336,20 @@ _POS_MID = re.compile(r"(^|;\s*)\(\s*" + _POS + r"(?:[\s;,/–-]+" + _POS + r")*
 _ENUM = re.compile(r"(?:^|\s)\d+\.\s+")
 
 
+_OF_ENUM = re.compile(r"^(\((?:of|of a|of an|of the)\s[^()]*\))\s*(1\.\s.*)$", re.I)
+_TAG_WORDS = re.compile(r"^\(\s*(?:" + _POS + r"|appellation|attributive|bound form|coll\.|colloquial|literally|"
+                        r"lit\.|fig\.|figurative|onom\.)(?:\s*[/;,]\s*(?:" + _POS + r"|appellation|attributive|"
+                        r"bound form|coll\.|colloquial|literally|lit\.|fig\.|figurative|onom\.))+\s*\)\s*", re.I)
+
+
 def _expand(sense: str) -> list:
-    """One sense without its leading part-of-speech tag; "1. x; 2. y" becomes separate senses."""
-    t = _POS_TAG.sub("", sense.strip())
-    if re.match(r"1\.\s", t):
+    """One sense without its leading part-of-speech tag; "1. x; 2. y" becomes separate senses, and
+    "(of X) 1. a; 2. b" becomes "(of X) a", "(of X) b"."""
+    t = _TAG_WORDS.sub("", _POS_TAG.sub("", sense.strip()))
+    m = _OF_ENUM.match(t)
+    if m:
+        return [f"{m.group(1)} {x.strip(' ;,')}" for x in _ENUM.split(m.group(2)) if x.strip(" ;,")]
+    if re.match(r"1\.\s", t) or re.search(r";\s*2\.\s", t):  # "1. a; 2. b", or "a; 2. b" with the 1. left out
         return [x.strip(" ;,") for x in _ENUM.split(t) if x.strip(" ;,")]
     return [t]
 
@@ -244,7 +379,8 @@ def clean_senses(senses, limit=3, follow=None) -> str:
         t = _tidy(_balanced(t))
         t = _POS_MID.sub(r"\1", t)  # a tag after a ";" inside a sense ("that time; (adverb) then")
         t = _tidy(_POS_TAG.sub("", t))  # a tag that only became leading, or alone, after the removals
-        if t and t not in out:
+        t = "; ".join(dict.fromkeys(x for x in t.split("; ") if x))  # "Tutor; Tutor" within one sense
+        if t and t.lower() not in {x.lower() for x in out}:  # ... or as two senses
             out.append(t)
     if not out and follow:
         for sense in senses:
@@ -261,7 +397,8 @@ def _cedict_by_form(srcs) -> dict:
         out: dict = {}
         if CEDICT.exists():
             for e in json.loads(CEDICT.read_text(encoding="utf8")):
-                out.setdefault(e["traditional"], []).extend(e["english"])
+                if not _proper(e):
+                    out.setdefault(e["traditional"], []).extend(e["english"])
         srcs["_cedict_trad"] = out
     return srcs["_cedict_trad"]
 
@@ -284,16 +421,30 @@ def _english(form, jp, srcs, alt=()) -> str:
                 return got
         return clean_senses(cedict, follow=follow)
     # A single character has many minor senses in CC-Canto ("(verb) to catch"): the dictionary's own come first,
-    # then the CC-Canto glosses, up to 3 senses in all.
+    # then the CC-Canto glosses, up to 3 senses in all. CC-CEDICT senses reached through a pinyin that maps to several
+    # readings (平 ping2 -> ping4 and peng4) may belong to the other reading, so they come last.
     out = []
     if not cedict:  # CC-CEDICT marks Cantonese-only senses "(dialect)" under a pinyin the readings file lacks (睇)
         cedict = [x[len("(dialect)"):].strip() for x in _cedict_by_form(srcs).get(form, [])
                   if x.lower().startswith("(dialect)")]
-    for sense in [*cedict, *(x for en in glosses for x in _split_gloss(en))]:
+    canto = [x for en in glosses for x in _split_gloss(en)]
+    if (form, jp) in srcs.get("cedict_ambiguous", ()):
+        # the senses may belong to the other reading: they count only for the dictionaries' own main reading
+        main = readings._rime_main(srcs.get("rime", {}).get(form, []), set(srcs.get("cccanto", {}).get(form, ())))
+        cedict = cedict if jp == main else []
+    order = [*cedict, *canto]
+    for sense in order:
+        if _NOT_A_CHAR_SENSE.search(sense):
+            continue
         c = clean_senses([sense], 1, follow=follow)
         if c and c not in out:
             out.append(c)
     return "; ".join(out[:3])
+
+
+_NOT_A_CHAR_SENSE = re.compile(
+    r"\b(?:dynasty|dynasties|kingdom|state of|warring states|province|county|prefecture|city|district|surname|"
+    r"place name|country|river in|mountain in|short (?:name|for)|abbr\.)", re.I)
 
 
 def _whk_eng_index(srcs) -> set:
@@ -325,35 +476,60 @@ def resolve_word(form, srcs) -> Word:
             return Word(form, "", list(r.others) if r else [], "unresolved")
         status = "agree" if r.status == "agreed" else r.status
         wid = next((i for rd, i in whk if rd == r.main), None)
-        return Word(form, r.main, list(r.others), status, en=_english(form, r.main, srcs, r.others), wordshk_id=wid,
-                    whk_eng=(form, r.main) in _whk_eng_index(srcs))
+        return Word(form, r.main, list(r.others), status, en=_meaning(form, r.main, srcs, r.others), wordshk_id=wid,
+                    whk_eng=(form, r.main) in _whk_eng_index(srcs), labels=_labels(form, r.main, srcs))
 
     rime, canto, whk = _candidates(form, srcs)
     whk_readings = [rd for rd, _i in whk]
-    cands: list = []
-    for rd in rime + canto + whk_readings:
-        if rd not in cands:
-            cands.append(rd)
+    listed = list(dict.fromkeys(rime + canto + whk_readings))
+    att = attestations(form, srcs)
+    total = sum(att.values())
+
+    def supported(rd):
+        """A listed reading worth showing as an alternative: speech and examples do not contradict it (at least 1 in
+        20 of 10 or more attestations), and two sources list it, or it is attested, or its syllables are usual."""
+        if total >= 10 and att[rd] * 20 < total:
+            return False
+        return (rd in rime) + (rd in canto) + (rd in whk_readings) >= 2 or att[rd] > 0 or _plain(form, rd, srcs)
+
+    cands = [rd for rd in listed if supported(rd)]
+    cands += [rd for rd, n in att.most_common() if rd not in cands and n >= MIN_ATTESTED and n * 4 >= total]
 
     def make(jp, status):
         wid = next((i for rd, i in whk if rd == jp), None)
-        alt = [c for c in cands if c != jp]
-        return Word(form, jp, alt, status, en=_english(form, jp, srcs, alt), changed=_changed(form, jp, srcs),
-                    wordshk_id=wid, whk_eng=(form, jp) in _whk_eng_index(srcs))
+        alt = [c for c in (cands if jp else list(dict.fromkeys(listed + cands))) if c != jp]  # unresolved: every candidate
+        labels = _labels(form, jp, srcs)
+        alt += [rd for rd in labels if rd not in alt]  # a labelled reading is always shown
+        return Word(form, jp, alt, status, en=_meaning(form, jp, srcs, alt), changed=_changed(form, jp, srcs),
+                    wordshk_id=wid, whk_eng=(form, jp) in _whk_eng_index(srcs), labels=labels)
 
-    if len(cands) == 1:
-        return make(cands[0], "agree")
+    over = srcs.get("overrides", {}).get(form)
+    if over and _norm(over, form):
+        jp = _norm(over, form)
+        cands = list(dict.fromkeys(cands + [jp]))
+        return make(jp, "override")
+    major = attested_majority(form, srcs)
+
+    def settle(jp, status):
+        return make(major, "attested") if major and major != jp else make(jp, status)
+
+    if len(listed) == 1:
+        rd = listed[0]
+        if major and major != rd:
+            return make(major, "attested")
+        if supported(rd):
+            return make(rd, "agree")
+        return make("", "unresolved")  # one source, an unusual syllable and nothing attested: not taught
     counts = _word_counts(srcs).get(form)
     if counts and sum(counts.values()) >= MIN_TOKENS:
         best = max(counts.values())
         tied = [r for r, c in counts.items() if c == best]
         if len(tied) == 1 and _norm(tied[0], form):
-            return make(tied[0], "corpus")
+            return settle(_norm(tied[0], form), "corpus")
     if whk_readings:
-        return make(whk_readings[0], "wordshk")
-    over = srcs.get("overrides", {}).get(form)
-    if over and _norm(over, form):
-        return make(_norm(over, form), "override")
+        return settle(whk_readings[0], "wordshk")
+    if major:
+        return make(major, "attested")
     return make("", "unresolved")
 
 
@@ -421,9 +597,15 @@ _READING_LINE = re.compile(r"^(\S+) \S+ \[([^\]]*)\] \{([^}]*)\}")
 CANTO_READINGS = sources.RAW / "cccedict_canto_readings.zip"
 
 
-def _cedict_jp() -> dict:
-    """(traditional form, Jyutping) -> CC-CEDICT senses, matched through CC-Canto's readings file
-    (lines like `食 食 [shi2] {sik6}`) on the pinyin of each CEDICT entry."""
+def _proper(entry) -> bool:
+    """A CC-CEDICT entry for a proper noun: its pinyin starts with a capital (Cheng2 Du1, Ming2, Bo1)."""
+    return entry["pinyin"][:1].isupper()
+
+
+def _cedict_jp():
+    """((traditional form, Jyutping) -> CC-CEDICT senses, set of the keys whose senses came through a pinyin that the
+    readings file maps to several Jyutping readings), matched through CC-Canto's readings file (lines like
+    `食 食 [shi2] {sik6}`) on the pinyin of each CEDICT entry. Proper-noun entries are skipped."""
     jp_of: dict = {}
     with zipfile.ZipFile(CANTO_READINGS) as z:
         for member in z.namelist():
@@ -436,13 +618,19 @@ def _cedict_jp() -> dict:
                     if jp:
                         jp_of.setdefault((m.group(1), _pinyin_key(m.group(2))), set()).add(jp)
     out: dict = {}
+    ambiguous = set()
     for e in json.loads(CEDICT.read_text(encoding="utf8")):
-        for jp in sorted(jp_of.get((e["traditional"], _pinyin_key(e["pinyin"])), ())):
+        if _proper(e):
+            continue
+        jps = sorted(jp_of.get((e["traditional"], _pinyin_key(e["pinyin"])), ()))
+        for jp in jps:
+            if len(jps) > 1:
+                ambiguous.add((e["traditional"], jp))
             for sense in e["english"]:
                 lst = out.setdefault((e["traditional"], jp), [])
                 if sense not in lst:
                     lst.append(sense)
-    return out
+    return out, ambiguous
 
 
 def load_sources(overrides_path=readings.OVERRIDES) -> dict:
@@ -455,10 +643,11 @@ def load_sources(overrides_path=readings.OVERRIDES) -> dict:
     tat = [raw / "tatoeba" / n for n in ("eng_sentences_detailed.tsv.bz2", "yue-eng_links.tsv.bz2",
                                          "yue_sentences_detailed.tsv.bz2")]
     srcs["tatoeba"] = _cached("tatoeba", tat, sources.load_tatoeba_yue)
-    srcs["cedict_jp"] = _cached("cedict_jp", [CEDICT, CANTO_READINGS], _cedict_jp)
+    srcs["cedict_jp"], srcs["cedict_ambiguous"] = _cached("cedict_jp", [CEDICT, CANTO_READINGS], _cedict_jp)
     srcs["train"], srcs["test"] = split_heldout(srcs["hkcancor"])
     # character readings for the lexicon see the train split only (phase 1's readings.json is unchanged)
     srcs["chars"] = readings.resolve_all({**srcs, "hkcancor": srcs["train"]})
+    srcs["same_word"] = readings.load_same_word(overrides_path)
     return srcs
 
 
@@ -483,7 +672,7 @@ def write_word_report(lex, srcs, path=readings.REPORT):
     lines = ["## Words", "", f"Words considered: {len(lex)}. Held-out split: every 5th HKCanCor sentence "
              "is test; readings and frequencies use train only.", "",
              "| status | words |", "|---|---|"]
-    for s in ("agree", "corpus", "wordshk", "override", "unresolved"):
+    for s in ("agree", "corpus", "attested", "wordshk", "override", "unresolved"):
         lines.append(f"| {s} | {counts.get(s, 0)} |")
     lines += ["", f"### Unresolved among the top {REPORT_TOP} by frequency ({len(unresolved)})", ""]
     if not unresolved:
