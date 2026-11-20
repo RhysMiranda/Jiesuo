@@ -343,7 +343,7 @@ Order: 4965 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 
 ## words.hk / HKCanCor Jyutping that differs from the lexicon
 
-5843 token(s), 1067 distinct. words.hk's own Jyutping is kept in the example; HKCanCor's only when it is a recorded alternative of the word. Most frequent first (token, lexicon, example reading, count, first example).
+5848 token(s), 1067 distinct. words.hk's own Jyutping is kept in the example; HKCanCor's only when it is a recorded alternative of the word. Most frequent first (token, lexicon, example reading, count, first example).
 
 - 呢: lexicon ne1, example ni1 x584 (wordshk:85360#2)
 - 喇: lexicon laa3, example laa1 x430 (wordshk:84901#2)
@@ -415,6 +415,7 @@ Order: 4965 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 掉: lexicon diu6, example deu6 x13 (wordshk:77233#1)
 - 呃: lexicon ngaak1, example aak3 x13 (wordshk:98623#1)
 - 新聞: lexicon san1 man4, example san1 man2 x13 (wordshk:86298#1)
+- 近: lexicon kan5, example gan6 x13 (wordshk:111511#1)
 - 唔到: lexicon m4 dou2, example m4 dou3 x13 (wordshk:70349#1)
 - 盒: lexicon hap6, example hap2 x12 (wordshk:78874#1)
 - 唔好意思: lexicon m4 hou2 ji3 si1, example m4 hou2 ji3 si3 x12 (wordshk:29424#1)
@@ -488,7 +489,6 @@ Order: 4965 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 係咁: lexicon hai6 gam3, example hai6 gam2 x6 (wordshk:86539#4)
 - 半夜: lexicon bun3 je6, example bun3 je2 x6 (wordshk:28250#1)
 - 曳: lexicon jai5, example jai1 x6 (wordshk:44231#23)
-- 近: lexicon gan6, example kan5 x6 (wordshk:70021#2)
 - 繩: lexicon sing4, example sing2 x6 (wordshk:79788#1)
 - 棘: lexicon gik1, example kik1 x6 (wordshk:96210#1)
 - 油: lexicon jau4, example jau2 x6 (wordshk:96210#2)
@@ -509,7 +509,6 @@ Order: 4965 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 分: lexicon fan1, example fan6 x5 (wordshk:64521#4)
 - 唉: lexicon aai5, example aai2 x5 (wordshk:13757#1)
 - 個人: lexicon go3 jan4, example go3 jan2 x5 (wordshk:52058#1)
-- 卡: lexicon kaa1, example kaat1 x5 (wordshk:40366#18)
 - 舖: lexicon pou3, example pou2 x5 (wordshk:66778#1)
 - 下個: lexicon haa6 go3, example haa5 go3 x5 (wordshk:45055#1)
 - 份: lexicon fan6, example fan2 x5 (wordshk:19652#3)
@@ -602,6 +601,7 @@ Order: 4965 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - 皮: lexicon pei4, example pei2 x3 (wordshk:65401#7)
 - 扱: lexicon caap3, example kap1 x3 (wordshk:78398#4)
 - 摟: lexicon lau2, example lau3 x3 (wordshk:90297#1)
+- 卡: lexicon kaat1, example kaa1 x3 (wordshk:82267#1)
 - 希臘: lexicon hei1 lip6, example hei1 laap6 x3 (wordshk:78427#1)
 - 唓: lexicon ce1, example ce2 x3 (wordshk:102316#1)
 - 妹: lexicon mui2, example mui1 x3 (wordshk:75936#3)

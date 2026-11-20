@@ -113,17 +113,18 @@ def free_chars(train, n=FREE_MIN, spelling=HKCANCOR_SPELLING):
 
 
 def order_words(lex, first, n=5000, headwords=None, free=None,
-                exclude=FORMAL_ONLY_ITEMS | WRITTEN_ITEMS | frozenset(ALT_SPELLINGS)):
+                exclude=FORMAL_ONLY_ITEMS | WRITTEN_ITEMS | frozenset(ALT_SPELLINGS), meant=frozenset()):
     """Stage 1 forms in content order, then greedy by spoken frequency, truncated to n.
 
-    Only forms with a meaning for their reading (en, or a published reviewed words.hk gloss) and, when `headwords` is
+    Only forms with a meaning for their reading (en, a published reviewed words.hk gloss, or a hand-checked one: a
+    form in `meant`) and, when `headwords` is
     given, a headword form can be taught; never a form in `exclude`; and, when `free` is given, a single character
     only if it is in `free` (a free word in speech). A multi-character form needs the characters that are teachable
     words. Forms in `first` are known.
     """
     done = list(dict.fromkeys(first))
     known = set(done)
-    ok = {f for f, w in lex.items() if (w.en or w.whk_eng) and (headwords is None or f in headwords)
+    ok = {f for f, w in lex.items() if (w.en or w.whk_eng or f in meant) and (headwords is None or f in headwords)
           and f not in exclude and (free is None or len(f) > 1 or f in free)}
     value = {f: lex[f].freq for f in ok if lex[f].freq > 0 and f not in known}
     prereq = {}
@@ -562,10 +563,12 @@ def build(srcs=None, located=None):
     # files them as variants of 俾 and 係唔係
     named = set(first) | {n for p in grammar["points"] for n in p["needs"]}
     free = free_chars(srcs["train"]) | wordshk_free_chars(srcs["wordshk"], lex) | keys
-    order = order_words(lex, first, headwords=headword_forms(srcs) | named, free=free)
+    table = load_meanings()
+    meant = {f for f, m in table["items"].items() if f in lex and m.get("jp") == lex[f].jp}
+    order = order_words(lex, first, headwords=headword_forms(srcs) | named, free=free, meant=meant)
     # forms the meaning table rules out as items of their own (bound, a name, a fragment, a particle cluster) leave the
     # greedy order; the order of everything else is unchanged. Stage 1 and grammar needs were chosen by hand and stay.
-    skip = set(load_meanings()["skip"]) - named
+    skip = set(table["skip"]) - named
     skipped = [f for f in order if f in skip]
     order = [f for f in order if f not in skip]
     pos = {f: i for i, f in enumerate(order)}

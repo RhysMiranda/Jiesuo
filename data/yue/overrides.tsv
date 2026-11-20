@@ -126,3 +126,5 @@ form	reading	reason	source	same_word
 細路哥	sai3 lou6 go1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under sai3 lou2 go1, the same word	HKCanCor train sai3 lou6 go1 x2; words.hk example spans sai3 lou6 go1 x3	sai3 lou2 go1
 一刻	jat1 hak1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jat1 haak1, the same word	words.hk example spans jat1 hak1 x6, jat1 haak1 x4	jat1 haak1
 預測	jyu6 caak1	how it is said (a strict majority of the attestations); the meaning is the dictionaries' entry under jyu6 cak1, the same word	HKCanCor train jyu6 caak1 x2; words.hk example spans jyu6 caak1 x7	jyu6 cak1
+近	kan5	near, close: kan5 when said on its own; gan6 is the literary reading, kept in words such as 最近 and 附近	HKCanCor train kan5 x9, gan6 x8 (one-character tokens); rime-cantonese kan5 weight 5	gan6 literary
+卡	kaat1	card: kaat1 is the everyday word; kaa1 is a different word (train carriage, carat)	wordshk:78321 (kaat1, 7 examples) vs wordshk:53793 (kaa1, 2 examples); words.hk examples kaat1 x32, kaa1 x15

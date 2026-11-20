@@ -6,9 +6,9 @@ Characters considered: 26998
 
 | status | characters |
 |---|---|
-| agreed | 22684 |
+| agreed | 22682 |
 | corpus | 26 |
-| override | 39 |
+| override | 41 |
 | unresolved | 4249 |
 
 ## Decided by the corpus (26)
@@ -4341,11 +4341,11 @@ Words considered: 43712. Held-out split: every 5th HKCanCor sentence is test; re
 
 | status | words |
 |---|---|
-| agree | 39884 |
+| agree | 39882 |
 | corpus | 265 |
 | attested | 346 |
 | wordshk | 865 |
-| override | 127 |
+| override | 129 |
 | unresolved | 2225 |
 
 ### Unresolved among the top 6000 by frequency (7)

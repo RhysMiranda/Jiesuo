@@ -2237,9 +2237,9 @@
    "src": "cedict; hk usage"
   },
   "近": {
-   "jp": "gan6",
-   "en": "near, close",
-   "src": "cedict; hk usage"
+   "jp": "kan5",
+   "en": "near; close to",
+   "src": "HKCanCor train kan5 x9; hk usage"
   },
   "最近": {
    "jp": "zeoi3 gan6",
@@ -2912,9 +2912,9 @@
    "src": "wordshk:71804,97232; cedict; lesson:wordshk:76773#8; hk usage"
   },
   "卡": {
-   "jp": "kaa1",
-   "en": "(train) carriage, compartment; carat",
-   "src": "wordshk:53793; cccanto; cedict; hk usage"
+   "jp": "kaat1",
+   "en": "card",
+   "src": "wordshk:78321; hk usage"
   },
   "查": {
    "jp": "caa4",
