@@ -143,13 +143,39 @@ def test_run_mocked_never_leaks_key(tmp_path, monkeypatch, capsys):
     assert "SECRET123" not in (tmp_path / "raw" / "manifest.json").read_text(encoding="utf8")
 
 
+CUR = {"f": "x", "a": "x", "b": "x", "c": "x", "d": "x"}
+
+
+def test_publish_ships_only_clips_that_say_the_current_reading(tmp_path):
+    for k in "abc":
+        (tmp_path / f"{k}.mp3").write_bytes(b"x")
+    man = {"a": {"f": "唔會", "r": "0%", "voice": HIU, "jp": "m4 wui5"},
+           "b": {"f": "唔會", "r": "0%", "voice": HIU, "jp": "m4 wui2"},  # made before the reading was fixed
+           "c": {"f": "gone", "r": "0%", "voice": HIU, "jp": "x"}}  # no longer in the data
+    stats = {}
+    c = tts.publish(man, tmp_path / "s.json", tmp_path, mismatched=set(), uncalibrated=set(), accepted=set(),
+                    checked={"a", "b", "c"}, stats=stats, current={"唔會": "m4 wui5"})
+    assert set(c) == {"a"} and stats["held"]["stale reading"] == 2
+
+
+def test_current_readings_prefer_stage1_then_lexicon_then_examples(tmp_path):
+    w = lambda name, d: (tmp_path / name).write_text(json.dumps(d, ensure_ascii=False), encoding="utf8")
+    w("lexicon.json", {"words": [["好", "hou2", "", 1, 0, "a"], ["ex1", "lexicon", "", 1, 0, "a"]], "chars": {}})
+    w("course.json", {"stage1": {"lessons": [{"items": [{"form": "好", "jp": "hou2 stage1"}]}]}})
+    w("sentences.json", {"items": {"ex1": ["t", "example"]}})
+    w("hkcancor.json", {"items": {}})
+    w("wordshk.json", {"examples": {"ex2": ["t", "whk"]}})
+    cur = tts.current_readings(tmp_path)
+    assert cur["好"] == "hou2 stage1" and cur["ex1"] == "lexicon" and cur["ex2"] == "whk"
+
+
 def test_publish_holds_back_mismatches_until_ok(tmp_path):
     (tmp_path / "a.mp3").write_bytes(b"x"), (tmp_path / "b.mp3").write_bytes(b"x")
-    man = {k: {"f": "f", "r": "0%", "voice": HIU} for k in ("a", "b", "c")}
+    man = {k: {"f": "f", "r": "0%", "voice": HIU, "jp": "x"} for k in ("a", "b", "c")}
     out = tmp_path / "s.json"
-    c = tts.publish(man, out, tmp_path, mismatched={"b"}, uncalibrated=set(), accepted=set(), checked={"a", "b", "c"})
+    c = tts.publish(man, out, tmp_path, mismatched={"b"}, uncalibrated=set(), accepted=set(), checked={"a", "b", "c"}, current=CUR)
     assert set(c) == {"a"}  # b mismatched, c has no mp3
-    c = tts.publish(man, out, tmp_path, mismatched={"b"}, uncalibrated=set(), accepted={"b"}, checked={"a", "b", "c"})
+    c = tts.publish(man, out, tmp_path, mismatched={"b"}, uncalibrated=set(), accepted={"b"}, checked={"a", "b", "c"}, current=CUR)
     assert set(c) == {"a", "b"}
 
 
@@ -157,11 +183,11 @@ def test_publish_skips_uncalibrated_voice_unless_accepted(tmp_path):
     wan = "zh-HK-WanLungNeural"
     for k in "abc":
         (tmp_path / f"{k}.mp3").write_bytes(b"x")
-    man = {"a": {"f": "f", "r": "0%", "voice": HIU}, "b": {"f": "f", "r": "0%", "voice": wan}, "c": {"f": "f", "r": "0%", "voice": wan}}
+    man = {"a": {"f": "f", "r": "0%", "voice": HIU, "jp": "x"}, "b": {"f": "f", "r": "0%", "voice": wan, "jp": "x"}, "c": {"f": "f", "r": "0%", "voice": wan, "jp": "x"}}
     out = tmp_path / "s.json"
-    assert set(tts.publish(man, out, tmp_path, mismatched=set(), uncalibrated={wan}, accepted=set(), checked={"a"})) == {"a"}
-    assert set(tts.publish(man, out, tmp_path, mismatched=set(), uncalibrated={wan}, accepted={"c"}, checked={"a"})) == {"a"}  # a clip line is not a voice line
-    assert set(tts.publish(man, out, tmp_path, mismatched=set(), uncalibrated={wan}, accepted={f"voice:{wan}"}, checked={"a"})) == {"a", "b", "c"}
+    assert set(tts.publish(man, out, tmp_path, mismatched=set(), uncalibrated={wan}, accepted=set(), checked={"a"}, current=CUR)) == {"a"}
+    assert set(tts.publish(man, out, tmp_path, mismatched=set(), uncalibrated={wan}, accepted={"c"}, checked={"a"}, current=CUR)) == {"a"}  # a clip line is not a voice line
+    assert set(tts.publish(man, out, tmp_path, mismatched=set(), uncalibrated={wan}, accepted={f"voice:{wan}"}, checked={"a"}, current=CUR)) == {"a", "b", "c"}
 
 
 def test_publish_reads_tts_ok_file_and_needs_check(tmp_path, monkeypatch, capsys):
@@ -171,9 +197,10 @@ def test_publish_reads_tts_ok_file_and_needs_check(tmp_path, monkeypatch, capsys
     monkeypatch.setattr(tts, "MANIFEST", tmp_path / "m.json")
     monkeypatch.setattr(tts, "SPEECH_DIR", tmp_path)
     monkeypatch.setattr(tts, "SPEECH_JSON", tmp_path / "s.json")
+    monkeypatch.setattr(tts, "current_readings", lambda *a: CUR)
     assert tts.main(["--publish"], env={}) == 1  # nothing ships before the check ran
     assert "clip check" in capsys.readouterr().out and not (tmp_path / "s.json").exists()
-    (tmp_path / "m.json").write_text(json.dumps({k: {"f": "f", "r": "0%", "voice": HIU} for k in ("a", "b")}))
+    (tmp_path / "m.json").write_text(json.dumps({k: {"f": "f", "r": "0%", "voice": HIU, "jp": "x"} for k in ("a", "b")}))
     for k in "ab":
         (tmp_path / f"{k}.mp3").write_bytes(b"x")
     (tmp_path / "check.json").write_text(json.dumps({"mismatched": ["a", "b"], "uncalibrated": [], "checked": ["a", "b"]}))
@@ -197,14 +224,14 @@ def test_publish_withholds_clips_the_check_did_not_cover(tmp_path):
     for k in "abcd":
         (tmp_path / f"{k}.mp3").write_bytes(b"x")
     (tmp_path / "orphan.mp3").write_bytes(b"x")
-    man = {k: {"f": k, "r": "0%", "voice": HIU} for k in "abc"}
-    man["d"] = {"f": "d", "r": "0%", "voice": wan}  # a voice added after the check
+    man = {k: {"f": k, "r": "0%", "voice": HIU, "jp": "x"} for k in "abc"}
+    man["d"] = {"f": "d", "r": "0%", "voice": wan, "jp": "x"}  # a voice added after the check
     stats = {}
-    c = tts.publish(man, tmp_path / "s.json", tmp_path, mismatched={"b"}, uncalibrated=set(), accepted=set(), checked={"a", "b"}, stats=stats)
+    c = tts.publish(man, tmp_path / "s.json", tmp_path, mismatched={"b"}, uncalibrated=set(), accepted=set(), checked={"a", "b"}, stats=stats, current=CUR)
     assert set(c) == {"a"}  # b mismatched, c generated after the check, d a later voice
     assert stats["held"]["mismatched"] == 1 and stats["held"]["not checked"] == 2
     assert stats["unreferenced"] == ["b.mp3", "c.mp3", "d.mp3", "orphan.mp3"]
-    c = tts.publish(man, tmp_path / "s.json", tmp_path, mismatched={"b"}, uncalibrated=set(), accepted={"b"}, checked={"a", "b"})
+    c = tts.publish(man, tmp_path / "s.json", tmp_path, mismatched={"b"}, uncalibrated=set(), accepted={"b"}, checked={"a", "b"}, current=CUR)
     assert set(c) == {"a", "b"}
 
 
@@ -215,7 +242,8 @@ def test_publish_cli_says_rerun_check(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(tts, "MANIFEST", tmp_path / "m.json")
     monkeypatch.setattr(tts, "SPEECH_DIR", tmp_path)
     monkeypatch.setattr(tts, "SPEECH_JSON", tmp_path / "s.json")
-    (tmp_path / "m.json").write_text(json.dumps({"a": {"f": "f", "r": "0%", "voice": HIU}}))
+    monkeypatch.setattr(tts, "current_readings", lambda *a: CUR)
+    (tmp_path / "m.json").write_text(json.dumps({"a": {"f": "f", "r": "0%", "voice": HIU, "jp": "x"}}))
     (tmp_path / "a.mp3").write_bytes(b"x")
     (tmp_path / "check.json").write_text(json.dumps({"mismatched": [], "uncalibrated": [], "checked": []}))
     assert tts.main(["--publish"], env={}) == 0

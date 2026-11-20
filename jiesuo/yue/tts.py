@@ -222,11 +222,30 @@ def _accepted():
     return {ln for ln in lines if ln}
 
 
+def current_readings(data_dir=DATA) -> dict:
+    """What each clip's `f` must say now: {form or example id: jp}. Stage 1 content first, then the lexicon, then the
+    example files (sentences, HKCanCor, words.hk)."""
+    data_dir = Path(data_dir)
+    out = {}
+    for i, (_text, jp) in _examples(data_dir).items():
+        out[i] = jp
+    for w in _load(data_dir / "lexicon.json")["words"]:
+        out[w[0]] = w[1]
+    for les in _load(data_dir / "course.json")["stage1"]["lessons"]:
+        for it in les["items"]:
+            out[it["form"]] = it["jp"]
+    return out
+
+
 def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, uncalibrated=None, accepted=None,
-            checked=None, stats=None):
+            checked=None, stats=None, current=None):
     """Write speech.json from the manifest. A clip ships only if the clip check covered it (matched, unsure or
-    unsegmented; mismatched only when its key is in tts_ok.txt) and its MP3 exists. Voices that could not be calibrated
-    ship only with a `voice:<name>` line in tts_ok.txt. `stats` (a dict) receives the counts of what was withheld."""
+    unsegmented; mismatched only when its key is in tts_ok.txt), its MP3 exists, and it says what the data says now:
+    its `jp` equals the current reading of its `f` (`current`, default current_readings()), so a clip made before a
+    reading was corrected never speaks the old reading. Voices that could not be calibrated ship only with a
+    `voice:<name>` line in tts_ok.txt. `stats` (a dict) receives the counts of what was withheld."""
+    if current is None:
+        current = current_readings()
     speech_json, speech_dir = Path(speech_json or SPEECH_JSON), Path(speech_dir or SPEECH_DIR)
     if manifest is None:
         manifest = _load(MANIFEST) if MANIFEST.exists() else {}
@@ -238,9 +257,11 @@ def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, u
     ok = _accepted() if accepted is None else set(accepted)
     bad = set(mismatched) - ok
     voice_ok = {v for v in uncalibrated if f"voice:{v}" in ok}
-    clips, held = {}, {"mismatched": 0, "uncalibrated voice": 0, "not checked": 0, "no mp3": 0}
+    clips, held = {}, {"stale reading": 0, "mismatched": 0, "uncalibrated voice": 0, "not checked": 0, "no mp3": 0}
     for k, v in sorted(manifest.items()):
-        if k in bad:
+        if v.get("jp") is None or current.get(v["f"]) != v["jp"]:
+            held["stale reading"] += 1  # the reading changed since the clip was made, or the item is gone
+        elif k in bad:
             held["mismatched"] += 1
         elif v["voice"] in uncalibrated and v["voice"] not in voice_ok:
             held["uncalibrated voice"] += 1
