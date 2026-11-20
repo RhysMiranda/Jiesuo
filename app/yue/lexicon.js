@@ -15,7 +15,7 @@
       try { JP.parse(ini + fin + "1"); SYLLABLES.add(ini + fin); } catch (e) { /* not a syllable */ }
     }
   }
-  const STATUS = { a: "agree", c: "corpus", w: "wordshk", o: "override" }; // row[5]: how the reading was settled
+  const STATUS = { a: "agree", c: "corpus", e: "attested", w: "wordshk", o: "override" }; // row[5]: how the reading was settled
   const TONE_MAP = { "7": "1", "8": "3", "9": "6" };
 
   const MAX_SPLITS = 8;
@@ -131,7 +131,7 @@
         const e = byForm.get(form);
         if (!e) return null;
         const w0 = wkEntry(form);
-        const out = { form: e.form, jp: e.jp, en: enOf(e), whkEn: (w0 && w0[1]) || null, rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2), unchecked: !!(e.flags & 4), status: e.status, alts: Array.isArray(lex.alts && lex.alts[form]) ? lex.alts[form].slice() : [] };
+        const out = { form: e.form, jp: e.jp, en: enOf(e), whkEn: (w0 && w0[1]) || null, rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2), unchecked: !!(e.flags & 4), status: e.status, alts: Array.isArray(lex.alts && lex.alts[form]) ? lex.alts[form].slice() : [], labels: Object.assign({}, lex.labels && lex.labels[form]) };
         const w = wkEntry(form);
         if (w) out.wordshk = { id: w[0], eng: w[1], def: w[2] };
         return out;
@@ -162,7 +162,8 @@
           } else {
             const c = cps[i];
             const r = Object.prototype.hasOwnProperty.call(chars, c) ? chars[c] : null;
-            out.push({ t: c, word: null, jp: (Array.isArray(r) ? r[0] : r) || null, kind: "han" });
+            const jp = (Array.isArray(r) ? r[0] : r) || null;
+            out.push({ t: c, word: null, jp, guess: !!jp, kind: "han" }); // a character's main reading, not checked in context
             i++;
           }
         }
@@ -300,18 +301,31 @@
     let pool = null;
     function buildPool() {
       pool = [];
-      const add = (items, pri) => { for (const [id, r] of Object.entries(items || {})) pool.push({ id, text: r[0], en: !!r[2], pri }); };
+      const add = (items, pri) => { for (const [id, r] of Object.entries(items || {})) pool.push({ id, text: r[0], jp: r[1], en: !!r[2], pri }); };
       add(d.sentences && d.sentences.items, 0);
       add(d.wordshk && d.wordshk.examples, 1);
       add(d.hkcancor && d.hkcancor.items, 2);
     }
-    /** Up to k example ids that contain `form`: the word's own words.hk examples first, then those with an English line, Tatoeba before the rest, short first. */
+    /** True if the sentence says `form` with the word's reading at least once (its Jyutping over the form's characters):
+     *  你呢 in 你呢排 (nei5 ni1) or 地下 in 地下音樂 (haa6) is another word. */
+    function saysForm(p, form, jp) {
+      const han = Array.from(p.text).filter((c) => HAN.test(c)).join("");
+      const syls = String(p.jp || "").split(/\s+/).filter(Boolean), want = String(jp || "").split(/\s+/).filter(Boolean);
+      if (!want.length || syls.length !== Array.from(han).length) return false;
+      const cps = Array.from(han), f = Array.from(form);
+      for (let i = 0; i + f.length <= cps.length; i++) {
+        if (f.every((c, k) => cps[i + k] === c) && want.every((s, k) => syls[i + k] === s)) return true;
+      }
+      return false;
+    }
+    /** Up to k example ids that say `form` (saysForm): the word's own words.hk examples first, then those with an English line, Tatoeba before the rest, short first. */
     function examplesFor(form, k) {
       try {
         if (typeof form !== "string" || !form) return [];
         if (!pool) buildPool();
         const w = wkEntry(form), own = w ? "wordshk:" + w[0] + "#" : null;
-        const hits = pool.filter((p) => p.text.includes(form));
+        const e = byForm.get(form);
+        const hits = pool.filter((p) => p.text.includes(form) && (!e || saysForm(p, form, e.jp)));
         const score = (p) => (own && p.id.startsWith(own) ? 0 : 1) * 1000 + (p.en ? 0 : 500) + p.pri * 100 + p.text.length;
         return hits.sort((a, b) => score(a) - score(b)).slice(0, k == null ? 3 : k).map((p) => p.id);
       } catch (err) { return []; }

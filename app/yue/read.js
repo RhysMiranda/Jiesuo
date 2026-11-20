@@ -24,11 +24,14 @@
       sum.innerHTML = rep.total
         ? `You know ${rep.known} of ${rep.total} words.${links ? " Learn next: " + links + "." : ""}`
         : `<span class="soft">Nothing to read yet.</span>`;
-      out.innerHTML = segs.map((s) => {
+      const guessed = segs.some((s) => s.guess);
+      out.innerHTML = (guessed ? `<p class="soft small">A reading with a ? is the character's usual one: reading not checked for this text.</p>` : "") + segs.map((s) => {
         if (s.kind !== "han") return `<span class="tok-other">${esc(s.t)}</span>`;
         const known = !!(ctx.state.words && ctx.state.words[s.t]);
         const cls = "tok " + (known ? "known" : "new");
-        const body = `<ruby><span class="zh">${esc(s.t)}</span><rt>${s.jp ? esc(s.jp) : '<span class="soft">not in the app yet</span>'}</rt></ruby>`;
+        const rt = !s.jp ? '<span class="soft">not in the app yet</span>'
+          : s.guess ? `<span class="soft guess" title="reading not checked">${esc(s.jp)}?</span>` : esc(s.jp);
+        const body = `<ruby><span class="zh">${esc(s.t)}</span><rt>${rt}</rt></ruby>`;
         return s.word ? `<a class="${cls}" href="${wordHref(s.t)}">${body}</a>` : `<span class="${cls} nolink">${body}</span>`;
       }).join("");
     }

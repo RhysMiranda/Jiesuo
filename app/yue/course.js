@@ -234,14 +234,17 @@
   }
 
   const exercises = { hear, read, type };
+  const MEET_EXAMPLES = 5; // a grammar meet card shows this many examples
 
   // ---- the day -----------------------------------------------------------------------------------------------
 
   function meet(ctx, item) {
     if (isGrammar(item)) {
       const g = ctx.course.grammar[item.slice(2)];
-      const examples = [];
-      for (const id of g.examples || []) { const ex = ctx.lex.example(id); if (ex) examples.push(Object.assign({ id }, ex)); }
+      const found = [];
+      for (const id of g.examples || []) { const ex = ctx.lex.example(id); if (ex) found.push(Object.assign({ id }, ex)); }
+      // at most MEET_EXAMPLES, those with an English line first (the order is otherwise kept: best first)
+      const examples = found.filter((e) => e.en).concat(found.filter((e) => !e.en)).slice(0, MEET_EXAMPLES);
       return { type: "meet", item, grammar: true, title: g.title, explain: g.explain, pattern: g.pattern, cite: g.cite, examples };
     }
     const inf = info(ctx.course, ctx.lex, item);

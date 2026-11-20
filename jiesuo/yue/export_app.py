@@ -19,7 +19,7 @@ MIN_VOICES shipped voices have recorded:
 Syllabic m4 and ng5 have no recordings in Cantone, so they are taught in text only.
 
 Phase 2 (words and grammar), one file per licence, from the course build (course.build):
-    lexicon.json    CC BY-SA 4.0  words [form, jp, en, freqRank, flags, status], status a/c/w/o = agree/corpus/words.hk/override, alts, chars {char: [jp, main first]}
+    lexicon.json    CC BY-SA 4.0  words [form, jp, en, freqRank, flags, status], status a/c/e/w/o = agree/corpus/attested (HKCanCor + words.hk examples)/words.hk/override, alts, labels {form: {alt jp: "literary"|"citation"}}, chars {char: [jp, main first]}
     course.json    CC BY-SA 4.0  order, stage1, grammar points with example ids, lessonSentence
     sentences.json  CC BY 2.0 FR  Tatoeba sentences with their authors and translation authors
     hkcancor.json   CC BY 4.0     HKCanCor sentences
@@ -47,7 +47,7 @@ MIN_VOICES = 2
 MIN_SOURCES = 2  # an "other" reading ships only if at least this many sources list it
 HAN = re.compile(r"[㐀-鿿\U00020000-\U0003ffff]")
 
-STATUS_CODE = {"agree": "a", "corpus": "c", "wordshk": "w", "override": "o"}  # how the reading was settled (lexicon row[5])
+STATUS_CODE = {"agree": "a", "corpus": "c", "attested": "e", "wordshk": "w", "override": "o"}  # how the reading was settled (lexicon row[5])
 ASPIRATION = [("b", "p"), ("d", "t"), ("g", "k"), ("gw", "kw"), ("z", "c")]
 ENDINGS = [("m", "n", "ng"), ("p", "t", "k")]
 ROUNDED = [("i", "yu"), ("in", "yun"), ("it", "yut"), ("e", "oe"), ("eng", "oeng"), ("ek", "oek"), ("ei", "eoi")]
@@ -242,7 +242,9 @@ def build_phase2(b, wordshk, chars_for, notice=None):
             g = {k: v for k, v in p.items() if k not in GRAMMAR_DROP}
             g["examples"] = [e["id"] for e in p["_examples"]]
             cited = course.cited_entries(p["cite"], wordshk) if p.get("cite") else []
-            g["citeId"] = cited[0].id if cited else None  # the reviewed words.hk entry, resolved at build time
+            ids = [e.id for e in cited]
+            own = [i for i in (p.get("entries") or ()) if i in ids]  # the sense entry the point names, if it is one
+            g["citeId"] = (own or ids or [None])[0]  # the reviewed words.hk entry, resolved at build time
             grammar[p["id"]] = g
     keep = set(b["order"][:MAX_WORDS]) | {f"g:{p}" for p in grammar}
     lesson = {f: i for f, i in b["lesson"].items() if i and f in keep}
@@ -251,13 +253,16 @@ def build_phase2(b, wordshk, chars_for, notice=None):
     forms = [f for f in forms if f in lex and lex[f].jp]
     ranked = sorted((f for f in forms if lex[f].freq > 0), key=lambda f: -lex[f].freq)
     rank = {f: i for i, f in enumerate(ranked, 1)}
-    words, alts = [], {}
+    words, alts, labels = [], {}, {}
     for f in forms:
         w = lex[f]
         flags = (1 if w.changed else 0) | (2 if w.alt else 0) | (4 if w.status == "unresolved" else 0)
         words.append([f, w.jp, w.en, rank.get(f, 0), flags, STATUS_CODE.get(w.status, "")])
         if w.alt:
             alts[f] = list(w.alt)
+        lab = {rd: x for rd, x in (getattr(w, "labels", None) or {}).items() if rd in w.alt}
+        if lab:
+            labels[f] = lab
     chars = {}
     for ch in sorted({c for f in forms for c in f if lexicon.is_han(c)}):
         jps = list(chars_for(ch) or [])
@@ -280,7 +285,7 @@ def build_phase2(b, wordshk, chars_for, notice=None):
                "English, author of the Cantonese sentence, author of the English translation, Tatoeba id of the "
                "translation]; Jyutping added by Jiesuo.")
     return {
-        "lexicon": {"licence": LEXICON_LICENCE, "words": words, "alts": alts, "chars": chars},
+        "lexicon": {"licence": LEXICON_LICENCE, "words": words, "alts": alts, "labels": labels, "chars": chars},
         "course": {"licence": COURSE_LICENCE, "order": list(b["placed"]), "stage1": b["stage1"],
                    "grammar": grammar, "lessonSentence": lesson},
         "sentences": {"licence": SENTENCES_LICENCE, "credits": credits, "items": tat},

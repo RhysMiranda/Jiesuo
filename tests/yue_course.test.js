@@ -85,7 +85,9 @@ test("planDay with grammar: meet lists examples, hear uses an example with Engli
   const { steps } = C.planDay(ctx({ words, newCount: 1 }));
   const g = steps.filter((s) => s.item === "g:zo2");
   assert.strictEqual(g[0].type, "meet");
-  assert.strictEqual(g[0].examples.length, course.grammar.zo2.examples.length);
+  assert.strictEqual(g[0].examples.length, Math.min(5, course.grammar.zo2.examples.length)); // at most 5 on the card
+  const withEn = g[0].examples.map((e) => !!e.en);
+  assert.deepStrictEqual(withEn, withEn.slice().sort((a, b) => b - a)); // English ones first
   if (g[1]) { assert.strictEqual(g[1].type, "hear"); assert.ok(g[1].answer && g[1].options.includes(g[1].answer)); }
 });
 

@@ -47,11 +47,24 @@ test("examplesFor finds sentences containing the word, own words.hk examples fir
   const lx = JyutLex.create({
     lexicon: { words: [["食", "sik6", "eat", 1, 0, "a"]], alts: { 食: ["sik9"] }, chars: {} },
     wordshk: { entries: { 食: [11, "to eat", "d"] }, examples: { "wordshk:11#1": ["食飯", "sik6 faan6", "eat"], "wordshk:12#1": ["我食", "ngo5 sik6", "I eat"] } },
-    sentences: { items: { "tatoeba:1": ["你食咗未", "x", "Have you eaten?", "a", "b", 2] } },
+    sentences: { items: { "tatoeba:1": ["你食咗未", "nei5 sik6 zo2 mei6", "Have you eaten?", "a", "b", 2], "tatoeba:2": ["食物", "sik9 mat6", "food", "a", "b", 3] } },
     hkcancor: { items: { "hkcancor:f#1": ["食", "sik6", null], "hkcancor:f#2": ["去", "heoi3", null] } },
   });
   assert.deepStrictEqual(lx.examplesFor("食", 3), ["wordshk:11#1", "tatoeba:1", "wordshk:12#1"]);
   assert.deepStrictEqual(lx.examplesFor("食", 1), ["wordshk:11#1"]);
   assert.deepStrictEqual(lx.examplesFor("鬼", 3), []);
   assert.deepStrictEqual(lx.word("食").alts, ["sik9"]);
+  assert.ok(!lx.examplesFor("食", 9).includes("tatoeba:2")); // there 食 is read sik9: not this word's reading
+});
+
+test("a sentence that has the form as part of another word is not its example; a character guess is marked", () => {
+  const lx = JyutLex.create({
+    lexicon: { words: [["你呢", "nei5 ne1", "and you?", 1, 0, "o"], ["你", "nei5", "you", 2, 0, "a"]], alts: {}, labels: { 你呢: { "nei5 ni1": "x" } }, chars: { 排: ["paai4"] } },
+    wordshk: { entries: {}, examples: { "wordshk:1#1": ["你呢排點呀", "nei5 ni1 paai2 dim2 aa3", "How are you lately?"], "wordshk:2#1": ["我住喺旺角。你呢？", "ngo5 zyu6 hai2 wong6 gok3 nei5 ne1", "And you?"] } },
+  });
+  assert.deepStrictEqual(lx.examplesFor("你呢", 3), ["wordshk:2#1"]);
+  assert.deepStrictEqual(lx.word("你呢").labels, { "nei5 ni1": "x" });
+  const seg = lx.segment("排");
+  assert.ok(seg[0].guess && seg[0].jp === "paai4");
+  assert.ok(!lx.segment("你").some((s) => s.guess));
 });

@@ -39,7 +39,7 @@ Note: rime-cantonese's ODbL `.maps` file is not used; only the CC BY 4.0 data is
 
 | Source | Licence | Used for | Conditions |
 |---|---|---|---|
-| [Tatoeba](https://tatoeba.org/) yue sentences with English translations | CC BY 2.0 FR (`app/yue/licences/tatoeba-NOTICE.txt`) | Example sentences in `sentences.json`, Jyutping added by us | Name each sentence's author and its translation's author: met, `sentences.json` items are `[text, jp, en, author, en_author, en_id]`; a sentence whose translation has no named author is not shipped |
+| [Tatoeba](https://tatoeba.org/) yue sentences with English translations | CC BY 2.0 FR (`app/yue/licences/tatoeba-NOTICE.txt`) | Example sentences in `sentences.json`, Jyutping added by us | Name each sentence's author and its translation's author: `sentences.json` items are `[text, jp, en, author, en_author, en_id]`; a sentence whose translation has no named author is not shipped |
 | [words.hk](https://words.hk/) | Non-Commercial Open Data Licence 1.0 (`app/yue/licences/wordshk-NOTICE.txt`, text from https://words.hk/base/hoifong/) | Published, reviewed entries and examples in `wordshk.json`; reviewed readings for checking | Not covered by this repo's MIT licence. Non-commercial use only; no sublicensing; ship the copyright notice, disclaimer and credits list and link https://words.hk (all in `wordshk.json` and the licences page) |
 | HKCanCor sentences | CC BY 4.0 (`app/yue/licences/HKCanCor-LICENSE.txt`) | Spoken example sentences in `hkcancor.json` | Credit, link the licence |
 | Jiesuo word list and course (this project) | CC BY-SA 4.0 | `lexicon.json` and `course.json`, built on the readings sources above and CC-CEDICT / CC-Canto meanings | Credit, link the licence, share alike. They hold no words.hk text |

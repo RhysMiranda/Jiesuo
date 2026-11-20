@@ -209,6 +209,7 @@
   function route() {
     const h = (location.hash || "#" + HOME).slice(1);
     const name = h.split("/")[0];
+    if (name === "word" && !h.split("/").slice(1).join("/")) { location.replace("#search"); return; } // a bare #word: nothing to show
     const tab = SCREENS.includes(h) ? h : name === "word" ? "word" : HOME;
     const screens = window.JyutScreens || {};
     if (current && screens[current] && typeof screens[current].stop === "function") { try { screens[current].stop(); } catch (e) { /* a cleanup must never block navigation */ } }

@@ -102,12 +102,12 @@ def test_flags_and_alts():
 def test_rows_carry_the_reading_status_code():
     rows = {r[0]: r for r in build()["lexicon"]["words"]}
     assert rows["好"][5] == "a" and all(len(r) == 6 for r in rows.values())
-    assert ex.STATUS_CODE == {"agree": "a", "corpus": "c", "wordshk": "w", "override": "o"}
+    assert ex.STATUS_CODE == {"agree": "a", "corpus": "c", "attested": "e", "wordshk": "w", "override": "o"}
 
 
 def test_shipped_rows_have_a_known_status_code():
     rows = _load("lexicon.json")["words"]
-    assert all(len(r) == 6 and r[5] in ("a", "c", "w", "o", "") for r in rows)
+    assert all(len(r) == 6 and r[5] in ("a", "c", "e", "w", "o", "") for r in rows)
     assert all(r[5] for r in rows if not r[4] & 4)  # every checked word has a resolved status
 
 
@@ -173,7 +173,7 @@ def test_shipped_wordshk_text_is_only_in_wordshk_json():
     assert w["notice"] and w["disclaimer"] and w["credits"] and w["link"] == "https://words.hk"
     srcs = lexicon.load_sources()
     for form, jp, en, _r, _f, _s in _load("lexicon.json")["words"]:
-        assert en == lexicon._english(form, jp, srcs), form
+        assert en == lexicon._meaning(form, jp, srcs), form
     for name in ("course.json", "sentences.json", "hkcancor.json"):
         s = (APP / name).read_text(encoding="utf8")
         assert not any(len(e[2]) > 12 and e[2] in s for e in w["entries"].values()), name  # shorter ones occur by chance

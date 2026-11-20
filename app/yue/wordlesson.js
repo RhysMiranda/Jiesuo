@@ -46,6 +46,15 @@
     return notes.length ? notes.join("; ") : "Yes, that is it.";
   }
 
+  /** The characters of a word of two or more, each with its syllable in this word: [{c, jp}]; [] for one character
+   *  or a reading that does not split one syllable per character. Characters that are not words on their own are
+   *  taught here, on the word's card (Ruling 21). */
+  function charParts(form, jp) {
+    const cs = Array.from(String(form || "")), syls = String(jp || "").split(/\s+/).filter(Boolean);
+    if (cs.length < 2 || cs.length !== syls.length) return [];
+    return cs.map((c, i) => ({ c, jp: syls[i] }));
+  }
+
   /** "This word changes 名 ming4 → meng2" from the character's main reading (chars[c][0]) and the word's syllable; "" if none differ. */
   function changedNote(form, jp, chars) {
     const cs = Array.from(String(form || "")), syls = String(jp || "").split(/\s+/).filter(Boolean);
@@ -230,7 +239,9 @@
           <div class="row"><button type="button" class="btn primary" id="go">${nextLabel() === "Finish" ? "Finish" : "Got it"}</button></div>`);
       } else {
         const changed = step.changed ? changedNote(step.form, step.jp, K.chars) : "";
-        shell(`${head(step)}<p class="hanzi zh" lang="zh-HK">${esc(step.form)}</p><p class="jp big">${esc(step.jp)}</p><p class="meaning">${esc(clean(step.en))}</p>
+        const parts = charParts(step.form, step.jp);
+        const partsHtml = parts.length ? `<p class="soft small chars">Characters: ${parts.map((p) => `<span class="zh" lang="zh-HK">${esc(p.c)}</span> ${esc(p.jp)}`).join(" · ")}</p>` : "";
+        shell(`${head(step)}<p class="hanzi zh" lang="zh-HK">${esc(step.form)}</p><p class="jp big">${esc(step.jp)}</p><p class="meaning">${esc(clean(step.en))}</p>${partsHtml}
           <div class="row">${playBtn(step.form, "Play")}${playBtn(step.form, "Slower", true)}</div>${audioMsg}
           ${step.note ? `<p class="hint">${esc(clean(step.note))}</p>` : ""}${changed ? `<p class="hint changed">${esc(changed)}</p>` : ""}
           <div class="row"><button type="button" class="btn primary" id="go">${nextLabel() === "Finish" ? "Finish" : "Got it"}</button></div>`);
@@ -393,5 +404,5 @@
     return { stop() { stopped = true; token++; clearKeys(); } };
   }
 
-  return { run, resumePos, expandGate, stepLabel, feedbackFor, changedNote, creditParts, usableSteps, clean };
+  return { run, resumePos, expandGate, stepLabel, feedbackFor, changedNote, charParts, creditParts, usableSteps, clean };
 });

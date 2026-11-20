@@ -3,7 +3,7 @@
   "use strict";
   window.JyutScreens = window.JyutScreens || {};
   const wordHref = (f) => "#word/" + encodeURIComponent(f);
-  const SOURCE = { agree: "reading: all sources agree", corpus: "reading: from speech corpus", wordshk: "reading: words.hk", override: "reading: hand-checked" };
+  const SOURCE = { agree: "reading: all sources agree", corpus: "reading: from speech corpus", attested: "reading: how it is said in the speech corpus and words.hk examples", wordshk: "reading: words.hk", override: "reading: hand-checked" };
   const SKILLS = [["h", "Hearing"], ["r", "Reading"], ["t", "Typing"]];
   let lastQuery = "";
 
@@ -45,7 +45,7 @@
     }
     const whkLink = "https://words.hk/zidin/" + encodeURIComponent(form);
     const def = w.wordshk && w.wordshk.def ? W.clean(w.wordshk.def) : "";
-    const note = W.changedNote(form, w.jp, K.chars);
+    const note = w.changed ? W.changedNote(form, w.jp, K.chars) : "";
     const grammar = Object.values((K.course && K.course.grammar) || {}).filter((g) => {
       const c = String(g.cite || "").split(":")[0];
       return c === form || (g.needs && g.needs[0] === form) || g.pattern === form;
@@ -65,7 +65,7 @@
     view.innerHTML = `<section class="stack wordpage">${back}
       <h1 class="zh hanzi" lang="zh-HK">${esc(form)}</h1>
       <p class="jp">${esc(w.jp)}</p>
-      ${w.alts.length ? `<p class="soft small">Other reading${w.alts.length > 1 ? "s" : ""}: ${w.alts.map(esc).join(", ")}</p>` : ""}
+      ${w.alts.length ? `<p class="soft small">Other reading${w.alts.length > 1 ? "s" : ""}: ${w.alts.map((a) => esc(a) + (w.labels && w.labels[a] ? ` (${esc(w.labels[a])})` : "")).join(", ")}</p>` : ""}
       <div class="row">${play(form, "Play")}</div><p class="soft small audiomsg" id="audiomsg" role="status" aria-live="polite"></p>
       ${w.unchecked ? `<p class="hint small">Not yet confirmed by a source.</p>` : ""}
       ${w.en ? `<p class="meaning">${esc(W.clean(w.en))}</p>` : ""}

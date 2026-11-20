@@ -4,7 +4,7 @@
 // Everything else (shell, scripts, data) is NETWORK-FIRST: fetch, store a copy, return it. If the network fails, or
 // has not answered within NET_MS while a cached copy exists, the cached copy is used and the fetch still updates the
 // cache in the background. So an update reaches an installed app on the next online visit. Bump VERSION on big changes.
-const VERSION = "jiesuo-yue-v13";
+const VERSION = "jiesuo-yue-v14";
 const AUDIO = "jiesuo-yue-audio-v1"; // never matched by the shell-cache cleanup below
 const NET_MS = 3000;
 const FILES = ["./", "index.html", "yue.css", "../style.css", "../journey.js", "../tone.js",

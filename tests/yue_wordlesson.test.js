@@ -82,3 +82,9 @@ test("usableSteps drops damaged grammar examples", () => {
   const out = W.usableSteps([g]);
   assert.strictEqual(out[0].examples.length, 1);
 });
+
+test("charParts lists each character of a word with its syllable for the meet card", () => {
+  assert.deepStrictEqual(W.charParts("咖啡", "gaa3 fe1"), [{ c: "咖", jp: "gaa3" }, { c: "啡", jp: "fe1" }]);
+  assert.deepStrictEqual(W.charParts("食", "sik6"), []);
+  assert.deepStrictEqual(W.charParts("咖啡", "gaa3"), []);
+});

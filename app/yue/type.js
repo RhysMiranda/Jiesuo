@@ -19,7 +19,7 @@
     const day = () => ctx.journey.dayKey();
     // met words: the ones you have heard or read (an h or r entry), never grammar items
     const met = () => Object.keys(ctx.state.words || {}).filter((it) => !it.startsWith("g:") && ctx.state.words[it] && (ctx.state.words[it].h || ctx.state.words[it].r) && C.info(K.course, lex, it));
-    let target = null, tried = false, done = false, shown = false;
+    let target = null, tried = false, done = false, shown = false, missed = false;
     let field = "", picked = []; // picked: [{form, jp}]
     let cands = [];
 
@@ -27,7 +27,7 @@
       const all = met();
       const pool = all.length > 1 ? all.filter((x) => x !== target) : all;
       target = pool.length ? pool[Math.floor(Math.random() * pool.length)] : null;
-      field = ""; picked = []; tried = false; done = false; shown = false;
+      field = ""; picked = []; tried = false; done = false; shown = false; missed = false;
     };
     pickTarget();
 
@@ -55,9 +55,16 @@
       const got = picked.map((p) => p.form).join("");
       if (got === target) {
         done = true;
-        if (!shown) { ctx.state.words = C.record(ctx.state.words, target, "t", true, day()); ctx.save(); } // a peeked answer does not count
+        if (!shown && !missed) { ctx.state.words = C.record(ctx.state.words, target, "t", true, day()); ctx.save(); } // a peeked answer does not count
         play(target);
-      } else tried = true;
+      } else {
+        tried = true;
+        if (mode === "practise" && !shown && !missed) { // one result per word: the first wrong answer counts as a miss
+          missed = true;
+          ctx.state.words = C.record(ctx.state.words, target, "t", false, day());
+          ctx.save();
+        }
+      }
       paint();
     }
 
