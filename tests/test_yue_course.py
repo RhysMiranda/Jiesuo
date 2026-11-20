@@ -352,3 +352,13 @@ def test_examples_tatoeba_carries_the_translation_author_and_skips_ownerless_tra
            {"id": 2, "text": "我食", "author": "a", "eng": [(8, "x", "")]}]
     pool = course.examples(lex, tat, [], [])
     assert [(x["id"], x["en"], x["en_id"], x["en_author"]) for x in pool] == [("tatoeba:1", "I eat.", 9, "bob")]
+
+
+def test_wordshk_free_chars_need_a_published_reviewed_spoken_entry_with_the_reading():
+    lex = lexi(W("雨", "jyu5"), W("其", "kei4"), W("風", "fung1"), W("火", "fo2"))
+    ents = [WordsHK(1, [("雨", "jyu5")], ["名詞"], [], [], ["rain"], [], True, True),
+            WordsHK(2, [("其", "kei4")], ["名詞"], ["書面語"], [], ["its"], [], True, True),  # labelled written
+            WordsHK(5, [("其", "kei4")], ["代詞"], [], [], ["its"], [], True, True),  # a function word
+            WordsHK(3, [("風", "fung1")], ["名詞"], [], [], ["wind"], [], True, False),  # not published
+            WordsHK(4, [("火", "fo1")], ["名詞"], [], [], ["fire"], [], True, True)]  # another reading
+    assert course.wordshk_free_chars(ents, lex) == {"雨"}

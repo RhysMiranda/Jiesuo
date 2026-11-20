@@ -331,7 +331,7 @@ def test_shipped_lesson_sentences_say_their_item_as_that_word(built):
 
 def test_single_characters_in_the_order_are_free_words_or_named_by_the_content(built):
     srcs, b = built
-    free = _course.free_chars(srcs["train"])
+    free = _course.free_chars(srcs["train"]) | _course.wordshk_free_chars(srcs["wordshk"], b["lex"])
     named = {it for it in STAGE1_FORMS} | {n for p in _grammar()["points"] for n in p["needs"]}
     bad = [f for f in b["order"] if len(f) == 1 and f not in free and f not in named]
     assert not bad, bad[:20]
@@ -460,3 +460,11 @@ def test_known_bad_examples_are_not_shipped(built):
     assert not bad & shipped
     assert not {i for i in bad if i.startswith("tatoeba")} & {ex["id"] for ex in b["pool"]}
     assert all(_course.han_len(ex["text"]) >= 5 for p in b["points"] for ex in p["_examples"] if ex["id"].startswith("hkcancor"))
+
+
+def test_free_words_from_wordshk_come_back_and_bound_characters_stay_out(built):
+    _srcs, b = built
+    order = set(b["order"])
+    assert {"雨", "風", "天", "山"} <= order  # words.hk entries of their own, though HKCanCor rarely has them alone
+    assert "火" not in order  # its words.hk entries (71286) are reviewed but not published: the rule needs both
+    assert not {"其", "之", "而", "己", "俾", "揾"} & order  # bound or written-only; spellings the course does not use

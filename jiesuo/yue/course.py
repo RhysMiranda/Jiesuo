@@ -2,8 +2,9 @@
 
 Order: Stage 1 forms first, then jiesuo.order.greedy over the spoken-frequency lexicon, where a multi-character
 word needs the characters that are words themselves (spec section 3). A character is taught on its own only if it is
-a free word in speech: at least FREE_MIN one-character HKCanCor train tokens (Ruling 21); the others are shown on the
-meet card of the words that use them. Formal-only forms (FORMAL_ONLY_ITEMS, Ruling 20) are never taught on their own;
+a free word: at least FREE_MIN one-character HKCanCor train tokens, or a reviewed, published words.hk entry of its own
+with its reading and no written/classical label (Ruling 21); the others are shown on the meet card of the words that
+use them. Formal-only forms (FORMAL_ONLY_ITEMS, Ruling 20) are never taught on their own;
 colloquial words that contain them (不過, 是但, 現在) are. Forms that words.hk lists only as variants of another
 form (囖, 嚹) are not taught either.
 
@@ -36,6 +37,11 @@ FORMAL_SUBSTRING = "沒有"
 # Ruling 20: standalone items of written Chinese that speech replaces (佢, 唔, 呢, 嗰, 冇, 嘅, 係, 咗, 喺, 講, 睇, 食,
 # 畀, 好, 乜嘢, 點, 仲). 還 is left out as a whole: its colloquial use ("still") is 仲.
 FORMAL_ONLY_ITEMS = frozenset("不 他 她 它 們 這 那 沒 沒有 的 是 了 在 說 看 吃 給 很 什麼 怎麼 還".split())
+# Also never items of their own (controller, refining Ruling 21): 之 (CC-CEDICT "him; her; it", the classical object
+# pronoun) and 而 (a written conjunction; speech says 同, 但係), which HKCanCor has in semi-formal talk; and spellings
+# of a taught word that the course does not use (俾 for 畀, 揾 for 搵, 啊 for 呀).
+WRITTEN_ITEMS = frozenset("之 而".split())
+ALT_SPELLINGS = {"俾": "畀", "揾": "搵", "啊": "呀"}
 FREE_MIN = 5  # one-character HKCanCor train tokens for a character to be taught on its own (Ruling 21)
 POOL_MAX_HAN = 20  # lesson sentences
 GRAMMAR_MAX_HAN = 14  # grammar examples
@@ -64,6 +70,29 @@ def headword_forms(srcs):
     return (out | first) - (variant - first)
 
 
+WRITTEN_LABELS = ("書面語", "文言", "古語", "專名")  # words.hk labels: written, classical, archaic; a proper name
+# Parts of speech of a content word. words.hk leaves many written function words unlabelled (其 代詞, 而 連詞, 之 詞綴,
+# 及 連詞, 雖 語素), so this path takes nouns, verbs, adjectives and measure words only; colloquial function words
+# (佢, 同, 都, 就) are frequent enough in HKCanCor to pass FREE_MIN.
+CONTENT_POS = ("名詞", "動詞", "形容詞", "量詞")
+
+
+def wordshk_free_chars(wordshk, lex):
+    """Characters with a reviewed AND published words.hk entry of their own, with the character's reading, a content
+    word (CONTENT_POS) and not labelled written, classical or a name (Ruling 21 as refined: 雨 風 山 are words although
+    HKCanCor rarely has them alone)."""
+    out = set()
+    for e in wordshk:
+        if not (e.reviewed and e.published) or any(lab.strip() in WRITTEN_LABELS for lab in e.labels):
+            continue
+        if not any(x.strip() in CONTENT_POS for x in e.pos):
+            continue
+        for form, jp in e.forms:
+            if len(form) == 1 and form in lex and lex[form].jp and lexicon._norm(jp, form) == lex[form].jp:
+                out.add(form)
+    return out
+
+
 # HKCanCor writes some colloquial words with another character (checked on its one-character tokens: 來 lai4 x401,
 # 嚟 x2; 俾 bei2 x390, 畀 x0; 重 zung6 x182, 仲 x1; 揾 x184, 搵 x0; 喇 laa1 x1400, 啦 x0; 嚹 laa3 x547; 囖 lo1 x1194,
 # 囉 x3; 啊 aa3 x3373; 架 gaa3 x27). Those tokens count for the character the app teaches.
@@ -83,7 +112,8 @@ def free_chars(train, n=FREE_MIN, spelling=HKCANCOR_SPELLING):
     return {ch for ch, k in c.items() if k >= n}
 
 
-def order_words(lex, first, n=5000, headwords=None, free=None, exclude=FORMAL_ONLY_ITEMS):
+def order_words(lex, first, n=5000, headwords=None, free=None,
+                exclude=FORMAL_ONLY_ITEMS | WRITTEN_ITEMS | frozenset(ALT_SPELLINGS)):
     """Stage 1 forms in content order, then greedy by spoken frequency, truncated to n.
 
     Only forms with a meaning for their reading (en, or a published reviewed words.hk gloss) and, when `headwords` is
@@ -506,7 +536,8 @@ def build(srcs=None, located=None):
     # forms the content files name (Stage 1, grammar needs) were chosen by hand: 畀 and 係咪 stay although words.hk
     # files them as variants of 俾 and 係唔係
     named = set(first) | {n for p in grammar["points"] for n in p["needs"]}
-    order = order_words(lex, first, headwords=headword_forms(srcs) | named, free=free_chars(srcs["train"]) | keys)
+    free = free_chars(srcs["train"]) | wordshk_free_chars(srcs["wordshk"], lex) | keys
+    order = order_words(lex, first, headwords=headword_forms(srcs) | named, free=free)
     pos = {f: i for i, f in enumerate(order)}
     diffs = []
     pool = examples(lex, srcs["tatoeba"], srcs["wordshk"], train, diffs)

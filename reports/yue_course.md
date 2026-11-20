@@ -109,38 +109,38 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 
 | id | cite | position | attested | words.hk | HKCanCor | Tatoeba |
 |---|---|---|---|---|---|---|
-| hai2 | 喺:hai2 | 284 | 112 | 94 | 12 | 6 |
-| ge3 | 嘅:ge3 | 43 | 206 | 172 | 34 | 0 |
-| clf | 隻:zek3 | 306 | 2 | 1 | 1 | 0 |
-| zo2 | 咗:zo2 | 427 | 193 | 169 | 16 | 8 |
-| gan2 | 緊:gan2 | 438 | 29 | 29 | 0 | 0 |
-| gwo3 | 過:gwo3 | 78 | 37 | 25 | 12 | 0 |
-| mei6 | 未:mei6 | 526 | 33 | 26 | 6 | 1 |
-| mou5v | 冇:mou5 | 56 | 20 | 14 | 6 | 0 |
-| mhou2 | 咪:mai5 | 114 | 7 | 7 | 0 | 0 |
-| anota | 有冇:jau5 mou5 | 67 | 24 | 17 | 7 | 0 |
-| haimai | 係咪:hai6 mai6 | 332 | 15 | 13 | 2 | 0 |
-| qwords | 點解:dim2 gaai2 | 449 | 19 | 10 | 6 | 3 |
+| hai2 | 喺:hai2 | 287 | 113 | 95 | 12 | 6 |
+| ge3 | 嘅:ge3 | 43 | 210 | 176 | 34 | 0 |
+| clf | 隻:zek3 | 462 | 11 | 10 | 1 | 0 |
+| zo2 | 咗:zo2 | 429 | 253 | 227 | 17 | 9 |
+| gan2 | 緊:gan2 | 440 | 31 | 31 | 0 | 0 |
+| gwo3 | 過:gwo3 | 78 | 34 | 25 | 9 | 0 |
+| mei6 | 未:mei6 | 533 | 39 | 32 | 6 | 1 |
+| mou5v | 冇:mou5 | 56 | 21 | 16 | 5 | 0 |
+| mhou2 | 咪:mai5 | 114 | 9 | 9 | 0 | 0 |
+| anota | 有冇:jau5 mou5 | 67 | 28 | 21 | 7 | 0 |
+| haimai | 係咪:hai6 mai6 | 332 | 16 | 14 | 2 | 0 |
+| qwords | 點解:dim2 gaai2 | 451 | 20 | 11 | 6 | 3 |
 | gwo3cmp | 過:gwo3 | 202 | 4 | 2 | 2 | 0 |
-| bei2 | 畀:bei2 | 273 | 4 | 4 | 0 | 0 |
-| dirs | 返:faan1 | 416 | 52 | 46 | 6 | 0 |
-| dak1 | 得:dak1 | left out | 0 | 0 | 0 | 0 |
-| hoi1 | 開:hoi1 | 460 | 2 | 2 | 0 | 0 |
-| zyu6 | 住:zyu6 | 244 | 5 | 4 | 1 | 0 |
-| haa5 | 吓:haa5 | 392 | 10 | 9 | 1 | 0 |
-| maai4 | 埋:maai4 | 223 | 10 | 6 | 4 | 0 |
-| faan1asp | 返:faan1 | 405 | 6 | 5 | 1 | 0 |
-| laa3 | 喇:laa3 | 317 | 2 | 2 | 0 | 0 |
-| wo3 | 喎:wo3 | 696 | 50 | 6 | 44 | 0 |
-| lo1 | 囉:lo1 | 295 | 5 | 5 | 0 | 0 |
+| bei2 | 畀:bei2 | 276 | 4 | 4 | 0 | 0 |
+| dirs | 返:faan1 | 418 | 54 | 47 | 7 | 0 |
+| dak1 | 得:dak1 | left out | 1 | 1 | 0 | 0 |
+| hoi1 | 開:hoi1 | 473 | 2 | 2 | 0 | 0 |
+| zyu6 | 住:zyu6 | 244 | 4 | 3 | 1 | 0 |
+| haa5 | 吓:haa5 | 392 | 9 | 8 | 1 | 0 |
+| maai4 | 埋:maai4 | 226 | 11 | 7 | 4 | 0 |
+| faan1asp | 返:faan1 | 407 | 6 | 5 | 1 | 0 |
+| laa3 | 喇:laa3 | 312 | 2 | 2 | 0 | 0 |
+| wo3 | 喎:wo3 | 726 | 52 | 6 | 46 | 0 |
+| lo1 | 囉:lo1 | 298 | 5 | 5 | 0 | 0 |
 | me1 | 咩:me1 | 103 | 18 | 5 | 11 | 2 |
-| ge3fin | 嘅:ge3 | 186 | 23 | 3 | 20 | 0 |
+| ge3fin | 嘅:ge3 | 184 | 22 | 3 | 19 | 0 |
 | bo3 | 噃:bo3 | left out | 0 | 0 | 0 | 0 |
 | gwaa3 | 啩:gwaa3 | left out | 0 | 0 | 0 | 0 |
 
 ### Left out
 
-- dak1: 0 attested example(s)
+- dak1: 1 attested example(s)
 - bo3: 0 attested example(s)
 - gwaa3: 0 attested example(s)
 
@@ -163,22 +163,26 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:90075#1: 生嘅嘢 | saang1 ge3 je5 | raw food
 
 **clf** `[我你佢][部隻本架間條張對個支枝]`
+- wordshk:87739#2: 我隻鞋唔知去咗邊 | ngo5 zek3 haai4 m4 zi1 heoi3 zo2 bin1 | I don't know where my shoe is.
+- wordshk:89439#1: 我隻腳腫咗 | ngo5 zek3 goek3 zung2 zo2 | My leg is swollen.
+- wordshk:57375#4: 你隻眼好紅喎 | nei5 zek3 ngaan5 hou2 hung4 wo3 | Your eye looks very red.
 - wordshk:83550#2: 你隻手指壞咗 | nei5 zek3 sau2 zi2 waai6 zo2 | Your USB flash drive is not working.
-- hkcancor:FC-045_v2#26: 你睇下你隻手 | nei5 tai2 haa5 nei5 zek3 sau2 | None
+- wordshk:43033#2: 佢隻腳中咗兩槍 | keoi5 zek3 goek3 zung3 zo2 loeng5 coeng1 | He was shot twice on his leg.
+- wordshk:97033#5: 你隻錶我見唔到 | nei5 zek3 biu1 ngo5 gin3 m4 dou2 | I have not found your watch.
 
 **zo2** `咗`
 - wordshk:13605#2: 佢去咗邊度呀 | keoi5 heoi3 zo2 bin1 dou6 aa3 | Where did he go?
 - wordshk:13605#4: 你瘦咗又靚咗喎 | nei5 sau3 zo2 jau6 leng3 zo2 wo3 | You have become slimmer and prettier!
+- wordshk:91262#5: 乾咗佢 | gon1 zo2 keoi5 | Bottom up (your drink)!
+- wordshk:40366#4: 個波爆咗 | go3 bo1 baau3 zo2 | The balloon burst.
 - wordshk:40872#8: 你去咗邊 | nei5 heoi3 zo2 bin1 | Where did you go?
-- wordshk:55281#1: 等咗好耐 | dang2 zo2 hou2 noi6 | to have waited for a long time
-- wordshk:55281#2: 做咗功課 | zou6 zo2 gung1 fo3 | to have finished one's homework
-- wordshk:62981#1: 個掣壞咗 | go3 zai3 waai6 zo2 | The button is not working.
+- wordshk:43033#1: 開咗五槍 | hoi1 zo2 ng5 coeng1 | fired five shots
 
 **gan2** `[^\s嚟]緊(?![要張])`
 - wordshk:13606#2: 我食緊飯 | ngo5 sik6 gan2 faan6 | I am eating.
 - wordshk:13606#1: 你而家做緊咩呀 | nei5 ji4 gaa1 zou6 gan2 me1 aa3 | What are you doing now?
-- wordshk:13606#3: 我拍緊拖呀，唔好阻住晒啦 | ngo5 paak3 gan2 to1 aa3 m4 hou2 zo2 zyu6 saai3 laa1 | I'm on a date. Don't get in my way!
 - wordshk:67766#3: 出緊差 | ceot1 gan2 caai1 | being on a business trip
+- wordshk:55411#2: 而家落緊雨 | ji4 gaa1 lok6 gan2 jyu5 | It's raining now.
 - wordshk:66626#2: 你食緊飯呀 | nei5 sik6 gan2 faan6 aa4 | Are you having your dinner?
 - wordshk:80414#1: 你做緊乜嘢呀 | nei5 zou6 gan2 mat1 je5 aa3 | What are you doing?
 
@@ -195,8 +199,8 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:103628#1: 定咗日子未 | ding6 zo2 jat6 zi2 mei6 | Has the date been fixed?
 - wordshk:10853#2: 你未俾錢我 | nei5 mei6 bei2 cin2 ngo5 | You haven't given me money yet.
 - wordshk:40131#8: 你試過未吖 | nei5 si3 gwo3 mei6 aa1 | Have you tried it before?
+- wordshk:58322#5: 條片剪完未 | tiu4 pin2 zin2 jyun4 mei6 | Finished editing the video yet?
 - wordshk:60507#4: 你食咗藥未 | nei5 sik6 zo2 joek6 mei6 | Have you taken your medicine yet?
-- wordshk:76315#3: 佢入咗嚟未 | keoi5 jap6 zo2 lai4 mei6 | Did he come in?
 
 **mou5v** `(?<!有)冇[去食睇見嚟返買講做聽搵打話答知問]`
 - wordshk:60061#1: 我信你冇做過 | ngo5 seon3 nei5 mou5 zou6 gwo3 | I believe that you didn't do this.
@@ -204,15 +208,15 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:13816#5: 你冇嚟過呢度咓 | nei5 mou5 lai4 gwo3 ni1 dou6 aa5 | You haven't been here before, have you?
 - wordshk:72488#3: 冇問題我哋繼續 | mou5 man6 tai4 ngo5 dei6 gai3 zuk6 | If there's no problem, we'll continue.
 - wordshk:49981#1: 我肯定佢冇見到我 | ngo5 hang2 ding6 keoi5 mou5 gin3 dou2 ngo5 | I am sure that he didn't see me.
-- wordshk:70700#3: 負責人今日冇返工喎 | fu6 zaak3 jan4 gam1 jat6 mou5 faan1 gung1 wo3 | The person in-charge is on leave today.
+- wordshk:69323#2: 佢大咗肚就冇食煙喇 | keoi5 daai6 zo2 tou5 zau6 mou5 sik6 jin1 laa3 | When she became pregnant, she stopped smoking.
 
 **mhou2** `唔好(?!意思)|(?<!係)咪.`
 - wordshk:56011#3: 咪聽佢講呀，佢想要你啲錢咋 | mai5 teng1 keoi5 gong2 aa3 keoi5 soeng2 jiu3 nei5 di1 cin2 zaa3 | Don't listen to her! She only wants your money!
+- wordshk:90411#5: 咪撚嘈啦 | mai5 lan2 cou4 laa1 | Please be quiet!
+- wordshk:97496#20: 咪鬼嘈啦 | mai5 gwai2 cou4 laa1 | Please shut up.
 - wordshk:54841#3: 咪鬼理佢啦 | mai5 gwai2 lei5 keoi5 laa1 | Just ignore him.
 - wordshk:66531#6: 諗好就咪轉喇 | nam2 hou2 zau6 mai5 zyun3 laa3 | Don't change your mind after making a decision.
-- wordshk:7492#3: 咪阻住佢温書 | mai5 zo2 zyu6 keoi5 wan1 syu1 | Don't disturb him, he's studying.
 - wordshk:90780#2: 咪過份緊張啦 | mai5 gwo3 fan6 gan2 zoeng1 laa1 | Don't be too nervous.
-- wordshk:63141#5: 兄弟，圍住佢，咪畀佢走 | hing1 dai6 wai4 zyu6 keoi5 mai5 bei2 keoi5 zau2 | Let's surround him! Don't let him go!
 
 **anota** `([^唔\s])唔\1|有冇`
 - wordshk:90172#1: 你有冇筆呀 | nei5 jau5 mou5 bat1 aa3 | Have you got a pen?
@@ -220,15 +224,15 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:90172#3: 你有冇去過泰國呀 | nei5 jau5 mou5 heoi3 gwo3 taai3 gwok3 aa3 | Have you ever been to Thailand before?
 - wordshk:57279#10: 有冇女先 | jau5 mou5 neoi2 sin1 | Are there any girls there?
 - wordshk:57279#4: 你有冇女 | nei5 jau5 mou5 neoi2 | Do you have a girlfriend?
-- wordshk:84241#13: 你有冇事呀 | nei5 jau5 mou5 si6 aa3 | Are you all right?
+- wordshk:110903#13: 今晚有冇局 | gam1 maan1 jau5 mou5 guk6 | Any gathering tonight?
 
 **haimai** `係咪`
 - wordshk:89962#2: 係咪去行街呀 | hai6 mai6 heoi3 haang4 gaai1 aa3 | Are we going shopping?
-- wordshk:89962#3: 你係咪廣東人 | nei5 hai6 mai6 gwong2 dung1 jan4 | Are you Cantonese?
 - wordshk:100000#3: 係咪真係噉呢 | hai6 mai6 zan1 hai6 gam2 ne1 | Is that really the case?
 - wordshk:81251#3: 你係咪男人嚟㗎 | nei5 hai6 mai6 naam4 jan2 lai4 gaa3 | Aren't you a man?! (i.e. you failed to do what a man is supposed to do.)
 - wordshk:100000#19: 提咗你㗎啦，係咪呢 | tai4 zo2 nei5 gaa3 laa1 hai6 mai6 ne1 | I've reminded you. You see?
 - wordshk:61022#4: 喂，請問係咪陳小姐 | wai2 cing2 man6 hai6 mai6 can4 siu2 ze2 | Hello, is this Miss Chan?
+- wordshk:63001#6: 係咪玩下都唔得呀 | hai6 mai6 waan2 haa5 dou1 m4 dak1 aa3 | Do you have to be so serious all the time?
 
 **qwords** `乜嘢|邊個|邊度|點解|幾時|幾多`
 - wordshk:44715#1: 你上個星期日點解唔嚟嘅 | nei5 soeng6 go3 sing1 kei4 jat6 dim2 gaai2 m4 lai4 ge2 | Why didn't you come last Sunday?
@@ -259,6 +263,7 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:74637#1: 我行路返學嘅 | ngo5 haang4 lou6 faan1 hok6 ge3 | I walk to school.
 
 **dak1** `唔[食去睇做行講買玩用試聽見飲坐]得|[食去睇做行講買玩用試聽見飲坐]得(?:晒|$|呀|啊|嘅|喎)|[食去睇做行講買玩用試聽見飲坐]得唔得`
+- wordshk:72202#2: 我最近減肥，唔食得甜嘢 | ngo5 zeoi3 gan6 gaam2 fei4 m4 sik6 dak1 tim4 je5 | I'm on a diet recently to lose weight, so I can't eat sweets.
 
 **hoi1** `[用食睇做買玩]開(?![會工學門車])`
 - wordshk:13607#1: 阿明做開運動，身體好健康 | aa3 ming4 zou6 hoi1 wan6 dung6 san1 tai2 hou2 gin6 hong1 | Ah Ming is used to doing exercise and has a healthy body.
@@ -268,7 +273,6 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:85655#19: 睇住呀 | tai2 zyu6 aa3 | Watch out!
 - wordshk:85674#1: 睇住啲袋 | tai2 zyu6 di1 doi2 | to keep an eye on the bags
 - wordshk:85709#1: 睇住盤數 | tai2 zyu6 pun4 sou3 | to look after the finances
-- wordshk:71454#1: 屋企有我睇住，你放心啦 | uk1 kei2 jau5 ngo5 tai2 zyu6 nei5 fong3 sam1 laa1 | I will take care of the house. Don't worry.
 - hkcancor:FC-009b_v#63: 冇老師睇住你哋即係 | mou5 lou5 si1 tai2 zyu6 nei5 dei6 zik1 hai6 | None
 
 **haa5** `[試睇聽揀問望諗等學講跑行]吓|[試睇聽揀問望諗等學講跑行]下`
@@ -283,9 +287,9 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:100323#8: 做埋份功課就走得 | zou6 maai4 fan6 gung1 fo3 zau6 zau2 dak1 | I can leave after finishing the assignment.
 - wordshk:100323#7: 我講埋呢句，之後先到你 | ngo5 gong2 maai4 ni1 geoi3 zi1 hau6 sin1 dou3 nei5 | You will have your chance to speak after I have finished my sentence.
 - wordshk:78884#3: 我做埋今日就退休喇 | ngo5 zou6 maai4 gam1 jat6 zau6 teoi3 jau1 laa3 | I will be retired after today's work.
+- wordshk:90428#4: 佢成日講埋晒啲膠嘢 | keoi5 seng4 jat6 gong2 maai4 saai3 di1 gaau1 je5 | She often talks about foolish ideas.
 - wordshk:87605#6: 我做埋呢個星期就走喇 | ngo5 zou6 maai4 ni1 go3 sing1 kei4 zau6 zau2 laa3 | This is my last week at work.
 - wordshk:53190#5: 你做埋呢樣功課就去玩啦 | nei5 zou6 maai4 ni1 joeng6 gung1 fo3 zau6 heoi3 waan2 laa1 | You can go and play after you finish this homework.
-- wordshk:79829#1: 我老闆成日要我哋做埋啲無謂嘢 | ngo5 lou5 baan2 seng4 jat6 jiu3 ngo5 dei6 zou6 maai4 di1 mou4 wai6 je5 | My boss always asks us to do meaningless things.
 
 **faan1asp** `[瞓睇食講做買]返`
 - wordshk:90214#6: 食返餐好嘅 | sik6 faan1 caan1 hou2 ge3 | Let's eat something good!
@@ -310,9 +314,9 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 **lo1** `囉`
 - wordshk:55295#8: 唔係囉 | m4 hai6 lo1 | I quite disagree.
 - wordshk:55295#11: 你鍾意點咪點囉 | nei5 zung1 ji3 dim2 mai6 dim2 lo1 | Do whatever you like!
-- wordshk:55295#13: 上頭叫到，唯有做囉 | soeng6 tau4 giu3 dou3 wai4 jau5 zou6 lo1 | The boss demands it. We have no choice but to do it.
 - wordshk:55295#10: 佢一定唔會鍾意你囉 | keoi5 jat1 ding6 m4 wui5 zung1 ji3 nei5 lo1 | I really don't think she will like you.
 - wordshk:55295#14: 對唔住囉，最多請你飲汽水囉 | deoi3 m4 zyu6 lo1 zeoi3 do1 ceng2 nei5 jam2 hei3 seoi2 lo1 | Alright, I'm sorry, OK? I'll make it up to you by buying you a soda (... if that makes you happy).
+- wordshk:55295#3: 架車咪喺對面囉，噉都睇唔到 | gaa3 ce1 mai6 hai2 deoi3 min6 lo1 gam2 dou1 tai2 m4 dou2 | The car is right opposite to you. You didn't even notice it?
 
 **me1** `[^\s]咩$`
 - wordshk:98798#2: 咁做好咩 | gam2 zou6 hou2 me1 | Is that really a good idea?

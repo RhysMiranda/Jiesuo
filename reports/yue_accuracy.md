@@ -10,8 +10,8 @@ For each test token the app can read (app/yue/data/lexicon.json: the shipped wor
 
 | measure | count | share equal |
 |---|---|---|
-| per token | 22162 | 95.0% |
-| per token type (unique forms; right only if every token agrees) | 2434 | 91.5% |
+| per token | 22220 | 95.0% |
+| per token type (unique forms; right only if every token agrees) | 2481 | 91.6% |
 
 ### 20 most frequent disagreements
 
@@ -46,7 +46,7 @@ Boundary F1 of the longest-match segmenter (over the lexicon forms) against HKCa
 
 | measure | value |
 |---|---|
-| boundary F1 | 93.2% |
+| boundary F1 | 93.1% |
 
 ## Coverage
 
@@ -59,15 +59,15 @@ The course order trails plain frequency on these numbers by design: it teaches o
 | n | course | frequency |
 |---|---|---|
 | 100 | 51.2% | 66.5% |
-| 300 | 68.1% | 80.8% |
-| 1000 | 77.2% | 90.0% |
-| 3000 | 81.7% | 95.1% |
+| 300 | 67.9% | 80.8% |
+| 1000 | 76.8% | 90.0% |
+| 3000 | 81.9% | 95.1% |
 
-### Tatoeba yue, colloquial (128553 tokens)
+### Tatoeba yue, colloquial (129191 tokens)
 
 | n | course | frequency |
 |---|---|---|
-| 100 | 36.3% | 35.1% |
-| 300 | 53.5% | 47.5% |
-| 1000 | 69.3% | 59.7% |
-| 3000 | 79.9% | 71.6% |
+| 100 | 36.2% | 35.0% |
+| 300 | 53.3% | 47.4% |
+| 1000 | 70.7% | 59.7% |
+| 3000 | 83.2% | 71.7% |
