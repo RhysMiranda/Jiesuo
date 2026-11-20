@@ -1,7 +1,11 @@
 """Course order, grammar placement and attested examples (phase 2, Task 3).
 
 Order: Stage 1 forms first, then jiesuo.order.greedy over the spoken-frequency lexicon, where a multi-character
-word needs the characters that are words themselves (spec section 3). Characters that are not words get no unit.
+word needs the characters that are words themselves (spec section 3). A character is taught on its own only if it is
+a free word in speech: at least FREE_MIN one-character HKCanCor train tokens (Ruling 21); the others are shown on the
+meet card of the words that use them. Formal-only forms (FORMAL_ONLY_ITEMS, Ruling 20) are never taught on their own;
+colloquial words that contain them (不過, 是但, 現在) are. Forms that words.hk lists only as variants of another
+form (囖, 嚹) are not taught either.
 
 Examples are never written by hand. Each is a Tatoeba sentence, a published reviewed words.hk example, or a
 HKCanCor train sentence, with Jyutping built per token from the lexicon (spec section 6):
@@ -29,6 +33,10 @@ REPORT = ROOT / "reports" / "yue_course.md"
 COLLOQUIAL = "佢係喺嘅咗冇唔哋啲嚟乜咩嘢噉嗰睇畀俾㗎囉喎啦喇嘛"
 FORMAL_TOKENS = ("他", "在", "的")
 FORMAL_SUBSTRING = "沒有"
+# Ruling 20: standalone items of written Chinese that speech replaces (佢, 唔, 呢, 嗰, 冇, 嘅, 係, 咗, 喺, 講, 睇, 食,
+# 畀, 好, 乜嘢, 點, 仲). 還 is left out as a whole: its colloquial use ("still") is 仲.
+FORMAL_ONLY_ITEMS = frozenset("不 他 她 它 們 這 那 沒 沒有 的 是 了 在 說 看 吃 給 很 什麼 怎麼 還".split())
+FREE_MIN = 5  # one-character HKCanCor train tokens for a character to be taught on its own (Ruling 21)
 POOL_MAX_HAN = 20  # lesson sentences
 GRAMMAR_MAX_HAN = 14  # grammar examples
 HKCANCOR_MIN_HAN = 5  # fragments such as 未, 好啦 or 係關於嘅 teach nothing
@@ -46,22 +54,47 @@ _ALNUM = re.compile(r"[0-9A-Za-z０-９Ａ-Ｚａ-ｚ]")
 
 def headword_forms(srcs):
     """Forms that may be taught: rime characters and words, CC-Canto, or the first form of a reviewed words.hk entry.
-    Forms seen only in HKCanCor or only as words.hk variants are never taught."""
+    Forms seen only in HKCanCor are never taught, nor are forms that reviewed words.hk entries list only as a variant
+    of another form (囖 for 囉, 嚹 for 喇), whatever rime or CC-Canto say."""
     out = set(srcs.get("rime", {})) | set(srcs.get("rime_words", {}))
     out |= set(srcs.get("cccanto", {})) | set(srcs.get("cccanto_words", {}))
-    out |= {e.forms[0][0] for e in srcs.get("wordshk", []) if e.reviewed and e.forms}
-    return out
+    reviewed = [e for e in srcs.get("wordshk", []) if e.reviewed and e.forms]
+    first = {e.forms[0][0] for e in reviewed}
+    variant = {f for e in reviewed for f, _jp in e.forms[1:]}
+    return (out | first) - (variant - first)
 
 
-def order_words(lex, first, n=5000, headwords=None):
+# HKCanCor writes some colloquial words with another character (checked on its one-character tokens: 來 lai4 x401,
+# 嚟 x2; 俾 bei2 x390, 畀 x0; 重 zung6 x182, 仲 x1; 揾 x184, 搵 x0; 喇 laa1 x1400, 啦 x0; 嚹 laa3 x547; 囖 lo1 x1194,
+# 囉 x3; 啊 aa3 x3373; 架 gaa3 x27). Those tokens count for the character the app teaches.
+HKCANCOR_SPELLING = {("來", "lai4"): "嚟", ("俾", "bei2"): "畀", ("重", "zung6"): "仲", ("揾", "wan2"): "搵",
+                     ("喇", "laa1"): "啦", ("嚹", "laa3"): "喇", ("囖", "lo1"): "囉", ("啊", "aa3"): "呀",
+                     ("架", "gaa3"): "㗎"}
+
+
+def free_chars(train, n=FREE_MIN, spelling=HKCANCOR_SPELLING):
+    """Characters that are words of their own in speech: at least n one-character tokens in the HKCanCor train split
+    (a token HKCanCor spells another way, `spelling`, counts for the app's character)."""
+    c = Counter()
+    for sent in train:
+        for w, _p, jp in sent:
+            if len(w) == 1:
+                c[spelling.get((w, jp), w)] += 1
+    return {ch for ch, k in c.items() if k >= n}
+
+
+def order_words(lex, first, n=5000, headwords=None, free=None, exclude=FORMAL_ONLY_ITEMS):
     """Stage 1 forms in content order, then greedy by spoken frequency, truncated to n.
 
-    Only forms with a meaning for their reading (en, or a published reviewed words.hk gloss) and, when `headwords` is given, a headword form can be
-    taught. A multi-character form needs the characters that are teachable words. Forms in `first` are known.
+    Only forms with a meaning for their reading (en, or a published reviewed words.hk gloss) and, when `headwords` is
+    given, a headword form can be taught; never a form in `exclude`; and, when `free` is given, a single character
+    only if it is in `free` (a free word in speech). A multi-character form needs the characters that are teachable
+    words. Forms in `first` are known.
     """
     done = list(dict.fromkeys(first))
     known = set(done)
-    ok = {f for f, w in lex.items() if (w.en or w.whk_eng) and (headwords is None or f in headwords)}
+    ok = {f for f, w in lex.items() if (w.en or w.whk_eng) and (headwords is None or f in headwords)
+          and f not in exclude and (free is None or len(f) > 1 or f in free)}
     value = {f: lex[f].freq for f in ok if lex[f].freq > 0 and f not in known}
     prereq = {}
     for f in ok:
@@ -112,9 +145,10 @@ def _align(text, syls, lex, forms, tol):
 
     tol 'wordshk': the source's syllables win and a difference from the lexicon is recorded.
     tol 'alt': the source's syllables are used only when they are an alternative reading of the word.
-    Returns (jp, words, diffs) or None.
+    Returns (jp, words, diffs, toks) or None; toks is [[token, the reading used for it], ...] in text order.
     """
     jps, words, diffs, off = [], [], [], 0
+    used_toks = []
     toks = []
     for run in re.split(r"[^㐀-鿿豈-﫿〇𠀀-𱍏]+", text):
         if run:  # segment each Han run alone: a word never spans punctuation
@@ -133,10 +167,11 @@ def _align(text, syls, lex, forms, tol):
         else:
             return None
         jps.append(use)
+        used_toks.append([tok, use])
         if tok not in words:
             words.append(tok)
         off += L
-    return " ".join(jps), words, diffs
+    return " ".join(jps), words, diffs, used_toks
 
 
 def _split_valid(jp):
@@ -151,18 +186,7 @@ def _split_valid(jp):
     return syls
 
 
-_TAIL_JP = re.compile(r"^(.*?)\s*\(([a-z0-9 ,.!?;:~'…-]*[1-6][a-z0-9 ,.!?;:~'…-]*)\)\s*$", re.S)
-
-
-def split_example_jp(text, jp):
-    """(text, jp). The words.hk loader only takes a parenthetical of bare syllables as the reading; one with
-    punctuation inside ("ngo5 zi1 dou3, ...") is left on the text. Take it off here."""
-    if jp:
-        return text, jp
-    m = _TAIL_JP.match(text.strip())
-    if m and m.group(1):
-        return m.group(1), re.sub(r"[,.!?;:~'…-]+", " ", m.group(2))
-    return text, jp
+split_example_jp = lexicon.split_example_jp
 
 
 def _mk(id_, text, jp, en, source, words, author=None, en_id=None, en_author=None):
@@ -213,7 +237,10 @@ def examples(lex, tatoeba, wordshk, hkcancor, diffs=None):
             for tok, lj, used in built[2]:
                 if diffs is not None:
                     diffs.append((sid, tok, lj, used))
-            add(_mk(sid, text, built[0], eng.strip(), sid, built[1]))
+            ex = _mk(sid, text, built[0], eng.strip(), sid, built[1])
+            ex["toks"] = built[3]
+            ex["own"] = syls is not None  # the readings are the example's own (words.hk), not the lexicon's
+            add(ex)
 
     for s in tatoeba:
         text = _strip(s["text"])
@@ -231,7 +258,9 @@ def examples(lex, tatoeba, wordshk, hkcancor, diffs=None):
             continue
         eid, etext, ea = owned[0]
         sid = f"tatoeba:{s['id']}"
-        add(_mk(sid, text, built[0], etext, sid, built[1], s["author"], eid, ea))
+        ex = _mk(sid, text, built[0], etext, sid, built[1], s["author"], eid, ea)
+        ex["toks"] = built[3]
+        add(ex)
 
     for fname, n, sent in hkcancor:
         text = "".join(w for w, _p, _j in sent)
@@ -255,6 +284,8 @@ def examples(lex, tatoeba, wordshk, hkcancor, diffs=None):
                 diffs.append((sid, tok, lj, used))
         ex = _mk(sid, text, built[0], None, sid, built[1])
         ex["hk"] = [[w, jp] for w, _p, jp in sent]
+        ex["toks"] = built[3]
+        ex["own"] = True
         add(ex)
     return out
 
@@ -293,13 +324,35 @@ def _matches(point, ex, pos):
     return all(pos.get(w, GRAMMAR_WITHIN) < GRAMMAR_WITHIN for w in ex["words"])
 
 
+def own_syllables(ex):
+    """The example's own per-Han-character syllables (words.hk or HKCanCor Jyutping), else None."""
+    if not ex.get("own"):
+        return None
+    return " ".join(jp for _t, jp in ex.get("toks", ())).split()
+
+
 def _key_ok(point, ex, lex, wordshk_ids):
-    """Provenance rule (R4b): words.hk examples come from the cited entries; HKCanCor needs the cited reading on
-    the key token; Tatoeba needs a key word with a single reading in the lexicon."""
+    """Provenance rule (R4b): a words.hk example from the cited entries, or (not for a sentence-final particle point)
+    from any reviewed published entry when its own Jyutping gives the key word the cited reading; HKCanCor needs the cited reading on the key token;
+    Tatoeba needs a key word with a single reading in the lexicon."""
     form, jp = parse_cite(point["cite"])
     src = ex["id"].split(":")[0]
     if src == "wordshk":
-        return int(ex["id"].split(":")[1].split("#")[0]) in wordshk_ids
+        if int(ex["id"].split(":")[1].split("#")[0]) in wordshk_ids:
+            return True
+        if point["id"] in PARTICLE_POINTS:  # 係我嘅 "it's mine" ends in 嘅 ge3 too: particles keep their own entries
+            return False
+        syls = own_syllables(ex)
+        han = [c for c in ex["text"] if is_han(c)]
+        if syls is None or len(syls) != len(han):
+            return False
+        text, want = "".join(han), jp.split()
+        k = text.find(form)
+        while k != -1:
+            if syls[k:k + len(form)] == want:
+                return True
+            k = text.find(form, k + 1)
+        return False
     if src == "hkcancor":
         want = jp.split()
         for w, sy in ex["hk"]:
@@ -314,13 +367,17 @@ def _key_ok(point, ex, lex, wordshk_ids):
 
 
 def grammar_examples(point, pool, pos, lex, wordshk):
-    """Attested examples of one point, best first: words.hk (cited entries), HKCanCor train, Tatoeba."""
+    """Attested examples of one point, best first: words.hk (cited entries, then others with the cited reading),
+    HKCanCor train, Tatoeba."""
     cited = {e.id for e in cited_entries(point["cite"], wordshk)}
     ids = set(point.get("entries") or cited) & cited  # the sense entries whose examples may be used
     skip = set(point.get("exclude") or ())
     rank = {"wordshk": 0, "hkcancor": 1, "tatoeba": 2}
     found = [ex for ex in pool if ex["id"] not in skip and _matches(point, ex, pos) and _key_ok(point, ex, lex, ids)]
-    return sorted(found, key=lambda ex: (rank[ex["id"].split(":")[0]], han_len(ex["text"]), ex["id"]))
+
+    def cited_first(ex):
+        return 0 if ex["id"].startswith("wordshk:") and int(ex["id"].split(":")[1].split("#")[0]) in ids else 1
+    return sorted(found, key=lambda ex: (rank[ex["id"].split(":")[0]], cited_first(ex), han_len(ex["text"]), ex["id"]))
 
 
 def attested(point, examples_, pos):
@@ -364,13 +421,43 @@ def place_grammar(order, points, examples_, every=10):
 LESSON_MIN_HAN = 4
 
 
-def lesson_sentences(order, examples_, points=()):
+def reads_as(ex, form, lex):
+    """True if the example says `form` as that word: every token equal to it is read with the word's reading (or a
+    recorded alternative that differs only in tone, a changed tone), and, for HKCanCor, the corpus's own word
+    boundaries have it as a token. 你呢 in 你呢排 (nei5 ni1, 你 + 呢排) or 地下 in 地下音樂 (haa6) are not 你呢 / 地下."""
+    w = lex.get(form) if lex else None
+    toks = ex.get("toks")
+    if w is None or toks is None:
+        return True
+    got = [jp for t, jp in toks if t == form]
+    if not got:
+        return False
+    for jp in got:
+        if jp != w.jp and not (jp in w.alt and jyutping.toneless(jp) == jyutping.toneless(w.jp)):
+            return False
+    if "hk" in ex and form not in {t for t, _jp in ex["hk"]}:
+        return False
+    return True
+
+
+def read_right(ex, lex):
+    """True if every word of the example is read with its own reading (or a recorded alternative that differs only
+    in tone): a split that the source's own Jyutping contradicts (你呢|排 for 你|呢排, nei5 ni1) fails."""
+    for tok, jp in ex.get("toks") or ():
+        w = lex.get(tok)
+        if w is not None and jp != w.jp and not (jp in w.alt and jyutping.toneless(jp) == jyutping.toneless(w.jp)):
+            return False
+    return True
+
+
+def lesson_sentences(order, examples_, points=(), lex=None):
     """item -> id of its lesson sentence (Ruling 13); items without a qualifying example are left out.
 
-    The sentence for a form X contains X as one of its segmented words, has English and at least LESSON_MIN_HAN Han
-    characters, and every word of it is at or before X in the order. For a grammar item `g:<id>` (in `order`, with
-    `points`) it is one of that point's attested `_examples`, under the same rules. Prefer words.hk, then the
-    shortest, then the id."""
+    The sentence for a form X contains X as one of its segmented words, read as X and with every word read as itself
+    (reads_as, read_right, given `lex`), has
+    English and at least LESSON_MIN_HAN Han characters, and every word of it is at or before X in the order. For a
+    grammar item `g:<id>` (in `order`, with `points`) it is one of that point's attested `_examples`, under the same
+    rules. Prefer words.hk, then the shortest, then the id."""
     pos = {f: i for i, f in enumerate(order)}
     key = lambda ex: (not ex["id"].startswith("wordshk"), han_len(ex["text"]), ex["id"])
     ok = lambda ex: bool(ex["en"]) and han_len(ex["text"]) >= LESSON_MIN_HAN
@@ -382,6 +469,8 @@ def lesson_sentences(order, examples_, points=()):
         if not ps or None in ps:
             continue
         x = order[max(ps)]  # the one word of the example that comes last is the item it teaches
+        if lex is not None and not (reads_as(ex, x, lex) and read_right(ex, lex)):
+            continue
         if x not in best or key(ex) < key(best[x]):
             best[x] = ex
     out = {f: best[f]["id"] for f in order if f in best}
@@ -389,7 +478,7 @@ def lesson_sentences(order, examples_, points=()):
         g = f"g:{p['id']}"
         if g not in pos:
             continue
-        cands = [ex for ex in p.get("_examples", ()) if ok(ex)
+        cands = [ex for ex in p.get("_examples", ()) if ok(ex) and (lex is None or read_right(ex, lex))
                  and all(pos.get(w, len(order)) <= pos[g] for w in ex["words"])]
         if cands:
             out[g] = min(cands, key=key)["id"]
@@ -410,10 +499,15 @@ def build(srcs=None, located=None):
     lex = lexicon.build_lexicon(srcs)
     stage1, grammar = load_content()
     first = [it["form"] for les in stage1["lessons"] for it in les["items"]]
-    order = order_words(lex, first, headwords=headword_forms(srcs))
-    pos = {f: i for i, f in enumerate(order)}
     located = located or sources.load_hkcancor_located()
     train = lexicon.split_heldout(located)[0]
+    # a grammar point's key characters (緊, 開, 吓 ...) are taught with the point even when they are bound
+    keys = {n for p in grammar["points"] for n in p["needs"] if len(n) == 1}
+    # forms the content files name (Stage 1, grammar needs) were chosen by hand: 畀 and 係咪 stay although words.hk
+    # files them as variants of 俾 and 係唔係
+    named = set(first) | {n for p in grammar["points"] for n in p["needs"]}
+    order = order_words(lex, first, headwords=headword_forms(srcs) | named, free=free_chars(srcs["train"]) | keys)
+    pos = {f: i for i, f in enumerate(order)}
     diffs = []
     pool = examples(lex, srcs["tatoeba"], srcs["wordshk"], train, diffs)
     points = []
@@ -423,7 +517,7 @@ def build(srcs=None, located=None):
         points.append(q)
     placed = place_grammar(order, points, pool)
     return {"lex": lex, "order": order, "placed": placed, "pool": pool, "points": points, "diffs": diffs,
-            "lesson": lesson_sentences(placed, pool, points), "stage1": stage1}
+            "lesson": lesson_sentences(placed, pool, points, lex), "stage1": stage1}
 
 
 def write_report(b, srcs, path=REPORT):

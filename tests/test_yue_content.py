@@ -295,6 +295,49 @@ def test_every_grammar_pattern_compiles_and_needs_are_words(built):
             assert n in b["lex"], (p["id"], n)
 
 
+def test_every_grammar_pattern_is_clean_and_matches_its_own_illustration():
+    """I2: a pattern compiles, has no control character (anota once held a literal U+0001 for \\1), and finds at least
+    one of the Cantonese phrases its own `explain` gives as an illustration."""
+    for p in _grammar()["points"]:
+        pat = p["pattern"]
+        assert not re.search(r"[\x00-\x1f\x7f]", pat), p["id"]
+        rx = re.compile(pat)
+        runs = re.findall(r"[\u3400-\u9fff]+", p["explain"])
+        if runs:
+            assert any(rx.search(r) for r in runs), (p["id"], pat, runs)
+    anota = next(p for p in _grammar()["points"] if p["id"] == "anota")
+    assert anota["pattern"] == "([^唔\\s])唔\\1|有冇"
+    assert re.search(anota["pattern"], "去唔去") and not re.search(anota["pattern"], "去唔食")
+
+
+def test_formal_only_items_are_not_in_the_order_but_colloquial_words_with_them_are(built):
+    _srcs, b = built
+    assert not set(b["order"]) & _course.FORMAL_ONLY_ITEMS
+    assert "不過" in b["order"]  # 現在 is rarer in speech (而家) than the first 5000
+
+
+def test_shipped_lesson_sentences_say_their_item_as_that_word(built):
+    """I1: the item is read with its own reading, every word of the sentence is read as itself, and HKCanCor's own
+    word boundaries have the item as a token."""
+    _srcs, b = built
+    pool = {e["id"]: e for e in b["pool"]}
+    bad = [(f, i) for f, i in b["lesson"].items() if not f.startswith("g:")
+           and not (_course.reads_as(pool[i], f, b["lex"]) and _course.read_right(pool[i], b["lex"]))]
+    assert not bad, bad[:10]
+    for f, i in b["lesson"].items():
+        if f in ("你呢", "地下", "造"):
+            assert pool[i]["text"].find(f) != -1
+
+
+def test_single_characters_in_the_order_are_free_words_or_named_by_the_content(built):
+    srcs, b = built
+    free = _course.free_chars(srcs["train"])
+    named = {it for it in STAGE1_FORMS} | {n for p in _grammar()["points"] for n in p["needs"]}
+    bad = [f for f in b["order"] if len(f) == 1 and f not in free and f not in named]
+    assert not bad, bad[:20]
+    assert "嚟" in b["order"] and "囖" not in b["order"] and "嚹" not in b["order"]
+
+
 def test_placed_grammar_points_have_two_attested_examples(built):
     _srcs, b = built
     placed = [x[2:] for x in b["placed"] if x.startswith("g:")]

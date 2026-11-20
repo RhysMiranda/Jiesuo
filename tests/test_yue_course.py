@@ -62,20 +62,71 @@ def test_order_is_truncated():
     assert course.order_words(lex, ["五"], n=2)[0] == "五"
 
 
-FORMS = {"的士", "他", "在", "坐", "我", "家", "食", "咗", "飯", "佢"}
+FORMS = {"的士", "他", "在", "坐", "我", "家", "食", "咗", "飯", "佢", "現在", "目的", "其他", "在乎"}
 
 
 def test_formal_hits():
-    assert course.formal_hits("他在家", FORMS)
+    assert course.formal_hits("他在家", FORMS) == ["他", "在"]
     assert course.formal_hits("我坐的士", FORMS) == []  # 的士 is one token
+    assert course.formal_hits("佢現在喺屋企", FORMS) == []  # 現在 is a colloquial word, not 在 alone
+    assert course.formal_hits("其他人", FORMS) == []  # 他 inside 其他
+    assert course.formal_hits("佢嘅目的", FORMS) == []
+    assert course.formal_hits("我的飯", FORMS) == ["的"]
     assert course.formal_hits("我沒有飯", FORMS) == ["沒有"]
     assert course.formal_hits("我食咗飯", lambda t: list(t)) == []  # a segmenting function works too
+    assert course.formal_hits("他食咗飯", lambda t: list(t)) == ["他"]
 
 
 def test_colloquial():
     assert course.colloquial("我食咗飯", FORMS)
+    assert course.colloquial("佢現在食緊", FORMS)  # 現在 is fine
     assert not course.colloquial("我食飯", FORMS)  # no marker
     assert not course.colloquial("佢在家", FORMS)  # marker, but a formal form
+    assert not course.colloquial("佢沒有食", FORMS)  # the substring 沒有
+    assert not course.colloquial("我的佢", FORMS)
+
+
+def test_formal_only_items_are_never_taught_on_their_own():
+    lex = lexi(W("不", "bat1", 99), W("不過", "bat1 gwo3", 50), W("是", "si6", 98), W("是但", "si6 daan6", 40),
+               W("還", "waan4", 97), W("在", "zoi6", 96), W("現在", "jin6 zoi6", 30), W("沒有", "mut6 jau5", 95),
+               W("食", "sik6", 10))
+    order = course.order_words(lex, [])
+    assert not set(order) & course.FORMAL_ONLY_ITEMS
+    assert {"不過", "是但", "現在", "食"} <= set(order)
+    assert {"不", "他", "她", "它", "們", "這", "那", "沒", "沒有", "的", "是", "了", "在", "說", "看", "吃", "給", "很",
+            "什麼", "怎麼", "還"} == course.FORMAL_ONLY_ITEMS
+
+
+def test_a_character_is_taught_alone_only_if_it_is_a_free_word():
+    lex = lexi(W("咖", "gaa3", 5), W("啡", "fe1", 5), W("咖啡", "gaa3 fe1", 50), W("食", "sik6", 9))
+    order = course.order_words(lex, [], free={"食"})
+    assert order == ["咖啡", "食"]  # 咖 and 啡 are bound: no item of their own, and no prerequisite
+    train = [[("食", "V", "sik6")]] * 5 + [[("咖", "N", "gaa3")]] * 4 + [[("來", "V", "lai4")]] * 5
+    free = course.free_chars(train)
+    assert "食" in free and "咖" not in free
+    assert "嚟" in free and "來" not in free  # HKCanCor writes 嚟 lai4 as 來
+
+
+def test_variant_only_forms_are_not_headwords():
+    srcs = {"rime": {"囖": [], "囉": []}, "rime_words": {}, "cccanto": {}, "cccanto_words": {},
+            "wordshk": [_whk(1, [], forms=(("囉", "lo1"), ("囖", "lo1")))]}
+    assert course.headword_forms(srcs) == {"囉"}  # 囖 is in rime, but words.hk files it as a variant of 囉
+
+
+def test_reads_as_rejects_another_word_or_reading():
+    lex = lexi(W("你呢", "nei5 ne1"), W("排", "paai4"), W("地下", "dei6 haa2", alt=["dei6 haa6"]))
+    other = {"toks": [["你呢", "nei5 ni1"], ["排", "paai4"]], "id": "wordshk:1#1"}
+    same = {"toks": [["你呢", "nei5 ne1"]], "id": "wordshk:2#1"}
+    tone = {"toks": [["地下", "dei6 haa6"]], "id": "wordshk:3#1"}
+    hk = {"toks": [["你呢", "nei5 ne1"]], "hk": [["你", "nei5"], ["呢", "ne1"]], "id": "hkcancor:f#1"}
+    assert not course.reads_as(other, "你呢", lex) and course.reads_as(same, "你呢", lex)
+    assert course.reads_as(tone, "地下", lex)  # a recorded alternative that differs only in tone (a changed tone)
+    assert not course.reads_as(dict(tone, toks=[["地下", "dei6 haa1"]]), "地下", lex)
+    assert not course.reads_as(hk, "你呢", lex)  # HKCanCor's own tokens are 你 + 呢
+    order = ["你呢", "排"]
+    exs = [dict(_ex("a", "你呢排點呀", ["你呢", "排"]), toks=other["toks"])]
+    assert course.lesson_sentences(order, exs, (), lex) == {}
+
 
 
 def _ex(id_, text, words, en="x"):
@@ -248,7 +299,8 @@ def test_grammar_examples_follow_the_provenance_rule():
     point = {"id": "zo2", "pattern": "咗", "cite": "咗:zo2", "needs": []}
     pos = {w: i for i, w in enumerate(LEX)}
     ent = _whk(7, [("我食咗飯", "ngo5 sik6 zo2 faan6", "I ate")])
-    other = _whk(8, [("佢食咗飯", "keoi5 sik6 zo2 faan6", "He ate")], forms=(("喇", "laa3"),))
+    other = _whk(8, [("佢食咗飯", "keoi5 sik6 zo2 faan6", "He ate"), ("佢食咗粥", "keoi5 sik6 zo3 zuk1", "x")],
+                 forms=(("喇", "laa3"),))
     tat = [{"id": 1, "text": "我食咗", "author": "a", "eng": [(9, "I ate", "b")]}]
     hk = [("f", 1, [("我", "R", "ngo5"), ("食", "V", "sik6"), ("咗", "U", "zo2"), ("飯", "N", "faan6"), ("呢", "Y", "ne1")]),
           ("f", 2, [("我", "R", "ngo5"), ("食", "V", "sik6"), ("咗", "U", "zo3"), ("飯", "N", "faan6"), ("呢", "Y", "ne1")])]
@@ -257,15 +309,21 @@ def test_grammar_examples_follow_the_provenance_rule():
     wk = [ent, other]
     pool = course.examples(lex, tat, wk, hk)
     got = [x["id"] for x in course.grammar_examples(point, pool, pos, lex, wk)]
-    assert got == ["wordshk:7#1", "hkcancor:f#1"]  # words.hk entry first, only the cited entry; zo3 is not the cited reading
+    # the cited entry first, then another entry whose own Jyutping gives 咗 zo2 (not zo3); HKCanCor only with zo2
+    assert got == ["wordshk:7#1", "wordshk:8#1", "hkcancor:f#1"]
     lex["咗"] = W("咗", "zo2")  # a single reading: Tatoeba may be used
     pool = course.examples(lex, tat, wk, hk)
     got = [x["id"] for x in course.grammar_examples(point, pool, pos, lex, wk)]
     assert got[0] == "wordshk:7#1" and got[-1] == "tatoeba:1"
     point["exclude"] = ["tatoeba:1"]
     assert "tatoeba:1" not in [x["id"] for x in course.grammar_examples(point, pool, pos, lex, wk)]
-    point["entries"] = [8]  # an entry that is not a citation of this point is ignored
-    assert not any(x["id"].startswith("wordshk") for x in course.grammar_examples(point, pool, pos, lex, wk))
+    point["entries"] = [8]  # an entry that is not a citation of this point gives no free pass: the reading rule applies
+    assert [x["id"] for x in course.grammar_examples(point, pool, pos, lex, wk) if x["id"].startswith("wordshk")] == [
+        "wordshk:7#1", "wordshk:8#1"]
+    ex8 = next(x for x in pool if x["id"] == "wordshk:8#1")
+    assert course._key_ok({"id": "zo2", "cite": "咗:zo2"}, ex8, lex, {7})
+    # a particle point uses its own entries only (係我嘅 ends in ge3 too, but is possessive)
+    assert not course._key_ok({"id": "laa3", "cite": "咗:zo2"}, ex8, lex, {7})
 
 
 def test_lesson_sentence_prefers_wordshk_over_tatoeba():
