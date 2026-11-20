@@ -53,7 +53,8 @@ def toy():
 
 def build():
     b, whk = toy()
-    return ex.build_phase2(b, whk, lambda ch: {"好": ["hou2", "hou3"]}.get(ch, ["x1"]), notice=NOTICE)
+    return ex.build_phase2(b, whk, lambda ch: {"好": ["hou2", "hou3"]}.get(ch, ["x1"]), notice=NOTICE,
+                           meanings={"items": {}})
 
 
 NOTICE = {"notice": "N", "disclaimer": "D", "credits": ["C"], "link": "https://words.hk"}
@@ -97,6 +98,17 @@ def test_flags_and_alts():
     lex = build()["lexicon"]
     row = [r for r in lex["words"] if r[0] == "好"][0]
     assert row[4] == 3 and lex["alts"]["好"] == ["hou3"]
+
+
+def test_checked_meaning_replaces_the_gloss_and_sets_flag_8():
+    b, whk = toy()
+    chars = lambda ch: ["x1"]
+    m = {"items": {"食": {"jp": "sik6", "en": "to eat; to take (medicine)", "src": "x"}}}
+    rows = {r[0]: r for r in ex.build_phase2(b, whk, chars, notice=NOTICE, meanings=m)["lexicon"]["words"]}
+    assert rows["食"][2] == "to eat; to take (medicine)" and rows["食"][4] & 8
+    assert rows["我"][2] == "I" and not rows["我"][4] & 8
+    with pytest.raises(ValueError):  # a table checked for another reading never ships
+        ex.build_phase2(b, whk, chars, notice=NOTICE, meanings={"items": {"食": {"jp": "sik1", "en": "x", "src": "x"}}})
 
 
 def test_rows_carry_the_reading_status_code():
@@ -172,8 +184,13 @@ def test_shipped_wordshk_text_is_only_in_wordshk_json():
     w = _load("wordshk.json")
     assert w["notice"] and w["disclaimer"] and w["credits"] and w["link"] == "https://words.hk"
     srcs = lexicon.load_sources()
-    for form, jp, en, _r, _f, _s in _load("lexicon.json")["words"]:
-        assert en == lexicon._meaning(form, jp, srcs), form
+    checked = json.loads((ROOT / "data" / "yue" / "content" / "meanings.json").read_text(encoding="utf8"))["items"]
+    for form, jp, en, _r, flags, _s in _load("lexicon.json")["words"]:
+        if flags & 8:  # the hand-checked table, written by Jiesuo
+            assert en == checked[form]["en"], form
+            assert not any(len(e[1]) > 25 and e[1] in en for e in w["entries"].values()), form
+        else:
+            assert en == lexicon._meaning(form, jp, srcs), form
     for name in ("course.json", "sentences.json", "hkcancor.json"):
         s = (APP / name).read_text(encoding="utf8")
         assert not any(len(e[2]) > 12 and e[2] in s for e in w["entries"].values()), name  # shorter ones occur by chance

@@ -68,7 +68,7 @@ test("the Mandarin service worker no longer deletes foreign caches", () => {
 
 test("the Cantonese service worker caches shell and data but not audio", () => {
   const sw = fs.readFileSync(yue("sw.js"), "utf8");
-  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v14"'));
+  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v15"'));
   const files = sw.split("const FILES")[1].split("];")[0];
   for (const f of ["speech.js", "wordlesson.js", "type.js", "read.js", "search.js", "map.js", "data/keyboards.json", "data/lexicon.json", "data/course.json", "data/sentences.json", "data/hkcancor.json", "data/wordshk.json"]) assert.ok(files.includes('"' + f + '"'), f);
   assert.ok(!files.includes("speech.json"), "speech.json is optional, so it is not precached");

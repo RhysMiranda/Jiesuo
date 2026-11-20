@@ -124,3 +124,14 @@ test("scoreTyping marks wrong tones and wrong syllables", () => {
   assert.strictEqual(S("nei5 hou2", "xyz").ok, false);
   assert.strictEqual(S("nei5 hou2", null).ok, false);
 });
+
+test("checked is lexicon flag 8 (meaning hand-checked); it does not touch the other flags", () => {
+  const fx = JyutLex.create({ lexicon: { words: [["可以", "ho2 ji5", "can; may", 1, 8], ["名", "meng2", "name", 2, 1], ["係", "hai6", "to be", 3, 9]], alts: {}, chars: {} }, course: {}, wordshk: {}, sentences: {}, hkcancor: {} });
+  assert.strictEqual(fx.word("可以").checked, true);
+  assert.strictEqual(fx.word("可以").en, "can; may");
+  assert.strictEqual(fx.word("可以").changed, false);
+  assert.strictEqual(fx.word("名").checked, false);
+  assert.strictEqual(fx.word("係").checked, true);
+  assert.strictEqual(fx.word("係").changed, true);
+  assert.strictEqual(fx.word("係").unchecked, false);
+});

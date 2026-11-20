@@ -480,23 +480,38 @@ def read_right(ex, lex):
     return True
 
 
-def lesson_sentences(order, examples_, points=(), lex=None):
+def known_at(pos, by_parts=()):
+    """word -> its place in the order, for `lesson_sentences`. A form in `by_parts` (one the meaning table leaves out
+    of the order, such as the particle cluster 㗎喇) counts as known once each of its characters is: at the place of
+    the last of them. A bound character such as 以 has no place, so a sentence that segments it out teaches nothing."""
+    out = dict(pos)
+    for f in by_parts:
+        ps = [pos.get(c) for c in f] if len(f) > 1 else [None]
+        if None not in ps:
+            out[f] = max(ps)
+    return out
+
+
+def lesson_sentences(order, examples_, points=(), lex=None, by_parts=()):
     """item -> id of its lesson sentence (Ruling 13); items without a qualifying example are left out.
 
     The sentence for a form X contains X as one of its segmented words, read as X and with every word read as itself
     (reads_as, read_right, given `lex`), has
     English and at least LESSON_MIN_HAN Han characters, and every word of it is at or before X in the order. For a
     grammar item `g:<id>` (in `order`, with `points`) it is one of that point's attested `_examples`, under the same
-    rules. Prefer words.hk, then the shortest, then the id."""
+    rules. Prefer words.hk, then the shortest, then the id. Forms in `by_parts` are not items; they count as known
+    as `known_at` says, and an item is never one of them."""
     pos = {f: i for i, f in enumerate(order)}
+    at = known_at(pos, by_parts)
+    parts = set(by_parts)
     key = lambda ex: (not ex["id"].startswith("wordshk"), han_len(ex["text"]), ex["id"])
     ok = lambda ex: bool(ex["en"]) and han_len(ex["text"]) >= LESSON_MIN_HAN
     best = {}
     for ex in examples_:
         if not ok(ex):
             continue
-        ps = [pos.get(w) for w in ex["words"]]
-        if not ps or None in ps:
+        ps = [pos.get(w) for w in ex["words"] if w not in parts]
+        if not ps or None in ps or any(at.get(w, len(order)) > max(ps) for w in ex["words"] if w in parts):
             continue
         x = order[max(ps)]  # the one word of the example that comes last is the item it teaches
         if lex is not None and not (reads_as(ex, x, lex) and read_right(ex, lex)):
@@ -509,13 +524,23 @@ def lesson_sentences(order, examples_, points=(), lex=None):
         if g not in pos:
             continue
         cands = [ex for ex in p.get("_examples", ()) if ok(ex) and (lex is None or read_right(ex, lex))
-                 and all(pos.get(w, len(order)) <= pos[g] for w in ex["words"])]
+                 and all(at.get(w, len(order)) <= pos[g] for w in ex["words"])]
         if cands:
             out[g] = min(cands, key=key)["id"]
     return out
 
 
 # ---------------------------------------------------------------- build and report
+
+MEANINGS = CONTENT / "meanings.json"
+
+
+def load_meanings(path=MEANINGS):
+    """The hand-checked meaning table: {"items": {form: {jp, en, src}}, "skip": {form: reason}}. Empty when missing."""
+    path = Path(path)
+    m = json.loads(path.read_text(encoding="utf8")) if path.exists() else {}
+    return {"items": m.get("items") or {}, "skip": m.get("skip") or {}}
+
 
 def load_content():
     stage1 = json.loads((CONTENT / "stage1.json").read_text(encoding="utf8"))
@@ -538,6 +563,11 @@ def build(srcs=None, located=None):
     named = set(first) | {n for p in grammar["points"] for n in p["needs"]}
     free = free_chars(srcs["train"]) | wordshk_free_chars(srcs["wordshk"], lex) | keys
     order = order_words(lex, first, headwords=headword_forms(srcs) | named, free=free)
+    # forms the meaning table rules out as items of their own (bound, a name, a fragment, a particle cluster) leave the
+    # greedy order; the order of everything else is unchanged. Stage 1 and grammar needs were chosen by hand and stay.
+    skip = set(load_meanings()["skip"]) - named
+    skipped = [f for f in order if f in skip]
+    order = [f for f in order if f not in skip]
     pos = {f: i for i, f in enumerate(order)}
     diffs = []
     pool = examples(lex, srcs["tatoeba"], srcs["wordshk"], train, diffs)
@@ -548,7 +578,8 @@ def build(srcs=None, located=None):
         points.append(q)
     placed = place_grammar(order, points, pool)
     return {"lex": lex, "order": order, "placed": placed, "pool": pool, "points": points, "diffs": diffs,
-            "lesson": lesson_sentences(placed, pool, points, lex), "stage1": stage1}
+            "lesson": lesson_sentences(placed, pool, points, lex, by_parts=skipped), "stage1": stage1,
+            "skipped": skipped}
 
 
 def write_report(b, srcs, path=REPORT):
@@ -563,6 +594,10 @@ def write_report(b, srcs, path=REPORT):
     for i, item in enumerate(placed[:100], 1):
         w = lex.get(item)
         lines.append(f"{i}. {item}" + (f" ({w.jp})" if w else ""))
+    skipped = b.get("skipped") or []
+    lines += ["", "## Left out by the meaning table", "",
+              f"{len(skipped)} form(s) the hand-checked meaning table (data/yue/content/meanings.json) marks as not a "
+              "word to teach on its own: " + (", ".join(skipped) or "none") + "."]
     lines += ["", "## Grammar points", "",
               "| id | cite | position | attested | words.hk | HKCanCor | Tatoeba |", "|---|---|---|---|---|---|---|"]
     left = []

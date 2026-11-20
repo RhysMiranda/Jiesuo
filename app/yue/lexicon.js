@@ -131,7 +131,7 @@
         const e = byForm.get(form);
         if (!e) return null;
         const w0 = wkEntry(form);
-        const out = { form: e.form, jp: e.jp, en: enOf(e), whkEn: (w0 && w0[1]) || null, rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2), unchecked: !!(e.flags & 4), status: e.status, alts: Array.isArray(lex.alts && lex.alts[form]) ? lex.alts[form].slice() : [], labels: Object.assign({}, lex.labels && lex.labels[form]) };
+        const out = { form: e.form, jp: e.jp, en: enOf(e), whkEn: (w0 && w0[1]) || null, rank: e.rank, changed: !!(e.flags & 1), alt: !!(e.flags & 2), unchecked: !!(e.flags & 4), checked: !!(e.flags & 8), status: e.status, alts: Array.isArray(lex.alts && lex.alts[form]) ? lex.alts[form].slice() : [], labels: Object.assign({}, lex.labels && lex.labels[form]) };
         const w = wkEntry(form);
         if (w) out.wordshk = { id: w[0], eng: w[1], def: w[2] };
         return out;

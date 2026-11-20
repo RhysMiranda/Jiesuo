@@ -260,7 +260,9 @@ def test_stage1_readings_equal_the_lexicon(built):
 def test_order_starts_with_stage1(built):
     _srcs, b = built
     assert b["order"][:len(STAGE1_FORMS)] == STAGE1_FORMS
-    assert len(b["order"]) == len(set(b["order"])) and len(b["order"]) == 5000
+    # 5000 greedy items, less the forms the meaning table leaves out (data/yue/content/meanings.json "skip")
+    assert len(b["order"]) == len(set(b["order"])) and len(b["order"]) + len(b["skipped"]) == 5000
+    assert not set(b["skipped"]) & set(b["order"]) and not set(b["skipped"]) & set(STAGE1_FORMS)
 
 
 def test_overrides_for_the_three_character_readings_name_a_reviewed_entry(built):
@@ -377,9 +379,10 @@ def test_every_example_syllable_is_valid_jyutping(built):
 
 def test_lesson_sentences_teach_their_item(built):
     _srcs, b = built
-    pos = {f: i for i, f in enumerate(b["placed"])}
+    pos = _course.known_at({f: i for i, f in enumerate(b["placed"])}, b["skipped"])
     pool = {e["id"]: e for e in b["pool"]}
     pts = {f"g:{p['id']}": {e["id"] for e in p["_examples"]} for p in b["points"]}
+    assert not set(b["lesson"]) & set(b["skipped"])
     got = 0
     for item, sid in b["lesson"].items():
         got += 1

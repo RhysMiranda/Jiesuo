@@ -19,7 +19,8 @@ MIN_VOICES shipped voices have recorded:
 Syllabic m4 and ng5 have no recordings in Cantone, so they are taught in text only.
 
 Phase 2 (words and grammar), one file per licence, from the course build (course.build):
-    lexicon.json    CC BY-SA 4.0  words [form, jp, en, freqRank, flags, status], status a/c/e/w/o = agree/corpus/attested (HKCanCor + words.hk examples)/words.hk/override, alts, labels {form: {alt jp: "literary"|"citation"}}, chars {char: [jp, main first]}
+    lexicon.json    CC BY-SA 4.0  words [form, jp, en, freqRank, flags, status], flags 1 changed / 2 alternatives /
+                                  4 unresolved / 8 meaning hand-checked (en from data/yue/content/meanings.json), status a/c/e/w/o = agree/corpus/attested (HKCanCor + words.hk examples)/words.hk/override, alts, labels {form: {alt jp: "literary"|"citation"}}, chars {char: [jp, main first]}
     course.json    CC BY-SA 4.0  order, stage1, grammar points with example ids, lessonSentence
     sentences.json  CC BY 2.0 FR  Tatoeba sentences with their authors and translation authors
     hkcancor.json   CC BY 4.0     HKCanCor sentences
@@ -192,7 +193,8 @@ def build(srcs=None, content=None, audio=None):
 
 
 LEXICON_LICENCE = ("CC BY-SA 4.0: Jyutping from rime-cantonese (CC BY 4.0) checked against CC-Canto (CC BY-SA 3.0), "
-                   "CC-CEDICT (CC BY-SA 4.0), Unihan and HKCanCor (CC BY 4.0); meanings from CC-Canto and CC-CEDICT")
+                   "CC-CEDICT (CC BY-SA 4.0), Unihan and HKCanCor (CC BY 4.0); meanings hand-checked by Jiesuo against "
+                   "words.hk, CC-Canto and CC-CEDICT (flag 8), else from CC-Canto and CC-CEDICT")
 COURSE_LICENCE = "CC BY-SA 4.0: Jiesuo course order and grammar notes, built on the lexicon's sources"
 SENTENCES_LICENCE = "CC BY 2.0 FR: Tatoeba (https://tatoeba.org/), each sentence with its author"
 HKCANCOR_LICENCE = "CC BY 4.0: HKCanCor, the Hong Kong Cantonese Corpus (https://github.com/fcbond/hkcancor)"
@@ -229,11 +231,13 @@ def _wordshk_entries(words, wordshk):
     return out
 
 
-def build_phase2(b, wordshk, chars_for, notice=None):
+def build_phase2(b, wordshk, chars_for, notice=None, meanings=None):
     """The five phase 2 data files as dicts, from a course.build() result `b`, the words.hk entries and
-    `chars_for(char) -> [jp, ...]` (main reading first)."""
+    `chars_for(char) -> [jp, ...]` (main reading first). A word in the hand-checked meaning table (`meanings`, default
+    data/yue/content/meanings.json) ships the table's English and flag 8; the table's reading must be the word's."""
     if notice is None:
         notice = json.loads(NOTICE.read_text(encoding="utf8"))
+    checked = (course.load_meanings() if meanings is None else meanings).get("items") or {}
     lex, pool = b["lex"], {e["id"]: e for e in b["pool"]}
     grammar = {}
     placed = set(b["placed"])
@@ -257,7 +261,13 @@ def build_phase2(b, wordshk, chars_for, notice=None):
     for f in forms:
         w = lex[f]
         flags = (1 if w.changed else 0) | (2 if w.alt else 0) | (4 if w.status == "unresolved" else 0)
-        words.append([f, w.jp, w.en, rank.get(f, 0), flags, STATUS_CODE.get(w.status, "")])
+        en = w.en
+        m = checked.get(f)
+        if m is not None:
+            if m.get("jp") != w.jp:
+                raise ValueError(f"meanings.json: {f} is checked for {m.get('jp')} but the lexicon reads {w.jp}")
+            en, flags = m["en"], flags | 8
+        words.append([f, w.jp, en, rank.get(f, 0), flags, STATUS_CODE.get(w.status, "")])
         if w.alt:
             alts[f] = list(w.alt)
         lab = {rd: x for rd, x in (getattr(w, "labels", None) or {}).items() if rd in w.alt}
@@ -323,6 +333,8 @@ def main():
         r = lexicon._char_res(ch, srcs)
         return [r.main, *r.others] if r is not None and r.main else []
 
+    if b.get("skipped"):
+        print(f"left out by the meaning table: {len(b['skipped'])} form(s): {' '.join(b['skipped'])}")
     _write(APP / "keyboards.json", build_keyboards())
     for name, data in build_phase2(b, srcs["wordshk"], chars_for).items():
         _write(APP / f"{name}.json", data)

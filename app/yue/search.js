@@ -43,6 +43,11 @@
       view.innerHTML = `<section class="stack wordpage">${back}<h1 class="zh hanzi" lang="zh-HK">${esc(form)}</h1>${jp ? `<p class="jp">${esc(jp)}</p>` : ""}<p class="soft">Not in the app yet.</p></section>`;
       return;
     }
+    // Stage 1 items have their own hand-checked table meaning (the one the lessons drill); other words show the
+    // lexicon's, marked when it has not been hand-checked yet (lexicon flag 8).
+    const stage1 = ((K.course && K.course.stage1 && K.course.stage1.lessons) || []).some((l) => (l.items || []).some((it) => it.form === form));
+    const C = window.JyutCourse;
+    const en = (stage1 && C && C.meaning ? C.meaning(K.course, K.lex, form) : "") || w.en;
     const whkLink = "https://words.hk/zidin/" + encodeURIComponent(form);
     const def = w.wordshk && w.wordshk.def ? W.clean(w.wordshk.def) : "";
     const note = w.changed ? W.changedNote(form, w.jp, K.chars) : "";
@@ -68,8 +73,9 @@
       ${w.alts.length ? `<p class="soft small">Other reading${w.alts.length > 1 ? "s" : ""}: ${w.alts.map((a) => esc(a) + (w.labels && w.labels[a] ? ` (${esc(w.labels[a])})` : "")).join(", ")}</p>` : ""}
       <div class="row">${play(form, "Play")}</div><p class="soft small audiomsg" id="audiomsg" role="status" aria-live="polite"></p>
       ${w.unchecked ? `<p class="hint small">Not yet confirmed by a source.</p>` : ""}
-      ${w.en ? `<p class="meaning">${esc(W.clean(w.en))}</p>` : ""}
-      ${w.whkEn && w.whkEn !== w.en ? `<p class="meaning soft">words.hk: ${esc(W.clean(w.whkEn))}</p>` : ""}
+      ${en ? `<p class="meaning">${esc(W.clean(en))}</p>` : ""}
+      ${en && !w.checked && !stage1 ? `<p class="soft small">Meaning not hand-checked yet.</p>` : ""}
+      ${w.whkEn && w.whkEn !== en ? `<p class="meaning soft">words.hk: ${esc(W.clean(w.whkEn))}</p>` : ""}
       ${def ? `<p lang="zh-HK">${esc(def)} <a class="small" href="${esc(whkLink)}" target="_blank" rel="noopener">words.hk</a></p>` : ""}
       ${note ? `<p class="hint small">${esc(note)}</p>` : ""}
       ${exHtml ? `<h2>Examples</h2><ul class="examples">${exHtml}</ul>` : ""}

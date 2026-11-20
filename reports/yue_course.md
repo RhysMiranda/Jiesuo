@@ -1,6 +1,6 @@
 # Cantonese course order
 
-Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Example pool: 21865 sentences ([('wordshk', 17946), ('hkcancor', 3827), ('tatoeba', 92)]).
+Order: 4965 words (Stage 1 first, then greedy by HKCanCor train frequency). Example pool: 21865 sentences ([('wordshk', 17946), ('hkcancor', 3827), ('tatoeba', 92)]).
 
 ## First 100 items
 
@@ -71,70 +71,74 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 65. 嘢 (je5)
 66. 得 (dak1)
 67. g:anota
-68. 即 (zik1)
-69. 即係 (zik1 hai6)
-70. 幾 (gei2)
-71. 過 (gwo3)
-72. 吖 (aa1)
-73. 呢個 (ni1 go3)
-74. 睇 (tai2)
-75. 一個 (jat1 go3)
-76. 嗰 (go2)
-77. 嗰啲 (go2 di1)
+68. 即係 (zik1 hai6)
+69. 幾 (gei2)
+70. 過 (gwo3)
+71. 吖 (aa1)
+72. 呢個 (ni1 go3)
+73. 睇 (tai2)
+74. 一個 (jat1 go3)
+75. 嗰 (go2)
+76. 嗰啲 (go2 di1)
+77. 下 (haa6)
 78. g:gwo3
-79. 下 (haa6)
-80. 知 (zi1)
-81. 先 (sin1)
-82. 想 (soeng2)
-83. 住 (zyu6)
-84. 多 (do1)
-85. 好多 (hou2 do1)
-86. 咩 (me1)
-87. 嚟 (lai4)
-88. 但 (daan6)
-89. 但係 (daan6 hai6)
-90. 唔好 (m4 hou2)
-91. 返 (faan1)
-92. 隻 (zek3)
-93. 食 (sik6)
-94. 自己 (zi6 gei2)
-95. 嗎 (maa3)
-96. 買 (maai5)
-97. 大 (daai6)
-98. 晒 (saai3)
-99. 間 (gaan1)
-100. 用 (jung6)
+79. 知 (zi1)
+80. 先 (sin1)
+81. 想 (soeng2)
+82. 住 (zyu6)
+83. 多 (do1)
+84. 好多 (hou2 do1)
+85. 咩 (me1)
+86. 嚟 (lai4)
+87. 但 (daan6)
+88. 但係 (daan6 hai6)
+89. 唔好 (m4 hou2)
+90. 返 (faan1)
+91. 隻 (zek3)
+92. 食 (sik6)
+93. 自己 (zi6 gei2)
+94. 嗎 (maa3)
+95. 買 (maai5)
+96. 大 (daai6)
+97. 晒 (saai3)
+98. 間 (gaan1)
+99. 用 (jung6)
+100. 真 (zan1)
+
+## Left out by the meaning table
+
+35 form(s) the hand-checked meaning table (data/yue/content/meanings.json) marks as not a word to teach on its own: 即, 覺, 以, 可, 所, 今, 應, 解, 出來, 道, 友, 方, 通, 法, 性, 我係, 校, 返來, 陳, 作, 里, 英, 視, 安, 市, 式, 李, 當我, 何, 園, 麥, 周, 漢, 譯, 番.
 
 ## Grammar points
 
 | id | cite | position | attested | words.hk | HKCanCor | Tatoeba |
 |---|---|---|---|---|---|---|
-| hai2 | 喺:hai2 | 287 | 113 | 95 | 12 | 6 |
-| ge3 | 嘅:ge3 | 43 | 210 | 176 | 34 | 0 |
-| clf | 隻:zek3 | 462 | 11 | 10 | 1 | 0 |
-| zo2 | 咗:zo2 | 429 | 253 | 227 | 17 | 9 |
-| gan2 | 緊:gan2 | 440 | 31 | 31 | 0 | 0 |
+| hai2 | 喺:hai2 | 279 | 115 | 97 | 12 | 6 |
+| ge3 | 嘅:ge3 | 43 | 207 | 175 | 32 | 0 |
+| clf | 隻:zek3 | 450 | 11 | 10 | 1 | 0 |
+| zo2 | 咗:zo2 | 417 | 251 | 226 | 16 | 9 |
+| gan2 | 緊:gan2 | 428 | 31 | 31 | 0 | 0 |
 | gwo3 | 過:gwo3 | 78 | 34 | 25 | 9 | 0 |
-| mei6 | 未:mei6 | 533 | 39 | 32 | 6 | 1 |
+| mei6 | 未:mei6 | 515 | 39 | 32 | 6 | 1 |
 | mou5v | 冇:mou5 | 56 | 21 | 16 | 5 | 0 |
-| mhou2 | 咪:mai5 | 114 | 9 | 9 | 0 | 0 |
-| anota | 有冇:jau5 mou5 | 67 | 28 | 21 | 7 | 0 |
-| haimai | 係咪:hai6 mai6 | 332 | 16 | 14 | 2 | 0 |
-| qwords | 點解:dim2 gaai2 | 451 | 20 | 11 | 6 | 3 |
-| gwo3cmp | 過:gwo3 | 202 | 4 | 2 | 2 | 0 |
-| bei2 | 畀:bei2 | 276 | 4 | 4 | 0 | 0 |
-| dirs | 返:faan1 | 418 | 54 | 47 | 7 | 0 |
+| mhou2 | 咪:mai5 | 113 | 9 | 9 | 0 | 0 |
+| anota | 有冇:jau5 mou5 | 67 | 27 | 20 | 7 | 0 |
+| haimai | 係咪:hai6 mai6 | 323 | 16 | 14 | 2 | 0 |
+| qwords | 點解:dim2 gaai2 | 439 | 20 | 11 | 6 | 3 |
+| gwo3cmp | 過:gwo3 | 197 | 4 | 2 | 2 | 0 |
+| bei2 | 畀:bei2 | 268 | 4 | 4 | 0 | 0 |
+| dirs | 返:faan1 | 406 | 51 | 46 | 5 | 0 |
 | dak1 | 得:dak1 | left out | 1 | 1 | 0 | 0 |
-| hoi1 | 開:hoi1 | 473 | 2 | 2 | 0 | 0 |
-| zyu6 | 住:zyu6 | 244 | 4 | 3 | 1 | 0 |
-| haa5 | 吓:haa5 | 392 | 9 | 8 | 1 | 0 |
-| maai4 | 埋:maai4 | 226 | 11 | 7 | 4 | 0 |
-| faan1asp | 返:faan1 | 407 | 6 | 5 | 1 | 0 |
-| laa3 | 喇:laa3 | 312 | 2 | 2 | 0 | 0 |
-| wo3 | 喎:wo3 | 726 | 52 | 6 | 46 | 0 |
-| lo1 | 囉:lo1 | 298 | 5 | 5 | 0 | 0 |
-| me1 | 咩:me1 | 103 | 18 | 5 | 11 | 2 |
-| ge3fin | 嘅:ge3 | 184 | 22 | 3 | 19 | 0 |
+| hoi1 | 開:hoi1 | 461 | 2 | 2 | 0 | 0 |
+| zyu6 | 住:zyu6 | 237 | 5 | 4 | 1 | 0 |
+| haa5 | 吓:haa5 | 381 | 9 | 8 | 1 | 0 |
+| maai4 | 埋:maai4 | 219 | 10 | 7 | 3 | 0 |
+| faan1asp | 返:faan1 | 395 | 4 | 3 | 1 | 0 |
+| laa3 | 喇:laa3 | 303 | 2 | 2 | 0 | 0 |
+| wo3 | 喎:wo3 | 704 | 52 | 6 | 46 | 0 |
+| lo1 | 囉:lo1 | 290 | 5 | 5 | 0 | 0 |
+| me1 | 咩:me1 | 102 | 16 | 4 | 10 | 2 |
+| ge3fin | 嘅:ge3 | 179 | 22 | 3 | 19 | 0 |
 | bo3 | 噃:bo3 | left out | 0 | 0 | 0 | 0 |
 | gwaa3 | 啩:gwaa3 | left out | 0 | 0 | 0 | 0 |
 
@@ -228,10 +232,10 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 
 **haimai** `係咪`
 - wordshk:89962#2: 係咪去行街呀 | hai6 mai6 heoi3 haang4 gaai1 aa3 | Are we going shopping?
+- wordshk:89962#3: 你係咪廣東人 | nei5 hai6 mai6 gwong2 dung1 jan4 | Are you Cantonese?
 - wordshk:100000#3: 係咪真係噉呢 | hai6 mai6 zan1 hai6 gam2 ne1 | Is that really the case?
 - wordshk:81251#3: 你係咪男人嚟㗎 | nei5 hai6 mai6 naam4 jan2 lai4 gaa3 | Aren't you a man?! (i.e. you failed to do what a man is supposed to do.)
 - wordshk:100000#19: 提咗你㗎啦，係咪呢 | tai4 zo2 nei5 gaa3 laa1 hai6 mai6 ne1 | I've reminded you. You see?
-- wordshk:61022#4: 喂，請問係咪陳小姐 | wai2 cing2 man6 hai6 mai6 can4 siu2 ze2 | Hello, is this Miss Chan?
 - wordshk:63001#6: 係咪玩下都唔得呀 | hai6 mai6 waan2 haa5 dou1 m4 dak1 aa3 | Do you have to be so serious all the time?
 
 **qwords** `乜嘢|邊個|邊度|點解|幾時|幾多`
@@ -273,6 +277,7 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:85655#19: 睇住呀 | tai2 zyu6 aa3 | Watch out!
 - wordshk:85674#1: 睇住啲袋 | tai2 zyu6 di1 doi2 | to keep an eye on the bags
 - wordshk:85709#1: 睇住盤數 | tai2 zyu6 pun4 sou3 | to look after the finances
+- wordshk:71454#1: 屋企有我睇住，你放心啦 | uk1 kei2 jau5 ngo5 tai2 zyu6 nei5 fong3 sam1 laa1 | I will take care of the house. Don't worry.
 - hkcancor:FC-009b_v#63: 冇老師睇住你哋即係 | mou5 lou5 si1 tai2 zyu6 nei5 dei6 zik1 hai6 | None
 
 **haa5** `[試睇聽揀問望諗等學講跑行]吓|[試睇聽揀問望諗等學講跑行]下`
@@ -294,8 +299,6 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 **faan1asp** `[瞓睇食講做買]返`
 - wordshk:90214#6: 食返餐好嘅 | sik6 faan1 caan1 hou2 ge3 | Let's eat something good!
 - wordshk:90214#1: 做返你應該做嘅嘢 | zou6 faan1 nei5 jing1 goi1 zou6 ge3 je5 | Go back to work on whatever you should be doing.
-- wordshk:117268#7: 瞓返個靚覺 | fan3 faan1 go3 leng3 gaau3 | to have a nice sleep
-- wordshk:47453#4: 瞓返個靚覺先 | fan3 faan1 go3 leng3 gaau3 sin1 | I'll have a nice sleep!
 - wordshk:76812#1: 不如買啲嘢食返嚟啦 | bat1 jyu4 maai5 di1 je5 sik6 faan1 lei4 laa1 | Why don't you buy some food and bring it back?
 - hkcancor:FC-013_v#50: 要睇返啲旅行書 | jiu3 tai2 faan1 di1 leoi5 hang4 syu1 | None
 
@@ -322,9 +325,9 @@ Order: 5000 words (Stage 1 first, then greedy by HKCanCor train frequency). Exam
 - wordshk:98798#2: 咁做好咩 | gam2 zou6 hou2 me1 | Is that really a good idea?
 - wordshk:98798#4: 你鍾意佢咩 | nei5 zung1 ji3 keoi5 me1 | You like him?
 - wordshk:98798#6: 乜你唔去咩 | mat1 nei5 m4 heoi3 me1 | Aren't you going?
-- wordshk:98798#10: 你當我傻嘅咩 | nei5 dong3 ngo5 so4 ge3 me1 | I'm not a freakin' idiot. (literally 'You think I'm silly?')
 - wordshk:98798#3: 你唔驚佢嬲咩 | nei5 m4 geng1 keoi5 nau1 me1 | Aren't you worried that he may get mad at you?
 - hkcancor:FC-055_v2#59: 你知邊個咩 | nei5 zi1 bin1 go3 me1 | None
+- hkcancor:FC-013_v#19: 但係你識去咩 | daan6 hai6 nei5 sik1 heoi3 me1 | None
 
 **ge3fin** `嘅$`
 - wordshk:98364#4: 冇事嘅 | mou5 si6 ge3 | It'll be fine.
