@@ -65,13 +65,14 @@ def test_unresolved_is_reported(tmp_path):
 
 
 def test_dictionary_agreed_citation_readings_are_not_demoted():
+    srcs = dict(SRCS, overrides={})  # the rule itself; overrides.tsv decides some of these by hand (位 wai2, 嘩 waa3)
     for ch, want in zip("到位友樣來嘩", ["dou3", "wai6", "jau5", "joeng6", "loi4", "waa1"]):
-        r = resolve_char(ch, SRCS)
+        r = resolve_char(ch, srcs)
         assert r.main == want and r.status == "agreed", (ch, r.main, r.status)
 
 
 def test_speech_reading_recorded_in_evidence():
-    r = resolve_char("到", SRCS)
+    r = resolve_char("到", dict(SRCS, overrides={}))
     assert r.main == "dou3"
     reading, count = r.evidence["speech_top"]
     assert reading == "dou2" and count >= 5
@@ -101,3 +102,21 @@ def test_five_tokens_count_four_do_not():
     args = ([("baa3", None)], {"baa1"}, None)
     assert resolve_char("甲", _synthetic(*args, ["baa1"] * 4)).status == "unresolved"
     assert resolve_char("甲", _synthetic(*args, ["baa1"] * 5)).status == "corpus"
+
+
+def test_override_fifth_column_lists_the_same_words_other_readings(tmp_path):
+    from jiesuo.yue.readings import load_same_word
+
+    def tsv(*rows):
+        return "\n".join("\t".join(r) for r in rows) + "\n"
+
+    head = ("form", "reading", "reason", "source", "same_word")
+    p = tmp_path / "o.tsv"
+    p.write_text(tsv(head, ("驚", "geng1", "speech", "wordshk:1", "ging1 literary"),
+                     ("今年", "gam1 nin2", "speech", "x", "gam1 nin4 citation, gam1 nin3"),
+                     ("試", "si3", "r", "s")), encoding="utf8")
+    assert load_overrides(p) == {"驚": "geng1", "今年": "gam1 nin2", "試": "si3"}
+    assert load_same_word(p) == {"驚": [("ging1", "literary")], "今年": [("gam1 nin4", "citation"), ("gam1 nin3", "")]}
+    p.write_text(tsv(head, ("驚", "geng1", "r", "s", "gam1 nin4")), encoding="utf8")
+    with pytest.raises(ValueError):
+        load_overrides(p)  # a same-word reading needs one syllable per character

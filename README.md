@@ -113,7 +113,7 @@ It teaches:
 - voice calibration (衣 椅 意 兒 耳 二) and a speaking guide;
 - a soft gate (34 of 40) before words.
 
-Words and sentences come in phase 2. Rebuild order (Python 3.12 is required, because of the networkx pin; use the venv above):
+Phase 2 adds words and grammar (below). Rebuild order (Python 3.12 is required, because of the networkx pin; use the venv above):
 
     python scripts/fetch_yue_data.py
     python -m jiesuo.yue.readings
@@ -124,10 +124,29 @@ Words and sentences come in phase 2. Rebuild order (Python 3.12 is required, bec
 
 Tone check: guide mode; on held-out recordings it is right on 85.1% of the syllables it decides, confuses tone 2 for 5 most (14.6%), and says "not sure" on 12.1% ([reports/yue_tone_check.md](reports/yue_tone_check.md)). Readings: [reports/yue_readings.md](reports/yue_readings.md) (22,718 agreed, 4,249 unresolved and never taught).
 
+### Phase 2: words and grammar
+
+- **Today** teaches new words in the course order, a few at a time, then reviews them on a schedule (hearing, reading and typing, each in its own box 1 to 6). Grammar points sit in the same order, each with attested example sentences.
+- **Type** is a Jyutping typing trainer with a keyboard setup guide. **Read** takes pasted chat or text and shows each word's reading and meaning. **Search** (搵) finds words by characters, Jyutping or English, and each word has its own page.
+- **Map** (圖, from the Progress screen) shows the whole course in bands of 50: new, learning, or strong (box 4 or more in all three skills). **Progress** also counts words per skill and what is due today.
+- Data: a lexicon with checked Jyutping readings, the course order and grammar notes, example sentences from Tatoeba and HKCanCor, and published, reviewed entries from [words.hk](https://words.hk). See [LICENSES.md](LICENSES.md).
+- Progress files are `v: 2` (words included). A `v: 1` file from phase 1 still loads.
+- Held-out evaluation (readings, word splitting, course coverage; run `python -m jiesuo.yue.evaluate`): [reports/yue_accuracy.md](reports/yue_accuracy.md).
+
+Optional neural audio (Azure Speech, zh-HK voices, with our own Jyutping sent as SSML). Until it is made the app uses the recorded syllables and your device's voice. Run these in your own terminal, and set the key there; it is read only from the environment and is never written to a file or a log:
+
+    python -m jiesuo.yue.tts --dry-run                  # how many clips and characters, no network
+    export AZURE_SPEECH_KEY=...  AZURE_SPEECH_REGION=...   # PowerShell: $env:AZURE_SPEECH_KEY = "..."
+    python -m jiesuo.yue.tts --run --limit 50           # a small first batch; drop --limit for all of it
+    node scripts/yue_clip_check.js data/raw/yue/tts     # tone-checks every clip, writes reports/yue_tts_check.md
+    python -m jiesuo.yue.tts --publish                  # writes app/yue/data/speech.json
+
+Between the check and `--publish`: listen to the clips that `reports/yue_tts_check.md` lists (the mismatched ones, and for a voice that could not be calibrated, its sample). Add the key of each clip you accept to `data/yue/tts_ok.txt`, one per line, or `voice:<name>` (for example `voice:zh-HK-WanLungNeural`) to accept a whole voice. Clips that mismatched and are not listed there stay out of `speech.json`. Commit `speech.json` and the MP3s in `app/yue/audio/speech/` that it lists; keep `app/yue/` under 150 MB. The clips are generated with Azure Speech, and no licence is claimed beyond that.
+
 Limits of phase 1:
 
 - The tone check is a guide. The held-out test used only 2 synthetic Google voices, so real voices will do worse.
-- Syllabic m4 and ng5 have no recordings (text only until phase 2 audio).
+- Syllabic m4 and ng5 have no recordings (text only until the neural audio above is made).
 - The recorded voices (googleA, googleB, amazonHiuJin) are synthetic, from Cantone.
 - Without a microphone the saying unit is skipped.
 - Windows' built-in `python http.server` serves `.js` as text/plain, so for local testing use a server that sets JavaScript MIME types (offline mode needs it).

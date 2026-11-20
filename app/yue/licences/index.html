@@ -25,9 +25,9 @@
   <section>
     <h2>App code and lesson text</h2>
     <p><code>index.html</code>, <code>app.js</code>, <code>state.js</code>, <code>drills.js</code>, <code>lesson.js</code>, <code>jyutping.js</code>,
-      <code>tones.js</code>, <code>audio.js</code>, <code>speak.js</code>, <code>today.js</code>, <code>sounds.js</code>, <code>yue.css</code>, <code>sw.js</code> and <code>data/stage0.json</code>, <code>data/tonecheck.json</code>: MIT.
+      <code>tones.js</code>, <code>audio.js</code>, <code>speak.js</code>, <code>speech.js</code>, <code>lexicon.js</code>, <code>course.js</code>, <code>wordlesson.js</code>, <code>today.js</code>, <code>sounds.js</code>, <code>type.js</code>, <code>read.js</code>, <code>search.js</code>, <code>map.js</code>, <code>yue.css</code>, <code>sw.js</code> and <code>data/stage0.json</code>, <code>data/tonecheck.json</code>, <code>data/keyboards.json</code>: MIT.
       <a href="Jiesuo-LICENSE.txt">Licence text</a>.</p>
-    <p>Data file notice: <code>data/stage0.json</code> says “MIT: Jiesuo”; <code>data/tonecheck.json</code> says “MIT: Jiesuo (computed)”.</p>
+    <p>Data file notice: <code>data/stage0.json</code> says “MIT: Jiesuo”; <code>data/tonecheck.json</code> says “MIT: Jiesuo (computed)”; <code>data/keyboards.json</code> says “MIT: Jiesuo”, with its setup steps summarised from the pages it cites.</p>
     <p>The lesson text cites its sources in the file: Matthews and Yip, <em>Cantonese: A Comprehensive Grammar</em> (2nd ed., Routledge 2011),
       and the Linguistic Society of Hong Kong's Jyutping scheme.</p>
   </section>
@@ -63,16 +63,40 @@
   </section>
 
   <section>
+    <h2>Neural voice clips: <code>data/speech.json</code> and <code>audio/speech/</code></h2>
+    <p>These clips, when present, were generated with Azure Speech zh-HK neural voices (HiuMaan and WanLung) from our own Jyutping readings.
+      They are computer-generated voices, not people. The sentence texts they speak keep their own licences, shown above.</p>
+  </section>
+
+  <section>
     <h2>Font: Noto Serif HK</h2>
     <p>Hong Kong forms of the characters are set in Noto Serif HK (Noto Serif CJK), loaded from Google Fonts, and used for the app icon.
       Copyright Google and Adobe, SIL Open Font License 1.1. <a href="NotoSerifHK-OFL.txt">Licence text</a>.</p>
   </section>
 
   <section>
-    <h2>Used from phase 2: words.hk</h2>
-    <p>words.hk data is downloaded for later work but is not used or shipped in phase 1. When used it comes under the
-      <a href="https://words.hk/">words.hk</a> Non-Commercial Open Data Licence 1.0: non-commercial use only, no sublicensing,
-      and the notice, disclaimer, credits list and a link to the licence are shown.</p>
+    <h2>Words and course: <code>data/lexicon.json</code>, <code>data/course.json</code></h2>
+    <p>Both files say “CC BY-SA 4.0” in their <code>licence</code> line. The word list builds on the readings sources above and on
+      CC-CEDICT (CC BY-SA 4.0) and CC-Canto for meanings. They contain no words.hk text.</p>
+  </section>
+
+  <section>
+    <h2>Tatoeba sentences: <code>data/sentences.json</code></h2>
+    <p>Sentences from <a href="https://tatoeba.org/">Tatoeba</a>, Creative Commons Attribution 2.0 France (CC BY 2.0 FR). Each sentence names its author, and the author of its English translation, in the file.
+      We added the Jyutping. <a href="tatoeba-NOTICE.txt">Notice</a>.</p>
+  </section>
+
+  <section>
+    <h2>Spoken sentences: <code>data/hkcancor.json</code></h2>
+    <p>Sentences from <a href="https://github.com/fcbond/hkcancor">HKCanCor</a>, CC BY 4.0. <a href="HKCanCor-LICENSE.txt">Licence text</a>.</p>
+  </section>
+
+  <section>
+    <h2>words.hk: <code>data/wordshk.json</code></h2>
+    <p>Entries and examples from <a href="https://words.hk/">words.hk</a> (Hong Kong Lexicography Limited) under the
+      <a href="https://words.hk/base/hoifong/">Non-Commercial Open Data Licence 1.0</a>: non-commercial use only, no sublicensing.
+      This file is not under the MIT licence. The copyright notice, disclaimer and credits list are in the file and in
+      <a href="wordshk-NOTICE.txt">wordshk-NOTICE.txt</a>.</p>
   </section>
 
   <section>

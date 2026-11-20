@@ -1,0 +1,36 @@
+{
+  "items": [
+    {
+      "platform": "Windows",
+      "name": "Rime / Weasel (小狼毫) with the rime-cantonese schema",
+      "steps": [
+        "Download the Weasel (小狼毫) installer that includes the Jyutping (粵拼) schema from jyutping.net. Weasel's own README says the Jyutping schema is no longer bundled with its installer.",
+        "Run the installer and follow its instructions. On a first install it shows an Install Options dialog.",
+        "Press the Windows key + Space and choose 小狼毫輸入法 as your input method.",
+        "Select the 中 icon in the input indicator menu to start typing with Weasel.",
+        "Press Ctrl+` or F4 to open the schema menu and switch the input mode.",
+        "The rime-cantonese schema supports only Jyutping (粵拼), the Linguistic Society of Hong Kong scheme."
+      ],
+      "url": "https://github.com/rime/rime-cantonese",
+      "sources": [
+        {"url": "https://jyutping.net", "says": "the Windows installer that includes Jyutping, and the Windows key + Space step"},
+        {"url": "https://github.com/rime/weasel", "says": "installing Weasel, the 中 icon, Ctrl+` / F4, and that Jyutping is no longer bundled"},
+        {"url": "https://github.com/rime/rime-cantonese", "says": "the schema supports only Jyutping (粵拼)"}
+      ],
+      "checked": "2026-11-17"
+    },
+    {
+      "platform": "iPhone / iPad, Android (also Windows, macOS, web)",
+      "name": "TypeDuck 打得粵拼輸入法",
+      "steps": [
+        "Open typeduck.hk and choose the download link for your device. It lists Windows, macOS, iPhone/iPad and Android, and a web version.",
+        "Follow the installation guide linked on that page for your device. The guides are PDFs, in Chinese and in English."
+      ],
+      "url": "https://typeduck.hk/",
+      "sources": [
+        {"url": "https://typeduck.hk/", "says": "its title calls it a Jyutping input method (打得粵拼輸入法), the platform list and the installation guides"}
+      ],
+      "checked": "2026-11-17"
+    }
+  ]
+}

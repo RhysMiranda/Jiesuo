@@ -65,21 +65,25 @@
     return track.map((x, k) => ({ ...x, f0: f[k] }));
   }
 
+  /** The voiced runs as they fall, before any merging or cutting to a syllable count. */
+  function rawRuns(track) {
+    const runs = [];
+    for (let k = 0; k < track.length; k++) {
+      if (!(track[k].f0 > 0)) continue;
+      const last = runs[runs.length - 1];
+      if (last && k - last[1] <= 6) last[1] = k; // a gap under 60 ms is inside a syllable
+      else runs.push([k, k]);
+    }
+    return runs.filter(([a, b]) => b - a >= 3); // under 40 ms is a click
+  }
+
   /**
    * Split the voiced frames into n syllables. Pauses (60 ms or more of silence) separate syllables;
    * with too many runs the shortest gaps are merged, with too few the longest runs are cut evenly.
    * Each syllable is a list of pitches in semitones from the speaker's median.
    */
   function runs(track, n) {
-    const voiced = track.map((x) => x.f0 > 0);
-    let runs = [];
-    for (let k = 0; k < track.length; k++) {
-      if (!voiced[k]) continue;
-      const last = runs[runs.length - 1];
-      if (last && k - last[1] <= 6) last[1] = k; // a gap under 60 ms is inside a syllable
-      else runs.push([k, k]);
-    }
-    runs = runs.filter(([a, b]) => b - a >= 3); // under 40 ms is a click
+    const runs = rawRuns(track);
     if (!runs.length || n < 1) return [];
     while (runs.length > n) {
       let gap = Infinity, at = 0;
@@ -204,5 +208,5 @@
     return { heard: true, track, results, range, syllablesFound: segs.length };
   }
 
-  return { pitchTrack, runs, syllables, classify, resample, tonesOf, spoken, check, SHAPES, rangeOf };
+  return { pitchTrack, runs, rawRuns, syllables, classify, resample, tonesOf, spoken, check, SHAPES, rangeOf };
 });

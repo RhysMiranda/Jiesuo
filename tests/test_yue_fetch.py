@@ -72,6 +72,7 @@ def _rerun_setup(mod, tmp_path, monkeypatch, argv):
     raw = tmp_path / "raw"
     raw.mkdir()
     for name in mod.SOURCES:
+        (raw / name).parent.mkdir(parents=True, exist_ok=True)
         (raw / name).write_bytes(b"data " + name.encode())
     (raw / "cantone" / "v").mkdir(parents=True)
     (raw / "cantone" / "v" / "a.wav").write_bytes(b"w")

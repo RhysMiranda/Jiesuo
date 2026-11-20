@@ -22,14 +22,14 @@ BITRATE = 24
 RATE = 16000
 
 
-def encode(wav_path: Path) -> bytes:
+def encode(wav_path: Path, rate: int = RATE) -> bytes:
     with wave.open(str(wav_path), "rb") as w:
-        assert w.getnchannels() == 1 and w.getsampwidth() == 2 and w.getframerate() == RATE, wav_path
+        assert w.getnchannels() == 1 and w.getsampwidth() == 2 and w.getframerate() == rate, wav_path
         pcm = w.readframes(w.getnframes())
     enc = lameenc.Encoder()
     enc.set_bit_rate(BITRATE)
-    enc.set_in_sample_rate(RATE)
-    enc.set_out_sample_rate(RATE)
+    enc.set_in_sample_rate(rate)
+    enc.set_out_sample_rate(rate)
     enc.set_channels(1)
     enc.set_quality(2)
     return bytes(enc.encode(pcm) + enc.flush())

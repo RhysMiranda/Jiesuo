@@ -62,5 +62,20 @@
   ],
   "sha256": "fc56c7f78b5da7006f9288935feecfd1307b10a608be3268d18aa9e6e6878fd3",
   "bytes": 23611991
+ },
+ "tatoeba/yue_sentences_detailed.tsv.bz2": {
+  "url": "https://downloads.tatoeba.org/exports/per_language/yue/yue_sentences_detailed.tsv.bz2",
+  "sha256": "2e8e74e9bc7bc0704c5f3e124da9bb5a754f827d3a88e3d798b7d8deef143b94",
+  "bytes": 1727092
+ },
+ "tatoeba/yue-eng_links.tsv.bz2": {
+  "url": "https://downloads.tatoeba.org/exports/per_language/yue/yue-eng_links.tsv.bz2",
+  "sha256": "ca4051a58c46f6c96bab24e0e946445ef423370fab9cfee331b633bc264ed099",
+  "bytes": 44885
+ },
+ "tatoeba/eng_sentences_detailed.tsv.bz2": {
+  "url": "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_detailed.tsv.bz2",
+  "sha256": "f3a08a0af8deef3f50777cf0ccd7666f39e619f70fadae4327b7c29119468313",
+  "bytes": 34995780
  }
 }

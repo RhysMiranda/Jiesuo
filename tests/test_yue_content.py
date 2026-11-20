@@ -209,3 +209,268 @@ def test_anchor_must_be_a_shipped_reading():
     unit["anchors"].append(["錫", "sek6"])  # rime only, so not shipped in readings.json
     with pytest.raises(ValueError, match="not a shipped reading"):
         export_app.build(SRCS, content=content)
+
+
+# ---- phase 2, Task 3: Stage 1, grammar and attested examples (real data) ----
+
+from jiesuo.yue import course as _course  # noqa: E402
+from jiesuo.yue import lexicon as _lexicon  # noqa: E402
+
+STAGE1_FORMS = (
+    "你好 早晨 喂 拜拜 再見 唔該 多謝 唔該晒 唔使 對唔住 唔好意思 係 唔 唔係 有 冇 好 我 你 佢 我哋 你哋 佢哋 "
+    "零 一 二 三 四 五 六 七 八 九 十 百 千 萬 兩 個 呀 啦").split()
+
+
+@pytest.fixture(scope="module")
+def built():
+    srcs = _lexicon.load_sources()
+    return srcs, _course.build(srcs)
+
+
+def _stage1():
+    return json.loads((ROOT / "data" / "yue" / "content" / "stage1.json").read_text(encoding="utf8"))
+
+
+def _grammar():
+    return json.loads((ROOT / "data" / "yue" / "content" / "grammar.json").read_text(encoding="utf8"))
+
+
+def test_stage1_has_five_lessons_in_the_planned_order():
+    s = _stage1()
+    assert [les["id"] for les in s["lessons"]] == ["hello", "thanks", "is-has", "people", "numbers"]
+    assert [it["form"] for les in s["lessons"] for it in les["items"]] == STAGE1_FORMS
+    for les in s["lessons"]:
+        for it in les["items"]:
+            assert set(it) <= {"form", "jp", "en", "note", "group", "changed"}, it
+            assert it["jp"] and it["en"], it
+    tail = s["lessons"][4]["items"][-2:]
+    assert [it["form"] for it in tail] == ["呀", "啦"] and all(it.get("group") for it in tail)
+
+
+def test_stage1_readings_equal_the_lexicon(built):
+    _srcs, b = built
+    for les in _stage1()["lessons"]:
+        for it in les["items"]:
+            w = b["lex"][it["form"]]
+            assert w.status != "unresolved", it["form"]
+            if not it.get("changed"):  # a recorded changed tone is the one exception
+                assert it["jp"] == w.jp, (it["form"], it["jp"], w.jp)
+
+
+def test_order_starts_with_stage1(built):
+    _srcs, b = built
+    assert b["order"][:len(STAGE1_FORMS)] == STAGE1_FORMS
+    # 5000 greedy items, less the forms the meaning table leaves out (data/yue/content/meanings.json "skip")
+    assert len(b["order"]) == len(set(b["order"])) and len(b["order"]) + len(b["skipped"]) + len(b.get("profane", ())) == 5000
+    assert not set(b["skipped"]) & set(b["order"]) and not set(b["skipped"]) & set(STAGE1_FORMS)
+
+
+def test_overrides_for_the_three_character_readings_name_a_reviewed_entry(built):
+    srcs, b = built
+    rows = [ln.split("\t") for ln in (ROOT / "data" / "yue" / "overrides.tsv").read_text(encoding="utf8").splitlines()[1:]]
+    by = {r[0]: r for r in rows}
+    for ch, reading in (("撈", "lou1"), ("褪", "tan3"), ("當", "dong1")):
+        assert by[ch][1] == reading and b["lex"][ch].jp == reading and b["lex"][ch].status == "override"
+        ids = [int(x) for x in re.findall(r"wordshk:(\d+)", by[ch][3])]
+        assert ids and all(any(e.id == i and e.reviewed and (ch, reading) in e.forms for e in srcs["wordshk"]) for i in ids)
+
+
+def test_every_grammar_cite_is_a_reviewed_words_hk_entry(built):
+    srcs, _b = built
+    points = _grammar()["points"]
+    assert len(points) == 28 and not {"aa1", "maa3"} & {p["id"] for p in points}
+    assert len({p["id"] for p in points}) == 28
+    for p in points:
+        form, jp = _course.parse_cite(p["cite"])
+        hits = _course.cited_entries(p["cite"], srcs["wordshk"])
+        assert hits, p["cite"]
+        assert all(e.reviewed for e in hits)
+        assert set(p["entries"]) <= {e.id for e in hits}, p["id"]
+        assert p["title"] and p["explain"] and p["needs"], p["id"]
+
+
+def test_every_grammar_pattern_compiles_and_needs_are_words(built):
+    _srcs, b = built
+    for p in _grammar()["points"]:
+        re.compile(p["pattern"])
+        for n in p["needs"]:
+            assert n in b["lex"], (p["id"], n)
+
+
+def test_every_grammar_pattern_is_clean_and_matches_its_own_illustration():
+    """I2: a pattern compiles, has no control character (anota once held a literal U+0001 for \\1), and finds at least
+    one of the Cantonese phrases its own `explain` gives as an illustration."""
+    for p in _grammar()["points"]:
+        pat = p["pattern"]
+        assert not re.search(r"[\x00-\x1f\x7f]", pat), p["id"]
+        rx = re.compile(pat)
+        runs = re.findall(r"[\u3400-\u9fff]+", p["explain"])
+        if runs:
+            assert any(rx.search(r) for r in runs), (p["id"], pat, runs)
+    anota = next(p for p in _grammar()["points"] if p["id"] == "anota")
+    assert anota["pattern"] == "([^唔\\s])唔\\1|有冇"
+    assert re.search(anota["pattern"], "去唔去") and not re.search(anota["pattern"], "去唔食")
+
+
+def test_formal_only_items_are_not_in_the_order_but_colloquial_words_with_them_are(built):
+    _srcs, b = built
+    assert not set(b["order"]) & _course.FORMAL_ONLY_ITEMS
+    assert "不過" in b["order"]  # 現在 is rarer in speech (而家) than the first 5000
+
+
+def test_shipped_lesson_sentences_say_their_item_as_that_word(built):
+    """I1: the item is read with its own reading, every word of the sentence is read as itself, and HKCanCor's own
+    word boundaries have the item as a token."""
+    _srcs, b = built
+    pool = {e["id"]: e for e in b["pool"]}
+    bad = [(f, i) for f, i in b["lesson"].items() if not f.startswith("g:")
+           and not (_course.reads_as(pool[i], f, b["lex"]) and _course.read_right(pool[i], b["lex"]))]
+    assert not bad, bad[:10]
+    for f, i in b["lesson"].items():
+        if f in ("你呢", "地下", "造"):
+            assert pool[i]["text"].find(f) != -1
+
+
+def test_single_characters_in_the_order_are_free_words_or_named_by_the_content(built):
+    srcs, b = built
+    free = _course.free_chars(srcs["train"]) | _course.wordshk_free_chars(srcs["wordshk"], b["lex"])
+    named = {it for it in STAGE1_FORMS} | {n for p in _grammar()["points"] for n in p["needs"]}
+    bad = [f for f in b["order"] if len(f) == 1 and f not in free and f not in named]
+    assert not bad, bad[:20]
+    assert "嚟" in b["order"] and "囖" not in b["order"] and "嚹" not in b["order"]
+
+
+def test_placed_grammar_points_have_two_attested_examples(built):
+    _srcs, b = built
+    placed = [x[2:] for x in b["placed"] if x.startswith("g:")]
+    assert len(placed) == len(set(placed)) and placed
+    for p in b["points"]:
+        n = len(p["_examples"])
+        needs_ok = all(w in b["order"] for w in p["needs"])
+        assert (p["id"] in placed) == (n >= 2 and needs_ok), (p["id"], n, needs_ok)
+    gs = [i for i, x in enumerate(b["placed"]) if x.startswith("g:")]
+    assert all(b - a > 10 for a, b in zip(gs, gs[1:]))
+
+
+def test_every_shipped_example_has_a_source_and_no_formal_hits(built):
+    _srcs, b = built
+    forms = set(b["lex"])
+    for p in b["points"]:
+        for ex in p["_examples"]:
+            assert ex["source"] or ex.get("unchecked"), ex["id"]
+            assert re.match(r"(tatoeba:\d+|wordshk:\d+#\d+|hkcancor:[\w\-]+#\d+)$", ex["source"]), ex["source"]
+            assert not _course.formal_hits(ex["text"], forms), ex["id"]
+            assert _course.han_len(ex["text"]) <= 14 and ex["jp"] and ex["words"]
+            assert len(ex["jp"].split()) == _course.han_len(ex["text"]), ex["id"]
+            if ex["id"].startswith("hkcancor"):
+                assert ex["en"] is None
+            else:
+                assert ex["en"], ex["id"]
+            if ex["id"].startswith("tatoeba"):
+                assert ex["author"], ex["id"]
+
+
+def test_every_example_syllable_is_valid_jyutping(built):
+    _srcs, b = built
+    for ex in b["pool"]:
+        for s in ex["jp"].split():
+            jyutping.parse(s)
+
+
+def test_lesson_sentences_teach_their_item(built):
+    _srcs, b = built
+    pos = _course.known_at({f: i for i, f in enumerate(b["placed"])}, b["skipped"])
+    pool = {e["id"]: e for e in b["pool"]}
+    pts = {f"g:{p['id']}": {e["id"] for e in p["_examples"]} for p in b["points"]}
+    assert not set(b["lesson"]) & set(b["skipped"])
+    got = 0
+    for item, sid in b["lesson"].items():
+        got += 1
+        ex = pool[sid]
+        assert ex["en"] and _course.han_len(ex["text"]) >= 4, (item, sid)
+        assert max(pos[w] for w in ex["words"]) <= pos[item], (item, sid)
+        if item.startswith("g:"):
+            assert sid in pts[item], (item, sid)
+        else:
+            assert item in ex["words"], (item, sid)
+    assert got > 500
+    assert b["lesson"].get("再見") is None or "再見" in pool[b["lesson"]["再見"]]["words"]
+
+
+def test_course_content_renders_in_the_font(built):
+    from fontTools.ttLib import TTFont
+    _srcs, b = built
+    cmap = TTFont(FONT).getBestCmap()
+    text = json.dumps(_stage1(), ensure_ascii=False) + json.dumps(_grammar(), ensure_ascii=False)
+    text += "".join(ex["text"] for p in b["points"] for ex in p["_examples"])
+    missing = sorted({ch for ch in HAN.findall(text) if ord(ch) not in cmap})
+    assert not missing, missing
+
+
+def test_placed_examples_carry_the_cited_reading_on_the_key_character(built):
+    _srcs, b = built
+    placed = {x[2:] for x in b["placed"] if x.startswith("g:")}
+    spelling = {"吓": "吓下", "畀": "畀俾"}  # words.hk writes these as 下 and 俾
+    checked = 0
+    for p in b["points"]:
+        if p["id"] not in placed:
+            continue
+        form, jp = _course.parse_cite(p["cite"])
+        want = jp.split()
+        for ex in p["_examples"]:
+            han = "".join(c for c in ex["text"] if _lexicon.is_han(c))
+            syl = ex["jp"].split()
+            if p["id"] == "anota" and "有冇" not in han:
+                assert _course._aa_ok(p, ex), ex["id"]  # the A唔A half, confirmed by its own Jyutping
+                continue
+            ks = [k for k in range(len(han)) if any(han.startswith(f, k) for f in [form] + [
+                form.replace(form[0], v) for v in spelling.get(form[0], "") if len(form) == 1])]
+            assert any(syl[k:k + len(want)] == want for k in ks), (p["id"], ex["id"], ex["text"], ex["jp"])
+            checked += 1
+    assert checked > 50
+
+
+def test_no_tatoeba_example_rests_on_an_unsafe_token(built):
+    srcs, b = built
+    from collections import Counter
+    train = Counter(w for sent in srcs["train"] for w, _p, _j in sent)
+    lex = b["lex"]
+    seen = 0
+    for ex in b["pool"]:
+        if not ex["id"].startswith("tatoeba"):
+            continue
+        seen += 1
+        for t in ex["words"]:
+            assert not (len(t) == 1 and lex[t].alt), (ex["id"], t)
+            assert not (len(t) > 1 and train[t] < 3), (ex["id"], t)
+    assert seen > 50
+
+
+def test_particle_point_examples_end_a_clause_on_the_key_character(built):
+    _srcs, b = built
+    n = 0
+    for p in b["points"]:
+        if p["id"] in _course.PARTICLE_POINTS:
+            key = _course.parse_cite(p["cite"])[0]
+            for ex in p["_examples"]:
+                assert _course.clause_final(ex["text"], key), (p["id"], ex["id"], ex["text"])
+                n += 1
+    assert n > 20
+
+
+def test_known_bad_examples_are_not_shipped(built):
+    _srcs, b = built
+    bad = {"tatoeba:13107947", "tatoeba:5761094", "tatoeba:5735143", "tatoeba:12077986", "tatoeba:12099574",
+           "hkcancor:FC-026_v2#379", "hkcancor:FC-R002a_v2#24"}
+    shipped = {ex["id"] for p in b["points"] for ex in p["_examples"]}
+    assert not bad & shipped
+    assert not {i for i in bad if i.startswith("tatoeba")} & {ex["id"] for ex in b["pool"]}
+    assert all(_course.han_len(ex["text"]) >= 5 for p in b["points"] for ex in p["_examples"] if ex["id"].startswith("hkcancor"))
+
+
+def test_free_words_from_wordshk_come_back_and_bound_characters_stay_out(built):
+    _srcs, b = built
+    order = set(b["order"])
+    assert {"雨", "風", "天", "山"} <= order  # words.hk entries of their own, though HKCanCor rarely has them alone
+    assert "火" not in order  # its words.hk entries (71286) are reviewed but not published: the rule needs both
+    assert not {"其", "之", "而", "己", "俾", "揾"} & order  # bound or written-only; spellings the course does not use

@@ -1,0 +1,4967 @@
+{
+ "licence": "CC BY-SA 4.0: Jiesuo, checked against words.hk, CC-Canto and CC-CEDICT",
+ "items": {
+  "嘅": {
+   "jp": "ge3",
+   "en": "'s (possession); (links a description to a noun); (end of sentence) stating it as a fact",
+   "src": "wordshk:13550,98364,103693; hk usage"
+  },
+  "都": {
+   "jp": "dou1",
+   "en": "also, too; all, both; still, even",
+   "src": "wordshk:45127,45128; cccanto; cedict; hk usage"
+  },
+  "呢": {
+   "jp": "ne1",
+   "en": "what about...? (after a noun); (end of question) wondering, softening",
+   "src": "wordshk:100000; cccanto; cedict; hk usage"
+  },
+  "咗": {
+   "jp": "zo2",
+   "en": "(after a verb) completed action",
+   "src": "wordshk:13605; hk usage"
+  },
+  "噉": {
+   "jp": "gam2",
+   "en": "like this, in this way; so, then (starting a sentence)",
+   "src": "wordshk:47608,47609,104459; hk usage"
+  },
+  "就": {
+   "jp": "zau6",
+   "en": "then; right away, soon; just, exactly",
+   "src": "wordshk:64238,64239,90795; cccanto; cedict; hk usage"
+  },
+  "啲": {
+   "jp": "di1",
+   "en": "some; a bit (more); (plural marker)",
+   "src": "wordshk:13603,13611; cccanto; hk usage"
+  },
+  "喺": {
+   "jp": "hai2",
+   "en": "at, in, on (a place or time); to be at, to be in",
+   "src": "wordshk:49899,49900; hk usage"
+  },
+  "喇": {
+   "jp": "laa3",
+   "en": "(end of sentence) now, already (something has changed)",
+   "src": "wordshk:78884; cedict; hk usage"
+  },
+  "人": {
+   "jp": "jan4",
+   "en": "person; people; others",
+   "src": "wordshk:76187; cedict; hk usage"
+  },
+  "會": {
+   "jp": "wui5",
+   "en": "will; would; be likely to",
+   "src": "wordshk:13547,13585; hk usage"
+  },
+  "到": {
+   "jp": "dou3",
+   "en": "to arrive, to reach; until; so much that",
+   "src": "wordshk:45174,97550,103834; cccanto; cedict; hk usage"
+  },
+  "去": {
+   "jp": "heoi3",
+   "en": "to go; to go to",
+   "src": "wordshk:50446,50447; cccanto; cedict; lesson:wordshk:66626#5; hk usage"
+  },
+  "同": {
+   "jp": "tung4",
+   "en": "and, with; for (someone); the same as",
+   "src": "wordshk:62800,111348,122326; cedict; hk usage"
+  },
+  "要": {
+   "jp": "jiu3",
+   "en": "to want; to need; must, have to",
+   "src": "wordshk:53017,91136,97546; cedict; hk usage"
+  },
+  "咁": {
+   "jp": "gam3",
+   "en": "so (before an adjective); that much, such",
+   "src": "wordshk:72590; cccanto; hk usage"
+  },
+  "話": {
+   "jp": "waa6",
+   "en": "to say; to tell; to think, to reckon",
+   "src": "wordshk:2093; cccanto; cedict; hk usage"
+  },
+  "又": {
+   "jp": "jau6",
+   "en": "again; also; both... and...",
+   "src": "wordshk:76773; cccanto; cedict; hk usage"
+  },
+  "做": {
+   "jp": "zou6",
+   "en": "to do; to work (as); to make",
+   "src": "wordshk:89216,115999; cedict; hk usage"
+  },
+  "講": {
+   "jp": "gong2",
+   "en": "to speak; to say; to talk",
+   "src": "wordshk:73508; cccanto; cedict; lesson:wordshk:114493#1; hk usage"
+  },
+  "喎": {
+   "jp": "wo3",
+   "en": "(end of sentence) oh, I realise; (end of sentence) reminding the listener",
+   "src": "wordshk:63362; hk usage"
+  },
+  "嘢": {
+   "jp": "je5",
+   "en": "thing; stuff; something",
+   "src": "wordshk:13515,109124,111822; hk usage"
+  },
+  "得": {
+   "jp": "dak1",
+   "en": "OK, all right; (after a verb) can, able to; only (before a number)",
+   "src": "wordshk:7630,13620,97924; cccanto; cedict; hk usage"
+  },
+  "即係": {
+   "jp": "zik1 hai6",
+   "en": "that is; that means; I mean",
+   "src": "cccanto; hk usage"
+  },
+  "幾": {
+   "jp": "gei2",
+   "en": "how (much, many)?; quite, fairly; a few, several",
+   "src": "wordshk:47896,96328,96806; cccanto; cedict; hk usage"
+  },
+  "過": {
+   "jp": "gwo3",
+   "en": "to cross, to pass; (after a verb) have ever done; than (in comparisons)",
+   "src": "wordshk:49437,49438,90971; cccanto; cedict; hk usage"
+  },
+  "吖": {
+   "jp": "aa1",
+   "en": "(end of sentence) friendly urging or offer; (realising) ah, oh",
+   "src": "wordshk:13850,40131; hk usage"
+  },
+  "呢個": {
+   "jp": "ni1 go3",
+   "en": "this; this one",
+   "src": "cccanto; hk usage"
+  },
+  "睇": {
+   "jp": "tai2",
+   "en": "to look at, to watch; to read; to see, to judge",
+   "src": "wordshk:85655; cccanto; hk usage"
+  },
+  "一個": {
+   "jp": "jat1 go3",
+   "en": "one (of something); a, an",
+   "src": "cccanto; hk usage"
+  },
+  "嗰": {
+   "jp": "go2",
+   "en": "that; those (before a measure word)",
+   "src": "wordshk:73311; hk usage"
+  },
+  "嗰啲": {
+   "jp": "go2 di1",
+   "en": "those; that (amount of)",
+   "src": "wordshk:73312; cccanto; hk usage"
+  },
+  "下": {
+   "jp": "haa6",
+   "en": "down; below, under; next (week, time)",
+   "src": "wordshk:102591,115859; cedict; hk usage"
+  },
+  "知": {
+   "jp": "zi1",
+   "en": "to know; to be aware",
+   "src": "wordshk:64563; cccanto; cedict; hk usage"
+  },
+  "先": {
+   "jp": "sin1",
+   "en": "first; for now; only then, not until",
+   "src": "wordshk:60565,60566,116043; cedict; lesson:wordshk:60565#16; hk usage"
+  },
+  "想": {
+   "jp": "soeng2",
+   "en": "to want to; to think; to miss (someone)",
+   "src": "wordshk:61260,61261; cccanto; cedict; hk usage"
+  },
+  "住": {
+   "jp": "zyu6",
+   "en": "to live, to stay; (after a verb) keep doing, holding",
+   "src": "wordshk:11019,13608; cedict; hk usage"
+  },
+  "多": {
+   "jp": "do1",
+   "en": "many, much; more; (after a number) and more, odd",
+   "src": "wordshk:70159,110587; cedict; hk usage"
+  },
+  "好多": {
+   "jp": "hou2 do1",
+   "en": "a lot; many, much; much more",
+   "src": "wordshk:102044; cedict; hk usage"
+  },
+  "咩": {
+   "jp": "me1",
+   "en": "what?; (end of question) surprised, really?",
+   "src": "wordshk:11922,13618,98798; cccanto; lesson:wordshk:11922#5; hk usage"
+  },
+  "嚟": {
+   "jp": "lai4",
+   "en": "to come; (after a verb) towards here; (end of sentence) saying what something is",
+   "src": "cccanto; lesson:wordshk:60565#1; hk usage"
+  },
+  "但": {
+   "jp": "daan6",
+   "en": "but",
+   "src": "cedict; hk usage"
+  },
+  "但係": {
+   "jp": "daan6 hai6",
+   "en": "but; however",
+   "src": "wordshk:69432; cccanto; hk usage"
+  },
+  "唔好": {
+   "jp": "m4 hou2",
+   "en": "don't...; not good, bad",
+   "src": "wordshk:55768,55774; cccanto; hk usage"
+  },
+  "返": {
+   "jp": "faan1",
+   "en": "to return, to go back; to go to (work, school); (after a verb) back, again",
+   "src": "wordshk:19169,90214; hk usage"
+  },
+  "隻": {
+   "jp": "zek3",
+   "en": "measure word for animals; one of a pair; measure word for songs, ships, etc.",
+   "src": "wordshk:87739; cedict; hk usage"
+  },
+  "食": {
+   "jp": "sik6",
+   "en": "to eat; to take (medicine); to smoke",
+   "src": "wordshk:60507; cedict; hk usage"
+  },
+  "自己": {
+   "jp": "zi6 gei2",
+   "en": "oneself; one's own",
+   "src": "cedict; hk usage"
+  },
+  "嗎": {
+   "jp": "maa3",
+   "en": "(end of sentence) yes-no question, more formal",
+   "src": "cedict; hk usage"
+  },
+  "買": {
+   "jp": "maai5",
+   "en": "to buy",
+   "src": "wordshk:80141; cedict; hk usage"
+  },
+  "大": {
+   "jp": "daai6",
+   "en": "big, large; older; heavy, strong (rain, wind)",
+   "src": "wordshk:43832,43833,90576; cedict; lesson:wordshk:90576#4; hk usage"
+  },
+  "晒": {
+   "jp": "saai3",
+   "en": "all, completely; very much (after thanks); to dry in the sun",
+   "src": "wordshk:58713,58714,58715; hk usage"
+  },
+  "間": {
+   "jp": "gaan1",
+   "en": "measure word for shops, rooms, schools",
+   "src": "wordshk:47230; cccanto; cedict; hk usage"
+  },
+  "用": {
+   "jp": "jung6",
+   "en": "to use; to spend (money, time)",
+   "src": "wordshk:53321,53322; cedict; lesson:wordshk:60565#5; hk usage"
+  },
+  "真": {
+   "jp": "zan1",
+   "en": "real, true; really; clearly",
+   "src": "cedict; hk usage"
+  },
+  "真係": {
+   "jp": "zan1 hai6",
+   "en": "really; truly; very",
+   "src": "wordshk:87442; cccanto; lesson:wordshk:44646#1; hk usage"
+  },
+  "如果": {
+   "jp": "jyu4 gwo2",
+   "en": "if",
+   "src": "cedict; lesson:wordshk:77904#2; hk usage"
+  },
+  "對": {
+   "jp": "deoi3",
+   "en": "a pair of; to, towards (someone); right, correct",
+   "src": "wordshk:44617,44621,97923; cedict; hk usage"
+  },
+  "年": {
+   "jp": "nin4",
+   "en": "year",
+   "src": "wordshk:90270,119981; cedict; lesson:wordshk:96806#5; hk usage"
+  },
+  "點": {
+   "jp": "dim2",
+   "en": "how?; o'clock; to order (food), to dip",
+   "src": "wordshk:44707,44708,96424; cccanto; cedict; hk usage"
+  },
+  "咪": {
+   "jp": "mai6",
+   "en": "then just...; isn't it (obviously)...?",
+   "src": "wordshk:90738; hk usage"
+  },
+  "嗰個": {
+   "jp": "go2 go3",
+   "en": "that; that one",
+   "src": "wordshk:89936; cccanto; hk usage"
+  },
+  "已經": {
+   "jp": "ji5 ging1",
+   "en": "already",
+   "src": "wordshk:76993; cedict; hk usage"
+  },
+  "度": {
+   "jp": "dou6",
+   "en": "place, spot; degree (temperature, angle); about, around (after a number)",
+   "src": "wordshk:96834,97352,108714; lesson:wordshk:108714#7; hk usage"
+  },
+  "嘞": {
+   "jp": "laak3",
+   "en": "(end of sentence) definitely now; something has changed",
+   "src": "wordshk:78916; cccanto; hk usage"
+  },
+  "乜": {
+   "jp": "mat1",
+   "en": "what; why (on earth)...?",
+   "src": "wordshk:80410; lesson:wordshk:98798#6; hk usage"
+  },
+  "乜嘢": {
+   "jp": "mat1 je5",
+   "en": "what; what kind of",
+   "src": "wordshk:80414; cedict; hk usage"
+  },
+  "諗": {
+   "jp": "nam2",
+   "en": "to think; to think of; to consider",
+   "src": "wordshk:13539; lesson:wordshk:45131#5; hk usage"
+  },
+  "阿": {
+   "jp": "aa3",
+   "en": "(before a name or family word) friendly prefix",
+   "src": "wordshk:13658; cedict; hk usage"
+  },
+  "家": {
+   "jp": "gaa1",
+   "en": "family; home; measure word for companies, shops",
+   "src": "wordshk:71947,90559,96985; cedict; hk usage"
+  },
+  "而家": {
+   "jp": "ji4 gaa1",
+   "en": "now; nowadays",
+   "src": "wordshk:25962; cccanto; hk usage"
+  },
+  "哦": {
+   "jp": "o5",
+   "en": "oh, I see",
+   "src": "wordshk:117604; hk usage"
+  },
+  "緊": {
+   "jp": "gan2",
+   "en": "(after a verb) in the middle of doing; tight; urgent",
+   "src": "wordshk:3290,13606,13616; cedict; lesson:wordshk:80414#1; hk usage"
+  },
+  "樣": {
+   "jp": "joeng2",
+   "en": "appearance, looks; shape",
+   "src": "wordshk:53121; hk usage"
+  },
+  "噉樣": {
+   "jp": "gam2 joeng2",
+   "en": "like this; this way; then, in that case",
+   "src": "wordshk:72582; cccanto; lesson:wordshk:40131#2; hk usage"
+  },
+  "最": {
+   "jp": "zeoi3",
+   "en": "most; -est",
+   "src": "wordshk:87791; cedict; hk usage"
+  },
+  "為": {
+   "jp": "wai6",
+   "en": "for; for the sake of; because of",
+   "src": "wordshk:63191; cccanto; cedict; hk usage"
+  },
+  "因為": {
+   "jp": "jan1 wai6",
+   "en": "because",
+   "src": "wordshk:76126,103641; cccanto; cedict; hk usage"
+  },
+  "上": {
+   "jp": "soeng5",
+   "en": "to go up; to get on (a vehicle); to go to (class, work)",
+   "src": "wordshk:61300,115857,115910; cedict; hk usage"
+  },
+  "覺得": {
+   "jp": "gok3 dak1",
+   "en": "to think; to feel",
+   "src": "wordshk:48519; cedict; lesson:wordshk:79517#8; hk usage"
+  },
+  "埋": {
+   "jp": "maai4",
+   "en": "(after a verb) too, as well; to come close; to close up, to settle (the bill)",
+   "src": "wordshk:55865,55866,100323; cccanto; cedict; hk usage"
+  },
+  "同埋": {
+   "jp": "tung4 maai4",
+   "en": "and; together with",
+   "src": "wordshk:86458,90736; cccanto; hk usage"
+  },
+  "聽": {
+   "jp": "teng1",
+   "en": "to listen; to hear; to obey",
+   "src": "wordshk:62145; cedict; lesson:wordshk:116043#5; hk usage"
+  },
+  "鍾意": {
+   "jp": "zung1 ji3",
+   "en": "to like; to love, to fancy",
+   "src": "wordshk:89426; cccanto; lesson:wordshk:98798#4; hk usage"
+  },
+  "條": {
+   "jp": "tiu4",
+   "en": "measure word for long thin things; measure word for questions, items",
+   "src": "wordshk:62413,62414; cccanto; cedict; hk usage"
+  },
+  "成": {
+   "jp": "seng4",
+   "en": "whole, entire; as many as (a number)",
+   "src": "wordshk:107800; hk usage"
+  },
+  "日": {
+   "jp": "jat6",
+   "en": "day; sun; daytime",
+   "src": "wordshk:51852,51853; cedict; hk usage"
+  },
+  "成日": {
+   "jp": "seng4 jat6",
+   "en": "always, all the time; all day",
+   "src": "cccanto; lesson:wordshk:90795#2; hk usage"
+  },
+  "將": {
+   "jp": "zoeng1",
+   "en": "(moves the object before the verb) take...and; about to, going to",
+   "src": "wordshk:65623,65624; cccanto; cedict; hk usage"
+  },
+  "錢": {
+   "jp": "cin2",
+   "en": "money",
+   "src": "wordshk:16275; cedict; lesson:wordshk:13549#11; hk usage"
+  },
+  "或者": {
+   "jp": "waak6 ze2",
+   "en": "or; maybe, perhaps",
+   "src": "wordshk:86583,90783; cedict; lesson:wordshk:7211#1; hk usage"
+  },
+  "可以": {
+   "jp": "ho2 ji5",
+   "en": "can; may; to be allowed to",
+   "src": "wordshk:75398; cccanto; cedict; hk usage"
+  },
+  "可能": {
+   "jp": "ho2 nang4",
+   "en": "maybe, possibly; possible; possibility",
+   "src": "wordshk:50657,119509; cccanto; cedict; hk usage"
+  },
+  "未": {
+   "jp": "mei6",
+   "en": "not yet; (end of question) yet?",
+   "src": "wordshk:80547,90202; cedict; lesson:wordshk:40131#9; hk usage"
+  },
+  "佢嘅": {
+   "jp": "keoi5 ge3",
+   "en": "his; her; its",
+   "src": "cccanto; hk usage"
+  },
+  "蚊": {
+   "jp": "man1",
+   "en": "dollar (after a number); mosquito",
+   "src": "wordshk:80304,90001; cccanto; cedict; hk usage"
+  },
+  "似": {
+   "jp": "ci5",
+   "en": "to look like; to resemble; to seem",
+   "src": "wordshk:67979; cedict; hk usage"
+  },
+  "好似": {
+   "jp": "hou2 ci5",
+   "en": "seems; as if; like, similar to",
+   "src": "wordshk:51051,51052,103878; cccanto; cedict; lesson:wordshk:47608#11; hk usage"
+  },
+  "行": {
+   "jp": "haang4",
+   "en": "to walk; to stroll (around shops); (of vehicles) to run, to move",
+   "src": "wordshk:23390; hk usage"
+  },
+  "事": {
+   "jp": "si6",
+   "en": "matter, thing; trouble, problem",
+   "src": "wordshk:84241,121133; lesson:wordshk:88197#5; hk usage"
+  },
+  "張": {
+   "jp": "zoeng1",
+   "en": "measure word for flat things (paper, tables); to open (eyes, mouth)",
+   "src": "wordshk:65635,65636,90147; cccanto; cedict; lesson:wordshk:65635#17; hk usage"
+  },
+  "都係": {
+   "jp": "dou1 hai6",
+   "en": "also (is); after all; better just (do)",
+   "src": "cccanto; hk usage"
+  },
+  "幫": {
+   "jp": "bong1",
+   "en": "to help; for (someone)",
+   "src": "wordshk:41164,41165,98313; cedict; lesson:wordshk:41164#2; hk usage"
+  },
+  "實": {
+   "jp": "sat6",
+   "en": "tight, firm; solid; surely, definitely",
+   "src": "wordshk:59448,59449,90673; cccanto; cedict; hk usage"
+  },
+  "其實": {
+   "jp": "kei4 sat6",
+   "en": "actually; in fact",
+   "src": "wordshk:53996; cedict; hk usage"
+  },
+  "喺度": {
+   "jp": "hai2 dou6",
+   "en": "here; (before a verb) be doing right now",
+   "src": "wordshk:13619,96899; cccanto; lesson:wordshk:87442#1; hk usage"
+  },
+  "次": {
+   "jp": "ci3",
+   "en": "time (once, twice); occasion",
+   "src": "wordshk:42434,42435; cedict; hk usage"
+  },
+  "出": {
+   "jp": "ceot1",
+   "en": "to go out, to come out; (after a verb) out; to produce, to issue",
+   "src": "wordshk:42281; cccanto; cedict; lesson:wordshk:63362#4; hk usage"
+  },
+  "打": {
+   "jp": "daa2",
+   "en": "to hit, to beat; to play (games, ball); to make (a phone call)",
+   "src": "wordshk:43700; hk usage"
+  },
+  "見": {
+   "jp": "gin3",
+   "en": "to see; to meet; to feel (unwell)",
+   "src": "wordshk:73063; cedict; hk usage"
+  },
+  "識": {
+   "jp": "sik1",
+   "en": "to know (a person); to know how to; can (a skill)",
+   "src": "wordshk:60493,60494; cccanto; cedict; hk usage"
+  },
+  "本": {
+   "jp": "bun2",
+   "en": "measure word for books; this, our (organisation)",
+   "src": "wordshk:41451,41452,98329; cccanto; cedict; hk usage"
+  },
+  "再": {
+   "jp": "zoi3",
+   "en": "again; more; then (afterwards)",
+   "src": "wordshk:89023; cedict; lesson:wordshk:55282#6; hk usage"
+  },
+  "有冇": {
+   "jp": "jau5 mou5",
+   "en": "(asking) is there?, do you have?; (asking) did you (do)?",
+   "src": "wordshk:90172; cccanto; lesson:wordshk:84241#13; hk usage"
+  },
+  "邊": {
+   "jp": "bin1",
+   "en": "which?; where?; side, edge",
+   "src": "wordshk:40871,40872; cccanto; lesson:wordshk:40872#8; hk usage"
+  },
+  "有啲": {
+   "jp": "jau5 di1",
+   "en": "a bit, slightly; some, there are some",
+   "src": "wordshk:76699,102608; cccanto; lesson:tatoeba:486580; hk usage"
+  },
+  "重": {
+   "jp": "zung6",
+   "en": "still; even more; also",
+   "src": "wordshk:89502,98280; hk usage"
+  },
+  "種": {
+   "jp": "zung2",
+   "en": "kind, type; seed",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "件": {
+   "jp": "gin6",
+   "en": "measure word for clothes, matters, pieces",
+   "src": "wordshk:73098; cedict; hk usage"
+  },
+  "叫": {
+   "jp": "giu3",
+   "en": "to call, to shout; to tell (someone) to; to be called",
+   "src": "wordshk:73285; cedict; lesson:wordshk:98364#3; hk usage"
+  },
+  "嘩": {
+   "jp": "waa3",
+   "en": "wow!",
+   "src": "wordshk:62937; hk usage"
+  },
+  "月": {
+   "jp": "jyut6",
+   "en": "month; moon",
+   "src": "wordshk:78271; cedict; hk usage"
+  },
+  "走": {
+   "jp": "zau2",
+   "en": "to leave, to go away; to run; without (an ingredient)",
+   "src": "wordshk:87605; cccanto; cedict; lesson:wordshk:81667#1; hk usage"
+  },
+  "開": {
+   "jp": "hoi1",
+   "en": "to open; to turn on; to start (school, work)",
+   "src": "wordshk:13607,96489,96490; cccanto; cedict; hk usage"
+  },
+  "所以": {
+   "jp": "so2 ji5",
+   "en": "so; therefore",
+   "src": "wordshk:84907; cccanto; cedict; hk usage"
+  },
+  "書": {
+   "jp": "syu1",
+   "en": "book",
+   "src": "wordshk:85362,90277; cccanto; cedict; lesson:wordshk:51047#1; hk usage"
+  },
+  "玩": {
+   "jp": "waan2",
+   "en": "to play; to have fun; to tease",
+   "src": "wordshk:63001; hk usage"
+  },
+  "部": {
+   "jp": "bou6",
+   "en": "measure word for machines, vehicles, films; part, department",
+   "src": "wordshk:41366,41367; cccanto; cedict; hk usage"
+  },
+  "新": {
+   "jp": "san1",
+   "en": "new; newly",
+   "src": "wordshk:59205,90086; cedict; hk usage"
+  },
+  "飲": {
+   "jp": "jam2",
+   "en": "to drink; to attend a banquet",
+   "src": "wordshk:76079; cccanto; cedict; hk usage"
+  },
+  "唔會": {
+   "jp": "m4 wui5",
+   "en": "won't; wouldn't; unlikely to",
+   "src": "hk usage"
+  },
+  "完": {
+   "jp": "jyun4",
+   "en": "to finish; (after a verb) finished, done",
+   "src": "cccanto; cedict; lesson:wordshk:114493#2; hk usage"
+  },
+  "不過": {
+   "jp": "bat1 gwo3",
+   "en": "but; however; only, just",
+   "src": "wordshk:40534,114461,114462; cedict; hk usage"
+  },
+  "問": {
+   "jp": "man6",
+   "en": "to ask",
+   "src": "wordshk:80387; cccanto; cedict; hk usage"
+  },
+  "請": {
+   "jp": "ceng2",
+   "en": "to invite; to treat (pay for someone); to hire",
+   "src": "wordshk:89777; hk usage"
+  },
+  "嗰陣": {
+   "jp": "go2 zan6",
+   "en": "at that time; then; when (after a clause)",
+   "src": "cccanto; lesson:wordshk:73317#2; hk usage"
+  },
+  "吓": {
+   "jp": "haa2",
+   "en": "huh?, what?; (end of sentence) OK?, got it?",
+   "src": "wordshk:49623,96429; hk usage"
+  },
+  "死": {
+   "jp": "sei2",
+   "en": "to die; dead; (after an adjective) extremely",
+   "src": "cedict; hk usage"
+  },
+  "讀": {
+   "jp": "duk6",
+   "en": "to study; to read (aloud); to attend (school)",
+   "src": "wordshk:70482; cedict; hk usage"
+  },
+  "時候": {
+   "jp": "si4 hau6",
+   "en": "time; when (after a clause)",
+   "src": "cedict; hk usage"
+  },
+  "由": {
+   "jp": "jau4",
+   "en": "from; by (who does it)",
+   "src": "wordshk:51959,97545; cedict; hk usage"
+  },
+  "攞": {
+   "jp": "lo2",
+   "en": "to take; to get; to fetch",
+   "src": "wordshk:79645; hk usage"
+  },
+  "份": {
+   "jp": "fan6",
+   "en": "measure word for newspapers, jobs, documents; portion, share",
+   "src": "wordshk:117228; cedict; lesson:wordshk:102414#2; hk usage"
+  },
+  "後": {
+   "jp": "hau6",
+   "en": "after; behind, back; later",
+   "src": "wordshk:74965,101427; cedict; hk usage"
+  },
+  "之後": {
+   "jp": "zi1 hau6",
+   "en": "after; afterwards, later",
+   "src": "wordshk:98050; cedict; hk usage"
+  },
+  "邊個": {
+   "jp": "bin1 go3",
+   "en": "who?; which one?",
+   "src": "cccanto; lesson:wordshk:40872#2; hk usage"
+  },
+  "車": {
+   "jp": "ce1",
+   "en": "car; vehicle; to give (someone) a lift",
+   "src": "wordshk:42064,42065,96245; cccanto; cedict; lesson:wordshk:96245#2; hk usage"
+  },
+  "高": {
+   "jp": "gou1",
+   "en": "tall; high",
+   "src": "wordshk:73564,90276,100149; cccanto; cedict; lesson:wordshk:49438#5; hk usage"
+  },
+  "我嘅": {
+   "jp": "ngo5 ge3",
+   "en": "my; mine",
+   "src": "cccanto; lesson:wordshk:13550#3; hk usage"
+  },
+  "譬如": {
+   "jp": "pei3 jyu4",
+   "en": "for example; such as",
+   "src": "cedict; hk usage"
+  },
+  "架": {
+   "jp": "gaa3",
+   "en": "measure word for vehicles, machines",
+   "src": "wordshk:47000,97835; lesson:wordshk:42064#1; hk usage"
+  },
+  "靚": {
+   "jp": "leng3",
+   "en": "pretty, good-looking; good (quality)",
+   "src": "wordshk:90033; hk usage"
+  },
+  "仲": {
+   "jp": "zung6",
+   "en": "still; even (more); also, too",
+   "src": "wordshk:89502; cedict; lesson:wordshk:63022#2; hk usage"
+  },
+  "香": {
+   "jp": "hoeng1",
+   "en": "fragrant, smell nice; incense",
+   "src": "wordshk:50707,50708,101779; cccanto; cedict; hk usage"
+  },
+  "香港": {
+   "jp": "hoeng1 gong2",
+   "en": "Hong Kong",
+   "src": "wordshk:278; lesson:tatoeba:2054871; hk usage"
+  },
+  "跟": {
+   "jp": "gan1",
+   "en": "to follow; with",
+   "src": "cedict; hk usage"
+  },
+  "跟住": {
+   "jp": "gan1 zyu6",
+   "en": "and then; next; to follow",
+   "src": "wordshk:47650,47651; cccanto; lesson:wordshk:47651#1; hk usage"
+  },
+  "今日": {
+   "jp": "gam1 jat6",
+   "en": "today",
+   "src": "cccanto; cedict; lesson:wordshk:116677#2; hk usage"
+  },
+  "應該": {
+   "jp": "jing1 goi1",
+   "en": "should; ought to; probably",
+   "src": "wordshk:77357; cedict; lesson:wordshk:90214#1; hk usage"
+  },
+  "落": {
+   "jp": "lok6",
+   "en": "to go down, to get off; to put in, to add; (of rain) to fall",
+   "src": "wordshk:55411,55412; cccanto; cedict; hk usage"
+  },
+  "入": {
+   "jp": "jap6",
+   "en": "to enter, to go in; to put in",
+   "src": "wordshk:76315,119703; cedict; hk usage"
+  },
+  "面": {
+   "jp": "min6",
+   "en": "face; side; surface",
+   "src": "wordshk:56407,100182,100183; cccanto; cedict; hk usage"
+  },
+  "入面": {
+   "jp": "jap6 min6",
+   "en": "inside; in",
+   "src": "wordshk:76334; cccanto; hk usage"
+  },
+  "學": {
+   "jp": "hok6",
+   "en": "to learn; to imitate",
+   "src": "wordshk:50903; cedict; lesson:wordshk:23204#2; hk usage"
+  },
+  "班": {
+   "jp": "baan1",
+   "en": "class; group (of people); service, run (bus, flight)",
+   "src": "wordshk:40263,40264,109060; cccanto; cedict; hk usage"
+  },
+  "嗰陣時": {
+   "jp": "go2 zan6 si4",
+   "en": "at that time; then; when",
+   "src": "cccanto; hk usage"
+  },
+  "太": {
+   "jp": "taai3",
+   "en": "too (much); very, so",
+   "src": "wordshk:85545,114207; cccanto; cedict; lesson:wordshk:13620#5; hk usage"
+  },
+  "水": {
+   "jp": "seoi2",
+   "en": "water; drink, liquid; (slang) money",
+   "src": "wordshk:59919,59920,98257; cccanto; cedict; hk usage"
+  },
+  "等": {
+   "jp": "dang2",
+   "en": "to wait (for); let (someone do); class, grade",
+   "src": "wordshk:44430,44431,90291; cedict; lesson:wordshk:13608#2; hk usage"
+  },
+  "嗰度": {
+   "jp": "go2 dou6",
+   "en": "there",
+   "src": "wordshk:73313; cccanto; hk usage"
+  },
+  "唔到": {
+   "jp": "m4 dou2",
+   "en": "(after a verb) can't, didn't manage to",
+   "src": "wordshk:55748; lesson:wordshk:50657#2; hk usage"
+  },
+  "呢啲": {
+   "jp": "ni1 di1",
+   "en": "these; this (stuff)",
+   "src": "cccanto; hk usage"
+  },
+  "開始": {
+   "jp": "hoi1 ci2",
+   "en": "to start; beginning",
+   "src": "wordshk:75510; cedict; lesson:wordshk:79517#6; hk usage"
+  },
+  "時間": {
+   "jp": "si4 gaan3",
+   "en": "time",
+   "src": "cedict; lesson:wordshk:45174#4; hk usage"
+  },
+  "寫": {
+   "jp": "se2",
+   "en": "to write",
+   "src": "wordshk:83701; cccanto; cedict; hk usage"
+  },
+  "唔同": {
+   "jp": "m4 tung4",
+   "en": "different; unlike",
+   "src": "wordshk:55792,55793; cccanto; hk usage"
+  },
+  "定": {
+   "jp": "ding6",
+   "en": "or (in questions); calm, steady; in advance",
+   "src": "wordshk:44604,44848,97852; cccanto; cedict; hk usage"
+  },
+  "一定": {
+   "jp": "jat1 ding6",
+   "en": "definitely; must; certain",
+   "src": "wordshk:51707,51708; cedict; hk usage"
+  },
+  "帶": {
+   "jp": "daai3",
+   "en": "to bring, to take along; to lead (someone); belt, strap",
+   "src": "cedict; hk usage"
+  },
+  "兩個": {
+   "jp": "loeng5 go3",
+   "en": "two (of something); both of (us)",
+   "src": "cccanto; lesson:wordshk:79696#1; hk usage"
+  },
+  "中": {
+   "jp": "zung1",
+   "en": "middle; in, among; Chinese (short form)",
+   "src": "wordshk:66105,66106,115536; cedict; hk usage"
+  },
+  "賣": {
+   "jp": "maai6",
+   "en": "to sell",
+   "src": "wordshk:80150; cedict; hk usage"
+  },
+  "令": {
+   "jp": "ling6",
+   "en": "to make (someone feel), to cause",
+   "src": "wordshk:55188,98014,98015; cedict; hk usage"
+  },
+  "咋": {
+   "jp": "zaa3",
+   "en": "(end of sentence) only, just",
+   "src": "cccanto; cedict; lesson:wordshk:56011#3; hk usage"
+  },
+  "起": {
+   "jp": "hei2",
+   "en": "to rise, to get up; to build; (after a verb) up",
+   "src": "cedict; hk usage"
+  },
+  "坐": {
+   "jp": "co5",
+   "en": "to sit; to take (a bus, train)",
+   "src": "wordshk:42990; cedict; hk usage"
+  },
+  "生": {
+   "jp": "saang1",
+   "en": "to give birth to; to grow; raw, uncooked",
+   "src": "wordshk:32490,90075,96787; cedict; hk usage"
+  },
+  "今次": {
+   "jp": "gam1 ci3",
+   "en": "this time",
+   "src": "wordshk:72490; cccanto; hk usage"
+  },
+  "大家": {
+   "jp": "daai6 gaa1",
+   "en": "everyone; all of us",
+   "src": "wordshk:69183,102404; cedict; lesson:wordshk:69183#4; hk usage"
+  },
+  "世界": {
+   "jp": "sai3 gaai3",
+   "en": "the world; life, times",
+   "src": "wordshk:82929; cedict; hk usage"
+  },
+  "搞": {
+   "jp": "gaau2",
+   "en": "to do; to mess with; to organise",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "信": {
+   "jp": "seon3",
+   "en": "to believe; letter",
+   "src": "wordshk:60060,60061,90096; cedict; lesson:wordshk:60061#1; hk usage"
+  },
+  "上面": {
+   "jp": "soeng6 min6",
+   "en": "above; on top; the people higher up",
+   "src": "wordshk:85145; cccanto; lesson:tatoeba:12059878; hk usage"
+  },
+  "仔": {
+   "jp": "zai2",
+   "en": "son; boy, young man; (after a noun) small, little",
+   "src": "wordshk:63876,63877,109275; cedict; lesson:wordshk:52058#2; hk usage"
+  },
+  "教": {
+   "jp": "gaau3",
+   "en": "to teach",
+   "src": "wordshk:47404,47405; cccanto; cedict; lesson:wordshk:16422#1; hk usage"
+  },
+  "快": {
+   "jp": "faai3",
+   "en": "fast, quick; soon",
+   "src": "wordshk:70673,115500; cedict; hk usage"
+  },
+  "拉": {
+   "jp": "laai1",
+   "en": "to pull; to arrest",
+   "src": "wordshk:78888,96959; cccanto; cedict; hk usage"
+  },
+  "着": {
+   "jp": "zoek3",
+   "en": "to wear; to put on",
+   "src": "wordshk:97030; hk usage"
+  },
+  "變": {
+   "jp": "bin3",
+   "en": "to change; to turn into",
+   "src": "wordshk:40896; cedict; hk usage"
+  },
+  "難": {
+   "jp": "naan4",
+   "en": "difficult, hard",
+   "src": "wordshk:57155; cccanto; cedict; hk usage"
+  },
+  "手": {
+   "jp": "sau2",
+   "en": "hand; arm",
+   "src": "wordshk:59564,59565,109041; cccanto; cedict; hk usage"
+  },
+  "幾多": {
+   "jp": "gei2 do1",
+   "en": "how many; how much",
+   "src": "wordshk:72845; cccanto; hk usage"
+  },
+  "點解": {
+   "jp": "dim2 gaai2",
+   "en": "why",
+   "src": "wordshk:44715; cccanto; lesson:tatoeba:1532168; hk usage"
+  },
+  "啡": {
+   "jp": "fe1",
+   "en": "brown; coffee (short form)",
+   "src": "wordshk:46109,46110; cccanto; cedict; hk usage"
+  },
+  "見到": {
+   "jp": "gin3 dou2",
+   "en": "to see; to meet",
+   "src": "wordshk:89933; lesson:wordshk:61280#1; hk usage"
+  },
+  "名": {
+   "jp": "meng2",
+   "en": "name",
+   "src": "wordshk:56444; hk usage"
+  },
+  "政府": {
+   "jp": "zing3 fu2",
+   "en": "government",
+   "src": "wordshk:88613; cedict; hk usage"
+  },
+  "公": {
+   "jp": "gung1",
+   "en": "male (animal); grandfather (mother's father); public",
+   "src": "wordshk:73899,107980; cccanto; cedict; hk usage"
+  },
+  "公司": {
+   "jp": "gung1 si1",
+   "en": "company; office, workplace",
+   "src": "wordshk:73950; cccanto; cedict; lesson:wordshk:73950#6; hk usage"
+  },
+  "整": {
+   "jp": "zing2",
+   "en": "to make, to cook; to fix, to adjust; to hurt, to bother",
+   "src": "wordshk:65240,65241,90301; cedict; lesson:wordshk:90301#13; hk usage"
+  },
+  "就係": {
+   "jp": "zau6 hai6",
+   "en": "is exactly; it's just that",
+   "src": "cccanto; hk usage"
+  },
+  "唔知": {
+   "jp": "m4 zi1",
+   "en": "don't know; I wonder (if)",
+   "src": "cccanto; hk usage"
+  },
+  "被": {
+   "jp": "pei5",
+   "en": "quilt, blanket",
+   "src": "wordshk:58260; hk usage"
+  },
+  "頭": {
+   "jp": "tau4",
+   "en": "head; front, top; end, beginning",
+   "src": "wordshk:62117,62118,98174; cedict; hk usage"
+  },
+  "㗎喇": {
+   "jp": "gaa3 laa3",
+   "en": "(end of sentence) stating firmly it's so now",
+   "src": "lesson:wordshk:58713#8; hk usage"
+  },
+  "畀": {
+   "jp": "bei2",
+   "en": "to give; to let, to allow; by (someone, in passives)",
+   "src": "wordshk:10853; lesson:wordshk:104459#4; hk usage"
+  },
+  "驚": {
+   "jp": "geng1",
+   "en": "to be afraid; to worry",
+   "src": "wordshk:21794,116129; lesson:wordshk:21794#4; hk usage"
+  },
+  "淨係": {
+   "jp": "zing6 hai6",
+   "en": "only; just",
+   "src": "wordshk:88648; cccanto; hk usage"
+  },
+  "號": {
+   "jp": "hou6",
+   "en": "number (in a series); day of the month; size",
+   "src": "wordshk:75845,102228; cedict; hk usage"
+  },
+  "前": {
+   "jp": "cin4",
+   "en": "front; before, ago; former",
+   "src": "wordshk:42628,42629; cedict; hk usage"
+  },
+  "之前": {
+   "jp": "zi1 cin4",
+   "en": "before; previously",
+   "src": "wordshk:87915; cedict; hk usage"
+  },
+  "企": {
+   "jp": "kei5",
+   "en": "to stand",
+   "src": "wordshk:78525,108862; cedict; hk usage"
+  },
+  "屋": {
+   "jp": "uk1",
+   "en": "house; flat, home",
+   "src": "wordshk:86528; cedict; hk usage"
+  },
+  "屋企": {
+   "jp": "uk1 kei2",
+   "en": "home; family",
+   "src": "wordshk:86533; cedict; lesson:wordshk:49900#2; hk usage"
+  },
+  "養": {
+   "jp": "joeng5",
+   "en": "to raise (children); to keep (pets)",
+   "src": "wordshk:77713; cccanto; cedict; hk usage"
+  },
+  "呢度": {
+   "jp": "ni1 dou6",
+   "en": "here",
+   "src": "cccanto; lesson:wordshk:97050#12; hk usage"
+  },
+  "當": {
+   "jp": "dong1",
+   "en": "to serve as, to be (a role); when, at the time",
+   "src": "wordshk:45061,45062,102019; cedict; hk usage"
+  },
+  "杯": {
+   "jp": "bui1",
+   "en": "cup, glass; a cup of",
+   "src": "wordshk:89796,97771,99499; cedict; lesson:wordshk:89796#6; hk usage"
+  },
+  "其他": {
+   "jp": "kei4 taa1",
+   "en": "other; else",
+   "src": "wordshk:78482; cedict; hk usage"
+  },
+  "工": {
+   "jp": "gung1",
+   "en": "job, work",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "套": {
+   "jp": "tou3",
+   "en": "set (of clothes, films); cover, case",
+   "src": "wordshk:62625,62626,98534; cedict; lesson:wordshk:62625#9; hk usage"
+  },
+  "放": {
+   "jp": "fong3",
+   "en": "to put, to place; to let go; to finish (work, school)",
+   "src": "wordshk:46349; cccanto; cedict; hk usage"
+  },
+  "分": {
+   "jp": "fan1",
+   "en": "to divide, to share; minute; mark, point",
+   "src": "wordshk:45889,45890,99775; cedict; hk usage"
+  },
+  "係咪": {
+   "jp": "hai6 mai6",
+   "en": "is it...?, isn't it?; whether or not",
+   "src": "wordshk:89962; cccanto; lesson:wordshk:100000#3; hk usage"
+  },
+  "囉": {
+   "jp": "lo1",
+   "en": "(end of sentence) obviously, you see; (end of sentence) fine then (reluctant)",
+   "src": "wordshk:55295; cccanto; lesson:wordshk:54761#2; hk usage"
+  },
+  "一啲": {
+   "jp": "jat1 di1",
+   "en": "a bit; some",
+   "src": "cccanto; hk usage"
+  },
+  "錯": {
+   "jp": "co3",
+   "en": "wrong; mistake, fault",
+   "src": "wordshk:42974,116604; cedict; lesson:wordshk:108714#8; hk usage"
+  },
+  "考": {
+   "jp": "haau2",
+   "en": "to take (an exam); to test",
+   "src": "wordshk:74663; cedict; hk usage"
+  },
+  "字": {
+   "jp": "zi6",
+   "en": "character, written word; handwriting; five minutes (on the clock)",
+   "src": "wordshk:88155; cccanto; cedict; lesson:wordshk:59565#2; hk usage"
+  },
+  "加": {
+   "jp": "gaa1",
+   "en": "to add; plus; to increase",
+   "src": "cedict; lesson:wordshk:11794#1; hk usage"
+  },
+  "點樣": {
+   "jp": "dim2 joeng2",
+   "en": "how; how is it?",
+   "src": "wordshk:69932; cccanto; hk usage"
+  },
+  "語言": {
+   "jp": "jyu5 jin4",
+   "en": "language",
+   "src": "wordshk:78025; cccanto; cedict; hk usage"
+  },
+  "機": {
+   "jp": "gei1",
+   "en": "machine; plane; device (phone)",
+   "src": "wordshk:72807; cccanto; cedict; lesson:wordshk:76991#2; hk usage"
+  },
+  "國家": {
+   "jp": "gwok3 gaa1",
+   "en": "country, nation",
+   "src": "wordshk:74357; cedict; hk usage"
+  },
+  "出嚟": {
+   "jp": "ceot1 lai4",
+   "en": "to come out; (after a verb) out",
+   "src": "hk usage"
+  },
+  "咁多": {
+   "jp": "gam3 do1",
+   "en": "so many, so much",
+   "src": "cccanto; lesson:wordshk:72590#3; hk usage"
+  },
+  "歲": {
+   "jp": "seoi3",
+   "en": "years old",
+   "src": "wordshk:83897; cedict; lesson:wordshk:63876#2; hk usage"
+  },
+  "夠": {
+   "jp": "gau3",
+   "en": "enough; (before an adjective) really, enough",
+   "src": "cccanto; cedict; lesson:wordshk:90279#1; hk usage"
+  },
+  "貴": {
+   "jp": "gwai3",
+   "en": "expensive",
+   "src": "wordshk:49313; cccanto; cedict; lesson:wordshk:72590#4; hk usage"
+  },
+  "鬼": {
+   "jp": "gwai2",
+   "en": "ghost; (slang) foreigner, Westerner; (for emphasis) the hell",
+   "src": "wordshk:49281,49282,90763; cccanto; cedict; hk usage"
+  },
+  "阿媽": {
+   "jp": "aa3 maa1",
+   "en": "mum, mother",
+   "src": "wordshk:13654; cedict; lesson:wordshk:51051#1; hk usage"
+  },
+  "所有": {
+   "jp": "so2 jau5",
+   "en": "all; every",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "第一": {
+   "jp": "dai6 jat1",
+   "en": "first; best",
+   "src": "wordshk:69557; cedict; lesson:wordshk:102414#3; hk usage"
+  },
+  "亦都": {
+   "jp": "jik6 dou1",
+   "en": "also, too",
+   "src": "cccanto; hk usage"
+  },
+  "位": {
+   "jp": "wai2",
+   "en": "seat, place; (polite) measure word for people",
+   "src": "wordshk:36835,90122; cedict; hk usage"
+  },
+  "你嘅": {
+   "jp": "nei5 ge3",
+   "en": "your; yours",
+   "src": "cccanto; hk usage"
+  },
+  "明": {
+   "jp": "ming4",
+   "en": "to understand; clear; bright",
+   "src": "wordshk:56484,56485,98352; cccanto; cedict; hk usage"
+  },
+  "日本": {
+   "jp": "jat6 bun2",
+   "en": "Japan",
+   "src": "wordshk:6335; lesson:wordshk:104206#2; hk usage"
+  },
+  "啱啱": {
+   "jp": "ngaam1 ngaam1",
+   "en": "just now; just, exactly",
+   "src": "wordshk:13735; cccanto; lesson:wordshk:13735#3; hk usage"
+  },
+  "長": {
+   "jp": "coeng4",
+   "en": "long",
+   "src": "wordshk:43077,43078; cccanto; cedict; hk usage"
+  },
+  "可唔可以": {
+   "jp": "ho2 m4 ho2 ji5",
+   "en": "can (you)?, may (I)?",
+   "src": "cccanto; hk usage"
+  },
+  "收": {
+   "jp": "sau1",
+   "en": "to receive; to collect; to put away",
+   "src": "wordshk:83424; cccanto; cedict; lesson:wordshk:83424#25; hk usage"
+  },
+  "題": {
+   "jp": "tai4",
+   "en": "question (in an exam, exercise)",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "問題": {
+   "jp": "man6 tai4",
+   "en": "question; problem",
+   "src": "wordshk:80398,90509; cedict; hk usage"
+  },
+  "聲": {
+   "jp": "seng1",
+   "en": "voice, sound; (after a verb) a word, a shout",
+   "src": "wordshk:114781,119581; lesson:wordshk:90172#2; hk usage"
+  },
+  "地": {
+   "jp": "dei6",
+   "en": "ground, floor; land",
+   "src": "wordshk:69775,111962; cccanto; cedict; hk usage"
+  },
+  "學生": {
+   "jp": "hok6 saang1",
+   "en": "student",
+   "src": "cedict; hk usage"
+  },
+  "黑": {
+   "jp": "hak1",
+   "en": "black; dark; unlucky",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "衫": {
+   "jp": "saam1",
+   "en": "clothes; shirt, top",
+   "src": "wordshk:82724; cedict; lesson:wordshk:82724#2; hk usage"
+  },
+  "以前": {
+   "jp": "ji5 cin4",
+   "en": "before; in the past; ago",
+   "src": "wordshk:76998; cedict; hk usage"
+  },
+  "女": {
+   "jp": "neoi5",
+   "en": "female; woman",
+   "src": "wordshk:57278,117197; cedict; lesson:wordshk:57279#10; hk usage"
+  },
+  "女仔": {
+   "jp": "neoi5 zai2",
+   "en": "girl; young woman",
+   "src": "wordshk:81417; cccanto; lesson:wordshk:13550#7; hk usage"
+  },
+  "然後": {
+   "jp": "jin4 hau6",
+   "en": "then; after that",
+   "src": "wordshk:77291; cedict; hk usage"
+  },
+  "花": {
+   "jp": "faa1",
+   "en": "flower; to spend (money, time); blurry, messy (pattern)",
+   "src": "wordshk:45462,45463,97321; cccanto; cedict; lesson:wordshk:1196#1; hk usage"
+  },
+  "知道": {
+   "jp": "zi1 dou3",
+   "en": "to know",
+   "src": "wordshk:87955; cedict; lesson:wordshk:57911#1; hk usage"
+  },
+  "都好": {
+   "jp": "dou1 hou2",
+   "en": "(that's) fine too; quite, pretty (before an adjective)",
+   "src": "cccanto; lesson:wordshk:97050#17; hk usage"
+  },
+  "耐": {
+   "jp": "noi6",
+   "en": "a long time",
+   "src": "wordshk:57837,57838; cccanto; cedict; hk usage"
+  },
+  "場": {
+   "jp": "coeng4",
+   "en": "venue, field; measure word for games, shows, events",
+   "src": "wordshk:43111,43112,108726; cccanto; cedict; hk usage"
+  },
+  "不如": {
+   "jp": "bat1 jyu4",
+   "en": "how about; why not; not as good as",
+   "src": "wordshk:40577,40578; cedict; lesson:wordshk:40131#13; hk usage"
+  },
+  "心": {
+   "jp": "sam1",
+   "en": "heart; mind, feelings",
+   "src": "wordshk:82987,90084; cedict; hk usage"
+  },
+  "開心": {
+   "jp": "hoi1 sam1",
+   "en": "happy",
+   "src": "wordshk:75563; cedict; lesson:wordshk:78874#14; hk usage"
+  },
+  "唔識": {
+   "jp": "m4 sik1",
+   "en": "don't know (how to, a person)",
+   "src": "cccanto; lesson:wordshk:60493#1; hk usage"
+  },
+  "魚": {
+   "jp": "jyu2",
+   "en": "fish",
+   "src": "wordshk:27016; cedict; lesson:wordshk:27016#4; hk usage"
+  },
+  "向": {
+   "jp": "hoeng3",
+   "en": "towards; to face",
+   "src": "wordshk:50757,96488,100482; cedict; hk usage"
+  },
+  "細": {
+   "jp": "sai3",
+   "en": "small; young; little",
+   "src": "wordshk:82945; cccanto; cedict; hk usage"
+  },
+  "少": {
+   "jp": "siu2",
+   "en": "few, little; less; rarely",
+   "src": "wordshk:61025,61026; lesson:wordshk:61025#2; hk usage"
+  },
+  "需要": {
+   "jp": "seoi1 jiu3",
+   "en": "to need; need",
+   "src": "wordshk:59911,59912; cedict; hk usage"
+  },
+  "做嘢": {
+   "jp": "zou6 je5",
+   "en": "to work; to do things",
+   "src": "cccanto; hk usage"
+  },
+  "聽日": {
+   "jp": "ting1 jat6",
+   "en": "tomorrow",
+   "src": "wordshk:86015; cccanto; lesson:wordshk:86533#6; hk usage"
+  },
+  "連": {
+   "jp": "lin4",
+   "en": "even; to connect; including",
+   "src": "wordshk:55070,55071,98681; cedict; hk usage"
+  },
+  "堂": {
+   "jp": "tong4",
+   "en": "lesson, class period; hall",
+   "src": "wordshk:62553,62554,97928; cccanto; cedict; lesson:wordshk:103940#2; hk usage"
+  },
+  "平": {
+   "jp": "peng4",
+   "en": "cheap",
+   "src": "wordshk:58270; hk usage"
+  },
+  "有時": {
+   "jp": "jau5 si4",
+   "en": "sometimes",
+   "src": "cedict; hk usage"
+  },
+  "雖然": {
+   "jp": "seoi1 jin4",
+   "en": "although",
+   "src": "wordshk:83819; cedict; hk usage"
+  },
+  "哋": {
+   "jp": "dei6",
+   "en": "(after a pronoun) plural marker; (after a repeated adjective) -ish, a bit",
+   "src": "wordshk:44534; lesson:wordshk:49282#2; hk usage"
+  },
+  "人哋": {
+   "jp": "jan4 dei6",
+   "en": "other people; (said cutely) me",
+   "src": "wordshk:95813; cccanto; hk usage"
+  },
+  "佢哋嘅": {
+   "jp": "keoi5 dei6 ge3",
+   "en": "their; theirs",
+   "src": "hk usage"
+  },
+  "今年": {
+   "jp": "gam1 nin2",
+   "en": "this year",
+   "src": "hk usage"
+  },
+  "同學": {
+   "jp": "tung4 hok6",
+   "en": "classmate; schoolmate; student",
+   "src": "wordshk:86446; cedict; lesson:wordshk:60493#2; hk usage"
+  },
+  "嘅話": {
+   "jp": "ge3 waa2",
+   "en": "(after a clause) if",
+   "src": "cccanto; hk usage"
+  },
+  "每": {
+   "jp": "mui5",
+   "en": "every; each",
+   "src": "wordshk:81076,109311; cedict; lesson:wordshk:81076#4; hk usage"
+  },
+  "菲律賓": {
+   "jp": "fei1 leot6 ban1",
+   "en": "the Philippines",
+   "src": "wordshk:2599; hk usage"
+  },
+  "計": {
+   "jp": "gai3",
+   "en": "to count, to calculate; to count (it) as",
+   "src": "cedict; hk usage"
+  },
+  "講嘢": {
+   "jp": "gong2 je5",
+   "en": "to talk; to speak",
+   "src": "cccanto; lesson:wordshk:85531#1; hk usage"
+  },
+  "齊": {
+   "jp": "cai4",
+   "en": "complete, all there; together; neat, even",
+   "src": "wordshk:67350,112078,115907; cedict; hk usage"
+  },
+  "一齊": {
+   "jp": "jat1 cai4",
+   "en": "together",
+   "src": "wordshk:76362,91312; cccanto; cedict; lesson:wordshk:62800#1; hk usage"
+  },
+  "原來": {
+   "jp": "jyun4 loi4",
+   "en": "so it turns out; originally",
+   "src": "wordshk:78176; cedict; hk usage"
+  },
+  "算": {
+   "jp": "syun3",
+   "en": "to count, to calculate; forget it, let it go; to count as",
+   "src": "wordshk:85477,110674; cccanto; cedict; lesson:wordshk:66626#3; hk usage"
+  },
+  "路": {
+   "jp": "lou6",
+   "en": "road; way, route",
+   "src": "cedict; hk usage"
+  },
+  "個人": {
+   "jp": "go3 jan4",
+   "en": "personal; individual; oneself",
+   "src": "cedict; lesson:wordshk:52398#11; hk usage"
+  },
+  "小": {
+   "jp": "siu2",
+   "en": "small; little",
+   "src": "wordshk:84779,96868,96869; cccanto; cedict; hk usage"
+  },
+  "小心": {
+   "jp": "siu2 sam1",
+   "en": "careful; be careful!",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "朋友": {
+   "jp": "pang4 jau5",
+   "en": "friend",
+   "src": "wordshk:82239; cedict; lesson:wordshk:40264#1; hk usage"
+  },
+  "少少": {
+   "jp": "siu2 siu2",
+   "en": "a little; slightly",
+   "src": "wordshk:84848,108684; cccanto; hk usage"
+  },
+  "飛": {
+   "jp": "fei1",
+   "en": "to fly; ticket; to dump (a partner)",
+   "src": "wordshk:46128,46129,96142; cccanto; cedict; hk usage"
+  },
+  "快啲": {
+   "jp": "faai3 di1",
+   "en": "hurry up; faster",
+   "src": "wordshk:90737; cccanto; lesson:wordshk:90737#1; hk usage"
+  },
+  "半": {
+   "jp": "bun3",
+   "en": "half; half past (the hour)",
+   "src": "wordshk:67036,90711; cccanto; cedict; hk usage"
+  },
+  "塊": {
+   "jp": "faai3",
+   "en": "piece, slice; measure word for flat pieces",
+   "src": "wordshk:70695; cedict; hk usage"
+  },
+  "旅行": {
+   "jp": "leoi5 hang4",
+   "en": "to travel; trip",
+   "src": "cedict; lesson:wordshk:89777#3; hk usage"
+  },
+  "生活": {
+   "jp": "sang1 wut6",
+   "en": "life, daily life; to live",
+   "src": "cedict; lesson:wordshk:78874#10; hk usage"
+  },
+  "社會": {
+   "jp": "se5 wui2",
+   "en": "society",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "美國": {
+   "jp": "mei5 gwok3",
+   "en": "the USA, America",
+   "src": "wordshk:3146; hk usage"
+  },
+  "狗": {
+   "jp": "gau2",
+   "en": "dog",
+   "src": "wordshk:47746,47747; cccanto; cedict; lesson:wordshk:83775#1; hk usage"
+  },
+  "試": {
+   "jp": "si3",
+   "en": "to try; to test",
+   "src": "wordshk:84162; cccanto; cedict; lesson:wordshk:84162#7; hk usage"
+  },
+  "個個": {
+   "jp": "go3 go3",
+   "en": "everyone; each one",
+   "src": "cedict; hk usage"
+  },
+  "咦": {
+   "jp": "ji2",
+   "en": "eh? (surprise); ew (disgust)",
+   "src": "wordshk:52293,104578; cedict; hk usage"
+  },
+  "地方": {
+   "jp": "dei6 fong1",
+   "en": "place; space, room",
+   "src": "wordshk:69786; cedict; hk usage"
+  },
+  "大學": {
+   "jp": "daai6 hok6",
+   "en": "university",
+   "src": "wordshk:69220; cedict; lesson:wordshk:61089#1; hk usage"
+  },
+  "好好": {
+   "jp": "hou2 hou2",
+   "en": "very good; well, properly",
+   "src": "wordshk:8635; cedict; hk usage"
+  },
+  "最後": {
+   "jp": "zeoi3 hau6",
+   "en": "last, final; finally, in the end",
+   "src": "wordshk:64378,64379; cedict; lesson:wordshk:64379#1; hk usage"
+  },
+  "送": {
+   "jp": "sung3",
+   "en": "to give (as a gift); to deliver; to see (someone) off",
+   "src": "wordshk:85339; cedict; lesson:wordshk:70159#2; hk usage"
+  },
+  "傾": {
+   "jp": "king1",
+   "en": "to chat; to talk about; to discuss",
+   "src": "cedict; lesson:wordshk:72590#5; hk usage"
+  },
+  "轉": {
+   "jp": "zyun3",
+   "en": "to turn; to change; to transfer",
+   "src": "wordshk:66531,96161,97730; lesson:wordshk:66531#6; hk usage"
+  },
+  "望": {
+   "jp": "mong6",
+   "en": "to look (at); to hope",
+   "src": "wordshk:80827,110495,117248; cedict; lesson:wordshk:80827#1; hk usage"
+  },
+  "希望": {
+   "jp": "hei1 mong6",
+   "en": "to hope; hope",
+   "src": "wordshk:50232,50233; cedict; hk usage"
+  },
+  "一樣": {
+   "jp": "jat1 joeng6",
+   "en": "the same; alike",
+   "src": "wordshk:76406,117205; cedict; lesson:wordshk:76406#1; hk usage"
+  },
+  "瞓": {
+   "jp": "fan3",
+   "en": "to sleep; to lie down",
+   "src": "wordshk:13610; lesson:wordshk:83925#1; hk usage"
+  },
+  "終於": {
+   "jp": "zung1 jyu1",
+   "en": "finally, at last",
+   "src": "wordshk:89411; cedict; hk usage"
+  },
+  "力": {
+   "jp": "lik6",
+   "en": "strength, force; effort",
+   "src": "cedict; hk usage"
+  },
+  "返工": {
+   "jp": "faan1 gung1",
+   "en": "to go to work; to work",
+   "src": "wordshk:70700; cccanto; lesson:wordshk:67036#8; hk usage"
+  },
+  "神": {
+   "jp": "san4",
+   "en": "god, spirit; (slang) faulty, acting up",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "低": {
+   "jp": "dai1",
+   "en": "low; (after a verb) down, behind",
+   "src": "wordshk:69483,89852; cedict; hk usage"
+  },
+  "凍": {
+   "jp": "dung3",
+   "en": "cold; iced (drink)",
+   "src": "wordshk:70524; cccanto; cedict; lesson:wordshk:6067#1; hk usage"
+  },
+  "飯": {
+   "jp": "faan6",
+   "en": "cooked rice; meal",
+   "src": "wordshk:70817; cedict; lesson:wordshk:13606#2; hk usage"
+  },
+  "食飯": {
+   "jp": "sik6 faan6",
+   "en": "to eat, to have a meal",
+   "src": "wordshk:60513,60514; cccanto; lesson:wordshk:96845#1; hk usage"
+  },
+  "科": {
+   "jp": "fo1",
+   "en": "subject (of study); department",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "決定": {
+   "jp": "kyut3 ding6",
+   "en": "to decide; decision",
+   "src": "cedict; hk usage"
+  },
+  "鐘": {
+   "jp": "zung1",
+   "en": "clock; hour; bell",
+   "src": "wordshk:89433; cedict; lesson:wordshk:67036#3; hk usage"
+  },
+  "老": {
+   "jp": "lou5",
+   "en": "old; (before a surname) friendly 'old'",
+   "src": "wordshk:55528,55529,111285; cccanto; cedict; lesson:wordshk:55528#6; hk usage"
+  },
+  "老師": {
+   "jp": "lou5 si1",
+   "en": "teacher",
+   "src": "wordshk:79868; cedict; lesson:wordshk:115500#1; hk usage"
+  },
+  "幾時": {
+   "jp": "gei2 si4",
+   "en": "when?",
+   "src": "wordshk:72849; cedict; lesson:wordshk:19169#1; hk usage"
+  },
+  "隊": {
+   "jp": "deoi6",
+   "en": "team; group, squad",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "借": {
+   "jp": "ze3",
+   "en": "to borrow; to lend",
+   "src": "wordshk:87705; cedict; hk usage"
+  },
+  "影": {
+   "jp": "jing2",
+   "en": "to take (a photo); shadow; photo",
+   "src": "wordshk:52818,52819,117454; cccanto; cedict; lesson:wordshk:69#2; hk usage"
+  },
+  "我哋嘅": {
+   "jp": "ngo5 dei6 ge3",
+   "en": "our; ours",
+   "src": "cccanto; hk usage"
+  },
+  "唔可以": {
+   "jp": "m4 ho2 ji5",
+   "en": "can't; mustn't, not allowed",
+   "src": "cccanto; lesson:wordshk:51708#4; hk usage"
+  },
+  "特別": {
+   "jp": "dak6 bit6",
+   "en": "special; especially",
+   "src": "wordshk:44348,44349; cedict; lesson:wordshk:44348#1; hk usage"
+  },
+  "比": {
+   "jp": "bei2",
+   "en": "to compare; than (in comparisons)",
+   "src": "wordshk:40716,40717,115545; cedict; lesson:wordshk:40716#5; hk usage"
+  },
+  "比賽": {
+   "jp": "bei2 coi3",
+   "en": "match, competition; to compete",
+   "src": "wordshk:40719,40720; cedict; lesson:tatoeba:5738677; hk usage"
+  },
+  "身": {
+   "jp": "san1",
+   "en": "body",
+   "src": "cedict; lesson:wordshk:103900#1; hk usage"
+  },
+  "馬": {
+   "jp": "maa5",
+   "en": "horse",
+   "src": "wordshk:80097,100147,112742; cedict; hk usage"
+  },
+  "受": {
+   "jp": "sau6",
+   "en": "to receive; to bear, to stand (it); to suffer",
+   "src": "wordshk:96362; cedict; hk usage"
+  },
+  "落去": {
+   "jp": "lok6 heoi3",
+   "en": "to go down; (after a verb) on, keep going",
+   "src": "wordshk:79739,100020; cccanto; hk usage"
+  },
+  "門": {
+   "jp": "mun4",
+   "en": "door; gate",
+   "src": "wordshk:56990,56991,98346; cedict; hk usage"
+  },
+  "邊度": {
+   "jp": "bin1 dou6",
+   "en": "where",
+   "src": "wordshk:40874; cccanto; lesson:wordshk:13605#2; hk usage"
+  },
+  "電": {
+   "jp": "din6",
+   "en": "electricity; battery (charge)",
+   "src": "wordshk:44762,44763,119448; cccanto; cedict; hk usage"
+  },
+  "電話": {
+   "jp": "din6 waa2",
+   "en": "phone; phone call",
+   "src": "wordshk:70011; cccanto; cedict; lesson:wordshk:70011#8; hk usage"
+  },
+  "拎": {
+   "jp": "ling1",
+   "en": "to take; to hold; to bring",
+   "src": "wordshk:28762; cccanto; cedict; hk usage"
+  },
+  "交": {
+   "jp": "gaau1",
+   "en": "to hand in; to pay; to make (friends)",
+   "src": "cedict; hk usage"
+  },
+  "愛": {
+   "jp": "oi3",
+   "en": "to love; love",
+   "src": "wordshk:7346,90855; cccanto; cedict; lesson:wordshk:8132#1; hk usage"
+  },
+  "支": {
+   "jp": "zi1",
+   "en": "measure word for bottles, pens, long things; to support",
+   "src": "wordshk:64536,64537,87949; cccanto; cedict; hk usage"
+  },
+  "腳": {
+   "jp": "goek3",
+   "en": "foot; leg",
+   "src": "wordshk:73331; cccanto; cedict; lesson:wordshk:73331#1; hk usage"
+  },
+  "嚟㗎": {
+   "jp": "lai4 gaa3",
+   "en": "(end of sentence) says what something is",
+   "src": "hk usage"
+  },
+  "搭": {
+   "jp": "daap3",
+   "en": "to take (bus, train); to put up, to build; to hang over",
+   "src": "wordshk:44171; cccanto; cedict; hk usage"
+  },
+  "讀書": {
+   "jp": "duk6 syu1",
+   "en": "to study; to go to school",
+   "src": "wordshk:70488; cedict; lesson:wordshk:49899#2; hk usage"
+  },
+  "差": {
+   "jp": "caa1",
+   "en": "bad, poor; to lack, short of; difference",
+   "src": "wordshk:41534,41535,97921; cccanto; cedict; lesson:wordshk:64238#6; hk usage"
+  },
+  "數": {
+   "jp": "sou3",
+   "en": "sum, bill; number; maths",
+   "src": "wordshk:61494; lesson:wordshk:43700#51; hk usage"
+  },
+  "電腦": {
+   "jp": "din6 nou5",
+   "en": "computer",
+   "src": "wordshk:70000; cedict; lesson:wordshk:96491#8; hk usage"
+  },
+  "通常": {
+   "jp": "tung1 soeng4",
+   "en": "usually",
+   "src": "wordshk:86405; cedict; hk usage"
+  },
+  "全部": {
+   "jp": "cyun4 bou6",
+   "en": "all; the whole",
+   "src": "wordshk:68918; cccanto; cedict; lesson:wordshk:68918#2; hk usage"
+  },
+  "小朋友": {
+   "jp": "siu2 pang4 jau5",
+   "en": "child, kid",
+   "src": "wordshk:84823; cedict; lesson:wordshk:13549#9; hk usage"
+  },
+  "即刻": {
+   "jp": "zik1 haak1",
+   "en": "immediately, right away",
+   "src": "lesson:wordshk:88284#2; hk usage"
+  },
+  "剪": {
+   "jp": "zin2",
+   "en": "to cut (with scissors)",
+   "src": "wordshk:88426; cedict; hk usage"
+  },
+  "揀": {
+   "jp": "gaan2",
+   "en": "to choose; to pick",
+   "src": "wordshk:72250; cedict; lesson:wordshk:72250#6; hk usage"
+  },
+  "易": {
+   "jp": "ji6",
+   "en": "easy",
+   "src": "wordshk:52475; cedict; hk usage"
+  },
+  "遠": {
+   "jp": "jyun5",
+   "en": "far",
+   "src": "wordshk:78247; cedict; hk usage"
+  },
+  "理": {
+   "jp": "lei5",
+   "en": "to pay attention to, to care about; reason, logic",
+   "src": "wordshk:54841,54842; cedict; lesson:wordshk:54841#3; hk usage"
+  },
+  "笑": {
+   "jp": "siu3",
+   "en": "to laugh; to smile; to laugh at",
+   "src": "wordshk:84865; cedict; lesson:wordshk:52458#7; hk usage"
+  },
+  "熱": {
+   "jp": "jit6",
+   "en": "hot; popular",
+   "src": "wordshk:52952,52953; cccanto; cedict; lesson:wordshk:13549#4; hk usage"
+  },
+  "搞到": {
+   "jp": "gaau2 dou3",
+   "en": "to cause, to end up (so that)",
+   "src": "cccanto; hk usage"
+  },
+  "老細": {
+   "jp": "lou5 sai3",
+   "en": "boss",
+   "src": "cccanto; lesson:wordshk:89933#3; hk usage"
+  },
+  "晚": {
+   "jp": "maan5",
+   "en": "night, evening; late",
+   "src": "wordshk:55930,55931; cedict; hk usage"
+  },
+  "今晚": {
+   "jp": "gam1 maan5",
+   "en": "tonight",
+   "src": "cedict; lesson:wordshk:72496#2; hk usage"
+  },
+  "梗": {
+   "jp": "gang2",
+   "en": "surely, of course; fixed",
+   "src": "wordshk:96566,109839,116728; cccanto; hk usage"
+  },
+  "梗係": {
+   "jp": "gang2 hai6",
+   "en": "of course",
+   "src": "wordshk:72657; cccanto; hk usage"
+  },
+  "掂": {
+   "jp": "dim6",
+   "en": "OK, sorted, done; straight",
+   "src": "wordshk:44735; lesson:wordshk:44734#2; hk usage"
+  },
+  "戲": {
+   "jp": "hei3",
+   "en": "film, movie; play, show",
+   "src": "wordshk:75164; cccanto; cedict; lesson:wordshk:51066#1; hk usage"
+  },
+  "擺": {
+   "jp": "baai2",
+   "en": "to put, to place; to display; to hold (a banquet)",
+   "src": "wordshk:13833; cccanto; cedict; hk usage"
+  },
+  "單": {
+   "jp": "daan1",
+   "en": "bill, receipt; list, form; single",
+   "src": "cedict; hk usage"
+  },
+  "洗": {
+   "jp": "sai2",
+   "en": "to wash; to clean",
+   "src": "wordshk:82907,122889; cedict; lesson:wordshk:56407#9; hk usage"
+  },
+  "湯": {
+   "jp": "tong1",
+   "en": "soup",
+   "src": "wordshk:86199,100481,100575; cccanto; cedict; hk usage"
+  },
+  "出去": {
+   "jp": "ceot1 heoi3",
+   "en": "to go out; out",
+   "src": "wordshk:42324,119769; cccanto; cedict; lesson:wordshk:42324#3; hk usage"
+  },
+  "口": {
+   "jp": "hau2",
+   "en": "mouth; measure word for bites, family members",
+   "src": "wordshk:50112,50113; cccanto; cedict; lesson:wordshk:50113#1; hk usage"
+  },
+  "句": {
+   "jp": "geoi3",
+   "en": "measure word for sentences; sentence",
+   "src": "wordshk:72946; cedict; lesson:wordshk:72946#2; hk usage"
+  },
+  "只": {
+   "jp": "zi2",
+   "en": "only; just",
+   "src": "wordshk:88033; cedict; hk usage"
+  },
+  "只係": {
+   "jp": "zi2 hai6",
+   "en": "only; just",
+   "src": "wordshk:90803; cccanto; hk usage"
+  },
+  "片": {
+   "jp": "pin2",
+   "en": "film; video, clip",
+   "src": "wordshk:58322,114571; lesson:wordshk:58322#5; hk usage"
+  },
+  "仲有": {
+   "jp": "zung6 jau5",
+   "en": "also, and also; there's still",
+   "src": "cccanto; lesson:wordshk:36835#3; hk usage"
+  },
+  "波": {
+   "jp": "bo1",
+   "en": "ball; ball game; gear (in a car)",
+   "src": "wordshk:13626,100770; cccanto; cedict; hk usage"
+  },
+  "相": {
+   "jp": "soeng2",
+   "en": "photo",
+   "src": "wordshk:61255; lesson:wordshk:77403#1; hk usage"
+  },
+  "第二": {
+   "jp": "dai6 ji6",
+   "en": "second; another, other",
+   "src": "wordshk:69562; cedict; hk usage"
+  },
+  "中國": {
+   "jp": "zung1 gwok3",
+   "en": "China",
+   "src": "wordshk:11369; hk usage"
+  },
+  "炒": {
+   "jp": "caau2",
+   "en": "to stir-fry; to fire (from a job); to speculate (on prices)",
+   "src": "wordshk:67322; cccanto; cedict; hk usage"
+  },
+  "眼": {
+   "jp": "ngaan5",
+   "en": "eye; a glance",
+   "src": "wordshk:57375,100387; cccanto; cedict; lesson:wordshk:100387#2; hk usage"
+  },
+  "老闆": {
+   "jp": "lou5 baan2",
+   "en": "boss; owner",
+   "src": "wordshk:79829; cccanto; cedict; lesson:wordshk:60565#9; hk usage"
+  },
+  "考試": {
+   "jp": "haau2 si5",
+   "en": "exam; to take an exam",
+   "src": "cccanto; cedict; lesson:wordshk:67322#5; hk usage"
+  },
+  "頭先": {
+   "jp": "tau4 sin1",
+   "en": "just now; a moment ago",
+   "src": "wordshk:85844; cccanto; lesson:wordshk:83113#2; hk usage"
+  },
+  "學校": {
+   "jp": "hok6 haau6",
+   "en": "school",
+   "src": "wordshk:75643; cedict; lesson:wordshk:47230#5; hk usage"
+  },
+  "冰": {
+   "jp": "bing1",
+   "en": "ice",
+   "src": "wordshk:40953,100942; cedict; lesson:wordshk:40953#5; hk usage"
+  },
+  "功課": {
+   "jp": "gung1 fo3",
+   "en": "homework",
+   "src": "wordshk:73977; cedict; lesson:wordshk:53190#1; hk usage"
+  },
+  "早": {
+   "jp": "zou2",
+   "en": "early; morning (greeting)",
+   "src": "wordshk:65937,65938; cedict; hk usage"
+  },
+  "舊": {
+   "jp": "gau6",
+   "en": "old (not new); lump, chunk (measure word)",
+   "src": "wordshk:72763,110589,119775; cccanto; cedict; hk usage"
+  },
+  "包": {
+   "jp": "baau1",
+   "en": "bun, bread; bag; to wrap, to include",
+   "src": "wordshk:40329,40330,66615; cccanto; cedict; lesson:wordshk:40329#6; hk usage"
+  },
+  "肯": {
+   "jp": "hang2",
+   "en": "to be willing to",
+   "src": "wordshk:74776; cedict; lesson:wordshk:62145#9; hk usage"
+  },
+  "跑": {
+   "jp": "paau2",
+   "en": "to run",
+   "src": "wordshk:82180; cccanto; cedict; lesson:wordshk:13620#3; hk usage"
+  },
+  "女人": {
+   "jp": "neoi5 jan2",
+   "en": "woman",
+   "src": "wordshk:81400; hk usage"
+  },
+  "完全": {
+   "jp": "jyun4 cyun4",
+   "en": "completely",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "差唔多": {
+   "jp": "caa1 m4 do1",
+   "en": "almost; about the same",
+   "src": "wordshk:41544,41545; cccanto; hk usage"
+  },
+  "情況": {
+   "jp": "cing4 fong3",
+   "en": "situation",
+   "src": "cedict; hk usage"
+  },
+  "留": {
+   "jp": "lau4",
+   "en": "to stay; to keep, to save; to leave (a message)",
+   "src": "wordshk:79151; cedict; lesson:wordshk:47609#2; hk usage"
+  },
+  "袋": {
+   "jp": "doi2",
+   "en": "bag; pocket",
+   "src": "wordshk:45050; cedict; lesson:wordshk:96489#3; hk usage"
+  },
+  "冇得": {
+   "jp": "mou5 dak1",
+   "en": "can't (no chance to); there's none (to get)",
+   "src": "cccanto; hk usage"
+  },
+  "肥": {
+   "jp": "fei4",
+   "en": "fat; to fail (an exam)",
+   "src": "wordshk:46174,46175; cedict; lesson:wordshk:73098#10; hk usage"
+  },
+  "叫做": {
+   "jp": "giu3 zou6",
+   "en": "to be called; kind of, barely counts as",
+   "src": "wordshk:73294,90158; cedict; lesson:wordshk:90158#2; hk usage"
+  },
+  "根本": {
+   "jp": "gan1 bun2",
+   "en": "simply, at all; basically; basis",
+   "src": "cedict; hk usage"
+  },
+  "結婚": {
+   "jp": "git3 fan1",
+   "en": "to get married",
+   "src": "wordshk:73234; cedict; lesson:wordshk:89777#1; hk usage"
+  },
+  "利": {
+   "jp": "lei6",
+   "en": "sharp; profit, benefit",
+   "src": "wordshk:54867,54868,120105; cedict; hk usage"
+  },
+  "病": {
+   "jp": "beng6",
+   "en": "illness; to be sick",
+   "src": "wordshk:40811,40812; cccanto; cedict; lesson:wordshk:77713#5; hk usage"
+  },
+  "粒": {
+   "jp": "lap1",
+   "en": "measure word for small round things; grain",
+   "src": "cedict; hk usage"
+  },
+  "親": {
+   "jp": "can1",
+   "en": "(after a verb) to get hurt by; (after a verb) every time; relative",
+   "src": "wordshk:41884,41885,107913; cedict; lesson:wordshk:109953#1; hk usage"
+  },
+  "返屋企": {
+   "jp": "faan1 uk1 kei2",
+   "en": "to go home",
+   "src": "wordshk:89883; cccanto; lesson:wordshk:23390#2; hk usage"
+  },
+  "餐": {
+   "jp": "caan1",
+   "en": "a meal; set meal",
+   "src": "cccanto; cedict; lesson:wordshk:90214#6; hk usage"
+  },
+  "至": {
+   "jp": "zi3",
+   "en": "only then, not until; most",
+   "src": "wordshk:64734,90804; cedict; lesson:wordshk:90804#3; hk usage"
+  },
+  "先至": {
+   "jp": "sin1 zi3",
+   "en": "only then; not until",
+   "src": "wordshk:84440; cccanto; lesson:wordshk:84440#1; hk usage"
+  },
+  "發": {
+   "jp": "faat3",
+   "en": "to send; to have (a fever, a dream); to get rich",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "發現": {
+   "jp": "faat3 jin6",
+   "en": "to discover, to find out; to realise",
+   "src": "wordshk:45780,45781; cedict; hk usage"
+  },
+  "發生": {
+   "jp": "faat3 sang1",
+   "en": "to happen",
+   "src": "cedict; hk usage"
+  },
+  "近": {
+   "jp": "kan5",
+   "en": "near; close to",
+   "src": "HKCanCor train kan5 x9; hk usage"
+  },
+  "最近": {
+   "jp": "zeoi3 gan6",
+   "en": "recently; nearest",
+   "src": "wordshk:87795; cedict; lesson:wordshk:55792#4; hk usage"
+  },
+  "食咗": {
+   "jp": "sik6 zo2",
+   "en": "ate, have eaten",
+   "src": "cccanto; lesson:wordshk:55282#2; hk usage"
+  },
+  "先生": {
+   "jp": "sin1 saang1",
+   "en": "Mr, sir; husband; teacher",
+   "src": "wordshk:60581; cccanto; cedict; lesson:wordshk:84279#2; hk usage"
+  },
+  "成個": {
+   "jp": "seng4 go3",
+   "en": "the whole; entire",
+   "src": "hk usage"
+  },
+  "搵": {
+   "jp": "wan2",
+   "en": "to look for; to find; to earn (money)",
+   "src": "cccanto; hk usage"
+  },
+  "歌": {
+   "jp": "go1",
+   "en": "song",
+   "src": "wordshk:73299; cccanto; cedict; hk usage"
+  },
+  "每個": {
+   "jp": "mui5 go3",
+   "en": "every; each (one)",
+   "src": "cccanto; hk usage"
+  },
+  "海": {
+   "jp": "hoi2",
+   "en": "sea",
+   "src": "wordshk:75588,97391; cedict; hk usage"
+  },
+  "好鍾意": {
+   "jp": "hou2 zung1 ji3",
+   "en": "to really like; to love",
+   "src": "cccanto; hk usage"
+  },
+  "最好": {
+   "jp": "zeoi3 hou2",
+   "en": "best; had better",
+   "src": "wordshk:64380,64381; cedict; lesson:wordshk:56484#3; hk usage"
+  },
+  "細路": {
+   "jp": "sai3 lou6",
+   "en": "child, kid",
+   "src": "wordshk:82954; cccanto; lesson:wordshk:72845#4; hk usage"
+  },
+  "記": {
+   "jp": "gei3",
+   "en": "to remember; to note down",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "唔記得": {
+   "jp": "m4 gei3 dak1",
+   "en": "to forget",
+   "src": "wordshk:80038; cccanto; lesson:wordshk:53121#7; hk usage"
+  },
+  "記得": {
+   "jp": "gei3 dak1",
+   "en": "to remember",
+   "src": "wordshk:72856; cedict; hk usage"
+  },
+  "返嚟": {
+   "jp": "faan1 lai4",
+   "en": "to come back; (after a verb) back",
+   "src": "lesson:wordshk:13654#2; hk usage"
+  },
+  "重要": {
+   "jp": "zung6 jiu3",
+   "en": "important",
+   "src": "wordshk:89510; cedict; hk usage"
+  },
+  "做咩": {
+   "jp": "zou6 me1",
+   "en": "why?; what are (you) doing?",
+   "src": "wordshk:89228; cccanto; hk usage"
+  },
+  "奶": {
+   "jp": "naai5",
+   "en": "milk",
+   "src": "wordshk:30735; cedict; hk usage"
+  },
+  "島": {
+   "jp": "dou2",
+   "en": "island",
+   "src": "wordshk:70316; cedict; lesson:wordshk:70316#5; hk usage"
+  },
+  "機會": {
+   "jp": "gei1 wui6",
+   "en": "chance, opportunity",
+   "src": "cedict; hk usage"
+  },
+  "衰": {
+   "jp": "seoi1",
+   "en": "bad, nasty; unlucky; to be caught out",
+   "src": "wordshk:59895,59896,90292; cccanto; cedict; lesson:wordshk:110699#3; hk usage"
+  },
+  "房": {
+   "jp": "fong2",
+   "en": "room; bedroom",
+   "src": "cedict; lesson:wordshk:110718#3; hk usage"
+  },
+  "更": {
+   "jp": "gang3",
+   "en": "even more",
+   "src": "wordshk:96307; cccanto; cedict; hk usage"
+  },
+  "有得": {
+   "jp": "jau5 dak1",
+   "en": "able to, get to (do); there is (some to get)",
+   "src": "cccanto; hk usage"
+  },
+  "街": {
+   "jp": "gaai1",
+   "en": "street; out (not at home)",
+   "src": "wordshk:72060; cedict; lesson:wordshk:72060#18; hk usage"
+  },
+  "勁": {
+   "jp": "ging6",
+   "en": "great, awesome; very, really",
+   "src": "wordshk:48300,48301; hk usage"
+  },
+  "成功": {
+   "jp": "sing4 gung1",
+   "en": "to succeed; success",
+   "src": "cedict; hk usage"
+  },
+  "計劃": {
+   "jp": "gai3 waak6",
+   "en": "plan; to plan",
+   "src": "wordshk:47493,47494; cedict; hk usage"
+  },
+  "越": {
+   "jp": "jyut6",
+   "en": "the more... (the more...); to cross over",
+   "src": "wordshk:53774,53775,111081; cccanto; cedict; lesson:wordshk:53774#1; hk usage"
+  },
+  "分鐘": {
+   "jp": "fan1 zung1",
+   "en": "minute",
+   "src": "wordshk:71053; cedict; lesson:wordshk:64378#3; hk usage"
+  },
+  "方法": {
+   "jp": "fong1 faat3",
+   "en": "method, way",
+   "src": "cedict; hk usage"
+  },
+  "星": {
+   "jp": "sing1",
+   "en": "star; celebrity",
+   "src": "wordshk:84507,97343,123788; cccanto; cedict; hk usage"
+  },
+  "茶": {
+   "jp": "caa4",
+   "en": "tea",
+   "src": "wordshk:67112; cedict; hk usage"
+  },
+  "贏": {
+   "jp": "jeng4",
+   "en": "to win; to beat",
+   "src": "cedict; lesson:wordshk:50232#1; hk usage"
+  },
+  "電影": {
+   "jp": "din6 jing2",
+   "en": "film, movie",
+   "src": "cedict; lesson:wordshk:78025#3; hk usage"
+  },
+  "首": {
+   "jp": "sau2",
+   "en": "measure word for songs, poems",
+   "src": "wordshk:59645,98739,98740; cedict; hk usage"
+  },
+  "工作": {
+   "jp": "gung1 zok3",
+   "en": "work, job; to work",
+   "src": "cedict; lesson:wordshk:73098#6; hk usage"
+  },
+  "之間": {
+   "jp": "zi1 gaan1",
+   "en": "between; among",
+   "src": "wordshk:87916; cedict; lesson:wordshk:87916#1; hk usage"
+  },
+  "啲人": {
+   "jp": "di1 jan4",
+   "en": "people; those people; some people",
+   "src": "wordshk:101280; cccanto; lesson:wordshk:104459#6; hk usage"
+  },
+  "老婆": {
+   "jp": "lou5 po4",
+   "en": "wife",
+   "src": "wordshk:79863; cedict; hk usage"
+  },
+  "經濟": {
+   "jp": "ging1 zai3",
+   "en": "economy; economical",
+   "src": "wordshk:48216,48217; cedict; hk usage"
+  },
+  "呢條": {
+   "jp": "ni1 tiu4",
+   "en": "this (long thing, road, question)",
+   "src": "cccanto; hk usage"
+  },
+  "巴": {
+   "jp": "baa1",
+   "en": "a slap (in one slap); bus (short form)",
+   "src": "wordshk:40169,98619,102253; cedict; lesson:wordshk:123788#2; hk usage"
+  },
+  "巴士": {
+   "jp": "baa1 si2",
+   "en": "bus",
+   "src": "wordshk:13729; cedict; lesson:wordshk:42324#5; hk usage"
+  },
+  "換": {
+   "jp": "wun6",
+   "en": "to change; to exchange",
+   "src": "wordshk:87147; cedict; lesson:wordshk:90086#6; hk usage"
+  },
+  "爭": {
+   "jp": "zaang1",
+   "en": "to owe; to lack, to fall short; to compete for",
+   "src": "wordshk:37646; hk usage"
+  },
+  "較": {
+   "jp": "gaau3",
+   "en": "to adjust; to set (an alarm, a clock)",
+   "src": "wordshk:47401; cccanto; cedict; hk usage"
+  },
+  "比較": {
+   "jp": "bei2 gaau3",
+   "en": "relatively, quite; to compare",
+   "src": "wordshk:40724,40725; cedict; hk usage"
+  },
+  "樹": {
+   "jp": "syu6",
+   "en": "tree",
+   "src": "wordshk:85424,97250; cedict; hk usage"
+  },
+  "而且": {
+   "jp": "ji4 ce2",
+   "en": "also, moreover",
+   "src": "wordshk:76941; cedict; hk usage"
+  },
+  "味": {
+   "jp": "mei6",
+   "en": "taste, flavour; smell",
+   "src": "wordshk:56363; cccanto; cedict; lesson:wordshk:87739#10; hk usage"
+  },
+  "發展": {
+   "jp": "faat3 zin2",
+   "en": "to develop; development",
+   "src": "cedict; lesson:wordshk:74357#4; hk usage"
+  },
+  "細個": {
+   "jp": "sai3 go3",
+   "en": "young (as a child); when (one was) little",
+   "src": "wordshk:82948; cccanto; hk usage"
+  },
+  "線": {
+   "jp": "sin3",
+   "en": "line; thread, string; (phone) line",
+   "src": "cccanto; cedict; lesson:wordshk:83462#1; hk usage"
+  },
+  "肉": {
+   "jp": "juk6",
+   "en": "meat; flesh",
+   "src": "wordshk:77760; cedict; hk usage"
+  },
+  "天": {
+   "jp": "tin1",
+   "en": "sky; heaven; day",
+   "src": "wordshk:62234,98288; cccanto; cedict; lesson:wordshk:55282#1; hk usage"
+  },
+  "天氣": {
+   "jp": "tin1 hei3",
+   "en": "weather",
+   "src": "wordshk:85956; cedict; lesson:wordshk:85956#3; hk usage"
+  },
+  "升": {
+   "jp": "sing1",
+   "en": "to rise, to go up; to be promoted; litre",
+   "src": "wordshk:84488,97254,123788; cccanto; cedict; hk usage"
+  },
+  "喊": {
+   "jp": "haam3",
+   "en": "to cry; to shout",
+   "src": "wordshk:74590,96581; cccanto; cedict; lesson:wordshk:74590#4; hk usage"
+  },
+  "相信": {
+   "jp": "soeng1 seon3",
+   "en": "to believe; to trust",
+   "src": "wordshk:84970; cccanto; cedict; lesson:wordshk:84970#3; hk usage"
+  },
+  "研究": {
+   "jp": "jin4 gau3",
+   "en": "to research; research; to look into",
+   "src": "wordshk:77283,108263; cedict; hk usage"
+  },
+  "繼續": {
+   "jp": "gai3 zuk6",
+   "en": "to continue",
+   "src": "wordshk:72488; cedict; lesson:wordshk:60565#7; hk usage"
+  },
+  "出現": {
+   "jp": "ceot1 jin6",
+   "en": "to appear; to arise",
+   "src": "wordshk:67805; cedict; lesson:wordshk:67805#2; hk usage"
+  },
+  "深": {
+   "jp": "sam1",
+   "en": "deep; dark (colour); difficult",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "白": {
+   "jp": "baak6",
+   "en": "white; for nothing, in vain",
+   "src": "wordshk:13803,66596,66597; cedict; hk usage"
+  },
+  "賺": {
+   "jp": "zaan6",
+   "en": "to earn; to profit",
+   "src": "cedict; lesson:wordshk:55865#17; hk usage"
+  },
+  "一路": {
+   "jp": "jat1 lou6",
+   "en": "all along, always; all the way; while (doing two things)",
+   "src": "wordshk:76423,103776; cedict; hk usage"
+  },
+  "唔夠": {
+   "jp": "m4 gau3",
+   "en": "not enough",
+   "src": "cccanto; hk usage"
+  },
+  "感覺": {
+   "jp": "gam2 gok3",
+   "en": "feeling; to feel",
+   "src": "cedict; hk usage"
+  },
+  "改": {
+   "jp": "goi2",
+   "en": "to change; to correct (homework)",
+   "src": "cedict; lesson:wordshk:41165#2; hk usage"
+  },
+  "就算": {
+   "jp": "zau6 syun3",
+   "en": "even if",
+   "src": "wordshk:87682; cedict; hk usage"
+  },
+  "更加": {
+   "jp": "gang3 gaa1",
+   "en": "even more",
+   "src": "wordshk:72659; cedict; hk usage"
+  },
+  "一百": {
+   "jp": "jat1 baak3",
+   "en": "one hundred",
+   "src": "wordshk:90000; cccanto; lesson:wordshk:96199#1; hk usage"
+  },
+  "容易": {
+   "jp": "jung4 ji6",
+   "en": "easy; likely to",
+   "src": "wordshk:77826; cedict; lesson:wordshk:73508#5; hk usage"
+  },
+  "慘": {
+   "jp": "caam2",
+   "en": "miserable, terrible; in big trouble",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "碟": {
+   "jp": "dip2",
+   "en": "plate; disc",
+   "src": "wordshk:44884; hk usage"
+  },
+  "紙": {
+   "jp": "zi2",
+   "en": "paper; banknote",
+   "src": "wordshk:64715,64716; cedict; lesson:wordshk:100000#2; hk usage"
+  },
+  "起身": {
+   "jp": "hei2 san1",
+   "en": "to get up; to stand up",
+   "src": "wordshk:75083; cedict; lesson:wordshk:90737#2; hk usage"
+  },
+  "輸": {
+   "jp": "syu1",
+   "en": "to lose (a game, a bet)",
+   "src": "wordshk:85396; cedict; lesson:wordshk:90738#1; hk usage"
+  },
+  "一係": {
+   "jp": "jat1 hai6",
+   "en": "either... or; how about; or else",
+   "src": "wordshk:76391,112807; cccanto; hk usage"
+  },
+  "山": {
+   "jp": "saan1",
+   "en": "mountain, hill",
+   "src": "wordshk:82726; cedict; hk usage"
+  },
+  "酒": {
+   "jp": "zau2",
+   "en": "alcohol, wine",
+   "src": "wordshk:87638; cedict; hk usage"
+  },
+  "男": {
+   "jp": "naam4",
+   "en": "male; man",
+   "src": "wordshk:81244,117196; cedict; lesson:wordshk:57278#4; hk usage"
+  },
+  "男人": {
+   "jp": "naam4 jan2",
+   "en": "man",
+   "src": "wordshk:81251; lesson:wordshk:81251#1; hk usage"
+  },
+  "老公": {
+   "jp": "lou5 gung1",
+   "en": "husband",
+   "src": "wordshk:79848; cccanto; cedict; lesson:wordshk:58713#7; hk usage"
+  },
+  "返學": {
+   "jp": "faan1 hok6",
+   "en": "to go to school",
+   "src": "wordshk:70702; cccanto; lesson:wordshk:86778#1; hk usage"
+  },
+  "餅": {
+   "jp": "beng2",
+   "en": "biscuit, cake; pastry",
+   "src": "wordshk:40805,40806; cedict; lesson:wordshk:100323#4; hk usage"
+  },
+  "一直": {
+   "jp": "jat1 zik6",
+   "en": "all along, always; straight (ahead)",
+   "src": "wordshk:76498; cedict; lesson:wordshk:47608#3; hk usage"
+  },
+  "類": {
+   "jp": "leoi6",
+   "en": "kind, type",
+   "src": "wordshk:79348; cedict; hk usage"
+  },
+  "人類": {
+   "jp": "jan4 leoi6",
+   "en": "humankind, humans",
+   "src": "wordshk:76220; cedict; hk usage"
+  },
+  "唱": {
+   "jp": "coeng3",
+   "en": "to sing; to change (money into smaller notes)",
+   "src": "wordshk:68442,102837; cccanto; cedict; hk usage"
+  },
+  "定係": {
+   "jp": "ding6 hai6",
+   "en": "or (in questions)",
+   "src": "wordshk:70062; cccanto; hk usage"
+  },
+  "封": {
+   "jp": "fung1",
+   "en": "measure word for letters; to seal; to close off",
+   "src": "wordshk:46754,46755,114152; cccanto; cedict; lesson:wordshk:43700#22; hk usage"
+  },
+  "日日": {
+   "jp": "jat6 jat6",
+   "en": "every day",
+   "src": "wordshk:90374; cedict; lesson:wordshk:90374#1; hk usage"
+  },
+  "頭髮": {
+   "jp": "tau4 faat3",
+   "en": "hair (on the head)",
+   "src": "wordshk:85833; cedict; lesson:wordshk:62413#3; hk usage"
+  },
+  "努力": {
+   "jp": "nou5 lik6",
+   "en": "to work hard; hard-working; effort",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "區": {
+   "jp": "keoi1",
+   "en": "district, area",
+   "src": "wordshk:78553,119999; cccanto; cedict; hk usage"
+  },
+  "外國": {
+   "jp": "ngoi6 gwok3",
+   "en": "foreign country; abroad",
+   "src": "wordshk:81702; cedict; lesson:wordshk:70488#2; hk usage"
+  },
+  "平時": {
+   "jp": "ping4 si4",
+   "en": "usually, normally",
+   "src": "wordshk:82407; cccanto; cedict; lesson:wordshk:61025#7; hk usage"
+  },
+  "拍": {
+   "jp": "paak3",
+   "en": "to film, to take (a photo); to pat, to clap",
+   "src": "wordshk:100032,100034; cedict; lesson:wordshk:100032#2; hk usage"
+  },
+  "永遠": {
+   "jp": "wing5 jyun5",
+   "en": "forever; always",
+   "src": "wordshk:86910; cedict; hk usage"
+  },
+  "活動": {
+   "jp": "wut6 dung6",
+   "en": "activity, event; to move about",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "人工": {
+   "jp": "jan4 gung1",
+   "en": "salary, wages; artificial, man-made",
+   "src": "wordshk:51531,51532; cccanto; cedict; lesson:wordshk:69483#4; hk usage"
+  },
+  "令到": {
+   "jp": "ling6 dou3",
+   "en": "to cause; to make (someone feel)",
+   "src": "wordshk:79567; cccanto; hk usage"
+  },
+  "同一": {
+   "jp": "tung4 jat1",
+   "en": "the same",
+   "src": "cedict; lesson:wordshk:79348#1; hk usage"
+  },
+  "多啲": {
+   "jp": "do1 di1",
+   "en": "more; a bit more",
+   "src": "cccanto; lesson:wordshk:70159#9; hk usage"
+  },
+  "夜": {
+   "jp": "je6",
+   "en": "night; late",
+   "src": "wordshk:52191,52192,113793; cccanto; cedict; lesson:wordshk:113793#1; hk usage"
+  },
+  "夜晚": {
+   "jp": "je6 maan5",
+   "en": "night; at night",
+   "src": "cedict; lesson:wordshk:76824#2; hk usage"
+  },
+  "底": {
+   "jp": "dai2",
+   "en": "bottom; underneath; background",
+   "src": "wordshk:44231,44232,115727; cccanto; cedict; lesson:wordshk:44231#7; hk usage"
+  },
+  "雞": {
+   "jp": "gai1",
+   "en": "chicken; (slang) dollar(s)",
+   "src": "wordshk:72441,91061,98747; cedict; hk usage"
+  },
+  "仍然": {
+   "jp": "jing4 jin4",
+   "en": "still",
+   "src": "wordshk:77410; cedict; lesson:tatoeba:5761061; hk usage"
+  },
+  "例如": {
+   "jp": "lai6 jyu4",
+   "en": "for example",
+   "src": "wordshk:79072; cedict; hk usage"
+  },
+  "做咗": {
+   "jp": "zou6 zo2",
+   "en": "did, has done; became",
+   "src": "cccanto; lesson:wordshk:55281#2; hk usage"
+  },
+  "字典": {
+   "jp": "zi6 din2",
+   "en": "dictionary",
+   "src": "wordshk:88156; cedict; hk usage"
+  },
+  "響": {
+   "jp": "hoeng2",
+   "en": "to ring, to sound; at, in",
+   "src": "wordshk:49899,49900,50749; cedict; lesson:wordshk:50749#1; hk usage"
+  },
+  "影響": {
+   "jp": "jing2 hoeng2",
+   "en": "to affect; influence",
+   "src": "cedict; hk usage"
+  },
+  "成為": {
+   "jp": "sing4 wai4",
+   "en": "to become",
+   "src": "wordshk:84630; cedict; hk usage"
+  },
+  "版": {
+   "jp": "baan2",
+   "en": "edition, version; page",
+   "src": "wordshk:40291,40292,40299; cedict; hk usage"
+  },
+  "好耐": {
+   "jp": "hou2 noi6",
+   "en": "a long time",
+   "src": "cccanto; lesson:wordshk:55281#1; hk usage"
+  },
+  "意思": {
+   "jp": "ji3 si1",
+   "en": "meaning; idea, intention; a small token",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "戴": {
+   "jp": "daai3",
+   "en": "to wear (glasses, a hat, a watch)",
+   "src": "wordshk:100206; cccanto; cedict; lesson:wordshk:62626#4; hk usage"
+  },
+  "把": {
+   "jp": "baa2",
+   "en": "measure word for things with handles; (moves the object before the verb)",
+   "src": "wordshk:40179,40180,102760; cedict; lesson:wordshk:102760#3; hk usage"
+  },
+  "排": {
+   "jp": "paai4",
+   "en": "row, line; to line up, to arrange",
+   "src": "wordshk:58047,58048,101664; cccanto; cedict; lesson:wordshk:58047#7; hk usage"
+  },
+  "爸爸": {
+   "jp": "baa4 baa1",
+   "en": "dad, father",
+   "src": "lesson:wordshk:120942#1; hk usage"
+  },
+  "犀利": {
+   "jp": "sai1 lei6",
+   "en": "awesome, amazing; formidable",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "緊要": {
+   "jp": "gan2 jiu3",
+   "en": "important; serious, (it) matters",
+   "src": "wordshk:72625; cedict; hk usage"
+  },
+  "聽講": {
+   "jp": "teng1 gong2",
+   "en": "I heard (that); reportedly",
+   "src": "wordshk:85856; cccanto; cedict; hk usage"
+  },
+  "關": {
+   "jp": "gwaan1",
+   "en": "to close, to turn off; to concern; customs (border)",
+   "src": "wordshk:100492; cccanto; cedict; hk usage"
+  },
+  "關係": {
+   "jp": "gwaan1 hai6",
+   "en": "relationship; connection; relevance",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "藥": {
+   "jp": "joek6",
+   "en": "medicine; drug",
+   "src": "wordshk:77640; cedict; lesson:wordshk:60507#4; hk usage"
+  },
+  "身體": {
+   "jp": "san1 tai2",
+   "en": "body; health",
+   "src": "wordshk:83151; cccanto; cedict; hk usage"
+  },
+  "苦": {
+   "jp": "fu2",
+   "en": "bitter; hard, tough",
+   "src": "wordshk:46466,46467; cedict; hk usage"
+  },
+  "辛苦": {
+   "jp": "san1 fu2",
+   "en": "hard, tiring; unwell, in discomfort",
+   "src": "wordshk:83156; cedict; lesson:wordshk:83156#2; hk usage"
+  },
+  "風": {
+   "jp": "fung1",
+   "en": "wind; typhoon; trend",
+   "src": "wordshk:71804,97232; cedict; lesson:wordshk:76773#8; hk usage"
+  },
+  "卡": {
+   "jp": "kaat1",
+   "en": "card",
+   "src": "wordshk:78321; hk usage"
+  },
+  "查": {
+   "jp": "caa4",
+   "en": "to check; to look up; to investigate",
+   "src": "wordshk:67102; cedict; hk usage"
+  },
+  "廳": {
+   "jp": "teng1",
+   "en": "living room; hall",
+   "src": "wordshk:85867; cedict; lesson:wordshk:85867#1; hk usage"
+  },
+  "餐廳": {
+   "jp": "caan1 teng1",
+   "en": "restaurant",
+   "src": "wordshk:67234; cedict; lesson:wordshk:57837#5; hk usage"
+  },
+  "份人": {
+   "jp": "fan6 jan4",
+   "en": "(one's) personality, as a person",
+   "src": "cccanto; lesson:wordshk:51047#6; hk usage"
+  },
+  "塔": {
+   "jp": "taap3",
+   "en": "tower; lock, padlock",
+   "src": "wordshk:61905,61906,85647; cedict; hk usage"
+  },
+  "大陸": {
+   "jp": "daai6 luk6",
+   "en": "mainland China; continent",
+   "src": "wordshk:69250; cccanto; cedict; hk usage"
+  },
+  "廿": {
+   "jp": "jaa6",
+   "en": "twenty",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "悶": {
+   "jp": "mun6",
+   "en": "boring; bored",
+   "src": "wordshk:57037,57038; cedict; hk usage"
+  },
+  "貓": {
+   "jp": "maau1",
+   "en": "cat",
+   "src": "wordshk:80235,94116; cedict; lesson:wordshk:88197#9; hk usage"
+  },
+  "頂": {
+   "jp": "ding2",
+   "en": "to stand, to bear (it); top; damn!",
+   "src": "wordshk:96750,96751; cccanto; cedict; hk usage"
+  },
+  "係噉": {
+   "jp": "hai6 gam2",
+   "en": "like this, that's it; nonstop, keep on (doing)",
+   "src": "wordshk:74716; cccanto; lesson:wordshk:47608#1; hk usage"
+  },
+  "做乜": {
+   "jp": "zou6 mat1",
+   "en": "why; what for",
+   "src": "wordshk:89226; cccanto; lesson:wordshk:97050#3; hk usage"
+  },
+  "嗰時": {
+   "jp": "go2 si4",
+   "en": "at that time; then",
+   "src": "cccanto; hk usage"
+  },
+  "揸": {
+   "jp": "zaa1",
+   "en": "to hold; to drive (a car)",
+   "src": "wordshk:87177; cccanto; hk usage"
+  },
+  "文化": {
+   "jp": "man4 faa3",
+   "en": "culture",
+   "src": "cedict; hk usage"
+  },
+  "西": {
+   "jp": "sai1",
+   "en": "west",
+   "src": "wordshk:9,114002,116796; cedict; hk usage"
+  },
+  "貨": {
+   "jp": "fo3",
+   "en": "goods",
+   "src": "cccanto; cedict; lesson:wordshk:13620#4; hk usage"
+  },
+  "仲係": {
+   "jp": "zung6 hai6",
+   "en": "still; still is",
+   "src": "cccanto; lesson:wordshk:76699#2; hk usage"
+  },
+  "仲未": {
+   "jp": "zung6 mei6",
+   "en": "not yet; still not",
+   "src": "cccanto; lesson:wordshk:72493#2; hk usage"
+  },
+  "結果": {
+   "jp": "git3 gwo2",
+   "en": "result; in the end, as a result",
+   "src": "wordshk:48323,48324; cccanto; cedict; hk usage"
+  },
+  "跳": {
+   "jp": "tiu3",
+   "en": "to jump; to skip; to beat (heart)",
+   "src": "wordshk:86086; cedict; hk usage"
+  },
+  "朝": {
+   "jp": "ziu1",
+   "en": "morning",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "朝早": {
+   "jp": "ziu1 zou2",
+   "en": "morning; in the morning",
+   "src": "wordshk:88786; cccanto; hk usage"
+  },
+  "座": {
+   "jp": "zo6",
+   "en": "measure word for buildings, mountains; seat",
+   "src": "wordshk:7809,107777,110690; cedict; hk usage"
+  },
+  "東": {
+   "jp": "dung1",
+   "en": "east",
+   "src": "wordshk:70501,110170; cccanto; cedict; lesson:wordshk:73294#1; hk usage"
+  },
+  "歷史": {
+   "jp": "lik6 si2",
+   "en": "history",
+   "src": "wordshk:79433; cedict; lesson:wordshk:79433#1; hk usage"
+  },
+  "畀人": {
+   "jp": "bei2 jan4",
+   "en": "by someone (passive); to give to others",
+   "src": "wordshk:108761; cccanto; hk usage"
+  },
+  "過去": {
+   "jp": "gwo3 heoi3",
+   "en": "to go over (there); (after a verb) over; the past",
+   "src": "cedict; hk usage"
+  },
+  "雨": {
+   "jp": "jyu5",
+   "en": "rain",
+   "src": "wordshk:78002; cedict; lesson:wordshk:55411#2; hk usage"
+  },
+  "另": {
+   "jp": "ling6",
+   "en": "another; separately",
+   "src": "cedict; hk usage"
+  },
+  "另外": {
+   "jp": "ling6 ngoi6",
+   "en": "besides; another, other; separately",
+   "src": "wordshk:55199,55200; cccanto; cedict; lesson:wordshk:55199#1; hk usage"
+  },
+  "醫": {
+   "jp": "ji1",
+   "en": "to treat, to cure",
+   "src": "wordshk:52279,52280; cedict; hk usage"
+  },
+  "醫生": {
+   "jp": "ji1 sang1",
+   "en": "doctor",
+   "src": "wordshk:76895; cedict; lesson:tatoeba:5221130; hk usage"
+  },
+  "報": {
+   "jp": "bou3",
+   "en": "to report; to sign up; newspaper",
+   "src": "wordshk:41307,41308; cccanto; cedict; hk usage"
+  },
+  "父母": {
+   "jp": "fu6 mou5",
+   "en": "parents",
+   "src": "wordshk:71625; cedict; hk usage"
+  },
+  "肯定": {
+   "jp": "hang2 ding6",
+   "en": "definitely; to be sure; to affirm",
+   "src": "wordshk:49981,49982,96472; cedict; lesson:wordshk:96472#2; hk usage"
+  },
+  "薄": {
+   "jp": "bok6",
+   "en": "thin",
+   "src": "wordshk:66766,99708; cccanto; cedict; hk usage"
+  },
+  "入去": {
+   "jp": "jap6 heoi3",
+   "en": "to go in; (after a verb) in",
+   "src": "wordshk:76325,122534; cccanto; lesson:wordshk:76325#2; hk usage"
+  },
+  "對於": {
+   "jp": "deoi3 jyu1",
+   "en": "regarding, as for",
+   "src": "cedict; hk usage"
+  },
+  "屋企人": {
+   "jp": "uk1 kei2 jan4",
+   "en": "family (members)",
+   "src": "wordshk:86534; lesson:wordshk:76362#2; hk usage"
+  },
+  "布": {
+   "jp": "bou3",
+   "en": "cloth",
+   "src": "wordshk:66877; cedict; hk usage"
+  },
+  "裏面": {
+   "jp": "leoi5 min6",
+   "en": "inside (more formal)",
+   "src": "cccanto; hk usage"
+  },
+  "阿爸": {
+   "jp": "aa3 baa4",
+   "en": "dad, father",
+   "src": "wordshk:13660; hk usage"
+  },
+  "住喺": {
+   "jp": "zyu6 hai2",
+   "en": "to live in, to live at",
+   "src": "cccanto; lesson:wordshk:11019#1; hk usage"
+  },
+  "同事": {
+   "jp": "tung4 si6",
+   "en": "colleague",
+   "src": "wordshk:86462; cccanto; cedict; hk usage"
+  },
+  "睇到": {
+   "jp": "tai2 dou2",
+   "en": "to see; to get to see",
+   "src": "lesson:wordshk:45131#4; hk usage"
+  },
+  "菜": {
+   "jp": "coi3",
+   "en": "vegetables; dish; cuisine",
+   "src": "wordshk:68537,98342,98603; cccanto; cedict; lesson:wordshk:40577#1; hk usage"
+  },
+  "返去": {
+   "jp": "faan1 heoi3",
+   "en": "to go back; to go home",
+   "src": "wordshk:70701; lesson:wordshk:70701#1; hk usage"
+  },
+  "家庭": {
+   "jp": "gaa1 ting4",
+   "en": "family; household",
+   "src": "wordshk:71978; cedict; hk usage"
+  },
+  "英國": {
+   "jp": "jing1 gwok3",
+   "en": "Britain, the UK",
+   "src": "wordshk:2674; lesson:wordshk:42629#3; hk usage"
+  },
+  "附近": {
+   "jp": "fu6 gan6",
+   "en": "nearby; neighbourhood",
+   "src": "wordshk:71640; cedict; hk usage"
+  },
+  "段": {
+   "jp": "dyun6",
+   "en": "measure word for a section, passage, period",
+   "src": "wordshk:45447,100464; cedict; hk usage"
+  },
+  "每日": {
+   "jp": "mui5 jat6",
+   "en": "every day",
+   "src": "wordshk:90165; cedict; lesson:wordshk:44171#4; hk usage"
+  },
+  "畢業": {
+   "jp": "bat1 jip6",
+   "en": "to graduate",
+   "src": "wordshk:40670; cedict; lesson:wordshk:77004#3; hk usage"
+  },
+  "落雨": {
+   "jp": "lok6 jyu5",
+   "en": "to rain",
+   "src": "wordshk:79741; cccanto; lesson:wordshk:40329#7; hk usage"
+  },
+  "警察": {
+   "jp": "ging2 caat3",
+   "en": "police; police officer",
+   "src": "wordshk:73187; cedict; lesson:tatoeba:6424015; hk usage"
+  },
+  "醫院": {
+   "jp": "ji1 jyun2",
+   "en": "hospital",
+   "src": "wordshk:76892; cedict; lesson:wordshk:47230#6; hk usage"
+  },
+  "撞": {
+   "jp": "zong6",
+   "en": "to bump into, to crash; to run into (meet); to clash (timing)",
+   "src": "wordshk:89147; cedict; hk usage"
+  },
+  "牌": {
+   "jp": "paai4",
+   "en": "sign, plate; licence; brand",
+   "src": "wordshk:100187; cccanto; cedict; lesson:wordshk:31742#12; hk usage"
+  },
+  "環境": {
+   "jp": "waan4 ging2",
+   "en": "environment; surroundings; circumstances",
+   "src": "cedict; hk usage"
+  },
+  "生意": {
+   "jp": "saang1 ji3",
+   "en": "business",
+   "src": "cedict; lesson:wordshk:104459#11; hk usage"
+  },
+  "舖": {
+   "jp": "pou3",
+   "en": "shop",
+   "src": "wordshk:32212; hk usage"
+  },
+  "動物": {
+   "jp": "dung6 mat6",
+   "en": "animal",
+   "src": "wordshk:70561; cedict; lesson:wordshk:82929#6; hk usage"
+  },
+  "有錢": {
+   "jp": "jau5 cin2",
+   "en": "rich",
+   "src": "wordshk:76697; cccanto; cedict; lesson:wordshk:76697#2; hk usage"
+  },
+  "滿": {
+   "jp": "mun5",
+   "en": "full; (of time) up, expired",
+   "src": "wordshk:81155,118622; cccanto; cedict; lesson:wordshk:81155#3; hk usage"
+  },
+  "男仔": {
+   "jp": "naam4 zai2",
+   "en": "boy; young man",
+   "src": "wordshk:81262; cccanto; hk usage"
+  },
+  "痛": {
+   "jp": "tung3",
+   "en": "painful, sore; pain; to hurt",
+   "src": "wordshk:62785; cccanto; cedict; lesson:wordshk:97033#1; hk usage"
+  },
+  "小學": {
+   "jp": "siu2 hok6",
+   "en": "primary school",
+   "src": "wordshk:84811,109123; cedict; hk usage"
+  },
+  "本身": {
+   "jp": "bun2 san1",
+   "en": "in itself; originally, to begin with",
+   "src": "cedict; hk usage"
+  },
+  "約": {
+   "jp": "joek3",
+   "en": "to arrange to meet; about, around (a number); appointment",
+   "src": "wordshk:53063,53064,96459; cedict; lesson:wordshk:53064#2; hk usage"
+  },
+  "諗住": {
+   "jp": "nam2 zyu6",
+   "en": "to plan to, to intend; thinking (that)",
+   "src": "wordshk:81344; lesson:wordshk:42064#2; hk usage"
+  },
+  "跌": {
+   "jp": "dit3",
+   "en": "to fall; to drop; to lose (an item)",
+   "src": "wordshk:70089; cedict; hk usage"
+  },
+  "點知": {
+   "jp": "dim2 zi1",
+   "en": "unexpectedly, who knew; how would (I) know?",
+   "src": "wordshk:69939; cccanto; hk usage"
+  },
+  "一陣": {
+   "jp": "jat1 zan6",
+   "en": "a while; in a moment, later",
+   "src": "cccanto; cedict; lesson:wordshk:51834#1; hk usage"
+  },
+  "其中": {
+   "jp": "kei4 zung1",
+   "en": "among them; one of",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "受到": {
+   "jp": "sau6 dou3",
+   "en": "to receive; to be (affected, praised)",
+   "src": "wordshk:83635; cedict; hk usage"
+  },
+  "壞": {
+   "jp": "waai6",
+   "en": "broken; bad; gone off",
+   "src": "wordshk:62980,62981; cccanto; cedict; lesson:wordshk:40329#5; hk usage"
+  },
+  "好睇": {
+   "jp": "hou2 tai2",
+   "en": "good-looking; nice to watch, interesting",
+   "src": "wordshk:75798; cedict; lesson:wordshk:40664#1; hk usage"
+  },
+  "殺": {
+   "jp": "saat3",
+   "en": "to kill",
+   "src": "wordshk:82845; cedict; hk usage"
+  },
+  "添": {
+   "jp": "tim1",
+   "en": "(end of sentence) as well, too; (end of sentence) unexpectedly, oops; to add",
+   "src": "wordshk:85925,85929; cccanto; cedict; lesson:wordshk:55411#8; hk usage"
+  },
+  "清": {
+   "jp": "cing1",
+   "en": "clear; (after a verb) clearly, fully; to clear (off)",
+   "src": "wordshk:42700,42701,100803; cccanto; cedict; lesson:wordshk:68442#4; hk usage"
+  },
+  "筆": {
+   "jp": "bat1",
+   "en": "pen; sum (of money)",
+   "src": "wordshk:40673,40674; cedict; lesson:wordshk:90172#1; hk usage"
+  },
+  "經過": {
+   "jp": "ging1 gwo3",
+   "en": "to pass by, to go through; process",
+   "src": "wordshk:73125; cccanto; cedict; hk usage"
+  },
+  "行為": {
+   "jp": "hang4 wai4",
+   "en": "behaviour, conduct",
+   "src": "wordshk:74797; cedict; hk usage"
+  },
+  "飛機": {
+   "jp": "fei1 gei1",
+   "en": "plane",
+   "src": "wordshk:71227; cedict; hk usage"
+  },
+  "執": {
+   "jp": "zap1",
+   "en": "to pick up; to tidy; (of a business) to close down",
+   "src": "wordshk:64092,64093,90261; cccanto; cedict; lesson:wordshk:64092#4; hk usage"
+  },
+  "得到": {
+   "jp": "dak1 dou2",
+   "en": "to get, to obtain",
+   "src": "hk usage"
+  },
+  "所謂": {
+   "jp": "so2 wai6",
+   "en": "so-called; what is called",
+   "src": "wordshk:84911; cedict; hk usage"
+  },
+  "等我": {
+   "jp": "dang2 ngo5",
+   "en": "let me; wait for me",
+   "src": "cccanto; lesson:wordshk:90301#14; hk usage"
+  },
+  "金": {
+   "jp": "gam1",
+   "en": "gold; money; metal",
+   "src": "wordshk:47533,72507,104221; cccanto; cedict; hk usage"
+  },
+  "靚仔": {
+   "jp": "leng3 zai2",
+   "en": "handsome; handsome young man; (to a young man) hey",
+   "src": "wordshk:54896,113858; cccanto; cedict; lesson:wordshk:113857#1; hk usage"
+  },
+  "靠": {
+   "jp": "kaau3",
+   "en": "to lean on; to rely on",
+   "src": "cedict; hk usage"
+  },
+  "音": {
+   "jp": "jam1",
+   "en": "sound; note (music)",
+   "src": "cedict; lesson:wordshk:55748#4; hk usage"
+  },
+  "音樂": {
+   "jp": "jam1 ngok6",
+   "en": "music",
+   "src": "cedict; lesson:wordshk:30885#2; hk usage"
+  },
+  "估": {
+   "jp": "gu2",
+   "en": "to guess; to expect, to think",
+   "src": "wordshk:73712; cedict; lesson:wordshk:73712#4; hk usage"
+  },
+  "出街": {
+   "jp": "ceot1 gaai1",
+   "en": "to go out; to be published, to go public",
+   "src": "wordshk:67790; cccanto; lesson:wordshk:55282#3; hk usage"
+  },
+  "命": {
+   "jp": "meng6",
+   "en": "life; fate",
+   "src": "wordshk:109668; lesson:wordshk:109668#7; hk usage"
+  },
+  "搬": {
+   "jp": "bun1",
+   "en": "to move (house); to carry",
+   "src": "wordshk:67009; cedict; hk usage"
+  },
+  "日子": {
+   "jp": "jat6 zi2",
+   "en": "day, date; days, life",
+   "src": "wordshk:76533; cedict; lesson:wordshk:103628#1; hk usage"
+  },
+  "派": {
+   "jp": "paai3",
+   "en": "to hand out; to send (someone)",
+   "src": "wordshk:90334; cccanto; cedict; lesson:wordshk:115415#4; hk usage"
+  },
+  "無論": {
+   "jp": "mou4 leon6",
+   "en": "no matter (what, how)",
+   "src": "wordshk:80912; cedict; hk usage"
+  },
+  "答": {
+   "jp": "daap3",
+   "en": "to answer",
+   "src": "wordshk:69447; cedict; lesson:wordshk:90763#12; hk usage"
+  },
+  "蛋": {
+   "jp": "daan2",
+   "en": "egg",
+   "src": "wordshk:17765; cedict; hk usage"
+  },
+  "非常": {
+   "jp": "fei1 soeng4",
+   "en": "very, extremely; unusual",
+   "src": "cedict; hk usage"
+  },
+  "作為": {
+   "jp": "zok3 wai4",
+   "en": "as (in the role of)",
+   "src": "wordshk:65834,65835; cedict; hk usage"
+  },
+  "健康": {
+   "jp": "gin6 hong1",
+   "en": "health; healthy",
+   "src": "cedict; lesson:wordshk:108104#1; hk usage"
+  },
+  "喺嗰度": {
+   "jp": "hai2 go2 dou6",
+   "en": "(be) over there",
+   "src": "cccanto; lesson:wordshk:73313#1; hk usage"
+  },
+  "尋日": {
+   "jp": "cam4 jat6",
+   "en": "yesterday",
+   "src": "cccanto; hk usage"
+  },
+  "方面": {
+   "jp": "fong1 min6",
+   "en": "aspect; side",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "求": {
+   "jp": "kau4",
+   "en": "to beg; to ask for, to seek",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "要求": {
+   "jp": "jiu1 kau4",
+   "en": "to request; requirement",
+   "src": "cedict; hk usage"
+  },
+  "前面": {
+   "jp": "cin4 min6",
+   "en": "front; in front; ahead",
+   "src": "wordshk:68082; cedict; lesson:wordshk:68082#1; hk usage"
+  },
+  "叻": {
+   "jp": "lek1",
+   "en": "clever, smart; good at",
+   "src": "wordshk:79292; hk usage"
+  },
+  "將會": {
+   "jp": "zoeng1 wui5",
+   "en": "will; going to",
+   "src": "wordshk:88911; hk usage"
+  },
+  "樓": {
+   "jp": "lau2",
+   "en": "flat, apartment; building; floor",
+   "src": "wordshk:28409; hk usage"
+  },
+  "船": {
+   "jp": "syun4",
+   "en": "boat, ship",
+   "src": "wordshk:85489; cedict; hk usage"
+  },
+  "蛋糕": {
+   "jp": "daan6 gou1",
+   "en": "cake",
+   "src": "wordshk:69435; cedict; lesson:wordshk:73098#2; hk usage"
+  },
+  "血": {
+   "jp": "hyut3",
+   "en": "blood",
+   "src": "wordshk:76012,117138; cedict; hk usage"
+  },
+  "遲": {
+   "jp": "ci4",
+   "en": "late",
+   "src": "wordshk:67960; cedict; lesson:wordshk:60565#10; hk usage"
+  },
+  "電視": {
+   "jp": "din6 si6",
+   "en": "TV",
+   "src": "wordshk:70003; cccanto; cedict; lesson:wordshk:90301#10; hk usage"
+  },
+  "安全": {
+   "jp": "on1 cyun4",
+   "en": "safe; safety",
+   "src": "wordshk:82030; cedict; hk usage"
+  },
+  "嬲": {
+   "jp": "nau1",
+   "en": "angry; to be angry with",
+   "src": "wordshk:81365,117194; lesson:wordshk:81365#4; hk usage"
+  },
+  "捉": {
+   "jp": "zuk1",
+   "en": "to catch, to grab; to play (chess)",
+   "src": "wordshk:89265; cedict; hk usage"
+  },
+  "故事": {
+   "jp": "gu3 si6",
+   "en": "story",
+   "src": "wordshk:73746; cedict; hk usage"
+  },
+  "照": {
+   "jp": "ziu3",
+   "en": "according to; to shine (a light) on; to x-ray, to look in (a mirror)",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "熟": {
+   "jp": "suk6",
+   "en": "cooked; ripe; familiar",
+   "src": "wordshk:85296; cedict; lesson:wordshk:85296#4; hk usage"
+  },
+  "生命": {
+   "jp": "sang1 ming6",
+   "en": "life",
+   "src": "wordshk:83269; cedict; hk usage"
+  },
+  "短": {
+   "jp": "dyun2",
+   "en": "short",
+   "src": "wordshk:70584,117207; cccanto; cedict; lesson:wordshk:70584#2; hk usage"
+  },
+  "究竟": {
+   "jp": "gau3 ging2",
+   "en": "(in a question) exactly, on earth",
+   "src": "wordshk:72720; cedict; lesson:wordshk:72720#3; hk usage"
+  },
+  "色": {
+   "jp": "sik1",
+   "en": "colour",
+   "src": "wordshk:84302; cccanto; cedict; hk usage"
+  },
+  "介紹": {
+   "jp": "gaai3 siu6",
+   "en": "to introduce; introduction",
+   "src": "wordshk:72118; cedict; hk usage"
+  },
+  "假": {
+   "jp": "gaa2",
+   "en": "fake, false",
+   "src": "cedict; hk usage"
+  },
+  "地球": {
+   "jp": "dei6 kau4",
+   "en": "the Earth",
+   "src": "wordshk:69796; cedict; hk usage"
+  },
+  "成績": {
+   "jp": "sing4 zik1",
+   "en": "grades, results",
+   "src": "wordshk:84632; cedict; lesson:wordshk:84632#1; hk usage"
+  },
+  "皮": {
+   "jp": "pei4",
+   "en": "skin; peel, wrapper",
+   "src": "wordshk:99410,99411; cccanto; cedict; hk usage"
+  },
+  "城市": {
+   "jp": "sing4 si5",
+   "en": "city",
+   "src": "wordshk:84647; cedict; hk usage"
+  },
+  "市民": {
+   "jp": "si5 man4",
+   "en": "citizens, residents",
+   "src": "wordshk:7952; cccanto; cedict; lesson:wordshk:7952#1; hk usage"
+  },
+  "信心": {
+   "jp": "seon3 sam1",
+   "en": "confidence",
+   "src": "cedict; hk usage"
+  },
+  "分別": {
+   "jp": "fan1 bit6",
+   "en": "difference; respectively, separately",
+   "src": "wordshk:45894; cedict; hk usage"
+  },
+  "意見": {
+   "jp": "ji3 gin3",
+   "en": "opinion; suggestion; objection",
+   "src": "cedict; lesson:wordshk:69183#3; hk usage"
+  },
+  "銀行": {
+   "jp": "ngan4 hong4",
+   "en": "bank",
+   "src": "cedict; lesson:wordshk:120371#4; hk usage"
+  },
+  "黃": {
+   "jp": "wong4",
+   "en": "yellow; (of a secret) to leak out",
+   "src": "wordshk:90123,95761,99401; cccanto; cedict; hk usage"
+  },
+  "一年": {
+   "jp": "jat1 nin4",
+   "en": "one year",
+   "src": "cccanto; hk usage"
+  },
+  "幫手": {
+   "jp": "bong1 sau2",
+   "en": "to help; helper",
+   "src": "wordshk:41174,41175; cccanto; lesson:wordshk:41164#1; hk usage"
+  },
+  "清楚": {
+   "jp": "cing1 co2",
+   "en": "clear; to understand clearly; clearly",
+   "src": "wordshk:42708,42709; cedict; hk usage"
+  },
+  "火車": {
+   "jp": "fo2 ce1",
+   "en": "train",
+   "src": "wordshk:71290,115772; cedict; lesson:wordshk:40264#6; hk usage"
+  },
+  "畀我": {
+   "jp": "bei2 ngo5",
+   "en": "give me; let me",
+   "src": "cccanto; hk usage"
+  },
+  "拜": {
+   "jp": "baai3",
+   "en": "to worship, to pay respects",
+   "src": "wordshk:40189; cccanto; cedict; hk usage"
+  },
+  "禮拜": {
+   "jp": "lai5 baai3",
+   "en": "week; Sunday; day of the week",
+   "src": "wordshk:79046; cccanto; cedict; lesson:wordshk:79046#13; hk usage"
+  },
+  "停": {
+   "jp": "ting4",
+   "en": "to stop; to park",
+   "src": "wordshk:86019; cedict; lesson:wordshk:86019#7; hk usage"
+  },
+  "危險": {
+   "jp": "ngai4 him2",
+   "en": "dangerous; danger",
+   "src": "cedict; hk usage"
+  },
+  "好彩": {
+   "jp": "hou2 coi2",
+   "en": "luckily; lucky",
+   "src": "wordshk:75768; cccanto; hk usage"
+  },
+  "探": {
+   "jp": "taam3",
+   "en": "to visit (someone); to explore",
+   "src": "wordshk:85585; cccanto; cedict; hk usage"
+  },
+  "款": {
+   "jp": "fun2",
+   "en": "style, model; kind; funds",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "紅": {
+   "jp": "hung4",
+   "en": "red; popular",
+   "src": "wordshk:75954,96198; cccanto; cedict; lesson:wordshk:57375#4; hk usage"
+  },
+  "能力": {
+   "jp": "nang4 lik6",
+   "en": "ability",
+   "src": "cedict; hk usage"
+  },
+  "裙": {
+   "jp": "kwan4",
+   "en": "skirt; dress",
+   "src": "cedict; lesson:wordshk:13630#1; hk usage"
+  },
+  "酒店": {
+   "jp": "zau2 dim3",
+   "en": "hotel",
+   "src": "cedict; lesson:wordshk:120371#3; hk usage"
+  },
+  "節": {
+   "jp": "zit3",
+   "en": "festival; measure word for sections (class period, train car)",
+   "src": "cedict; hk usage"
+  },
+  "節目": {
+   "jp": "zit3 muk6",
+   "en": "programme, show",
+   "src": "cccanto; cedict; lesson:wordshk:57037#1; hk usage"
+  },
+  "其他人": {
+   "jp": "kei4 taa1 jan4",
+   "en": "other people",
+   "src": "cccanto; hk usage"
+  },
+  "各": {
+   "jp": "gok3",
+   "en": "each; every",
+   "src": "wordshk:73394; cedict; hk usage"
+  },
+  "國際": {
+   "jp": "gwok3 zai3",
+   "en": "international",
+   "src": "wordshk:74384,104297; cedict; lesson:wordshk:74384#2; hk usage"
+  },
+  "方便": {
+   "jp": "fong1 bin6",
+   "en": "convenient",
+   "src": "cedict; hk usage"
+  },
+  "煮": {
+   "jp": "zyu2",
+   "en": "to cook; to boil",
+   "src": "wordshk:89602; cccanto; cedict; lesson:wordshk:55528#12; hk usage"
+  },
+  "生日": {
+   "jp": "saang1 jat6",
+   "en": "birthday",
+   "src": "wordshk:32504; cedict; lesson:wordshk:89216#9; hk usage"
+  },
+  "設計": {
+   "jp": "cit3 gai3",
+   "en": "design; to design",
+   "src": "wordshk:42868,42869,103255; cedict; hk usage"
+  },
+  "關於": {
+   "jp": "gwaan1 jyu1",
+   "en": "about, concerning",
+   "src": "wordshk:74100; cedict; hk usage"
+  },
+  "上次": {
+   "jp": "soeng6 ci3",
+   "en": "last time",
+   "src": "wordshk:85129; cedict; hk usage"
+  },
+  "人生": {
+   "jp": "jan4 sang1",
+   "en": "life (one's)",
+   "src": "wordshk:76245; cccanto; cedict; hk usage"
+  },
+  "呢排": {
+   "jp": "ni1 paai4",
+   "en": "lately, these days",
+   "src": "cccanto; lesson:wordshk:40812#3; hk usage"
+  },
+  "左": {
+   "jp": "zo2",
+   "en": "left",
+   "src": "wordshk:7990,13605,103869; cedict; lesson:wordshk:7990#12; hk usage"
+  },
+  "彈": {
+   "jp": "daan6",
+   "en": "to bounce; (slang) to complain, to criticise",
+   "src": "wordshk:44152; cccanto; cedict; lesson:wordshk:44152#1; hk usage"
+  },
+  "得閒": {
+   "jp": "dak1 haan4",
+   "en": "free (not busy)",
+   "src": "wordshk:69591; cccanto; lesson:wordshk:79603#1; hk usage"
+  },
+  "撳": {
+   "jp": "gam6",
+   "en": "to press; to withdraw (cash from an ATM)",
+   "src": "wordshk:72594; cccanto; lesson:wordshk:28762#8; hk usage"
+  },
+  "油": {
+   "jp": "jau4",
+   "en": "oil; fuel, petrol; to paint",
+   "src": "wordshk:25677,51964; cedict; lesson:wordshk:83424#32; hk usage"
+  },
+  "竟然": {
+   "jp": "ging2 jin4",
+   "en": "unexpectedly; actually (to one's surprise)",
+   "src": "wordshk:73168; cedict; hk usage"
+  },
+  "興": {
+   "jp": "hing1",
+   "en": "popular, in fashion",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "興趣": {
+   "jp": "hing3 ceoi3",
+   "en": "interest; hobby",
+   "src": "wordshk:75342; cedict; lesson:wordshk:61300#16; hk usage"
+  },
+  "解釋": {
+   "jp": "gaai2 sik1",
+   "en": "to explain; explanation",
+   "src": "cedict; lesson:wordshk:114493#15; hk usage"
+  },
+  "主要": {
+   "jp": "zyu2 jiu3",
+   "en": "main; mainly",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "做得": {
+   "jp": "zou6 dak1",
+   "en": "can do; doable, works",
+   "src": "cccanto; hk usage"
+  },
+  "價": {
+   "jp": "gaa3",
+   "en": "price",
+   "src": "cedict; lesson:wordshk:75532#2; hk usage"
+  },
+  "參加": {
+   "jp": "caam1 gaa1",
+   "en": "to take part in, to join",
+   "src": "cedict; lesson:wordshk:114493#12; hk usage"
+  },
+  "好少": {
+   "jp": "hou2 siu2",
+   "en": "rarely; very few, very little",
+   "src": "wordshk:89990,89992; cccanto; lesson:wordshk:61025#3; hk usage"
+  },
+  "抵": {
+   "jp": "dai2",
+   "en": "worth it, good value; to deserve (it); to put up with",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "指": {
+   "jp": "zi2",
+   "en": "to point (at, to); to refer to",
+   "src": "cedict; hk usage"
+  },
+  "渠": {
+   "jp": "keoi4",
+   "en": "drain, ditch",
+   "src": "wordshk:78571; cedict; hk usage"
+  },
+  "自由": {
+   "jp": "zi6 jau4",
+   "en": "freedom; free",
+   "src": "cedict; hk usage"
+  },
+  "接": {
+   "jp": "zip3",
+   "en": "to pick up (someone); to catch; to receive",
+   "src": "wordshk:88670,108098; cedict; lesson:wordshk:88676#1; hk usage"
+  },
+  "接受": {
+   "jp": "zip3 sau6",
+   "en": "to accept",
+   "src": "cedict; lesson:wordshk:38519#1; hk usage"
+  },
+  "人士": {
+   "jp": "jan4 si6",
+   "en": "people (formal), figures",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "報紙": {
+   "jp": "bou3 zi2",
+   "en": "newspaper",
+   "src": "wordshk:66920; cedict; lesson:wordshk:66920#3; hk usage"
+  },
+  "宗教": {
+   "jp": "zung1 gaau3",
+   "en": "religion",
+   "src": "cedict; hk usage"
+  },
+  "怕": {
+   "jp": "paa3",
+   "en": "to be afraid of; to worry that",
+   "src": "wordshk:82094; cccanto; cedict; lesson:wordshk:82094#2; hk usage"
+  },
+  "死咗": {
+   "jp": "sei2 zo2",
+   "en": "dead; died",
+   "src": "cccanto; lesson:wordshk:72807#7; hk usage"
+  },
+  "理由": {
+   "jp": "lei5 jau4",
+   "en": "reason",
+   "src": "cedict; hk usage"
+  },
+  "服": {
+   "jp": "fuk6",
+   "en": "to be convinced, to admire; to take (medicine); clothes",
+   "src": "wordshk:46691,114925,117459; cedict; lesson:wordshk:117459#1; hk usage"
+  },
+  "服務": {
+   "jp": "fuk6 mou6",
+   "en": "service; to serve",
+   "src": "cedict; hk usage"
+  },
+  "哎": {
+   "jp": "aai1",
+   "en": "ouch!; oh no!",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "客": {
+   "jp": "haak3",
+   "en": "customer; guest",
+   "src": "wordshk:74568,103761,110867; cccanto; cedict; hk usage"
+  },
+  "怪": {
+   "jp": "gwaai3",
+   "en": "strange, weird; to blame",
+   "src": "wordshk:49210,49211; cedict; lesson:wordshk:41011#2; hk usage"
+  },
+  "產品": {
+   "jp": "caan2 ban2",
+   "en": "product",
+   "src": "wordshk:67239; cedict; hk usage"
+  },
+  "申請": {
+   "jp": "san1 cing2",
+   "en": "to apply (for); application",
+   "src": "wordshk:59155,59156; cedict; lesson:wordshk:59156#1; hk usage"
+  },
+  "當時": {
+   "jp": "dong1 si4",
+   "en": "at that time",
+   "src": "wordshk:70264; cccanto; cedict; lesson:wordshk:70264#1; hk usage"
+  },
+  "睇吓": {
+   "jp": "tai2 haa5",
+   "en": "to have a look; let's see",
+   "src": "lesson:wordshk:85655#13; hk usage"
+  },
+  "紅色": {
+   "jp": "hung4 sik1",
+   "en": "red",
+   "src": "wordshk:3426; cedict; hk usage"
+  },
+  "能夠": {
+   "jp": "nang4 gau3",
+   "en": "to be able to, can",
+   "src": "cedict; hk usage"
+  },
+  "認": {
+   "jp": "jing6",
+   "en": "to admit; to recognise",
+   "src": "wordshk:77481; cedict; hk usage"
+  },
+  "認真": {
+   "jp": "jing6 zan1",
+   "en": "serious, earnest; seriously",
+   "src": "wordshk:77495; cedict; lesson:wordshk:77495#1; hk usage"
+  },
+  "認為": {
+   "jp": "jing6 wai4",
+   "en": "to think, to consider",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "運動": {
+   "jp": "wan6 dung6",
+   "en": "exercise, sport; (social) movement",
+   "src": "wordshk:86872; cedict; lesson:wordshk:13607#1; hk usage"
+  },
+  "遲到": {
+   "jp": "ci4 dou3",
+   "en": "to be late",
+   "src": "wordshk:67963; cedict; lesson:wordshk:63362#7; hk usage"
+  },
+  "中心": {
+   "jp": "zung1 sam1",
+   "en": "centre",
+   "src": "wordshk:89368,100499; cccanto; cedict; lesson:wordshk:89368#5; hk usage"
+  },
+  "之外": {
+   "jp": "zi1 ngoi6",
+   "en": "besides, apart from; outside",
+   "src": "wordshk:87921; cedict; lesson:wordshk:87921#1; hk usage"
+  },
+  "今朝": {
+   "jp": "gam1 ziu1",
+   "en": "this morning",
+   "src": "wordshk:72505; cccanto; cedict; lesson:wordshk:67963#3; hk usage"
+  },
+  "係咩": {
+   "jp": "hai6 me1",
+   "en": "really? (surprise); is what...?",
+   "src": "cccanto; lesson:wordshk:30885#3; hk usage"
+  },
+  "喺呢度": {
+   "jp": "hai2 ni1 dou6",
+   "en": "(be) here",
+   "src": "cccanto; hk usage"
+  },
+  "嚟嘅": {
+   "jp": "lai4 ge3",
+   "en": "(end of sentence) says what something is",
+   "src": "cccanto; hk usage"
+  },
+  "嚴重": {
+   "jp": "jim4 zung6",
+   "en": "serious, severe",
+   "src": "cedict; hk usage"
+  },
+  "嚿": {
+   "jp": "gau6",
+   "en": "lump, chunk; (slang) a hundred dollars",
+   "src": "wordshk:72774; cccanto; hk usage"
+  },
+  "存在": {
+   "jp": "cyun4 zoi6",
+   "en": "to exist; existence",
+   "src": "wordshk:68968; cedict; hk usage"
+  },
+  "市場": {
+   "jp": "si5 coeng4",
+   "en": "market",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "慢": {
+   "jp": "maan6",
+   "en": "slow",
+   "src": "wordshk:80206; cccanto; cedict; lesson:wordshk:47608#12; hk usage"
+  },
+  "某": {
+   "jp": "mau5",
+   "en": "a certain (person, thing)",
+   "src": "cedict; hk usage"
+  },
+  "簡單": {
+   "jp": "gaan2 daan1",
+   "en": "simple",
+   "src": "cedict; lesson:wordshk:115195#1; hk usage"
+  },
+  "聖誕": {
+   "jp": "sing3 daan3",
+   "en": "Christmas",
+   "src": "wordshk:84587; hk usage"
+  },
+  "舖頭": {
+   "jp": "pou3 tau2",
+   "en": "shop",
+   "src": "wordshk:82549; cccanto; lesson:wordshk:120371#1; hk usage"
+  },
+  "冇乜": {
+   "jp": "mou5 mat1",
+   "en": "not much; nothing much; not very",
+   "src": "wordshk:80918; cccanto; lesson:wordshk:65834#1; hk usage"
+  },
+  "就嚟": {
+   "jp": "zau6 lai4",
+   "en": "soon, about to; (I'm) coming",
+   "src": "lesson:wordshk:108970#2; hk usage"
+  },
+  "尾": {
+   "jp": "mei5",
+   "en": "tail; end",
+   "src": "wordshk:56312; cccanto; cedict; lesson:wordshk:65635#18; hk usage"
+  },
+  "拖": {
+   "jp": "to1",
+   "en": "to drag, to pull; to delay; to hold (hands)",
+   "src": "cedict; lesson:wordshk:82147#2; hk usage"
+  },
+  "爆": {
+   "jp": "baau3",
+   "en": "to burst, to explode; full, packed; to reveal (a secret)",
+   "src": "wordshk:40366,40367,101969; cccanto; cedict; lesson:wordshk:40366#4; hk usage"
+  },
+  "現實": {
+   "jp": "jin6 sat6",
+   "en": "reality; realistic, materialistic",
+   "src": "wordshk:52754,52755; cedict; lesson:wordshk:52754#1; hk usage"
+  },
+  "當然": {
+   "jp": "dong1 jin4",
+   "en": "of course",
+   "src": "wordshk:103915,112805; cccanto; cedict; hk usage"
+  },
+  "而係": {
+   "jp": "ji4 hai6",
+   "en": "but rather",
+   "src": "cccanto; hk usage"
+  },
+  "自然": {
+   "jp": "zi6 jin4",
+   "en": "naturally; natural; nature",
+   "src": "wordshk:64853,64854,111023; cedict; hk usage"
+  },
+  "遊戲": {
+   "jp": "jau4 hei3",
+   "en": "game",
+   "src": "wordshk:76668; cedict; lesson:wordshk:75510#1; hk usage"
+  },
+  "大約": {
+   "jp": "daai6 joek3",
+   "en": "about, roughly",
+   "src": "wordshk:69233; cccanto; cedict; lesson:wordshk:53063#1; hk usage"
+  },
+  "權": {
+   "jp": "kyun4",
+   "en": "power; right(s)",
+   "src": "cedict; hk usage"
+  },
+  "歡迎": {
+   "jp": "fun1 jing4",
+   "en": "welcome; to welcome",
+   "src": "cedict; hk usage"
+  },
+  "爛": {
+   "jp": "laan6",
+   "en": "broken, torn; rotten; bad (quality)",
+   "src": "wordshk:78956,97022,97025; cccanto; cedict; hk usage"
+  },
+  "生物": {
+   "jp": "sang1 mat6",
+   "en": "living things; biology",
+   "src": "wordshk:83268; cedict; lesson:wordshk:89510#2; hk usage"
+  },
+  "鞋": {
+   "jp": "haai4",
+   "en": "shoe(s)",
+   "src": "wordshk:74543; cedict; lesson:wordshk:76362#1; hk usage"
+  },
+  "女朋友": {
+   "jp": "neoi5 pang4 jau5",
+   "en": "girlfriend",
+   "src": "wordshk:81403; cedict; lesson:wordshk:81403#1; hk usage"
+  },
+  "打電話": {
+   "jp": "daa2 din6 waa2",
+   "en": "to make a phone call",
+   "src": "wordshk:69029; cedict; lesson:wordshk:73977#3; hk usage"
+  },
+  "政治": {
+   "jp": "zing3 zi6",
+   "en": "politics; political",
+   "src": "cedict; lesson:wordshk:89368#3; hk usage"
+  },
+  "一日": {
+   "jp": "jat1 jat6",
+   "en": "one day, a day; all the fault of (blaming)",
+   "src": "wordshk:90789,114359; cccanto; hk usage"
+  },
+  "亂": {
+   "jp": "lyun6",
+   "en": "messy, in a mess; randomly, carelessly",
+   "src": "wordshk:91209; cedict; lesson:wordshk:87041#1; hk usage"
+  },
+  "唱歌": {
+   "jp": "coeng3 go1",
+   "en": "to sing",
+   "src": "wordshk:68444; cedict; lesson:wordshk:62145#1; hk usage"
+  },
+  "寄": {
+   "jp": "gei3",
+   "en": "to send, to post (mail)",
+   "src": "wordshk:72874,100324; cedict; lesson:wordshk:72874#3; hk usage"
+  },
+  "層": {
+   "jp": "cang4",
+   "en": "floor, storey; layer; a flat (measure word)",
+   "src": "wordshk:41955; cccanto; cedict; lesson:wordshk:69435#3; hk usage"
+  },
+  "忙": {
+   "jp": "mong4",
+   "en": "busy",
+   "src": "wordshk:56633; cedict; lesson:wordshk:30887#1; hk usage"
+  },
+  "然之後": {
+   "jp": "jin4 zi1 hau6",
+   "en": "and then; after that",
+   "src": "wordshk:77293; cccanto; hk usage"
+  },
+  "盡": {
+   "jp": "zeon6",
+   "en": "to do one's utmost; all the way, to the limit",
+   "src": "cedict; lesson:wordshk:87908#3; hk usage"
+  },
+  "細路仔": {
+   "jp": "sai3 lou6 zai2",
+   "en": "child, kid; little boy",
+   "src": "cccanto; hk usage"
+  },
+  "考慮": {
+   "jp": "haau2 leoi6",
+   "en": "to consider",
+   "src": "wordshk:74673; cccanto; cedict; lesson:wordshk:110718#5; hk usage"
+  },
+  "負責": {
+   "jp": "fu6 zaak3",
+   "en": "to be in charge of, responsible for",
+   "src": "cedict; lesson:wordshk:70700#3; hk usage"
+  },
+  "醒": {
+   "jp": "seng2",
+   "en": "to wake up; to sober up; to realise",
+   "src": "wordshk:34374; lesson:wordshk:34374#2; hk usage"
+  },
+  "食物": {
+   "jp": "sik6 mat6",
+   "en": "food",
+   "src": "wordshk:84383; cedict; lesson:wordshk:84383#3; hk usage"
+  },
+  "提": {
+   "jp": "tai4",
+   "en": "to mention; to remind",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "提供": {
+   "jp": "tai4 gung1",
+   "en": "to provide",
+   "src": "cedict; hk usage"
+  },
+  "一般": {
+   "jp": "jat1 bun1",
+   "en": "ordinary, so-so; generally",
+   "src": "cedict; lesson:wordshk:76359#1; hk usage"
+  },
+  "出名": {
+   "jp": "ceot1 meng2",
+   "en": "famous",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "咯": {
+   "jp": "lok3",
+   "en": "(end of sentence) as I said; stating it plainly",
+   "src": "wordshk:79727; lesson:wordshk:79727#5; hk usage"
+  },
+  "嘿": {
+   "jp": "hei1",
+   "en": "hey",
+   "src": "cedict; hk usage"
+  },
+  "團": {
+   "jp": "tyun4",
+   "en": "group, tour group; ball, lump",
+   "src": "cedict; hk usage"
+  },
+  "廁所": {
+   "jp": "ci3 so2",
+   "en": "toilet",
+   "src": "wordshk:67909; cedict; lesson:wordshk:40874#2; hk usage"
+  },
+  "扮": {
+   "jp": "baan6",
+   "en": "to pretend; to dress up as",
+   "src": "wordshk:40301; cccanto; cedict; hk usage"
+  },
+  "搞笑": {
+   "jp": "gaau2 siu3",
+   "en": "funny; ridiculous",
+   "src": "wordshk:72390; cccanto; cedict; hk usage"
+  },
+  "放棄": {
+   "jp": "fong3 hei3",
+   "en": "to give up",
+   "src": "wordshk:71443; cccanto; cedict; lesson:wordshk:61261#1; hk usage"
+  },
+  "星期": {
+   "jp": "sing1 kei4",
+   "en": "week; day of the week",
+   "src": "wordshk:60668; cedict; lesson:wordshk:60668#3; hk usage"
+  },
+  "望住": {
+   "jp": "mong6 zyu6",
+   "en": "to look at, to watch; to keep an eye on",
+   "src": "cccanto; lesson:wordshk:80827#5; hk usage"
+  },
+  "牛": {
+   "jp": "ngau4",
+   "en": "cow, ox; beef (in dishes); stubborn",
+   "src": "wordshk:81630,100488; cccanto; cedict; hk usage"
+  },
+  "租": {
+   "jp": "zou1",
+   "en": "to rent; rent",
+   "src": "wordshk:65916,65917; cedict; lesson:wordshk:65916#5; hk usage"
+  },
+  "面前": {
+   "jp": "min6 cin4",
+   "en": "in front of",
+   "src": "cedict; hk usage"
+  },
+  "任": {
+   "jp": "jam6",
+   "en": "as much as you like, freely; term (of office)",
+   "src": "cedict; hk usage"
+  },
+  "任何": {
+   "jp": "jam6 ho4",
+   "en": "any",
+   "src": "wordshk:76105; cedict; hk usage"
+  },
+  "準": {
+   "jp": "zeon2",
+   "en": "accurate; on time, punctual",
+   "src": "wordshk:64451,64452; cedict; lesson:wordshk:89433#6; hk usage"
+  },
+  "準備": {
+   "jp": "zeon2 bei6",
+   "en": "to prepare; preparation",
+   "src": "wordshk:64453,64454; cccanto; cedict; lesson:tatoeba:2479074; hk usage"
+  },
+  "嗌": {
+   "jp": "aai3",
+   "en": "to shout; to call (someone); to order (food)",
+   "src": "wordshk:13684; hk usage"
+  },
+  "意外": {
+   "jp": "ji3 ngoi6",
+   "en": "accident; unexpected",
+   "src": "wordshk:52319,52320; cedict; hk usage"
+  },
+  "戰爭": {
+   "jp": "zin3 zang1",
+   "en": "war",
+   "src": "cedict; hk usage"
+  },
+  "教育": {
+   "jp": "gaau3 juk6",
+   "en": "education; to educate",
+   "src": "wordshk:47422,47423; cedict; lesson:wordshk:47422#1; hk usage"
+  },
+  "曬": {
+   "jp": "saai3",
+   "en": "to dry in the sun; to show off; (after a verb) all, completely",
+   "src": "wordshk:58713,58714,58715; cccanto; cedict; hk usage"
+  },
+  "溫": {
+   "jp": "wan1",
+   "en": "to revise (for exams); warm",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "窗": {
+   "jp": "coeng1",
+   "en": "window",
+   "src": "wordshk:68408; cedict; lesson:tatoeba:757756; hk usage"
+  },
+  "黑色": {
+   "jp": "hak1 sik1",
+   "en": "black",
+   "src": "cedict; hk usage"
+  },
+  "公園": {
+   "jp": "gung1 jyun2",
+   "en": "park",
+   "src": "wordshk:89945; cedict; lesson:wordshk:4486#1; hk usage"
+  },
+  "做到": {
+   "jp": "zou6 dou3",
+   "en": "to manage to do, to achieve",
+   "src": "cedict; lesson:wordshk:90673#2; hk usage"
+  },
+  "型": {
+   "jp": "jing4",
+   "en": "stylish, cool; type, model",
+   "src": "wordshk:52881,52882; cccanto; cedict; hk usage"
+  },
+  "太空": {
+   "jp": "taai3 hung1",
+   "en": "outer space",
+   "src": "wordshk:85551; cccanto; cedict; hk usage"
+  },
+  "局": {
+   "jp": "guk6",
+   "en": "gathering, night out; round, game; bureau",
+   "src": "wordshk:97010,110598,110902; cedict; lesson:wordshk:110903#13; hk usage"
+  },
+  "後來": {
+   "jp": "hau6 loi4",
+   "en": "later, afterwards",
+   "src": "cedict; hk usage"
+  },
+  "星期日": {
+   "jp": "sing1 kei4 jat6",
+   "en": "Sunday",
+   "src": "wordshk:84513; lesson:tatoeba:593156; hk usage"
+  },
+  "未來": {
+   "jp": "mei6 loi4",
+   "en": "future",
+   "src": "wordshk:56358; cedict; lesson:wordshk:56358#1; hk usage"
+  },
+  "留意": {
+   "jp": "lau4 ji3",
+   "en": "to pay attention to; to notice",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "舒服": {
+   "jp": "syu1 fuk6",
+   "en": "comfortable; feeling well",
+   "src": "cedict; hk usage"
+  },
+  "詞": {
+   "jp": "ci4",
+   "en": "word, term; lyrics",
+   "src": "wordshk:67933,100102; hk usage"
+  },
+  "除": {
+   "jp": "ceoi4",
+   "en": "to take off (clothes); to remove",
+   "src": "wordshk:42203,42204,100772; cccanto; cedict; hk usage"
+  },
+  "除咗": {
+   "jp": "ceoi4 zo2",
+   "en": "apart from; except",
+   "src": "wordshk:67700; cccanto; lesson:wordshk:67696#1; hk usage"
+  },
+  "隔籬": {
+   "jp": "gaak3 lei4",
+   "en": "next door; next to",
+   "src": "wordshk:13594; cccanto; lesson:wordshk:13594#5; hk usage"
+  },
+  "電子": {
+   "jp": "din6 zi2",
+   "en": "electronic; electron",
+   "src": "wordshk:44808,44809; cedict; lesson:wordshk:44809#4; hk usage"
+  },
+  "鬧": {
+   "jp": "naau6",
+   "en": "to scold; to tell off",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "煩": {
+   "jp": "faan4",
+   "en": "annoying; worried, fed up",
+   "src": "cedict; lesson:wordshk:74759#3; hk usage"
+  },
+  "麻煩": {
+   "jp": "maa4 faan4",
+   "en": "troublesome, annoying; trouble; to bother (someone)",
+   "src": "wordshk:55815,55816; cedict; lesson:wordshk:76697#1; hk usage"
+  },
+  "係唔係": {
+   "jp": "hai6 m4 hai6",
+   "en": "is it...?; whether or not",
+   "src": "wordshk:89962; cccanto; lesson:wordshk:13545#3; hk usage"
+  },
+  "原因": {
+   "jp": "jyun4 jan1",
+   "en": "reason, cause",
+   "src": "cedict; hk usage"
+  },
+  "幾日": {
+   "jp": "gei2 jat6",
+   "en": "a few days; how many days?",
+   "src": "cccanto; lesson:wordshk:87795#1; hk usage"
+  },
+  "態度": {
+   "jp": "taai3 dou6",
+   "en": "attitude",
+   "src": "wordshk:85570; cedict; lesson:wordshk:85570#1; hk usage"
+  },
+  "案": {
+   "jp": "on3",
+   "en": "case (legal, police)",
+   "src": "wordshk:82074,110948; cccanto; cedict; hk usage"
+  },
+  "法國": {
+   "jp": "faat3 gwok3",
+   "en": "France",
+   "src": "wordshk:5327; hk usage"
+  },
+  "燕麥": {
+   "jp": "jin3 mak6",
+   "en": "oats",
+   "src": "cedict; hk usage"
+  },
+  "瞓覺": {
+   "jp": "fan3 gaau3",
+   "en": "to sleep; to go to bed",
+   "src": "wordshk:13609; cccanto; lesson:wordshk:83928#1; hk usage"
+  },
+  "落嚟": {
+   "jp": "lok6 lai4",
+   "en": "to come down; (after a verb) down",
+   "src": "cccanto; hk usage"
+  },
+  "適合": {
+   "jp": "sik1 hap6",
+   "en": "suitable; to suit",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "遮": {
+   "jp": "ze1",
+   "en": "umbrella; to cover, to block",
+   "src": "wordshk:64255,64256; cccanto; cedict; lesson:wordshk:64256#3; hk usage"
+  },
+  "郁": {
+   "jp": "juk1",
+   "en": "to move; to touch, to mess with; to beat up",
+   "src": "wordshk:77751; cccanto; lesson:wordshk:77751#1; hk usage"
+  },
+  "離開": {
+   "jp": "lei4 hoi1",
+   "en": "to leave",
+   "src": "wordshk:79233; cccanto; cedict; lesson:wordshk:79233#5; hk usage"
+  },
+  "㗎啦": {
+   "jp": "gaa3 laa1",
+   "en": "(end of sentence) insisting: of course it is",
+   "src": "cccanto; lesson:wordshk:100000#19; hk usage"
+  },
+  "下晝": {
+   "jp": "haa6 zau3",
+   "en": "afternoon",
+   "src": "wordshk:74522; cccanto; hk usage"
+  },
+  "乜都": {
+   "jp": "mat1 dou1",
+   "en": "anything, everything; (with a negative) nothing",
+   "src": "lesson:wordshk:45131#3; hk usage"
+  },
+  "印": {
+   "jp": "jan3",
+   "en": "to print; print, stamp",
+   "src": "cedict; hk usage"
+  },
+  "唔少": {
+   "jp": "m4 siu2",
+   "en": "quite a lot; not a few",
+   "src": "cccanto; hk usage"
+  },
+  "嗰樣": {
+   "jp": "go2 joeng6",
+   "en": "that kind; that thing",
+   "src": "cccanto; lesson:wordshk:81227#5; hk usage"
+  },
+  "佬": {
+   "jp": "lou2",
+   "en": "guy, man",
+   "src": "wordshk:79791,104730; cedict; lesson:wordshk:87625#1; hk usage"
+  },
+  "大佬": {
+   "jp": "daai6 lou2",
+   "en": "elder brother; boss, gang leader; (exasperated) man!, dude",
+   "src": "wordshk:69249; cccanto; cedict; hk usage"
+  },
+  "廣東話": {
+   "jp": "gwong2 dung1 waa2",
+   "en": "Cantonese (language)",
+   "src": "wordshk:74422; lesson:wordshk:61300#17; hk usage"
+  },
+  "強": {
+   "jp": "koeng4",
+   "en": "strong",
+   "src": "wordshk:54169; cccanto; cedict; hk usage"
+  },
+  "改變": {
+   "jp": "goi2 bin3",
+   "en": "to change; change",
+   "src": "wordshk:73365; cedict; hk usage"
+  },
+  "放假": {
+   "jp": "fong3 gaa3",
+   "en": "to have a holiday, a day off",
+   "src": "wordshk:71437; cccanto; cedict; lesson:wordshk:13548#2; hk usage"
+  },
+  "照顧": {
+   "jp": "ziu3 gu3",
+   "en": "to take care of",
+   "src": "cedict; hk usage"
+  },
+  "畀佢": {
+   "jp": "bei2 keoi5",
+   "en": "give (him, her); let (him, her); by (him, her)",
+   "src": "hk usage"
+  },
+  "睇下": {
+   "jp": "tai2 haa5",
+   "en": "to have a look; let's see",
+   "src": "lesson:wordshk:23204#1; hk usage"
+  },
+  "睇落": {
+   "jp": "tai2 lok6",
+   "en": "looks like; seems",
+   "src": "cccanto; hk usage"
+  },
+  "科學": {
+   "jp": "fo1 hok6",
+   "en": "science; scientific",
+   "src": "wordshk:71280,97687; cedict; lesson:wordshk:24555#1; hk usage"
+  },
+  "講真": {
+   "jp": "gong2 zan1",
+   "en": "honestly; to tell the truth",
+   "src": "cccanto; hk usage"
+  },
+  "都可以": {
+   "jp": "dou1 ho2 ji5",
+   "en": "either is fine; can (do) too",
+   "src": "cccanto; hk usage"
+  },
+  "吸引": {
+   "jp": "kap1 jan5",
+   "en": "to attract; attractive",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "咬": {
+   "jp": "ngaau5",
+   "en": "to bite",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "天主教": {
+   "jp": "tin1 zyu2 gaau3",
+   "en": "Catholicism; Catholic",
+   "src": "wordshk:85998; lesson:wordshk:85998#1; hk usage"
+  },
+  "太陽": {
+   "jp": "taai3 joeng4",
+   "en": "sun",
+   "src": "wordshk:85555; cedict; lesson:wordshk:9#1; hk usage"
+  },
+  "好玩": {
+   "jp": "hou2 waan2",
+   "en": "fun",
+   "src": "wordshk:75803; cedict; hk usage"
+  },
+  "宇宙": {
+   "jp": "jyu5 zau6",
+   "en": "universe",
+   "src": "cedict; hk usage"
+  },
+  "代": {
+   "jp": "doi6",
+   "en": "generation; to do for, on behalf of",
+   "src": "wordshk:45012,45013,122362; cedict; lesson:wordshk:52398#9; hk usage"
+  },
+  "年代": {
+   "jp": "nin4 doi6",
+   "en": "decade (the sixties, eighties); era",
+   "src": "cedict; hk usage"
+  },
+  "廠": {
+   "jp": "cong2",
+   "en": "factory",
+   "src": "cedict; hk usage"
+  },
+  "數學": {
+   "jp": "sou3 hok6",
+   "en": "maths",
+   "src": "wordshk:85257; cedict; lesson:wordshk:40716#1; hk usage"
+  },
+  "時代": {
+   "jp": "si4 doi6",
+   "en": "era, times",
+   "src": "wordshk:84177; cedict; lesson:wordshk:84177#11; hk usage"
+  },
+  "未必": {
+   "jp": "mei6 bit1",
+   "en": "not necessarily",
+   "src": "wordshk:80548; cedict; hk usage"
+  },
+  "男朋友": {
+   "jp": "naam4 pang4 jau5",
+   "en": "boyfriend",
+   "src": "wordshk:81256; cedict; lesson:wordshk:81256#1; hk usage"
+  },
+  "碗": {
+   "jp": "wun2",
+   "en": "bowl",
+   "src": "wordshk:63603,63604; cedict; lesson:wordshk:44430#2; hk usage"
+  },
+  "突然": {
+   "jp": "dat6 jin4",
+   "en": "suddenly; sudden",
+   "src": "wordshk:44468,44469; cccanto; cedict; lesson:wordshk:44468#1; hk usage"
+  },
+  "身上": {
+   "jp": "san1 soeng6",
+   "en": "on (one's) body; on (someone), with (one)",
+   "src": "cedict; lesson:wordshk:115449#3; hk usage"
+  },
+  "追": {
+   "jp": "zeoi1",
+   "en": "to chase; to catch up; to court (someone)",
+   "src": "cedict; hk usage"
+  },
+  "集": {
+   "jp": "zaap6",
+   "en": "episode; volume",
+   "src": "wordshk:63789,108818,110230; cccanto; cedict; hk usage"
+  },
+  "上去": {
+   "jp": "soeng5 heoi3",
+   "en": "to go up; to go (up) to mainland China",
+   "src": "wordshk:85097; cedict; lesson:wordshk:85097#2; hk usage"
+  },
+  "傳統": {
+   "jp": "cyun4 tung2",
+   "en": "tradition; traditional",
+   "src": "cccanto; cedict; hk usage"
+  },
+  "合作": {
+   "jp": "hap6 zok3",
+   "en": "to cooperate",
+   "src": "wordshk:74867; cedict; lesson:wordshk:49880#15; hk usage"
+  },
+  "員工": {
+   "jp": "jyun4 gung1",
+   "en": "staff, employee",
+   "src": "cedict; lesson:wordshk:73888#2; hk usage"
+  },
+  "地下": {
+   "jp": "dei6 haa2",
+   "en": "floor, ground; ground floor",
+   "src": "wordshk:44549; lesson:wordshk:44550#4; hk usage"
+  },
+  "多數": {
+   "jp": "do1 sou3",
+   "en": "mostly; probably; majority",
+   "src": "wordshk:44989,44990; cedict; lesson:wordshk:44989#1; hk usage"
+  },
+  "始終": {
+   "jp": "ci2 zung1",
+   "en": "after all, in the end; all along",
+   "src": "wordshk:67883; cedict; hk usage"
+  },
+  "家姐": {
+   "jp": "gaa1 ze1",
+   "en": "elder sister",
+   "src": "wordshk:90617; cedict; lesson:wordshk:101883#1; hk usage"
+  },
+  "幾好": {
+   "jp": "gei2 hou2",
+   "en": "quite good, pretty good",
+   "src": "cccanto; lesson:wordshk:40131#15; hk usage"
+  },
+  "根據": {
+   "jp": "gan1 geoi3",
+   "en": "according to; basis",
+   "src": "wordshk:47634,47635; cedict; lesson:wordshk:47635#1; hk usage"
+  },
+  "毛": {
+   "jp": "mou4",
+   "en": "hair (body), fur; feather",
+   "src": "wordshk:56674,98335,100473; cccanto; cedict; lesson:wordshk:56674#3; hk usage"
+  },
+  "病人": {
+   "jp": "beng6 jan4",
+   "en": "patient",
+   "src": "wordshk:40820; cedict; lesson:wordshk:42700#3; hk usage"
+  },
+  "科幻": {
+   "jp": "fo1 waan6",
+   "en": "science fiction",
+   "src": "wordshk:71283; cedict; hk usage"
+  },
+  "總之": {
+   "jp": "zung2 zi1",
+   "en": "anyway; in short",
+   "src": "wordshk:89446; cedict; lesson:wordshk:89446#1; hk usage"
+  },
+  "精": {
+   "jp": "zing1",
+   "en": "smart, shrewd; essence",
+   "src": "wordshk:65179,97715,102325; cedict; hk usage"
+  },
+  "精神": {
+   "jp": "zing1 san4",
+   "en": "energetic, lively; spirit",
+   "src": "wordshk:65205,65206; cedict; lesson:wordshk:65206#4; hk usage"
+  },
+  "似乎": {
+   "jp": "ci5 fu4",
+   "en": "seemingly; it seems",
+   "src": "wordshk:67981; cedict; hk usage"
+  },
+  "圍": {
+   "jp": "wai4",
+   "en": "to surround; to wrap around (a scarf)",
+   "src": "wordshk:63141,63142,109489; cccanto; cedict; lesson:wordshk:109489#4; hk usage"
+  },
+  "周圍": {
+   "jp": "zau1 wai4",
+   "en": "around; everywhere",
+   "src": "wordshk:87596; cedict; lesson:wordshk:87596#3; hk usage"
+  },
+  "嘢食": {
+   "jp": "je5 sik6",
+   "en": "food",
+   "src": "wordshk:76812; cccanto; lesson:wordshk:70524#4; hk usage"
+  },
+  "媽咪": {
+   "jp": "maa1 mi4",
+   "en": "mummy",
+   "src": "cedict; hk usage"
+  },
+  "幫助": {
+   "jp": "bong1 zo6",
+   "en": "to help; help",
+   "src": "wordshk:66785; cedict; lesson:wordshk:66785#1; hk usage"
+  },
+  "廟": {
+   "jp": "miu2",
+   "en": "temple",
+   "src": "wordshk:30204; hk usage"
+  },
+  "手機": {
+   "jp": "sau2 gei1",
+   "en": "mobile phone",
+   "src": "wordshk:83516; cedict; lesson:wordshk:90086#2; hk usage"
+  },
+  "澳洲": {
+   "jp": "ou3 zau1",
+   "en": "Australia",
+   "src": "wordshk:82089; hk usage"
+  },
+  "管": {
+   "jp": "gun2",
+   "en": "to manage, to be in charge of; to discipline; to care (about)",
+   "src": "wordshk:73831,104686; cccanto; cedict; lesson:wordshk:73831#4; hk usage"
+  },
+  "索": {
+   "jp": "sok3",
+   "en": "(slang) sexy, hot; to soak up; to sniff",
+   "src": "wordshk:32384,91310; lesson:wordshk:101969#2; hk usage"
+  },
+  "變成": {
+   "jp": "bin3 sing4",
+   "en": "to become, to turn into",
+   "src": "wordshk:40920; cedict; hk usage"
+  },
+  "兄弟": {
+   "jp": "hing1 dai6",
+   "en": "brothers; buddies, close friends",
+   "src": "wordshk:75298; cedict; lesson:wordshk:61300#8; hk usage"
+  },
+  "古": {
+   "jp": "gu2",
+   "en": "story (as in telling stories); ancient, old",
+   "src": "wordshk:73687,102321,108918; cccanto; cedict; hk usage"
+  },
+  "呢位": {
+   "jp": "ni1 wai2",
+   "en": "this (person, polite)",
+   "src": "hk usage"
+  },
+  "和": {
+   "jp": "wo4",
+   "en": "(of a game) to draw, to tie; and (formal)",
+   "src": "wordshk:63365,63366,97937; cedict; hk usage"
+  },
+  "唔見": {
+   "jp": "m4 gin3",
+   "en": "to have lost, to be missing; to not see",
+   "src": "wordshk:80039; cccanto; lesson:wordshk:80039#6; hk usage"
+  },
+  "嗰日": {
+   "jp": "go2 jat6",
+   "en": "that day",
+   "src": "cccanto; hk usage"
+  },
+  "嚟自": {
+   "jp": "lai4 zi6",
+   "en": "to come from",
+   "src": "hk usage"
+  },
+  "塞": {
+   "jp": "sak1",
+   "en": "blocked; jammed (traffic)",
+   "src": "wordshk:59015,59017; hk usage"
+  },
+  "從來": {
+   "jp": "cung4 loi4",
+   "en": "always (until now); (with a negative) never",
+   "src": "wordshk:68823; cedict; lesson:wordshk:68814#1; hk usage"
+  },
+  "撚": {
+   "jp": "nan2",
+   "en": "to fiddle with; to fool, to mess with (someone)",
+   "src": "wordshk:57232; hk usage"
+  },
+  "木": {
+   "jp": "muk6",
+   "en": "wood; numb, slow-witted",
+   "src": "wordshk:56947,56948; cccanto; cedict; hk usage"
+  },
+  "步": {
+   "jp": "bou6",
+   "en": "step",
+   "src": "cedict; hk usage"
+  },
+  "牆": {
+   "jp": "coeng4",
+   "en": "wall",
+   "src": "wordshk:68509; cedict; hk usage"
+  },
+  "肚": {
+   "jp": "tou5",
+   "en": "belly, stomach",
+   "src": "wordshk:86360; cedict; lesson:wordshk:69323#1; hk usage"
+  },
+  "靚女": {
+   "jp": "leng3 neoi2",
+   "en": "pretty; pretty girl; (to a young woman) miss",
+   "src": "wordshk:79297,110580; lesson:wordshk:74759#1; hk usage"
+  },
+  "中學": {
+   "jp": "zung1 hok6",
+   "en": "secondary school",
+   "src": "wordshk:89344; cccanto; cedict; lesson:wordshk:86446#2; hk usage"
+  },
+  "表": {
+   "jp": "biu2",
+   "en": "form, chart; to express; (before a family word) cousin",
+   "src": "wordshk:41061,41062,99525; cedict; hk usage"
+  },
+  "氹": {
+   "jp": "tam5",
+   "en": "puddle; pool",
+   "src": "wordshk:85750"
+  }
+ },
+ "skip": {
+  "即": "bound in everyday speech (in 即係, 即刻); formal on its own",
+  "覺": "bound (in 覺得); 'sleep' is a different reading",
+  "以": "bound form (in 以前, 所以, 可以); literary on its own",
+  "可": "bound form (in 可以, 可能); literary on its own",
+  "所": "bound form (in 所以, 所有); formal on its own",
+  "今": "bound form (in 今日, 今次, 今年)",
+  "應": "bound form (in 應該)",
+  "解": "mostly bound (in 點解, 解決, 了解)",
+  "出來": "Standard Written Chinese spelling of the same word as 出嚟 (taught there)",
+  "道": "bound in speech (in 知道, 味道, street names); formal measure word",
+  "友": "bound (in 朋友, 網友); the slang 'guy' is said with a different tone",
+  "方": "bound (in 地方, 方法, 方便)",
+  "通": "mostly bound (in 通常, 普通, 通知)",
+  "法": "bound (in 方法, 辦法, 法國, 法律)",
+  "性": "bound (in 性格, 性別, and as a suffix)",
+  "我係": "two words (I + to be), each taught on its own",
+  "校": "bound (in 學校, 校服, 校長)",
+  "返來": "Standard Written Chinese spelling of the same word as 返嚟 (taught there)",
+  "陳": "surname Chan; its other senses are literary",
+  "作": "bound (in 工作, 作業, 作者)",
+  "里": "old unit of length and place-name syllable, not everyday",
+  "英": "bound (in 英國, 英文, 英語)",
+  "視": "bound (in 電視, 視乎)",
+  "安": "bound (in 安全, 安靜, 平安)",
+  "市": "bound (in 城市, 市民, 街市)",
+  "式": "bound suffix for style, type (in 中式, 西式)",
+  "李": "surname Lee; 'plum' is rare on its own",
+  "當我": "two words (to treat as + me), each taught on its own",
+  "何": "literary 'what' and a surname; bound (in 任何, 如何)",
+  "園": "bound (in 公園, 花園, 幼稚園)",
+  "麥": "bound (in 燕麥, 小麥) and a surname",
+  "周": "bound (in 周圍, 周末)",
+  "漢": "bound (in 男子漢, 漢堡, 好漢)",
+  "譯": "bound (in 翻譯)",
+  "番": "variant spelling of 返 after verbs; otherwise bound (in 番茄)"
+ }
+}

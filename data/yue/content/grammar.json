@@ -1,0 +1,434 @@
+{
+  "licence": "MIT: Jiesuo",
+  "points": [
+    {
+      "id": "hai2",
+      "title": "喺 hai2: at, in",
+      "explain": "喺 marks where something is or happens: 我喺屋企 \"I'm at home\". Don't mix it up with 係 hai6 \"to be\". Only the tone differs.",
+      "pattern": "喺",
+      "needs": [
+        "喺",
+        "我",
+        "屋企"
+      ],
+      "cite": "喺:hai2",
+      "entries": [
+        49899,
+        49900
+      ]
+    },
+    {
+      "id": "ge3",
+      "title": "嘅 ge3: 's, of",
+      "explain": "嘅 links an owner or a description to a noun: 我嘅 \"my\", 好食嘅嘢 \"tasty stuff\".",
+      "pattern": "嘅(?![咩囖啦喇啊呀嘛呢吖喎噃咋啫㗎]|$)",
+      "needs": [
+        "嘅",
+        "我"
+      ],
+      "cite": "嘅:ge3",
+      "entries": [
+        13550
+      ]
+    },
+    {
+      "id": "clf",
+      "title": "Measure word as \"the\" or \"my\"",
+      "explain": "A measure word plus a noun can mean \"the …\": 隻貓好得意 \"the cat is cute\". Owner + measure word + noun is \"my …\": 我部電話 \"my phone\".",
+      "pattern": "[我你佢][部隻本架間條張對個支枝]",
+      "needs": [
+        "隻",
+        "部",
+        "我",
+        "電話"
+      ],
+      "cite": "隻:zek3",
+      "entries": [
+        87739
+      ]
+    },
+    {
+      "id": "zo2",
+      "title": "咗 zo2: done",
+      "explain": "After a verb, 咗 shows the action has happened: 我食咗飯 \"I've eaten\".",
+      "pattern": "咗",
+      "needs": [
+        "咗",
+        "食",
+        "飯"
+      ],
+      "cite": "咗:zo2",
+      "entries": [
+        13605
+      ]
+    },
+    {
+      "id": "gan2",
+      "title": "緊 gan2: -ing",
+      "explain": "After a verb, 緊 shows the action is in progress: 我食緊飯 \"I'm eating\".",
+      "pattern": "[^\\s嚟]緊(?![要張])",
+      "needs": [
+        "緊",
+        "食",
+        "飯"
+      ],
+      "cite": "緊:gan2",
+      "entries": [
+        13606
+      ]
+    },
+    {
+      "id": "gwo3",
+      "title": "過 gwo3: ever",
+      "explain": "After a verb, 過 means \"have done before\": 我去過 \"I've been (there)\".",
+      "pattern": "[去食睇見試聽做玩讀講學用買行搭坐飲到嚟]過",
+      "needs": [
+        "過",
+        "去"
+      ],
+      "cite": "過:gwo3",
+      "entries": [
+        49438
+      ]
+    },
+    {
+      "id": "mei6",
+      "title": "未 mei6: not yet",
+      "explain": "未 means \"not yet\". 食咗飯未呀? \"Have you eaten yet?\" is answered 未 or 食咗.",
+      "pattern": "未(?![必來])",
+      "needs": [
+        "未",
+        "食咗",
+        "飯"
+      ],
+      "cite": "未:mei6",
+      "entries": [
+        80547
+      ]
+    },
+    {
+      "id": "mou5v",
+      "title": "冇 + verb: didn't",
+      "explain": "冇 before a verb means \"didn't\": 我冇去 \"I didn't go\".",
+      "pattern": "(?<!有)冇[去食睇見嚟返買講做聽搵打話答知問]",
+      "needs": [
+        "冇",
+        "去",
+        "我"
+      ],
+      "cite": "冇:mou5",
+      "entries": [
+        13549
+      ]
+    },
+    {
+      "id": "mhou2",
+      "title": "唔好 / 咪: don't",
+      "explain": "唔好 + verb means \"don't …\". 咪 mai5 is a shorter, blunter \"don't\": 咪嘈 \"don't be noisy\".",
+      "pattern": "唔好(?!意思)|(?<!係)咪.",
+      "needs": [
+        "唔好",
+        "咪"
+      ],
+      "cite": "咪:mai5",
+      "entries": [
+        56011
+      ]
+    },
+    {
+      "id": "anota",
+      "title": "A唔A questions",
+      "explain": "Say the verb, then 唔, then the verb again to ask yes or no: 去唔去? \"going or not?\". For 有 the form is 有冇.",
+      "pattern": "([^唔\\s])唔\\1|有冇",
+      "needs": [
+        "唔",
+        "去",
+        "有",
+        "冇"
+      ],
+      "cite": "有冇:jau5 mou5",
+      "entries": [
+        90172
+      ]
+    },
+    {
+      "id": "haimai",
+      "title": "係咪 hai6 mai6: is it that…?",
+      "explain": "係咪 is a short form of 係唔係 and asks for confirmation: 你係咪學生?",
+      "pattern": "係咪",
+      "needs": [
+        "係咪",
+        "學生"
+      ],
+      "cite": "係咪:hai6 mai6",
+      "entries": [
+        89962
+      ]
+    },
+    {
+      "id": "qwords",
+      "title": "Question words",
+      "explain": "咩 me1 or 乜嘢 mat1 je5 \"what\", 邊個 bin1 go3 \"who\", 邊度 bin1 dou6 \"where\", 點解 dim2 gaai2 \"why\", 幾時 gei2 si4 \"when\", 幾多 gei2 do1 \"how many\", 點 dim2 \"how\". The question word stays where the answer would go.",
+      "pattern": "乜嘢|邊個|邊度|點解|幾時|幾多",
+      "needs": [
+        "咩",
+        "乜嘢",
+        "邊個",
+        "邊度",
+        "點解",
+        "幾時",
+        "幾多",
+        "點"
+      ],
+      "cite": "點解:dim2 gaai2",
+      "entries": [
+        44715
+      ]
+    },
+    {
+      "id": "gwo3cmp",
+      "title": "X + adjective + 過 + Y",
+      "explain": "To compare, put 過 after the adjective: 佢高過我 \"he's taller than me\".",
+      "pattern": "[高大矮細快慢靚平貴長短多少遠近重輕難易叻]過[我你佢]",
+      "needs": [
+        "過",
+        "高",
+        "佢",
+        "我"
+      ],
+      "cite": "過:gwo3",
+      "entries": [
+        49438
+      ]
+    },
+    {
+      "id": "bei2",
+      "title": "畀 bei2: give",
+      "explain": "When giving, the thing comes before the person: 畀本書我 \"give me the book\".",
+      "pattern": "[畀俾][^我你佢\\s]{1,6}[我你佢]",
+      "needs": [
+        "畀",
+        "書",
+        "我"
+      ],
+      "cite": "畀:bei2",
+      "entries": [
+        10853
+      ]
+    },
+    {
+      "id": "dirs",
+      "title": "嚟 去 返: come, go, go back",
+      "explain": "嚟 lai4 \"come\" (also heard as lei4), 去 heoi3 \"go\", 返 faan1 \"go back (somewhere you belong)\": 返屋企 \"go home\", 返工 \"go to work\".",
+      "pattern": "返(?:屋|工|學|去|嚟|到)",
+      "needs": [
+        "嚟",
+        "去",
+        "返",
+        "屋企",
+        "返工"
+      ],
+      "cite": "返:faan1",
+      "entries": [
+        19169
+      ]
+    },
+    {
+      "id": "dak1",
+      "title": "V + 得: can",
+      "explain": "Verb + 得 means it can be done or is allowed: 食得 \"edible, can eat\". 唔 + verb + 得 means it can't: 唔去得 \"can't go\".",
+      "pattern": "唔[食去睇做行講買玩用試聽見飲坐]得|[食去睇做行講買玩用試聽見飲坐]得(?:晒|$|呀|啊|嘅|喎)|[食去睇做行講買玩用試聽見飲坐]得唔得",
+      "needs": [
+        "得",
+        "食",
+        "去",
+        "唔"
+      ],
+      "cite": "得:dak1",
+      "entries": [
+        13620
+      ],
+      "exclude": [
+        "hkcancor:FC-R002a_v2#24"
+      ]
+    },
+    {
+      "id": "hoi1",
+      "title": "開 hoi1: usually",
+      "explain": "After a verb, 開 marks something you have been doing regularly: 我用開呢部電腦 \"this is the computer I normally use\".",
+      "pattern": "[用食睇做買玩]開(?![會工學門車])",
+      "needs": [
+        "開",
+        "用",
+        "電腦"
+      ],
+      "cite": "開:hoi1",
+      "entries": [
+        13607
+      ]
+    },
+    {
+      "id": "zyu6",
+      "title": "住 zyu6: keep -ing",
+      "explain": "After a verb, 住 marks a continuing state: 等住 \"wait (and keep waiting)\", 坐住 \"sitting\".",
+      "pattern": "[等坐企拎揸帶睇留]住",
+      "needs": [
+        "住",
+        "等",
+        "坐"
+      ],
+      "cite": "住:zyu6",
+      "entries": [
+        13608
+      ]
+    },
+    {
+      "id": "haa5",
+      "title": "吓 haa5: a bit",
+      "explain": "After a verb, 吓 means \"a little, have a go\": 試吓 \"give it a try\".",
+      "pattern": "[試睇聽揀問望諗等學講跑行]吓|[試睇聽揀問望諗等學講跑行]下",
+      "needs": [
+        "吓",
+        "試"
+      ],
+      "cite": "吓:haa5",
+      "entries": [
+        23204
+      ]
+    },
+    {
+      "id": "maai4",
+      "title": "埋 maai4: too, finish off",
+      "explain": "After a verb, 埋 means \"as well\" or \"finish the rest\": 等埋我 \"wait for me too\", 食埋佢 \"finish it off\".",
+      "pattern": "[等食攞買做帶講]埋",
+      "needs": [
+        "埋",
+        "等",
+        "食"
+      ],
+      "cite": "埋:maai4",
+      "entries": [
+        100323
+      ]
+    },
+    {
+      "id": "faan1asp",
+      "title": "返 faan1: again, back",
+      "explain": "After a verb, 返 means doing it again or getting back to it: 瞓返覺 \"go back to sleep\".",
+      "pattern": "[瞓睇食講做買]返",
+      "needs": [
+        "返",
+        "瞓"
+      ],
+      "cite": "返:faan1",
+      "entries": [
+        90214
+      ]
+    },
+    {
+      "id": "laa3",
+      "title": "喇 laa3: now, already",
+      "explain": "喇 marks a new situation: 夠喇 \"that's enough now\". People often write 啦 for it too.",
+      "pattern": "喇",
+      "needs": [
+        "喇",
+        "夠"
+      ],
+      "cite": "喇:laa3",
+      "entries": [
+        78884
+      ]
+    },
+    {
+      "id": "wo3",
+      "title": "喎 wo3 / wo5",
+      "explain": "wo3 shows you've just noticed something: 落雨喎 \"oh, it's raining\". wo5 reports what someone else said.",
+      "pattern": "喎",
+      "needs": [
+        "喎",
+        "落雨"
+      ],
+      "cite": "喎:wo3",
+      "entries": [
+        63362
+      ]
+    },
+    {
+      "id": "lo1",
+      "title": "囉 lo1: obviously",
+      "explain": "囉 says \"that's how it is, obviously\": 噉咪得囉 \"then that's fine, isn't it\".",
+      "pattern": "囉",
+      "needs": [
+        "囉",
+        "噉"
+      ],
+      "cite": "囉:lo1",
+      "entries": [
+        55295
+      ]
+    },
+    {
+      "id": "me1",
+      "title": "咩 me1: really?",
+      "explain": "At the end of a question, 咩 shows surprise or doubt: 真係咩? \"really?\".",
+      "pattern": "[^\\s]咩$",
+      "needs": [
+        "咩",
+        "真係"
+      ],
+      "cite": "咩:me1",
+      "entries": [
+        98798
+      ],
+      "exclude": [
+        "tatoeba:4826767",
+        "tatoeba:4465833"
+      ]
+    },
+    {
+      "id": "ge3fin",
+      "title": "嘅 ge3 at the end",
+      "explain": "嘅 at the end of a sentence says \"this is so\": 佢唔會嚟嘅 \"he won't come\".",
+      "pattern": "嘅$",
+      "needs": [
+        "嘅",
+        "佢",
+        "唔會",
+        "嚟"
+      ],
+      "cite": "嘅:ge3",
+      "entries": [
+        98364
+      ]
+    },
+    {
+      "id": "bo3",
+      "title": "噃 bo3: mind you",
+      "explain": "噃 points something out as a reminder: 好貴噃 \"it's pricey, mind you\".",
+      "pattern": "噃",
+      "needs": [
+        "噃",
+        "貴"
+      ],
+      "cite": "噃:bo3",
+      "entries": [
+        66738
+      ]
+    },
+    {
+      "id": "gwaa3",
+      "title": "啩 gwaa3: I guess",
+      "explain": "啩 makes a guess: 佢唔嚟啩 \"I guess he isn't coming\".",
+      "pattern": "啩",
+      "needs": [
+        "啩",
+        "佢",
+        "嚟"
+      ],
+      "cite": "啩:gwaa3",
+      "entries": [
+        96788
+      ]
+    }
+  ]
+}

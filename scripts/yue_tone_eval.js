@@ -256,5 +256,5 @@ function main() {
   if (params.shift !== Y.DEFAULTS.shift || params.unsure !== Y.DEFAULTS.unsure) console.log("NOTE: set DEFAULTS in app/yue/tones.js to " + JSON.stringify(params));
 }
 
-module.exports = { labelMode, readWav, exclusionReason };
+module.exports = { labelMode, readWav, exclusionReason, voiceClips, profileOf };
 if (require.main === module) main();

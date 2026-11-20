@@ -1,11 +1,11 @@
-/* Jiesuo 粵: the shell. Loads the data, keeps progress, routes #today / #sounds / #progress.
+/* Jiesuo 粵: the shell. Loads the data, keeps progress, routes #today / #type / #sounds / #read / #search / #word/<form> / #progress.
    Screens register on window.JyutScreens (see today.js); the Progress screen lives here. */
 (async function () {
   "use strict";
   const STORE_KEY = "jiesuo-yue-progress-v1";
   const BACKUP_KEY = "jiesuo-yue-progress-backup"; // the last save before a forced fresh start
   const HOME = "today";
-  const SCREENS = ["today", "sounds", "progress"];
+  const SCREENS = ["today", "type", "sounds", "read", "search", "progress", "map"]; // #word/<form> is also a screen (under Search)
   const view = document.getElementById("view");
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -31,7 +31,28 @@
     return;
   }
 
-  const loaded = JyutState.load(store.get(STORE_KEY));
+  // The word data is separate: if any of it fails to load, Today stays the phase 1 sound lesson.
+  // speech.json (the neural clip list) is optional: a 404 is fine and means no clips yet.
+  async function loadContent() {
+    try {
+      const [lexicon, course, sentences, hkcancor, wordshk] = await Promise.all(["lexicon.json", "course.json", "sentences.json", "hkcancor.json", "wordshk.json"].map(fetchJson));
+      let speechJson = { clips: {} };
+      try {
+        const r = await fetch("data/speech.json");
+        if (r.ok) { const j = await r.json(); if (j && typeof j === "object" && j.clips && typeof j.clips === "object") speechJson = j; }
+      } catch (e) { /* optional */ }
+      const lexData = { lexicon, course, wordshk, sentences, hkcancor };
+      const lex = JyutLex.create(lexData);
+      JyutAudio.init(data.audio);
+      const speech = JyutSpeech.create({ speechJson, audio: JyutAudio, lex, lexData });
+      const formById = new Map();
+      for (const [form, e] of Object.entries(wordshk.entries || {})) if (Array.isArray(e)) formById.set(String(e[0]), form);
+      return { course, lex, speech, chars: lexicon.chars || {}, formOf: (id) => formById.get(String(id)) || null };
+    } catch (e) { return null; }
+  }
+  data.content = await loadContent();
+
+  const loaded = JyutState.loadWithBackup(store.get(STORE_KEY), (text) => store.set(BACKUP_KEY, text)); // a fresh start keeps the unreadable text first
   let state = loaded.state; // a damaged or foreign save starts fresh
 
   const FRESH_MSG = "Your saved progress could not be read, so the app started fresh. Restore from a file if you have one.";
@@ -53,7 +74,7 @@
   // What every screen gets. `state` is replaced on restore, so read it through ctx.state each time.
   const ctx = {
     view, esc, data, store, toast, save, route: () => route(),
-    drills: JyutDrills, journey: JiesuoJourney,
+    drills: JyutDrills, journey: JiesuoJourney, content: data.content,
     get state() { return state; },
     get storageOk() { return storageOk; },
   };
@@ -68,6 +89,24 @@
       const status = passed ? `<span class="done-mark">Passed</span>` : log.length ? `<span class="soft">${right} of your last ${log.length} right</span>` : `<span class="soft">Not started</span>`;
       return `<div class="unit-row"><div class="row" style="justify-content:space-between"><span class="name">${esc(u.title)}</span>${status}</div><div class="bar" aria-hidden="true"><i style="width:${pct(right, 20)}%"></i></div></div>`;
     }).join("");
+  }
+
+  // Word progress: counts per skill, what is due today, and the link to the Map. "" when the word data did not load.
+  function wordRows() {
+    const K = data.content;
+    if (!K || !window.JyutCourse) return "";
+    const lib = JyutCourse.library(K.course, state.words, JiesuoJourney.dayKey());
+    const due = lib.bands.reduce((n, b) => n + b.due, 0);
+    const learned = lib.bands.reduce((n, b) => n + b.learned, 0);
+    const total = (K.course.order || []).length;
+    const row = ([k, label]) => `<tr><th scope="row">${label}</th><td>${lib.skills[k].learned} learned</td><td>${lib.skills[k].strong} strong</td></tr>`;
+    return `<section class="stack">
+        <h2>Words and grammar</h2>
+        <p>${learned} of ${total} items started. ${due ? `<strong>${due} due today.</strong>` : "Nothing due today."}</p>
+        <table class="wordcounts"><tbody>${[["h", "Hearing"], ["r", "Reading"], ["t", "Typing"]].map(row).join("")}</tbody></table>
+        <p class="soft small">Strong means box 4 or more.</p>
+        <p><a class="btn" href="#map" style="display:inline-block">Open the Map 圖</a></p>
+      </section>`;
   }
 
   function renderProgress() {
@@ -90,6 +129,7 @@
         <p>${esc(gateLine)}</p>
         ${guide}
       </section>
+      ${wordRows()}
       <details class="whole" open>
         <summary>Save, restore or move your progress</summary>
         <div class="stack">
@@ -114,6 +154,7 @@
       </details>
       <section class="credits">
         <p>Learning Mandarin too? <a href="../">Open Jiesuo 解锁</a>. It keeps its own progress.</p>
+        <p class="small">Words and example sentences: <a href="https://words.hk" target="_blank" rel="noopener">words.hk</a> (Hong Kong Lexicography Limited, non-commercial open data licence) and <a href="https://tatoeba.org/" target="_blank" rel="noopener">Tatoeba</a> contributors (CC BY 2.0 FR), with HKCanCor and rime-cantonese.</p>
         <p><a href="licences/">Licences and where the data comes from</a></p>
       </section>`;
 
@@ -164,14 +205,19 @@
   }
 
   // ---- Routing: a plain #name, the only hash form every host preserves
+  let current = null; // the screen drawn last; its `stop` hook (screen.stop) runs when the route changes
   function route() {
     const h = (location.hash || "#" + HOME).slice(1);
-    const tab = SCREENS.includes(h) ? h : HOME;
-    document.querySelectorAll(".tabs a").forEach((a) => (a.dataset.tab === tab ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
+    const name = h.split("/")[0];
+    if (name === "word" && !h.split("/").slice(1).join("/")) { location.replace("#search"); return; } // a bare #word: nothing to show
+    const tab = SCREENS.includes(h) ? h : name === "word" ? "word" : HOME;
     const screens = window.JyutScreens || {};
+    if (current && screens[current] && typeof screens[current].stop === "function") { try { screens[current].stop(); } catch (e) { /* a cleanup must never block navigation */ } }
+    current = tab;
+    document.querySelectorAll(".tabs a").forEach((a) => (a.dataset.tab === (tab === "word" ? "search" : tab === "map" ? "progress" : tab) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));
     const draw = () => {
       if (tab === "progress") renderProgress();
-      else if (typeof screens[tab] === "function") screens[tab](ctx);
+      else if (typeof screens[tab] === "function") screens[tab](ctx, h);
       else view.innerHTML = `<p class="soft">This screen is not ready yet.</p>`;
     };
     // A kept lesson is the likeliest culprit and costs nothing to drop, so that is tried first. Never leave the

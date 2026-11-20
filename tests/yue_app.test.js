@@ -10,7 +10,7 @@ const yue = (f) => path.join(__dirname, "../app/yue", f);
 
 test("emptyState has the agreed shape", () => {
   const s = State.emptyState();
-  assert.deepStrictEqual(s, { stats: Drills.emptyStats(), profile: null, voice: 0, lesson: null, days: [], gate: null });
+  assert.deepStrictEqual(s, { stats: Drills.emptyStats(), profile: null, voice: 0, lesson: null, days: [], gate: null, words: {} });
 });
 
 test("serialise round-trips", () => {
@@ -19,7 +19,7 @@ test("serialise round-trips", () => {
   s.voice = 2; s.days = ["2026-11-14"];
   const out = State.serialise(s);
   assert.strictEqual(out.lang, "yue");
-  assert.strictEqual(out.v, 1);
+  assert.strictEqual(out.v, 2);
   const back = State.deserialise(JSON.parse(JSON.stringify(out)));
   assert.deepStrictEqual(back, s);
 });
@@ -68,7 +68,10 @@ test("the Mandarin service worker no longer deletes foreign caches", () => {
 
 test("the Cantonese service worker caches shell and data but not audio", () => {
   const sw = fs.readFileSync(yue("sw.js"), "utf8");
-  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v7"'));
+  assert.ok(sw.includes('const VERSION = "jiesuo-yue-v16"'));
+  const files = sw.split("const FILES")[1].split("];")[0];
+  for (const f of ["speech.js", "wordlesson.js", "type.js", "read.js", "search.js", "map.js", "data/keyboards.json", "data/lexicon.json", "data/course.json", "data/sentences.json", "data/hkcancor.json", "data/wordshk.json"]) assert.ok(files.includes('"' + f + '"'), f);
+  assert.ok(!files.includes("speech.json"), "speech.json is optional, so it is not precached");
   assert.ok(sw.includes("network-first for everything else"));
   assert.ok(sw.includes("cache-first"));
   assert.ok(sw.includes('cache: "no-cache"'));

@@ -17,18 +17,29 @@ MIN_VOICES shipped voices have recorded:
     say         the tone and checked anchors; minimalSets holds two-syllable pairs to say, si + fan
                 in every tone combination
 Syllabic m4 and ng5 have no recordings in Cantone, so they are taught in text only.
+
+Phase 2 (words and grammar), one file per licence, from the course build (course.build):
+    lexicon.json    CC BY-SA 4.0  words [form, jp, en, freqRank, flags, status], flags 1 changed / 2 alternatives /
+                                  4 unresolved / 8 meaning hand-checked (en from data/yue/content/meanings.json), status a/c/e/w/o = agree/corpus/attested (HKCanCor + words.hk examples)/words.hk/override, alts, labels {form: {alt jp: "literary"|"citation"}}, chars {char: [jp, main first]}
+    course.json    CC BY-SA 4.0  order, stage1, grammar points with example ids, lessonSentence
+    sentences.json  CC BY 2.0 FR  Tatoeba sentences with their authors and translation authors
+    hkcancor.json   CC BY 4.0     HKCanCor sentences
+    keyboards.json  MIT: Jiesuo   setup guide for typing Jyutping (items: platform, name, steps, url, checked)
+    wordshk.json    words.hk Non-Commercial Open Data Licence 1.0: notice, disclaimer, credits, entries, examples
 """
 import json
 import re
 from pathlib import Path
 
-from . import jyutping
+from . import course, jyutping, lexicon
 from .readings import load_sources, resolve_char
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 CONTENT = ROOT / "data" / "yue" / "content" / "stage0.json"
 APP = ROOT / "app" / "yue" / "data"
 AUDIO = APP / "audio.json"
+KEYBOARDS = ROOT / "data" / "yue" / "content" / "keyboards.json"
+KEYBOARDS_LICENCE = "MIT: Jiesuo (setup steps summarised from the pages cited on each item)"
 
 STAGE0_LICENCE = "MIT: Jiesuo"
 READINGS_LICENCE = ("CC BY-SA 4.0: readings from rime-cantonese (CC BY 4.0), checked against "
@@ -37,6 +48,7 @@ MIN_VOICES = 2
 MIN_SOURCES = 2  # an "other" reading ships only if at least this many sources list it
 HAN = re.compile(r"[㐀-鿿\U00020000-\U0003ffff]")
 
+STATUS_CODE = {"agree": "a", "corpus": "c", "attested": "e", "wordshk": "w", "override": "o"}  # how the reading was settled (lexicon row[5])
 ASPIRATION = [("b", "p"), ("d", "t"), ("g", "k"), ("gw", "kw"), ("z", "c")]
 ENDINGS = [("m", "n", "ng"), ("p", "t", "k")]
 ROUNDED = [("i", "yu"), ("in", "yun"), ("it", "yut"), ("e", "oe"), ("eng", "oeng"), ("ek", "oek"), ("ei", "eoi")]
@@ -180,6 +192,129 @@ def build(srcs=None, content=None, audio=None):
     return stage0, {"licence": READINGS_LICENCE, "chars": chars}
 
 
+LEXICON_LICENCE = ("CC BY-SA 4.0: Jyutping from rime-cantonese (CC BY 4.0) checked against CC-Canto (CC BY-SA 3.0), "
+                   "CC-CEDICT (CC BY-SA 4.0), Unihan and HKCanCor (CC BY 4.0); meanings hand-checked by Jiesuo against "
+                   "words.hk, CC-Canto and CC-CEDICT (flag 8), else from CC-Canto and CC-CEDICT")
+COURSE_LICENCE = "CC BY-SA 4.0: Jiesuo course order and grammar notes, built on the lexicon's sources"
+SENTENCES_LICENCE = "CC BY 2.0 FR: Tatoeba (https://tatoeba.org/), each sentence with its author"
+HKCANCOR_LICENCE = "CC BY 4.0: HKCanCor, the Hong Kong Cantonese Corpus (https://github.com/fcbond/hkcancor)"
+WORDSHK_LICENCE = ("words.hk Non-Commercial Open Data Licence 1.0 (https://words.hk/base/hoifong/): non-commercial use "
+                   "only, no sublicensing; not covered by this repository's MIT licence")
+NOTICE = ROOT / "data" / "yue" / "content" / "wordshk_notice.json"
+MAX_WORDS = 5000
+GRAMMAR_DROP = {"pattern", "licence", "entries", "exclude", "_examples"}
+
+
+def _wordshk_entries(words, wordshk):
+    """form -> [id, eng, yue_def] from reviewed AND published entries whose form AND jp equal the word's.
+
+    Several such entries: most examples first, then lowest id. The top entry gives the id and yue_def; `eng` is the
+    first English sense of each of up to 3 entries, joined with "; "."""
+    want = {(w[0], w[1]) for w in words if w[1]}
+    found = {}
+    for e in wordshk:
+        if not (e.reviewed and e.published):
+            continue
+        for form, jp in e.forms:
+            if (form, lexicon._norm(jp, form)) in want:
+                found.setdefault(form, {})[e.id] = e
+    out = {}
+    for form, es in found.items():
+        ranked = sorted(es.values(), key=lambda e: (-len(e.examples), e.id))
+        firsts = []
+        for e in ranked:
+            sense = next((x.strip() for x in e.eng if x.strip()), "")
+            if sense and sense not in firsts:
+                firsts.append(sense)
+        top = ranked[0]
+        out[form] = [top.id, "; ".join(firsts[:3]), "; ".join(x.strip() for x in top.yue if x.strip())]
+    return out
+
+
+def build_phase2(b, wordshk, chars_for, notice=None, meanings=None):
+    """The five phase 2 data files as dicts, from a course.build() result `b`, the words.hk entries and
+    `chars_for(char) -> [jp, ...]` (main reading first). A word in the hand-checked meaning table (`meanings`, default
+    data/yue/content/meanings.json) ships the table's English and flag 8; the table's reading must be the word's."""
+    if notice is None:
+        notice = json.loads(NOTICE.read_text(encoding="utf8"))
+    checked = (course.load_meanings() if meanings is None else meanings).get("items") or {}
+    lex, pool = b["lex"], {e["id"]: e for e in b["pool"]}
+    grammar = {}
+    placed = set(b["placed"])
+    for p in b["points"]:
+        if f"g:{p['id']}" in placed:
+            g = {k: v for k, v in p.items() if k not in GRAMMAR_DROP}
+            g["examples"] = [e["id"] for e in p["_examples"]]
+            cited = course.cited_entries(p["cite"], wordshk) if p.get("cite") else []
+            ids = [e.id for e in cited]
+            own = [i for i in (p.get("entries") or ()) if i in ids]  # the sense entry the point names, if it is one
+            g["citeId"] = (own or ids or [None])[0]  # the reviewed words.hk entry, resolved at build time
+            grammar[p["id"]] = g
+    keep = set(b["order"][:MAX_WORDS]) | {f"g:{p}" for p in grammar}
+    lesson = {f: i for f, i in b["lesson"].items() if i and f in keep}
+    shipped = list(dict.fromkeys([*lesson.values(), *(i for g in grammar.values() for i in g["examples"])]))
+    forms = list(dict.fromkeys([*b["order"][:MAX_WORDS], *(w for i in shipped for w in pool[i]["words"])]))
+    forms = [f for f in forms if f in lex and lex[f].jp]
+    ranked = sorted((f for f in forms if lex[f].freq > 0), key=lambda f: -lex[f].freq)
+    rank = {f: i for i, f in enumerate(ranked, 1)}
+    words, alts, labels = [], {}, {}
+    for f in forms:
+        w = lex[f]
+        flags = (1 if w.changed else 0) | (2 if w.alt else 0) | (4 if w.status == "unresolved" else 0)
+        en = w.en
+        m = checked.get(f)
+        if m is not None:
+            if m.get("jp") != w.jp:
+                raise ValueError(f"meanings.json: {f} is checked for {m.get('jp')} but the lexicon reads {w.jp}")
+            en, flags = m["en"], flags | 8
+        words.append([f, w.jp, en, rank.get(f, 0), flags, STATUS_CODE.get(w.status, "")])
+        if w.alt:
+            alts[f] = list(w.alt)
+        lab = {rd: x for rd, x in (getattr(w, "labels", None) or {}).items() if rd in w.alt}
+        if lab:
+            labels[f] = lab
+    chars = {}
+    for ch in sorted({c for f in forms for c in f if lexicon.is_han(c)}):
+        jps = list(chars_for(ch) or [])
+        own = lex.get(ch)
+        if own is not None and own.jp and own.jp not in jps:
+            jps.append(own.jp)
+        if jps:
+            chars[ch] = jps
+    tat, hkc, whk_ex = {}, {}, {}
+    for i in shipped:
+        e = pool[i]
+        kind = i.split(":")[0]
+        if kind == "tatoeba":
+            tat[i] = [e["text"], e["jp"], e["en"], e.get("author", ""), e.get("en_author", ""), e.get("en_id", 0)]
+        elif kind == "hkcancor":
+            hkc[i] = [e["text"], e["jp"], None]
+        else:
+            whk_ex[i] = [e["text"], e["jp"], e["en"]]
+    credits = ("Sentences from Tatoeba (https://tatoeba.org/), CC BY 2.0 FR. Each item is [Cantonese, Jyutping, "
+               "English, author of the Cantonese sentence, author of the English translation, Tatoeba id of the "
+               "translation]; Jyutping added by Jiesuo.")
+    return {
+        "lexicon": {"licence": LEXICON_LICENCE, "words": words, "alts": alts, "labels": labels, "chars": chars},
+        "course": {"licence": COURSE_LICENCE, "order": list(b["placed"]), "stage1": b["stage1"],
+                   "grammar": grammar, "lessonSentence": lesson},
+        "sentences": {"licence": SENTENCES_LICENCE, "credits": credits, "items": tat},
+        "hkcancor": {"licence": HKCANCOR_LICENCE, "items": hkc},
+        "wordshk": {"licence": WORDSHK_LICENCE, "notice": notice["notice"], "disclaimer": notice["disclaimer"],
+                    "credits": notice["credits"], "link": "https://words.hk",
+                    "entries": _wordshk_entries(words, wordshk), "examples": whk_ex},
+    }
+
+
+def build_keyboards(content=None):
+    """keyboards.json: the setup guide for the Type screen, licence key first. Every item cites the page it came from."""
+    c = json.loads(KEYBOARDS.read_text(encoding="utf8")) if content is None else content
+    for it in c["items"]:
+        if not (it.get("steps") and it.get("url", "").startswith("https://") and re.fullmatch(r"\d{4}-\d\d-\d\d", it.get("checked", ""))):
+            raise ValueError(f"keyboard item needs steps, an https url and a checked date: {it.get('name')}")
+    return {"licence": KEYBOARDS_LICENCE, "items": c["items"]}
+
+
 def _write(path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf8")
 
@@ -191,6 +326,19 @@ def main():
     for u in stage0["units"]:
         print(f"{u['id']}: {len(u['syllables'])} syllables, {len(u['minimalSets'])} sets")
     print(f"readings: {len(readings['chars'])} characters")
+    srcs = lexicon.load_sources()
+    b = course.build(srcs)
+
+    def chars_for(ch):
+        r = lexicon._char_res(ch, srcs)
+        return [r.main, *r.others] if r is not None and r.main else []
+
+    if b.get("skipped"):
+        print(f"left out by the meaning table: {len(b['skipped'])} form(s): {' '.join(b['skipped'])}")
+    _write(APP / "keyboards.json", build_keyboards())
+    for name, data in build_phase2(b, srcs["wordshk"], chars_for).items():
+        _write(APP / f"{name}.json", data)
+        print(f"{name}.json: {(APP / f'{name}.json').stat().st_size} bytes")
 
 
 if __name__ == "__main__":
