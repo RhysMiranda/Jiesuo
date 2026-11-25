@@ -179,10 +179,12 @@
 
     // ---- teach
     function teach(step) {
-      const lines = step.lines.map((l) => `<p>${esc(l.text)}</p>`).join("");
+      const main = step.lines.filter((l) => !l.more).map((l) => `<p>${esc(l.text)}</p>`).join("");
+      const more = step.lines.filter((l) => l.more).map((l) => `<p>${esc(l.text)}</p>`).join("");
+      const lines = main + (more ? `<details class="more"><summary>More detail</summary>${more}</details>` : "");
       const list = (step.anchors || []).filter((a) => Array.isArray(a) && A.voicesFor(a[1]).length);
       // Examples are compared with each other, so they share one voice: one for the whole block if a voice has
-      // them all, else one per set (si1..si6, fan1..fan6). The learner's chosen voice wins when it has the set.
+      // them all, else one per set (si1..si6, fu1..fu6). The learner's chosen voice wins when it has the set.
       const pref = ctx.state.voice, syls = list.map((a) => a[1]);
       const whole = A.voiceForAll(syls, pref);
       const voiceOf = (syl) => {
@@ -192,7 +194,7 @@
       };
       const anchors = list.map((a) =>
         `<button type="button" class="btn small-btn playbtn" data-syl="${esc(a[1])}" data-voice="${voiceOf(a[1])}" aria-label="Play ${esc(a[1])}">&#9654; ${esc(a[0])} <span class="soft">${esc(a[1])}</span></button>`).join("");
-      shell(`<h1>${esc(step.title)}</h1>${lines}${anchors ? `<p class="soft small">Tap to hear examples.</p><div class="row">${anchors}</div>` : ""}
+      shell(`<h1>${esc(step.title)}</h1>${lines}${anchors ? `<p class="soft small">Tap to hear examples.</p><div class="row anchors">${anchors}</div>` : ""}
         <div class="row"><button type="button" class="btn primary" id="go">Start practising</button></div>`);
       view.querySelectorAll(".playbtn").forEach((b) => playBtnHandler(b, ctx.state.voice, false));
       const g = document.getElementById("go"); g.onclick = next; g.focus();
@@ -245,24 +247,24 @@
       let prompt = "", body = "";
       if (d.type === "tone-id") {
         prompt = "Which tone do you hear?";
-        body = `<div class="row">${playBtn(d.target, "Play", "p1")}</div>
-          <div class="row" role="group" aria-label="Tone choices">${d.options.map((t) => `<button type="button" class="btn choice" data-a="${t}" aria-label="Tone ${t}">${t}</button>`).join("")}</div>
-          <p class="soft small">Press 1 to 6 to answer, P to play again.</p>`;
+        body = `<div class="row plays">${playBtn(d.target, "Play", "p1")}</div>
+          <div class="row answers" role="group" aria-label="Tone choices">${d.options.map((t) => `<button type="button" class="btn choice" data-a="${t}" aria-label="Tone ${t}">${t}</button>`).join("")}</div>
+          <p class="soft small keyhint">Press 1 to 6 to answer, P to play again.</p>`;
       } else if (d.type === "same-diff") {
         prompt = "Same or different?";
-        body = `<div class="row">${playBtn(d.target[0], "Play first", "p1")}${playBtn(d.target[1], "Play second", "p2")}</div>
-          <div class="row" role="group"><button type="button" class="btn choice" data-a="same">Same</button><button type="button" class="btn choice" data-a="different">Different</button></div>
-          <p class="soft small">Press S for same, D for different.</p>`;
+        body = `<div class="row plays">${playBtn(d.target[0], "Play first", "p1")}${playBtn(d.target[1], "Play second", "p2")}</div>
+          <div class="row answers" role="group"><button type="button" class="btn choice" data-a="same">Same</button><button type="button" class="btn choice" data-a="different">Different</button></div>
+          <p class="soft small keyhint">Press S for same, D for different.</p>`;
       } else if (d.type === "syl-id") {
         prompt = "Which one do you hear?";
-        body = `<div class="row">${playBtn(d.target, "Play", "p1")}</div>
-          <div class="row" role="group">${d.options.map((o) => `<button type="button" class="btn choice" data-a="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+        body = `<div class="row plays">${playBtn(d.target, "Play", "p1")}</div>
+          <div class="row answers" role="group">${d.options.map((o) => `<button type="button" class="btn choice" data-a="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
       } else if (d.type === "read") {
         prompt = `Which sound is <strong>${esc(d.target)}</strong>?`;
-        body = d.options.map((o, i) => `<div class="row">${playBtn(o, "Sound " + (i + 1))}<button type="button" class="btn choice" data-a="${esc(o)}" aria-label="Sound ${i + 1} is ${esc(d.target)}">This one</button></div>`).join("");
+        body = d.options.map((o, i) => `<div class="row plays">${playBtn(o, "Sound " + (i + 1))}<button type="button" class="btn choice" data-a="${esc(o)}" aria-label="Sound ${i + 1} is ${esc(d.target)}">This one</button></div>`).join("");
       } else if (d.type === "dictation") {
         prompt = "Type what you hear";
-        body = `<div class="row">${playBtn(d.target, "Play", "p1")}</div>
+        body = `<div class="row plays">${playBtn(d.target, "Play", "p1")}</div>
           <form class="row" id="dict"><label class="soft small" for="ans">Jyutping with the tone number, such as si1</label>
           <input id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" style="font:inherit;padding:6px 8px;max-width:12em"><button class="btn primary" type="submit">Check</button></form>`;
       }

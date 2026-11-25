@@ -13,7 +13,7 @@ test("clipUrl returns null when no clip", () => {
 });
 
 test("clipUrl builds the path and falls back to a voice that has the clip", () => {
-  assert.strictEqual(A.clipUrl("si1", 0), "audio/googleA/si1.mp3");
+  assert.strictEqual(A.clipUrl("si1", 0), "audio/googleB/si1.mp3");
   A.init({ voices: [{ id: "a" }, { id: "b" }, { id: "c" }], clips: { x1: [2] } });
   assert.strictEqual(A.clipUrl("x1", 0), "audio/c/x1.mp3");
   assert.strictEqual(A.clipUrl("x1", 99), "audio/c/x1.mp3");

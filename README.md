@@ -147,7 +147,7 @@ Limits of phase 1:
 
 - The tone check is a guide. The held-out test used only 2 synthetic Google voices, so real voices will do worse.
 - Syllabic m4 and ng5 have no recordings (text only until the neural audio above is made).
-- The recorded voices (googleA, googleB, amazonHiuJin) are synthetic, from Cantone.
+- The recorded syllables are one synthetic voice from Cantone (googleB). googleA and amazonHiuJin were dropped after a tone audit: they often said tone 5 (and googleA tones 2 and 6) as another tone. Every googleB clip must pass a direct pitch-shape check (`node scripts/yue_audio_strict.js`); 807 that did not are left out, so the app plays nothing rather than a wrong tone.
 - Without a microphone the saying unit is skipped.
 - Windows' built-in `python http.server` serves `.js` as text/plain, so for local testing use a server that sets JavaScript MIME types (offline mode needs it).
 

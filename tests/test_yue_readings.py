@@ -13,8 +13,8 @@ SRCS = load_sources()
 
 
 def test_tone_anchor_sets_resolve():  # spec section 3 stage 0 anchors
-    wants = ["si1", "si2", "si3", "si4", "si5", "si6", "fan1", "fan2", "fan3", "fan4", "fan5", "fan6"]
-    for ch, want in zip("詩史試時市事分粉訓墳奮份", wants):
+    wants = ["si1", "si2", "si3", "si4", "si5", "si6", "fu1", "fu2", "fu3", "fu4", "fu5", "fu6"]
+    for ch, want in zip("詩史試時市事夫苦富扶婦父", wants):
         r = resolve_char(ch, SRCS)
         assert r.main == want, (ch, r)
         assert r.status in ("agreed", "corpus", "override"), (ch, r)

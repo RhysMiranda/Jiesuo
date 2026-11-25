@@ -263,7 +263,7 @@
       const hearId = step.type === "hear" ? (isGrammar(step.item) ? step.prompt.id : step.item) : step.type === "type" ? step.item : null;
       const showOptions = (opts, label, big) => `<div class="options" role="group" aria-label="${esc(label)}">${opts.map((o, i) =>
         `<button type="button" class="btn opt${big ? " optform zh" : ""}" data-i="${i}"><span class="num">${i + 1}</span> ${esc(clean(o))}</button>`).join("")}</div>
-        <p class="soft small">Press 1 to ${opts.length} to answer, Space to hear it again.</p>`;
+        <p class="soft small keyhint">Press 1 to ${opts.length} to answer, Space to hear it again.</p>`;
       const finish = (html) => {
         const fb = document.getElementById("fb");
         fb.innerHTML = html + `<div class="row"><button type="button" class="btn primary" id="next">${nextLabel()}</button></div>`;

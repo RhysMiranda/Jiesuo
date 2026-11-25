@@ -238,6 +238,12 @@
   document.getElementById("storage-warning").hidden = storageOk;
   route();
   if (loaded.fresh) toast(FRESH_MSG);
+  else if (state.profile && state.profile.v !== 2) {
+    // Calibrations made before the tone audit may copy the old voices' wrong tones: ask for a new one.
+    state.profile = null;
+    save();
+    toast("The practice audio was fixed: two voices said some tones wrong. Please set up your voice again the next time you practise speaking.");
+  }
 
   // Offline support where the host allows service workers (GitHub Pages does).
   try {

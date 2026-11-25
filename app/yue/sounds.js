@@ -89,8 +89,7 @@
         <div id="tones" class="tone-panel" aria-live="polite"></div>
         <h2>Your mix-ups</h2>
         <div class="stack">${mixHtml}</div>
-        <h2>Voice</h2>
-        <div class="row" role="radiogroup" aria-label="Voice">${voices}</div>
+        ${data.audio.voices.length > 1 ? `<h2>Voice</h2><div class="row" role="radiogroup" aria-label="Voice">${voices}</div>` : ""}
       </section>`;
 
     // A group played together (the ladder, one cell's tones) keeps one voice: the chosen one if it has them all.

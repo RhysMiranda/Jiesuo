@@ -30,7 +30,7 @@ in `jiesuo/grammar.py`. It does not cover the data below.
 | [CC-Canto](https://cantonese.org/download.html) and CC-CEDICT Cantonese readings | CC BY-SA 3.0 | Checking readings; `readings.json` is shared as CC BY-SA 4.0 | Credit, link the licence, share alike |
 | [HKCanCor](https://github.com/fcbond/hkcancor) | CC BY 4.0 (`app/yue/licences/HKCanCor-LICENSE.txt`) | Checking readings | Credit, link the licence |
 | [Unihan](https://www.unicode.org/charts/unihan.html) | Unicode Terms of Use | Checking readings | Link the licence |
-| [Cantone](https://huggingface.co/datasets/AlienKevin/cantone) | MIT (`app/yue/licences/Cantone-LICENSE.txt`) | Synthetic syllable audio in `app/yue/audio/`; voices googleA, googleB, amazonHiuJin (synthetic voices from Google and Amazon) | Keep the notice; say the voices are synthetic |
+| [Cantone](https://huggingface.co/datasets/AlienKevin/cantone) | MIT (`app/yue/licences/Cantone-LICENSE.txt`) | Synthetic syllable audio in `app/yue/audio/`; voice googleB (a synthetic voice from Google) | Keep the notice; say the voices are synthetic |
 | Noto Serif HK | SIL OFL 1.1 (`app/yue/licences/NotoSerifHK-OFL.txt`) | Page font (Google Fonts) and the app icon | Keep the licence |
 
 Note: rime-cantonese's ODbL `.maps` file is not used; only the CC BY 4.0 data is.

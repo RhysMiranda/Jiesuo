@@ -11,7 +11,10 @@
   // Tuned by scripts/yue_tone_eval.js on the tuning voices only (see reports/yue_tone_check.md).
   // shift: largest global pitch shift tried (semitones); step: its increment;
   // unsure: smallest margin (semitones) between best and second-best tone that counts as a decision.
-  const DEFAULTS = { shift: 0.25, step: 0.25, unsure: 0.1 };
+  // Real voices drift within a syllable and from the calibration, so a learner's attempt may shift by up to
+  // half a semitone, and a verdict needs a clear lead (0.35 st) over the next tone; otherwise it says "not sure".
+  // (The phase 1 values 0.25 / 0.1 were tuned on synthetic voices and gave confident wrong verdicts on real speech.)
+  const DEFAULTS = { shift: 0.5, step: 0.25, unsure: 0.35 };
   // Calibration syllables: sonorant onset, so the whole syllable is voiced (衣 意 二 兒 椅 耳).
   const ANCHORS = ["ji1", "ji3", "ji6", "ji4", "ji2", "ji5"];
   const MIN_FRAMES = 8, MIN_VOICED_SHARE = 0.05;
@@ -106,7 +109,9 @@
     const none = { tone: 0, unsure: true, margin: 0, scores: {}, points: [] };
     segHz = positive(segHz);
     if (segHz.length < MIN_FRAMES) return none;
-    const points = Tone.resample(segHz.map(semis), 5);
+    const st = segHz.map(semis), mid = median(st);
+    const folded = st.map((x) => (x - mid > 9.5 ? x - 12 : mid - x > 9.5 ? x + 12 : x)); // pitch-tracker octave jumps
+    const points = Tone.resample(folded, 5);
     if (points.length < 5 || !points.every(Number.isFinite)) return none;
     const scores = {};
     for (const t of allowed) {

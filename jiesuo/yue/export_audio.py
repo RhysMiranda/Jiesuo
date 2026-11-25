@@ -12,12 +12,13 @@ OUT_AUDIO = ROOT / "app" / "yue" / "audio"
 OUT_JSON = ROOT / "app" / "yue" / "data" / "audio.json"
 EXCLUSIONS = ROOT / "data" / "yue" / "audio_exclusions.json"
 
-LICENCE = "MIT: Cantone (AlienKevin/cantone), synthetic voices from Amazon and Google"
+LICENCE = "MIT: Cantone (AlienKevin/cantone), a synthetic voice from Google"
+# Only googleB is shipped: googleA and amazonHiuJin often say tone 5 (and googleA tones 2 and 6) as another
+# tone, so they taught wrong tones. Each googleB clip must also pass scripts/yue_audio_strict.js.
 VOICES = [
-    {"id": "googleA", "label": "Voice 1, female"},
-    {"id": "googleB", "label": "Voice 2, male"},
-    {"id": "amazonHiuJin", "label": "Voice 3, female"},
+    {"id": "googleB", "label": "Male voice"},
 ]
+STRICT = ROOT / "data" / "yue" / "audio_strict.json"
 BITRATE = 24
 RATE = 16000
 
@@ -40,7 +41,9 @@ def inventory() -> set:
 
 
 def main() -> None:
-    excluded = json.loads(EXCLUSIONS.read_text(encoding="utf8"))
+    # The direct shape check is the authority now; the phase 1 list (EXCLUSIONS) came from a classifier
+    # calibrated on the same synthetic voices, with googleA and amazonHiuJin among the vouching voices.
+    excluded = json.loads(STRICT.read_text(encoding="utf8"))
     syllables = inventory()
     clips: dict = {}
     made = 0

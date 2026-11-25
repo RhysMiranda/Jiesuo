@@ -181,7 +181,7 @@
     function advance() {
       if (redo) redo = null;
       else { i++; if (i < list.length) return step(); }
-      const profile = Tones.profileFrom(anchors);
+      const profile = Object.assign(Tones.profileFrom(anchors), { v: 2 }); // v2: made after the tone audit (see app.js)
       const v = Tones.validProfile(profile);
       if (v.ok) {
         el.innerHTML = `<p><strong>Your voice is set up.</strong></p>${PRIVACY}`;

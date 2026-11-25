@@ -66,7 +66,8 @@ def test_every_teach_line_cites_a_known_source():
     assert "Modern Cantonese Phonology" in STAGE0["sources"]["bauer-benedict-1997"]
     for u in STAGE0["units"]:
         for line in u["teach"]:
-            assert set(line) == {"text", "source"}, (u["id"], line)
+            assert {"text", "source"} <= set(line) <= {"text", "source", "more"}, (u["id"], line)  # more: folded under "More detail"
+            assert line.get("more", True) is True, (u["id"], line)
             assert line["text"].strip(), u["id"]
             assert line["source"] in STAGE0["sources"], (u["id"], line)
 
@@ -90,11 +91,11 @@ def test_tone_facts_present():
     assert "unreleased" in finals and "-p, -t and -k" in finals
 
 
-def test_every_syllable_has_two_voices_of_audio():
+def test_every_syllable_has_checked_audio():
     for u in STAGE0["units"]:
         for syl in _all_syllables(u):
             jyutping.parse(syl)
-            assert len(CLIPS.get(syl, [])) >= 2, (u["id"], syl)
+            assert len(CLIPS.get(syl, [])) >= 1, (u["id"], syl)
             assert jyutping.parse(syl)[2] in u["tones"], (u["id"], syl)
 
 
@@ -119,7 +120,7 @@ def test_no_unresolved_reading_is_taught():
         assert r.status != "unresolved", (ch, r)
         # main, then only the other readings at least two sources list
         assert READINGS["chars"][ch] == [r.main, *(o for o in r.others if len(r.evidence[o]) >= 2)], ch
-    assert READINGS["chars"]["份"] == ["fan6", "fan2"]  # rime 0% ban1 dropped
+    assert READINGS["chars"]["父"] == ["fu6", "fu2"]  # 師父 si1 fu2 keeps the second reading
     assert READINGS["chars"]["錫"] == ["sek3", "sik3"]  # sek6 (rime only) and sik1 (CC-Canto only) dropped
 
 
@@ -133,8 +134,8 @@ def test_every_character_renders_in_the_font():
 
 def test_teaching_anchors_follow_the_spec():
     assert UNITS["tones-six"]["anchors"] == [list(p) for p in zip(
-        "詩史試時市事分粉訓墳奮份",
-        ["si1", "si2", "si3", "si4", "si5", "si6", "fan1", "fan2", "fan3", "fan4", "fan5", "fan6"])]
+        "詩史試時市事夫苦富扶婦父",
+        ["si1", "si2", "si3", "si4", "si5", "si6", "fu1", "fu2", "fu3", "fu4", "fu5", "fu6"])]
     assert UNITS["checked"]["anchors"] == [["色", "sik1"], ["錫", "sek3"], ["食", "sik6"]]
     calib = "衣 ji1, 椅 ji2, 意 ji3, 兒 ji4, 耳 ji5, 二 ji6"  # voice calibration anchors (ruling R10)
     assert calib in _text(UNITS["tones-six"])
@@ -152,7 +153,7 @@ def test_generated_tone_sets():
         assert [jyutping.parse(s)[2] for s in ms] == [1, 2, 3, 4, 5, 6], ms
         assert len({jyutping.toneless(s) for s in ms}) == 1, ms
     bases = {jyutping.toneless(ms[0]) for ms in hear["minimalSets"]}
-    assert {"si", "fan", "jau", "se"} <= bases
+    assert {"si", "fu", "ji"} <= bases
     checked = UNITS["checked"]
     assert checked["tones"] == [1, 3, 6]
     assert checked["minimalSets"][0] == ["sik1", "sik3", "sik6"]  # tone-only set first

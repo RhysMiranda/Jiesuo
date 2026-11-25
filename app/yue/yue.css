@@ -101,3 +101,23 @@
 .wordcounts { width: 100%; border-collapse: collapse; }
 .wordcounts th, .wordcounts td { padding: 4px 8px; text-align: left; border-bottom: 1px dashed var(--grid); font-weight: 400; }
 .wordcounts td { text-align: right; }
+
+/* Phone-friendly layout (after the user's phone feedback) */
+body { font-variant-numeric: lining-nums; } /* Alegreya's old-style digits made tone numbers (si1, fu5) hard to read */
+@media (hover: none), (pointer: coarse) { .keyhint { display: none; } } /* keyboard shortcuts mean nothing on a phone */
+.today .plays { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.today .plays .btn { width: 100%; min-height: 52px; justify-content: center; text-align: center; font-size: 1.05rem; }
+.today .answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 10px; }
+.today .answers .btn { width: 100%; min-height: 60px; justify-content: center; text-align: center; font-size: 1.2rem; }
+.today .anchors { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+.today .anchors .btn { width: 100%; min-height: 48px; justify-content: center; text-align: center; }
+.today .btn.primary { min-height: 52px; }
+@media (max-width: 640px) { .today .row > .btn.primary, .wordlesson .row > .btn.primary { flex: 1 1 100%; justify-content: center; } }
+.wordlesson .btn.opt { min-height: 56px; }
+details.more { border-left: 3px solid var(--grid); padding: 0 0 0 12px; }
+details.more summary { cursor: pointer; color: var(--pen); font-weight: 700; min-height: 44px; display: flex; align-items: center; }
+input[type="text"], input[type="search"], input:not([type]), textarea { font-size: 16px; min-height: 48px; box-sizing: border-box; }
+@media (max-width: 640px) {
+  .stack > h1 { font-size: 1.6rem; }
+  .today p, .wordlesson p { line-height: 1.55; }
+}

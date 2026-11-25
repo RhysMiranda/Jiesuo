@@ -47,11 +47,11 @@ test("pick never returns a syllable without audio for the chosen voice", () => {
 test("pick with offlineClips only uses cached clips", () => {
   const rng = seeded(2);
   const offline = {};
-  for (const [s, vs] of Object.entries(audio.clips)) if (vs.includes(1) && rng() < 0.7) offline[s] = [1];
+  for (const [s, vs] of Object.entries(audio.clips)) if (vs.includes(0) && rng() < 0.7) offline[s] = [0];
   for (const unit of ["tones-hear", "initials", "finals", "jyutping", "checked"]) {
     for (let i = 0; i < 200; i++) {
       const d = D.pick(unit, Drills.emptyStats(), rng, { offlineClips: offline });
-      assert.strictEqual(d.voice, 1);
+      assert.strictEqual(d.voice, 0);
       for (const s of syllablesOf(d)) assert.ok(offline[s], s + " not cached");
     }
   }

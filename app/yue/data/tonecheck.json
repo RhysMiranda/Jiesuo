@@ -106,8 +106,9 @@
     ]
   ],
   "params": {
-    "shift": 0.25,
+    "shift": 0.5,
     "step": 0.25,
-    "unsure": 0.1
-  }
+    "unsure": 0.35
+  },
+  "note": "params widened by hand after the tone audit (real voices drift); the accuracy figures above were measured with the phase 1 values 0.25/0.25/0.1 on synthetic voices"
 }

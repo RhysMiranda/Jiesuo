@@ -8,7 +8,7 @@ app/yue/data/audio.json, and writes one file per licence:
 
 Each unit's `syllables` and `minimalSets` are generated here, from syllables that at least
 MIN_VOICES shipped voices have recorded:
-    tones-six   the anchors, grouped by toneless syllable (si1..si6, fan1..fan6)
+    tones-six   the anchors, grouped by toneless syllable (si1..si6, fu1..fu6)
     tones-hear  every non-checked syllable recorded in all six tones, one set per syllable
     checked     every -p/-t/-k syllable recorded in tones 1, 3 and 6 (sik first); anchors kept as syllables
     initials    pairs that differ only in aspiration (b/p d/t g/k gw/kw z/c), then ng- vs no initial
@@ -44,7 +44,7 @@ KEYBOARDS_LICENCE = "MIT: Jiesuo (setup steps summarised from the pages cited on
 STAGE0_LICENCE = "MIT: Jiesuo"
 READINGS_LICENCE = ("CC BY-SA 4.0: readings from rime-cantonese (CC BY 4.0), checked against "
                     "CC-Canto (CC BY-SA 3.0), Unihan, HKCanCor (CC BY 4.0)")
-MIN_VOICES = 2
+MIN_VOICES = 1  # one checked voice (googleB) since the tone audit; see jiesuo/yue/export_audio.py
 MIN_SOURCES = 2  # an "other" reading ships only if at least this many sources list it
 HAN = re.compile(r"[㐀-鿿\U00020000-\U0003ffff]")
 
@@ -131,8 +131,8 @@ def finals(have):
 
 
 def say_pairs(have):
-    return [[f"si{a}", f"fan{b}"] for a in range(1, 7) for b in range(1, 7)
-            if f"si{a}" in have and f"fan{b}" in have]
+    return [[f"si{a}", f"fu{b}"] for a in range(1, 7) for b in range(1, 7)
+            if f"si{a}" in have and f"fu{b}" in have]
 
 
 def _flat(sets):
