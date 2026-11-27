@@ -284,3 +284,14 @@ def test_bad_audio_is_a_skip_not_an_abort(tmp_path, monkeypatch, capsys):
     done, failed, manifest = tts.run(jobs, S(), "r", "k", raw_dir=tmp_path / "raw", speech_dir=tmp_path / "speech")
     assert (done, failed) == (1, 2) and len(manifest) == 1
     assert not list((tmp_path / "raw").glob("*.wav")) or len(list((tmp_path / "raw").glob("*.wav"))) == 1
+
+
+def test_publish_holds_one_syllable_clips(tmp_path):
+    for k in "ab":
+        (tmp_path / f"{k}.mp3").write_bytes(b"x")
+    man = {"a": {"f": "唔會", "r": "0%", "voice": HIU, "jp": "m4 wui5"}, "b": {"f": "會", "r": "0%", "voice": HIU, "jp": "wui5"}}
+    stats = {}
+    kw = dict(mismatched=set(), uncalibrated=set(), accepted=set(), checked={"a", "b"}, current={"唔會": "m4 wui5", "會": "wui5"})
+    c = tts.publish(man, tmp_path / "s.json", tmp_path, stats=stats, onesyl_pass=set(), **kw)
+    assert set(c) == {"a"} and stats["held"]["one syllable"] == 1
+    assert set(tts.publish(man, tmp_path / "s.json", tmp_path, onesyl_pass={"b"}, **kw)) == {"a", "b"}  # passed the strict check

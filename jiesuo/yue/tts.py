@@ -1,7 +1,7 @@
 """Build-time Azure Speech audio for words and sentences, with exact Jyutping via SSML.
 
     python -m jiesuo.yue.tts --dry-run
-    python -m jiesuo.yue.tts --run [--limit N] [--voice V]     (needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION)
+    python -m jiesuo.yue.tts --run [--limit N] [--voice V] [--pace S]     (needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION)
     python -m jiesuo.yue.tts --publish                          (write speech.json; needs node scripts/yue_clip_check.js first)
 
 The key is read only from the environment. It is never printed, logged or written.
@@ -34,6 +34,7 @@ CALIB_DIR = RAW_TTS / "calib"  # <voice>/<syllable>.wav: the clip check fits eac
 CALIB_SETS = ["ji", "jau", "jan", "wai", "maa", "ngaa", "lou"]
 CALIB_FALLBACK_CHAR = "啊"  # the ph attribute decides the reading, so any Han character will do
 REPORT_PUBLISH = ROOT / "reports" / "yue_tts_publish.md"
+ONESYL = ROOT / "data" / "yue" / "tts_onesyl.json"  # written by scripts/yue_azure_onesyl.js: {"pass": [key...], "fail": {...}}
 TTS_OK = ROOT / "data" / "yue" / "tts_ok.txt"  # keys, or "voice:<name>" lines, the learner listened to and accepted
 
 VOICES = ["zh-HK-HiuMaanNeural", "zh-HK-WanLungNeural"]
@@ -41,7 +42,7 @@ DEFAULT_VOICE = VOICES[0]
 SENTENCE_RATES = ["0%", "-25%"]
 WAV_RATE = 24000
 OUTPUT_FORMAT = "riff-24khz-16bit-mono-pcm"
-LICENCE = ("Generated with Azure Speech (zh-HK neural voices: HiuMaan, WanLung) from our own Jyutping readings. "
+LICENCE = ("Generated with Azure Speech (zh-HK neural voice HiuMaan) from our own Jyutping readings. "
            "The sentence texts keep their own licences (see sentences.json).")
 MAX_TRIES = 5
 
@@ -238,7 +239,7 @@ def current_readings(data_dir=DATA) -> dict:
 
 
 def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, uncalibrated=None, accepted=None,
-            checked=None, stats=None, current=None):
+            checked=None, stats=None, current=None, onesyl_pass=None):
     """Write speech.json from the manifest. A clip ships only if the clip check covered it (matched, unsure or
     unsegmented; mismatched only when its key is in tts_ok.txt), its MP3 exists, and it says what the data says now:
     its `jp` equals the current reading of its `f` (`current`, default current_readings()), so a clip made before a
@@ -255,12 +256,16 @@ def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, u
         uncalibrated = u if uncalibrated is None else uncalibrated
         checked = c if checked is None else checked
     ok = _accepted() if accepted is None else set(accepted)
+    if onesyl_pass is None:
+        onesyl_pass = set(_load(ONESYL)["pass"]) if ONESYL.exists() else set()
     bad = set(mismatched) - ok
     voice_ok = {v for v in uncalibrated if f"voice:{v}" in ok}
-    clips, held = {}, {"stale reading": 0, "mismatched": 0, "uncalibrated voice": 0, "not checked": 0, "no mp3": 0}
+    clips, held = {}, {"stale reading": 0, "one syllable": 0, "mismatched": 0, "uncalibrated voice": 0, "not checked": 0, "no mp3": 0}
     for k, v in sorted(manifest.items()):
         if v.get("jp") is None or current.get(v["f"]) != v["jp"]:
             held["stale reading"] += 1  # the reading changed since the clip was made, or the item is gone
+        elif _SYL.match(v["jp"].strip()) and k not in onesyl_pass:
+            held["one syllable"] += 1  # a lone syllable often comes out with a flattened tone; only clips that pass the strict shape check ship
         elif k in bad:
             held["mismatched"] += 1
         elif v["voice"] in uncalibrated and v["voice"] not in voice_ok:
@@ -279,7 +284,16 @@ def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, u
     return clips
 
 
-def run(jobs, session, region, key, speech_dir=None, raw_dir=None, sleep=None, out=print, calib_dir=None):
+def _save_manifest(mpath, manifest):
+    """Atomic: write a temporary file, then replace, so a killed run never leaves a half-written manifest."""
+    tmp = mpath.with_suffix(".tmp")
+    tmp.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf8")
+    os.replace(tmp, mpath)
+
+
+def run(jobs, session, region, key, speech_dir=None, raw_dir=None, sleep=None, out=print, calib_dir=None, pace=0.0, deadline=None):
+    """`pace`: seconds to wait after each request (the free F0 tier allows about 20 requests a minute).
+    `deadline`: a time.time() after which the run stops cleanly, saving the manifest (a later run resumes)."""
     raw_dir, speech_dir = Path(raw_dir or RAW_TTS), Path(speech_dir or SPEECH_DIR)
     raw_dir.mkdir(parents=True, exist_ok=True)
     speech_dir.mkdir(parents=True, exist_ok=True)
@@ -288,8 +302,13 @@ def run(jobs, session, region, key, speech_dir=None, raw_dir=None, sleep=None, o
     done = failed = 0
     try:
         for n, job in enumerate(jobs, 1):
+            if deadline is not None and time.time() >= deadline:
+                out(f"time limit reached after {n - 1}/{len(jobs)} jobs; a later --run resumes from here")
+                break
             try:
                 wav = synthesise(session, region, key, job, sleep)
+                if pace:
+                    (sleep or time.sleep)(pace)
                 if not wav:
                     raise ValueError("empty audio in the response")
             except ValueError as e:  # our own messages only; they never carry transport text, the key or headers
@@ -314,11 +333,12 @@ def run(jobs, session, region, key, speech_dir=None, raw_dir=None, sleep=None, o
             (speech_dir / f"{job.key}.mp3").write_bytes(mp3)
             manifest[job.key] = {"f": job.f, "r": job.rate, "voice": job.voice, "text": job.text, "jp": job.jp}
             done += 1
+            # Saved after every clip: a killed run must not leave MP3s the manifest does not know (a resume would skip them).
+            _save_manifest(mpath, manifest)
             if n % 25 == 0:
-                mpath.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf8")
                 out(f"{n}/{len(jobs)}")
     finally:
-        mpath.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf8")
+        _save_manifest(mpath, manifest)
     return done, failed, manifest
 
 
@@ -331,6 +351,8 @@ def main(argv=None, env=None, session=None, out=print):
     ap.add_argument("--limit", type=int, default=None, help="at most N clips this run")
     ap.add_argument("--words", type=int, default=2000, help="how many course words to cover")
     ap.add_argument("--voice", default=DEFAULT_VOICE, choices=VOICES)
+    ap.add_argument("--minutes", type=float, default=None, help="stop cleanly after this many minutes")
+    ap.add_argument("--pace", type=float, default=0.0, help="seconds between requests (3.1 keeps the free tier's 20 a minute)")
     a = ap.parse_args(argv)
     env = os.environ if env is None else env
     if a.publish:
@@ -371,7 +393,8 @@ def main(argv=None, env=None, session=None, out=print):
     if a.limit is not None:
         jobs = jobs[:a.limit]
     try:
-        done, failed, manifest = run(jobs, session or _UrllibSession(), region, key, out=out)
+        done, failed, manifest = run(jobs, session or _UrllibSession(), region, key, out=out, pace=a.pace,
+                                     deadline=None if a.minutes is None else time.time() + a.minutes * 60)
     except FatalError as e:
         out(str(e))
         return 1

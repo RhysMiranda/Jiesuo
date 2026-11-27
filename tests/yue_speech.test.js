@@ -12,8 +12,9 @@ const lexicon = {
     ["你", "nei5", "you", 5, 0],
     ["好", "hou2", "good", 3, 0],
     ["食", "sik6", "eat", 4, 2],               // alt reading
+    ["我", "ngo5", "me", 6, 0],                // safe, but no syllable recording
   ],
-  chars: { 你: ["nei5"], 好: ["hou2", "hou3"], 個: ["go3"], 名: ["meng4", "meng2"], 食: ["sik6"] },
+  chars: { 我: ["ngo5"], 你: ["nei5"], 好: ["hou2", "hou3"], 個: ["go3"], 名: ["meng4", "meng2"], 食: ["sik6"] },
 };
 const data = { lexicon, sentences: { items: { 7: ["你好", "nei5 hou2", "Hello", "a", "b", 1] } } };
 const lex = L.create(data);
@@ -27,15 +28,22 @@ test("a clip wins, and slow falls back to the normal clip", () => {
   const s = mk({ speechJson: { clips: { a1: { f: "你好", r: "0%", v: "x" }, a2: { f: "你好", r: "-25%", v: "x" }, b1: { f: "好", r: "0%", v: "x" } } } });
   assert.deepStrictEqual(s.source("你好"), { kind: "clip", url: "audio/speech/a1.mp3", slow: false });
   assert.deepStrictEqual(s.source("你好", { slow: true }), { kind: "clip", url: "audio/speech/a2.mp3", slow: true });
-  assert.deepStrictEqual(s.source("好", { slow: true }), { kind: "clip", url: "audio/speech/b1.mp3", slow: false });
+  assert.deepStrictEqual(s.source("好", { slow: true }), { kind: "syllables", syls: ["hou2"], voice: 0, slow: false }); // its syllable recording wins
+  assert.deepStrictEqual(s.source("我"), { kind: "device", slow: false });
+  const t = mk({ speechJson: { clips: { c1: { f: "我", r: "0%", v: "x" } } } });
+  assert.deepStrictEqual(t.source("我"), { kind: "clip", url: "audio/speech/c1.mp3", slow: false }); // no syllable recording: the checked clip
 });
 
 test("changed tone never uses the device voice", () => {
   assert.deepStrictEqual(mk().source("個名"), { kind: "syllables", syls: ["go3", "meng2"], voice: 0, slow: false });
 });
 
-test("a safe one-reading word uses the device voice", () => {
-  assert.deepStrictEqual(mk().source("你"), { kind: "device", slow: false });
+test("a one-syllable word plays its recorded syllable before the device voice", () => {
+  assert.deepStrictEqual(mk().source("你"), { kind: "syllables", syls: ["nei5"], voice: 0, slow: false });
+});
+
+test("a safe word with no syllable recording uses the device voice", () => {
+  assert.deepStrictEqual(mk().source("我"), { kind: "device", slow: false });
 });
 
 test("a word with several character readings or an alt reading is not safe", () => {
@@ -70,8 +78,8 @@ test("play on none resolves none; unknown input and bad speechJson never throw",
 test("play uses the device voice when safe", async () => {
   let said = null;
   const s = mk({ synth: { voices: hk.voices, speak: async (t) => { said = t; return "played"; } } });
-  assert.strictEqual(await s.play("你"), "played");
-  assert.strictEqual(said, "你");
+  assert.strictEqual(await s.play("我"), "played");
+  assert.strictEqual(said, "我");
 });
 
 // ---- play(): real playback path against a fake AudioContext ----
@@ -168,7 +176,7 @@ test("device speech after a syllable sequence stops the sequence and cancels syn
     const s = mk({ synth: syn });
     const seq = mk({ synth: noVoice }).play("個名");
     await sleep(1);
-    assert.strictEqual(await s.play("你"), "played");
+    assert.strictEqual(await s.play("我"), "played");
     assert.strictEqual(await seq, "stopped");
     assert.deepStrictEqual(f.started.map((x) => x.url), ["audio/v/go3.mp3"]);
     assert.ok(syn.log.cancels >= 1);
@@ -182,7 +190,7 @@ test("a clip after device speech cancels the synth", async () => {
     const syn = spySynth();
     let release; syn.speak = () => new Promise((r) => { release = r; });
     const s = mk({ synth: syn, speechJson: { clips: { c1: { f: "個名", r: "0%", v: "x" } } } });
-    const dev = s.play("你");
+    const dev = s.play("我");
     const before = syn.log.cancels;
     assert.strictEqual(await s.play("個名"), "played");
     assert.ok(syn.log.cancels > before);
@@ -193,8 +201,8 @@ test("a clip after device speech cancels the synth", async () => {
 
 test("slow device speech uses rate 0.7", async () => {
   const syn = spySynth();
-  await mk({ synth: syn }).play("你", { slow: true });
-  assert.deepStrictEqual(syn.log.said, [["你", 0.7]]);
+  await mk({ synth: syn }).play("我", { slow: true });
+  assert.deepStrictEqual(syn.log.said, [["我", 0.7]]);
 });
 
 test("stop() cancels a running sequence", async () => {

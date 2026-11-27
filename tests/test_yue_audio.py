@@ -58,5 +58,7 @@ def test_every_listed_clip_exists_and_is_small():
             p = AUDIO / a["voices"][i]["id"] / f"{syl}.mp3"
             assert p.is_file(), p
             assert p.stat().st_size < 12 * 1024, p
-    total = sum(f.stat().st_size for f in AUDIO.rglob("*") if f.is_file())
-    assert total < 40 * 1024 * 1024
+    syllables = sum(f.stat().st_size for f in AUDIO.rglob("*") if f.is_file() and "speech" not in f.relative_to(AUDIO).parts)
+    assert syllables < 40 * 1024 * 1024
+    app = sum(f.stat().st_size for f in AUDIO.parent.rglob("*") if f.is_file())
+    assert app < 150 * 1024 * 1024  # the whole app, Azure word clips included (README)

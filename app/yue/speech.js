@@ -96,14 +96,18 @@
         if (!r) return NONE;
         const slow = !!(opts && opts.slow);
         const clip = clipFor(r.id, slow);
+        const syls = syllablesOf(r);
+        const recorded = () => {
+          if (!syls.length || !audio) return null;
+          const voice = audio.voiceForAll(syls, opts && opts.voice);
+          return voice !== null && voice !== undefined ? { kind: "syllables", syls, voice, slow: false } : null;
+        };
+        // A one-syllable word plays its checked syllable recording first: a synthetic voice often says a lone syllable
+        // with a flattened tone, and the syllable recordings passed a pitch check (a one-syllable clip ships only after one too).
+        if (syls.length === 1) { const one = recorded(); if (one) return one; }
         if (clip) return { kind: "clip", url: clip.url, slow: clip.slow };
         if (isSafe(r) && deviceVoice()) return { kind: "device", slow };
-        const syls = syllablesOf(r);
-        if (syls.length && audio) {
-          const voice = audio.voiceForAll(syls, opts && opts.voice);
-          if (voice !== null && voice !== undefined) return { kind: "syllables", syls, voice, slow: false };
-        }
-        return NONE;
+        return recorded() || NONE;
       } catch (e) { return NONE; }
     }
 

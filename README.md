@@ -133,7 +133,7 @@ Tone check: guide mode; on held-out recordings it is right on 85.1% of the sylla
 - Progress files are `v: 2` (words included). A `v: 1` file from phase 1 still loads.
 - Held-out evaluation (readings, word splitting, course coverage; run `python -m jiesuo.yue.evaluate`): [reports/yue_accuracy.md](reports/yue_accuracy.md).
 
-Optional neural audio (Azure Speech, zh-HK voices, with our own Jyutping sent as SSML). Until it is made the app uses the recorded syllables and your device's voice. Run these in your own terminal, and set the key there; it is read only from the environment and is never written to a file or a log:
+Neural audio for words of two or more syllables and for sentences (Azure Speech, the zh-HK HiuMaan voice, with our own Jyutping sent as SSML). Azure often says a lone syllable with a flattened tone (tone 2 and 5 often do not rise), so a one-syllable word plays its checked syllable recording; its Azure clip ships only when there is no recording and the clip passes the same strict pitch-shape check (`node scripts/yue_azure_onesyl.js data/raw/yue/tts`, before `--publish`). The free tier allows about 20 requests a minute, so run with `--pace 3.1` (and `--minutes N` to stop cleanly); a run resumes where the last one stopped. Run these in your own terminal, and set the key there; it is read only from the environment and is never written to a file or a log:
 
     python -m jiesuo.yue.tts --dry-run                  # how many clips and characters, no network
     export AZURE_SPEECH_KEY=...  AZURE_SPEECH_REGION=...   # PowerShell: $env:AZURE_SPEECH_KEY = "..."
@@ -141,7 +141,7 @@ Optional neural audio (Azure Speech, zh-HK voices, with our own Jyutping sent as
     node scripts/yue_clip_check.js data/raw/yue/tts     # tone-checks every clip, writes reports/yue_tts_check.md
     python -m jiesuo.yue.tts --publish                  # writes app/yue/data/speech.json
 
-Between the check and `--publish`: listen to the clips that `reports/yue_tts_check.md` lists (the mismatched ones, and for a voice that could not be calibrated, its sample). Add the key of each clip you accept to `data/yue/tts_ok.txt`, one per line, or `voice:<name>` (for example `voice:zh-HK-WanLungNeural`) to accept a whole voice. Clips that mismatched and are not listed there stay out of `speech.json`. Commit `speech.json` and the MP3s in `app/yue/audio/speech/` that it lists; keep `app/yue/` under 150 MB. The clips are generated with Azure Speech, and no licence is claimed beyond that.
+Between the check and `--publish`: listen to the clips that `reports/yue_tts_check.md` lists (the mismatched ones, and for a voice that could not be calibrated, its sample). Add the key of each clip you accept to `data/yue/tts_ok.txt`, one per line, or `voice:<name>` (for example `voice:zh-HK-WanLungNeural`) to accept a whole voice. Clips that mismatched and are not listed there stay out of `speech.json`. (On 2026-11-27 a blind listen to 15 flagged and 15 passed clips found no wrong tone in either group, so all flagged multi-syllable clips were accepted: the check is calibrated on Azure's flat lone syllables and is noisy.) Commit `speech.json` and the MP3s in `app/yue/audio/speech/` that it lists; keep `app/yue/` under 150 MB. The clips are generated with Azure Speech, and no licence is claimed beyond that.
 
 Limits of phase 1:
 

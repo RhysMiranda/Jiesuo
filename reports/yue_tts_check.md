@@ -1,0 +1,564 @@
+# Azure clip tone check
+
+Each clip is split into voiced runs; when the run count equals the syllable count, each run is classified against a profile fitted on the same voice's own Azure calibration clips (Cantone clips only if those are missing) and compared with the tones we sent. Clips whose run count differs are only counted. Natural speech has tone sandhi and neutral tones, so a mismatch is a prompt to listen, not proof of a wrong clip.
+
+- clips: 7489
+- checked (run count = syllable count): 2354
+- matched: 609
+- unsure (no confident verdict on some syllable, none contradicted): 1199
+- mismatched: 546
+- unsegmented (not checked): 5135
+- not checked, voice could not be calibrated: 0
+
+- zh-HK-HiuMaanNeural: profile from Azure calibration clips
+
+## Mismatched, for a listen-through
+
+Held back from speech.json until the key is added to data/yue/tts_ok.txt (one per line).
+
+- de8516cb2257dcd2 zh-HK-HiuMaanNeural 0% 唔好意思: 唔好意思 (m4 hou2 ji3 si1): ji3 heard 1
+- 9324ce8e220bd4bb zh-HK-HiuMaanNeural 0% 六: 六 (luk6): luk6 heard 3
+- 5e1ead03b765d323 zh-HK-HiuMaanNeural 0% 會: 會 (wui5): wui5 heard 3
+- 3b8fcaa41cfe1ccf zh-HK-HiuMaanNeural 0% 如果: 如果 (jyu4 gwo2): gwo2 heard 4
+- 5ad89aa5ecba49ef zh-HK-HiuMaanNeural 0% 上: 上 (soeng5): soeng5 heard 2
+- 4732c7210f8cf5e5 zh-HK-HiuMaanNeural 0% 事: 事 (si6): si6 heard 3
+- 7e435ac531ee11ef zh-HK-HiuMaanNeural 0% 淨係: 淨係 (zing6 hai6): zing6 heard 3
+- d4cf68d47d949cf6 zh-HK-HiuMaanNeural 0% 語言: 語言 (jyu5 jin4): jyu5 heard 3
+- 3684f512fd39842d zh-HK-HiuMaanNeural 0% 問題: 問題 (man6 tai4): man6 heard 3
+- 63a24e08e4b24fff zh-HK-HiuMaanNeural 0% 女仔: 女仔 (neoi5 zai2): zai2 heard 4
+- 88acbc2c9401eeea zh-HK-HiuMaanNeural 0% 做嘢: 做嘢 (zou6 je5): zou6 heard 3
+- 9138676f2437e595 zh-HK-HiuMaanNeural 0% 今年: 今年 (gam1 nin2): nin2 heard 4
+- af877bc52c3dd88d zh-HK-HiuMaanNeural 0% 個人: 個人 (go3 jan4): go3 heard 1
+- f03df4a0a251a107 zh-HK-HiuMaanNeural 0% 旅行: 旅行 (leoi5 hang4): leoi5 heard 3
+- 7a6940a4b12043e0 zh-HK-HiuMaanNeural 0% 最後: 最後 (zeoi3 hau6): zeoi3 heard 1
+- 32b4f9787d5ec093 zh-HK-HiuMaanNeural 0% 落去: 落去 (lok6 heoi3): lok6 heard 3
+- f718d827f2f65138 zh-HK-HiuMaanNeural 0% 電腦: 電腦 (din6 nou5): din6 heard 3
+- e3ba0926bcacdbb2 zh-HK-HiuMaanNeural 0% 熱: 熱 (jit6): jit6 heard 3
+- 8e216882ae20c80e zh-HK-HiuMaanNeural 0% 仲有: 仲有 (zung6 jau5): zung6 heard 3
+- 99ed9c2414c008a6 zh-HK-HiuMaanNeural 0% 叫做: 叫做 (giu3 zou6): giu3 heard 1
+- 39c431618ba75989 zh-HK-HiuMaanNeural 0% 發現: 發現 (faat3 jin6): faat3 heard 1
+- 6ccbd376ce7c41de zh-HK-HiuMaanNeural 0% 近: 近 (kan5): kan5 heard 2
+- 64113ddc3a57150d zh-HK-HiuMaanNeural 0% 最好: 最好 (zeoi3 hou2): zeoi3 heard 1
+- 943859dd547ed2b1 zh-HK-HiuMaanNeural 0% 奶: 奶 (naai5): naai5 heard 4
+- 619c91d5dfebf5a3 zh-HK-HiuMaanNeural 0% 樹: 樹 (syu6): syu6 heard 3
+- 04be7ad83f526dc2 zh-HK-HiuMaanNeural 0% 活動: 活動 (wut6 dung6): wut6 heard 3
+- ff97fee1d731752b zh-HK-HiuMaanNeural 0% 份人: 份人 (fan6 jan4): fan6 heard 3
+- dbbacd4281e515ec zh-HK-HiuMaanNeural 0% 仲係: 仲係 (zung6 hai6): zung6 heard 3
+- 0aad5f61f2113511 zh-HK-HiuMaanNeural 0% 過去: 過去 (gwo3 heoi3): gwo3 heard 1
+- 4a87774b7ddaadd2 zh-HK-HiuMaanNeural 0% 阿爸: 阿爸 (aa3 baa4): aa3 heard 1
+- 5b0338161326cf9d zh-HK-HiuMaanNeural 0% 附近: 附近 (fu6 gan6): fu6 heard 3
+- a541a685138572a2 zh-HK-HiuMaanNeural 0% 落雨: 落雨 (lok6 jyu5): lok6 heard 3
+- 01e74628ff8423bf zh-HK-HiuMaanNeural 0% 受到: 受到 (sau6 dou3): sau6 heard 3
+- e273a0f07ba8ec62 zh-HK-HiuMaanNeural 0% 日子: 日子 (jat6 zi2): jat6 heard 3
+- c074c51db52faa99 zh-HK-HiuMaanNeural 0% 地球: 地球 (dei6 kau4): dei6 heard 3
+- df066a912fe94960 zh-HK-HiuMaanNeural 0% 市民: 市民 (si5 man4): si5 heard 3
+- 45d7961446a1ef7d zh-HK-HiuMaanNeural 0% 上次: 上次 (soeng6 ci3): soeng6 heard 3
+- 4ac297cd9e16a1bc zh-HK-HiuMaanNeural 0% 做得: 做得 (zou6 dak1): zou6 heard 3
+- a27a1215cd3cb877 zh-HK-HiuMaanNeural 0% 哎: 哎 (aai1): aai1 heard 3
+- cdc5876f1d83efcc zh-HK-HiuMaanNeural 0% 認為: 認為 (jing6 wai4): jing6 heard 3
+- 8edc5a098db321b4 zh-HK-HiuMaanNeural 0% 舖頭: 舖頭 (pou3 tau2): pou3 heard 1
+- 9b70f1742223052d zh-HK-HiuMaanNeural 0% 就嚟: 就嚟 (zau6 lai4): zau6 heard 3
+- 4b5969cb6365868d zh-HK-HiuMaanNeural 0% 負責: 負責 (fu6 zaak3): fu6 heard 3
+- a83cd96a0228a589 zh-HK-HiuMaanNeural 0% 放棄: 放棄 (fong3 hei3): fong3 heard 1
+- 04f84ec0a2b69196 zh-HK-HiuMaanNeural 0% 望住: 望住 (mong6 zyu6): mong6 heard 3
+- bdf33a2abc979db8 zh-HK-HiuMaanNeural 0% 面前: 面前 (min6 cin4): min6 heard 3
+- 3fe457898e8a75f5 zh-HK-HiuMaanNeural 0% 任何: 任何 (jam6 ho4): jam6 heard 3
+- 6312c0ac280055c6 zh-HK-HiuMaanNeural 0% 做到: 做到 (zou6 dou3): zou6 heard 3
+- fb9ebd08064780f3 zh-HK-HiuMaanNeural 0% 後來: 後來 (hau6 loi4): hau6 heard 3
+- 6bee6f4f4762c73e zh-HK-HiuMaanNeural 0% 除咗: 除咗 (ceoi4 zo2): zo2 heard 4
+- 309cb43adf68d113 zh-HK-HiuMaanNeural 0% 隔籬: 隔籬 (gaak3 lei4): gaak3 heard 1
+- c3d0fb1021995363 zh-HK-HiuMaanNeural 0% 態度: 態度 (taai3 dou6): taai3 heard 1
+- c2b9cc21a71dd907 zh-HK-HiuMaanNeural 0% 瞓覺: 瞓覺 (fan3 gaau3): fan3 heard 1
+- fba6261936c5274f zh-HK-HiuMaanNeural 0% 落嚟: 落嚟 (lok6 lai4): lok6 heard 3
+- 8b82e3b855d66858 zh-HK-HiuMaanNeural 0% 放假: 放假 (fong3 gaa3): fong3 heard 1
+- f800e47de24d553a zh-HK-HiuMaanNeural 0% 太陽: 太陽 (taai3 joeng4): taai3 heard 1
+- 5ac09ed7c73a1437 zh-HK-HiuMaanNeural 0% 數學: 數學 (sou3 hok6): sou3 heard 1
+- 2b8e9e28acf76307 zh-HK-HiuMaanNeural 0% 病人: 病人 (beng6 jan4): beng6 heard 3
+- 7eda4fed5f8dd740 zh-HK-HiuMaanNeural 0% 澳洲: 澳洲 (ou3 zau1): ou3 heard 1
+- 66a44ff453530056 zh-HK-HiuMaanNeural 0% 變成: 變成 (bin3 sing4): bin3 heard 1
+- 1a157ddc5ecece64 zh-HK-HiuMaanNeural 0% 木: 木 (muk6): muk6 heard 3
+- eef12ec6c7a56ce8 zh-HK-HiuMaanNeural 0% 各位: 各位 (gok3 wai2): gok3 heard 1
+- e189ac495d2dc212 zh-HK-HiuMaanNeural 0% 撞到: 撞到 (zong6 dou2): zong6 heard 3
+- f13395b75115c3cb zh-HK-HiuMaanNeural 0% 副: 副 (fu3): fu3 heard 1
+- 1251cf7ea3ded6f3 zh-HK-HiuMaanNeural 0% 正常: 正常 (zing3 soeng4): zing3 heard 1
+- 6eca244c5faec69e zh-HK-HiuMaanNeural 0% 過嚟: 過嚟 (gwo3 lai4): gwo3 heard 1
+- e550407de524d9ff zh-HK-HiuMaanNeural 0% 阿婆: 阿婆 (aa3 po4): aa3 heard 1
+- 6a94a03079c92eb1 zh-HK-HiuMaanNeural 0% 用嚟: 用嚟 (jung6 lai4): jung6 heard 3
+- 030815e959743a8c zh-HK-HiuMaanNeural 0% 隔離: 隔離 (gaak3 lei4): gaak3 heard 1
+- c111d726ff4f6007 zh-HK-HiuMaanNeural 0% 現代: 現代 (jin6 doi6): jin6 heard 3
+- b153bb65766bad92 zh-HK-HiuMaanNeural 0% 葉: 葉 (jip6): jip6 heard 3
+- 35322d4e78d7df75 zh-HK-HiuMaanNeural 0% 遇到: 遇到 (jyu6 dou2): jyu6 heard 3
+- 83abab2918512d3d zh-HK-HiuMaanNeural 0% 互相: 互相 (wu6 soeng1): wu6 heard 3
+- 61e55b49939fd36e zh-HK-HiuMaanNeural 0% 垃圾: 垃圾 (laap6 saap3): laap6 heard 3
+- 73d32b944e7fa1f3 zh-HK-HiuMaanNeural 0% 地鐵: 地鐵 (dei6 tit3): dei6 heard 3
+- a3af97c7ea3c3a27 zh-HK-HiuMaanNeural 0% 暫時: 暫時 (zaam6 si4): zaam6 heard 3
+- f55b39cee9b47fb5 zh-HK-HiuMaanNeural 0% 甚至: 甚至 (sam6 zi3): sam6 heard 3
+- fbd92ef387d96bed zh-HK-HiuMaanNeural 0% 掛住: 掛住 (gwaa3 zyu6): gwaa3 heard 1
+- 8db688aeb1b5228d zh-HK-HiuMaanNeural 0% 部分: 部分 (bou6 fan6): bou6 heard 3
+- 0d112b36fc35299c zh-HK-HiuMaanNeural 0% 做人: 做人 (zou6 jan4): zou6 heard 3
+- 63af05bd29c29b1d zh-HK-HiuMaanNeural 0% 目標: 目標 (muk6 biu1): muk6 heard 3
+- 0761f7e2b54a30ad zh-HK-HiuMaanNeural 0% 過程: 過程 (gwo3 cing4): gwo3 heard 1
+- fc2d63e7761c3875 zh-HK-HiuMaanNeural 0% 價錢: 價錢 (gaa3 cin4): gaa3 heard 1
+- 44421f5da0db80dd zh-HK-HiuMaanNeural 0% 內容: 內容 (noi6 jung4): noi6 heard 3
+- 42173c31b2ad18c4 zh-HK-HiuMaanNeural 0% 創造: 創造 (cong3 zou6): cong3 heard 1
+- c52e1c5751cda0b1 zh-HK-HiuMaanNeural 0% 數字: 數字 (sou3 zi6): sou3 heard 1
+- 77f180010eab5da4 zh-HK-HiuMaanNeural 0% 父親: 父親 (fu6 can1): fu6 heard 3
+- 649c426ab84ba789 zh-HK-HiuMaanNeural 0% 類型: 類型 (leoi6 jing4): leoi6 heard 3
+- 12e97e0dc862d836 zh-HK-HiuMaanNeural 0% 褲: 褲 (fu3): fu3 heard 1
+- fe69eccce8c563c7 zh-HK-HiuMaanNeural 0% 以後: 以後 (ji5 hau6): ji5 heard 3
+- 0e1c285cf722aed6 zh-HK-HiuMaanNeural 0% 薯仔: 薯仔 (syu4 zai2): zai2 heard 4
+- 89e6701c45f809d6 zh-HK-HiuMaanNeural 0% 到時: 到時 (dou3 si4): dou3 heard 1
+- 7c8810851baa3b7d zh-HK-HiuMaanNeural 0% 加拿大: 加拿大 (gaa1 naa4 daai6): daai6 heard 4
+- bc61edbf82a25144 zh-HK-HiuMaanNeural 0% 證明: 證明 (zing3 ming4): zing3 heard 1
+- 45e33d5fbf7d1560 zh-HK-HiuMaanNeural 0% 跳舞: 跳舞 (tiu3 mou5): tiu3 heard 1
+- a50c555b5c24b520 zh-HK-HiuMaanNeural 0% 有陣時: 有陣時 (jau5 zan6 si4): jau5 heard 2, zan6 heard 3
+- cadba467e24d6dd8 zh-HK-HiuMaanNeural 0% 現場: 現場 (jin6 coeng4): jin6 heard 3
+- 76fdb56cd143a876 zh-HK-HiuMaanNeural 0% 白人: 白人 (baak6 jan4): baak6 heard 3
+- 4698ef0e2c068049 zh-HK-HiuMaanNeural 0% 自殺: 自殺 (zi6 saat3): zi6 heard 3
+- c821ae3afc2af527 zh-HK-HiuMaanNeural 0% 亞視: 亞視 (aa3 si6): aa3 heard 1
+- c28aecb5596c17d4 zh-HK-HiuMaanNeural 0% 要好: 要好 (jiu3 hou2): jiu3 heard 1
+- 7483b68e21cb43ce zh-HK-HiuMaanNeural 0% 進行: 進行 (zeon3 hang4): zeon3 heard 1
+- e2d850809439a70c zh-HK-HiuMaanNeural 0% 仲好: 仲好 (zung6 hou2): zung6 heard 3
+- 685bc887381dfae1 zh-HK-HiuMaanNeural 0% 地圖: 地圖 (dei6 tou4): dei6 heard 3
+- 915781961b6de237 zh-HK-HiuMaanNeural 0% 外星人: 外星人 (ngoi6 sing1 jan4): ngoi6 heard 3
+- 12b840512345212a zh-HK-HiuMaanNeural 0% 會同: 會同 (wui6 tung4): wui6 heard 3
+- ff7a9f211fe9c00a zh-HK-HiuMaanNeural 0% 目的: 目的 (muk6 dik1): muk6 heard 3
+- d4f6851827470b5a zh-HK-HiuMaanNeural 0% 課程: 課程 (fo3 cing4): fo3 heard 1
+- 3f0bb991aeb376c4 zh-HK-HiuMaanNeural 0% 費事: 費事 (fai3 si6): fai3 heard 1
+- ed834ada02764051 zh-HK-HiuMaanNeural 0% 阿爺: 阿爺 (aa3 je4): aa3 heard 1
+- 3e10945f8193f2f6 zh-HK-HiuMaanNeural 0% 化學: 化學 (faa3 hok6): faa3 heard 1
+- 8a3f7ed6776fe81c zh-HK-HiuMaanNeural 0% 發達: 發達 (faat3 daat6): faat3 heard 1
+- c9002ee38c272040 zh-HK-HiuMaanNeural 0% 二百: 二百 (ji6 baak3): ji6 heard 3
+- 1a419c4429802f6a zh-HK-HiuMaanNeural 0% 會考: 會考 (wui6 haau2): wui6 heard 3
+- ad7f9be6b8b56b7f zh-HK-HiuMaanNeural 0% 講法: 講法 (gong2 faat3): gong2 heard 4
+- d3dca940702031ea zh-HK-HiuMaanNeural 0% 議員: 議員 (ji5 jyun4): ji5 heard 3
+- 8c7e4f7940970c0d zh-HK-HiuMaanNeural 0% 造成: 造成 (zou6 sing4): zou6 heard 3
+- ad44209903733687 zh-HK-HiuMaanNeural 0% 上來: 上來 (soeng5 lai4): soeng5 heard 2
+- a27f76a5a123f4aa zh-HK-HiuMaanNeural 0% 建築物: 建築物 (gin3 zuk1 mat6): gin3 heard 1
+- c31d728ccefb35c0 zh-HK-HiuMaanNeural 0% 智能: 智能 (zi3 nang4): zi3 heard 1
+- 7deae3c7d798c436 zh-HK-HiuMaanNeural 0% 死亡: 死亡 (sei2 mong4): sei2 heard 1
+- 19748e0e6822f265 zh-HK-HiuMaanNeural 0% 氹: 氹 (tam5): tam5 heard 2
+- 5977632885cc8e68 zh-HK-HiuMaanNeural 0% 第時: 第時 (dai6 si4): dai6 heard 3
+- 36890f4a0df5b4e4 zh-HK-HiuMaanNeural 0% 六月: 六月 (luk6 jyut6): luk6 heard 3, jyut6 heard 3
+- 6197ff0e571e9bee zh-HK-HiuMaanNeural 0% 困難: 困難 (kwan3 naan4): kwan3 heard 1
+- 5d42aca0ed96e7c8 zh-HK-HiuMaanNeural 0% 委員會: 委員會 (wai2 jyun4 wui2): jyun4 heard 1
+- f1fca87131b53a12 zh-HK-HiuMaanNeural 0% 法官: 法官 (faat3 gun1): faat3 heard 1
+- a4aa3e2c6681d198 zh-HK-HiuMaanNeural 0% 熱情: 熱情 (jit6 cing4): jit6 heard 3
+- 38c4b27904fd5fa5 zh-HK-HiuMaanNeural 0% 角落: 角落 (gok3 lok6): gok3 heard 1
+- 64419a89f6af9bd0 zh-HK-HiuMaanNeural 0% 上網: 上網 (soeng5 mong5): soeng5 heard 2
+- 40467facf5f00612 zh-HK-HiuMaanNeural 0% 犯法: 犯法 (faan6 faat3): faan6 heard 3
+- 171139de8851859d zh-HK-HiuMaanNeural 0% 贊成: 贊成 (zaan3 sing4): zaan3 heard 1
+- c0c0fd8711f1e97f zh-HK-HiuMaanNeural 0% 距離: 距離 (keoi5 lei4): keoi5 heard 2
+- bc349287c9a2e1a3 zh-HK-HiuMaanNeural 0% 分子: 分子 (fan6 zi2): fan6 heard 3
+- d6be25f1581654b6 zh-HK-HiuMaanNeural 0% 落地: 落地 (lok6 dei6): lok6 heard 3
+- 9455ec96ac6a0e28 zh-HK-HiuMaanNeural 0% 認識: 認識 (jing6 sik1): jing6 heard 3
+- ab8a801559f4b4b8 zh-HK-HiuMaanNeural 0% 上升: 上升 (soeng6 sing1): soeng6 heard 3
+- f738fb93a271ccc2 zh-HK-HiuMaanNeural 0% 九月: 九月 (gau2 jyut6): jyut6 heard 1
+- 49e986b4187ebd48 zh-HK-HiuMaanNeural 0% 二千: 二千 (ji6 cin1): ji6 heard 3
+- caa1959da5455f08 zh-HK-HiuMaanNeural 0% 人手: 人手 (jan4 sau2): sau2 heard 4
+- 070640324772497b zh-HK-HiuMaanNeural 0% 假期: 假期 (gaa3 kei4): gaa3 heard 1
+- 61fa263c8d8d4dd7 zh-HK-HiuMaanNeural 0% 咓: 咓 (aa5): aa5 heard 4
+- 9471da8cfb385e08 zh-HK-HiuMaanNeural 0% 墨西哥: 墨西哥 (mak6 sai1 go1): mak6 heard 3
+- 37888dc6c2755650 zh-HK-HiuMaanNeural 0% 業主: 業主 (jip6 zyu2): jip6 heard 3
+- e3e80691a875dba9 zh-HK-HiuMaanNeural 0% 獲得: 獲得 (wok6 dak1): wok6 heard 3
+- e17895a7de6a5fa9 zh-HK-HiuMaanNeural 0% wordshk:60565#1: 佢先過你嚟到 (keoi5 sin1 gwo3 nei5 lai4 dou3): nei5 heard 2
+- 1f87a0a80b4bb69c zh-HK-HiuMaanNeural 0% wordshk:60565#5: 你用住先 (nei5 jung6 zyu6 sin1): jung6 heard 3, zyu6 heard 3
+- 9cf4ebece383b4fb zh-HK-HiuMaanNeural -25% wordshk:60565#5: 你用住先 (nei5 jung6 zyu6 sin1): jung6 heard 3, zyu6 heard 3
+- 426c0237afcd9a0d zh-HK-HiuMaanNeural -25% wordshk:116043#5: 你要聽我講晒先 (nei5 jiu3 teng1 ngo5 gong2 saai3 sin1): nei5 heard 2, jiu3 heard 1
+- e24a685d0f2a4194 zh-HK-HiuMaanNeural -25% wordshk:88197#5: 佢自己知自己事 (keoi5 zi6 gei2 zi1 zi6 gei2 si6): keoi5 heard 3, si6 heard 4
+- b1e5963202db2729 zh-HK-HiuMaanNeural -25% wordshk:40872#8: 你去咗邊 (nei5 heoi3 zo2 bin1): nei5 heard 4
+- 2a922bc500335cff zh-HK-HiuMaanNeural -25% wordshk:102414#2: 邊份打邊份 (bin1 fan6 daa2 bin1 fan6): fan6 heard 3
+- b7ebbc4c32b3213e zh-HK-HiuMaanNeural -25% wordshk:40872#2: 佢係邊個 (keoi5 hai6 bin1 go3): hai6 heard 3
+- ec0d0c11b95eb260 zh-HK-HiuMaanNeural -25% wordshk:47651#1: 跟住到邊個 (gan1 zyu6 dou3 bin1 go3): zyu6 heard 3
+- 71031cb71838d468 zh-HK-HiuMaanNeural 0% wordshk:83424#25: 見好就收 (gin3 hou2 zau6 sau1): gin3 heard 1
+- 08ea26df4e625f2b zh-HK-HiuMaanNeural -25% wordshk:83424#25: 見好就收 (gin3 hou2 zau6 sau1): gin3 heard 1, zau6 heard 3
+- f252f94b8c64f6e2 zh-HK-HiuMaanNeural -25% wordshk:1196#1: 嗰度有好多花 (go2 dou6 jau5 hou2 do1 faa1): dou6 heard 3
+- 0bdd8913a401fa23 zh-HK-HiuMaanNeural -25% wordshk:60493#1: 你識唔識佢 (nei5 sik1 m4 sik1 keoi5): keoi5 heard 4
+- f58a169b80638ef2 zh-HK-HiuMaanNeural -25% wordshk:61025#2: 少做少錯 (siu2 zou6 siu2 co3): zou6 heard 3
+- 60b9cb9784bc95af zh-HK-HiuMaanNeural -25% wordshk:72692#1: 呢度有九個人 (ni1 dou6 jau5 gau2 go3 jan4): dou6 heard 3
+- 87d190d3c848b961 zh-HK-HiuMaanNeural -25% wordshk:51066#1: 佢哋真係好好戲 (keoi5 dei6 zan1 hai6 hou2 hou2 hei3): keoi5 heard 3, dei6 heard 3
+- a0e2351766acfe9f zh-HK-HiuMaanNeural 0% wordshk:100387#2: 望多兩眼 (mong6 do1 loeng5 ngaan5): mong6 heard 3
+- 416f6bcd4708deca zh-HK-HiuMaanNeural -25% wordshk:67322#5: 我考試炒咗 (ngo5 haau2 si5 caau2 zo2): si5 heard 3
+- 65a244b010afdba4 zh-HK-HiuMaanNeural -25% wordshk:13620#3: 佢跑得好快 (keoi5 paau2 dak1 hou2 faai3): keoi5 heard 3
+- 5efaf89e90996c47 zh-HK-HiuMaanNeural -25% wordshk:73098#10: 嗰件肥嘢 (go2 gin6 fei4 je5): fei4 heard 3, je5 heard 4
+- a8fd2fd70d9b9203 zh-HK-HiuMaanNeural -25% wordshk:77713#5: 養返好個病 (joeng5 faan1 hou2 go3 beng6): joeng5 heard 2, beng6 heard 4
+- 6f42f39a4ebfd23f zh-HK-HiuMaanNeural -25% wordshk:70316#5: 呢個島冇人住 (ni1 go3 dou2 mou5 jan4 zyu6): go3 heard 1, mou5 heard 3
+- 5d58246095b14bd5 zh-HK-HiuMaanNeural -25% wordshk:87916#1: 我哋之間有好多問題 (ngo5 dei6 zi1 gaan1 jau5 hou2 do1 man6 tai4): dei6 heard 3
+- b6ec187a0976c554 zh-HK-HiuMaanNeural 0% wordshk:74357#4: 發展中國家 (faat3 zin2 zung1 gwok3 gaa1): faat3 heard 1
+- 3dcb586468b35e1f zh-HK-HiuMaanNeural -25% wordshk:55282#1: 就天黑喇 (zau6 tin1 hak1 laa3): zau6 heard 3
+- ec655dca7284ed22 zh-HK-HiuMaanNeural 0% wordshk:73508#5: 講就容易做就難 (gong2 zau6 jung4 ji6 zou6 zau6 naan4): jung4 heard 3
+- 0453e90639cdde3a zh-HK-HiuMaanNeural 0% wordshk:113793#1: 一夜之間 (jat1 je6 zi1 gaan1): je6 heard 3
+- 5b3557c94a8ac1cf zh-HK-HiuMaanNeural -25% wordshk:55281#2: 做咗功課 (zou6 zo2 gung1 fo3): zou6 heard 3
+- fa5a8b0e4514cdc1 zh-HK-HiuMaanNeural -25% wordshk:62626#4: 記得戴套 (gei3 dak1 daai3 tou3): gei3 heard 1
+- a6f057cc1dbf164f zh-HK-HiuMaanNeural 0% wordshk:51047#6: 佢份人真係好 (keoi5 fan6 jan4 zan1 hai6 hou2): fan6 heard 3
+- 75926344fb8613ad zh-HK-HiuMaanNeural -25% wordshk:51047#6: 佢份人真係好 (keoi5 fan6 jan4 zan1 hai6 hou2): keoi5 heard 3, fan6 heard 3
+- 08e6fc007386896d zh-HK-HiuMaanNeural 0% wordshk:47651#2: 跟住我哋可以做乜 (gan1 zyu6 ngo5 dei6 ho2 ji5 zou6 mat1): ho2 heard 1
+- 6a75bcba7ade400d zh-HK-HiuMaanNeural -25% wordshk:47651#2: 跟住我哋可以做乜 (gan1 zyu6 ngo5 dei6 ho2 ji5 zou6 mat1): ho2 heard 1
+- cd6a43202ab272e9 zh-HK-HiuMaanNeural -25% wordshk:13620#4: 啲貨去得好快 (di1 fo3 heoi3 dak1 hou2 faai3): fo3 heard 1, heoi3 heard 1
+- 363226d65535a3c5 zh-HK-HiuMaanNeural 0% wordshk:76699#2: 我仲係有啲想見佢 (ngo5 zung6 hai6 jau5 di1 soeng2 gin3 keoi5): hai6 heard 3, keoi5 heard 4
+- a63145b5221dae0e zh-HK-HiuMaanNeural -25% wordshk:55199#1: 另外嗰本書 (ling6 ngoi6 go2 bun2 syu1): ling6 heard 3
+- c0e5b7e930dd2605 zh-HK-HiuMaanNeural -25% wordshk:96472#2: 肯定係佢做嘅 (hang2 ding6 hai6 keoi5 zou6 ge3): ding6 heard 3
+- 95aa125e3e311878 zh-HK-HiuMaanNeural -25% wordshk:70701#1: 我返去先喇！拜拜 (ngo5 faan1 heoi3 sin1 laa3 baai1 baai3): heoi3 heard 1
+- dfab667295f0a952 zh-HK-HiuMaanNeural -25% tatoeba:6424015: 警察已經走咗 (ging2 caat3 ji5 ging1 zau2 zo2): ji5 heard 1, ging1 heard 3, zau2 heard 4
+- 62eb05d9248428da zh-HK-HiuMaanNeural 0% wordshk:81155#3: 個袋滿咗喇 (go3 doi2 mun5 zo2 laa3): go3 heard 1, doi2 heard 1
+- 313a42f99fcb3a9b zh-HK-HiuMaanNeural -25% wordshk:81155#3: 個袋滿咗喇 (go3 doi2 mun5 zo2 laa3): go3 heard 1
+- eca81f2e51ac465d zh-HK-HiuMaanNeural 0% wordshk:97033#1: 痛住開心 (tung3 zyu6 hoi1 sam1): tung3 heard 1
+- 7e5edbb3839678b3 zh-HK-HiuMaanNeural -25% wordshk:97033#1: 痛住開心 (tung3 zyu6 hoi1 sam1): tung3 heard 1, zyu6 heard 3
+- 11722b2b7718596e zh-HK-HiuMaanNeural 0% wordshk:55411#8: 落錯車添 (lok6 co3 ce1 tim1): lok6 heard 3, co3 heard 1
+- 83a8036be09f8988 zh-HK-HiuMaanNeural -25% wordshk:55411#8: 落錯車添 (lok6 co3 ce1 tim1): lok6 heard 3, co3 heard 1
+- 02a8f55312a1a4b2 zh-HK-HiuMaanNeural -25% wordshk:103628#1: 定咗日子未 (ding6 zo2 jat6 zi2 mei6): ding6 heard 3
+- d80891dca358da7b zh-HK-HiuMaanNeural -25% wordshk:60565#10: 乜你咁遲先嚟㗎 (mat1 nei5 gam3 ci4 sin1 lai4 gaa3): nei5 heard 3
+- d4b9da5e94f6742c zh-HK-HiuMaanNeural 0% wordshk:120371#4: 四間銀行 (sei3 gaan1 ngan4 hong4): sei3 heard 1
+- 0f0338c22c2da764 zh-HK-HiuMaanNeural -25% wordshk:120371#4: 四間銀行 (sei3 gaan1 ngan4 hong4): sei3 heard 1
+- 070cee0d750aa455 zh-HK-HiuMaanNeural -25% wordshk:55528#12: 啲菜煮到老晒 (di1 coi3 zyu2 dou3 lou5 saai3): coi3 heard 1
+- 64fc897e3622df5d zh-HK-HiuMaanNeural -25% wordshk:61300#16: 上興趣班 (soeng5 hing3 ceoi3 baan1): hing3 heard 1
+- 216750a32bc9304f zh-HK-HiuMaanNeural -25% wordshk:114493#15: 有啲嘢係噉就係噉，解釋唔到 (jau5 di1 je5 hai6 gam2 zau6 hai6 gam2 gaai2 sik1 m4 dou2): dou2 heard 4
+- e85083e19ec41ed4 zh-HK-HiuMaanNeural -25% wordshk:61025#3: 大堂嗰度得好少人 (daai6 tong4 go2 dou6 dak1 hou2 siu2 jan4): daai6 heard 3, dou6 heard 3
+- 4cd6609bbb18ce68 zh-HK-HiuMaanNeural -25% wordshk:41011#2: 唔好怪佢 (m4 hou2 gwaai3 keoi5): keoi5 heard 4
+- 4d63dad7bdd3428b zh-HK-HiuMaanNeural 0% wordshk:40366#4: 個波爆咗 (go3 bo1 baau3 zo2): go3 heard 1
+- 8454442b8907e5b0 zh-HK-HiuMaanNeural -25% wordshk:40366#4: 個波爆咗 (go3 bo1 baau3 zo2): go3 heard 1, bo1 heard 3, baau3 heard 4
+- 6dc71f6cf2cabb51 zh-HK-HiuMaanNeural -25% wordshk:89368#3: 政治中心 (zing3 zi6 zung1 sam1): zing3 heard 1, zi6 heard 3
+- ee5841def035dbda zh-HK-HiuMaanNeural -25% wordshk:87795#1: 最近幾日 (zeoi3 gan6 gei2 jat6): zeoi3 heard 1, gan6 heard 3
+- 5ecbcabf25789428 zh-HK-HiuMaanNeural -25% wordshk:81227#5: 嗰樣係咩嚟 (go2 joeng6 hai6 me1 lai4): joeng6 heard 1, hai6 heard 3
+- 28b3a40fe27e2ae0 zh-HK-HiuMaanNeural -25% wordshk:87625#1: 聽講佢老婆跟人走咗佬 (teng1 gong2 keoi5 lou5 po4 gan1 jan4 zau2 zo2 lou2): po4 heard 1, gan1 heard 4
+- 9c43c6321d2737af zh-HK-HiuMaanNeural 0% wordshk:84177#11: 學生時代 (hok6 saang1 si4 doi6): doi6 heard 4
+- 9780c11b7c4a383f zh-HK-HiuMaanNeural -25% wordshk:84177#11: 學生時代 (hok6 saang1 si4 doi6): doi6 heard 4
+- 5c2ed18902fa995d zh-HK-HiuMaanNeural -25% wordshk:115449#3: 我唔想再花時間喺你身上 (ngo5 m4 soeng2 zoi3 faa1 si4 gaan3 hai2 nei5 san1 soeng6): soeng2 heard 1, zoi3 heard 1, soeng6 heard 4
+- fe1a0d2f757786cd zh-HK-HiuMaanNeural 0% wordshk:87596#3: 呢度周圍都係樹 (ni1 dou6 zau1 wai4 dou1 hai6 syu6): dou6 heard 3
+- 3c0b9b149bf10d94 zh-HK-HiuMaanNeural -25% wordshk:87596#3: 呢度周圍都係樹 (ni1 dou6 zau1 wai4 dou1 hai6 syu6): dou6 heard 3
+- d585c0f6c54b45a0 zh-HK-HiuMaanNeural -25% wordshk:89939#1: 幾多個鐘 (gei2 do1 go3 zung1): go3 heard 1
+- f9c10a1068cbf0ca zh-HK-HiuMaanNeural -25% wordshk:73406#2: 各位早晨 (gok3 wai2 zou2 san4): gok3 heard 1, wai2 heard 3
+- 28fce8cc781b0cc0 zh-HK-HiuMaanNeural 0% wordshk:84587#5: 白色聖誕 (baak6 sik1 sing3 daan3): baak6 heard 3
+- 4264a7c6fe81eb35 zh-HK-HiuMaanNeural -25% wordshk:84587#5: 白色聖誕 (baak6 sik1 sing3 daan3): baak6 heard 3
+- efa94e1e82aceb23 zh-HK-HiuMaanNeural 0% wordshk:55411#13: 落得太多糖添 (lok6 dak1 taai3 do1 tong4 tim1): lok6 heard 3, taai3 heard 1
+- 6e83e51c531ba698 zh-HK-HiuMaanNeural -25% wordshk:5327#1: 今年暑假，我會去法國旅行 (gam1 nin4 syu2 gaa3 ngo5 wui5 heoi3 faat3 gwok3 leoi5 hang4): ngo5 heard 3, wui5 heard 2
+- c8d3cf42f26ee108 zh-HK-HiuMaanNeural -25% wordshk:61025#5: 好少人嚟 (hou2 siu2 jan4 lai4): jan4 heard 1
+- 1d8a62cad9fa4e67 zh-HK-HiuMaanNeural -25% wordshk:73187#1: 佢大個想做警察 (keoi5 daai6 go3 soeng2 zou6 ging2 caat3): keoi5 heard 3, daai6 heard 3
+- d9654c1df0cb20e5 zh-HK-HiuMaanNeural -25% wordshk:74357#1: 亞洲國家 (aa3 zau1 gwok3 gaa1): gwok3 heard 1
+- b5299ac6d25856a6 zh-HK-HiuMaanNeural -25% wordshk:42829#1: 搭一程巴士 (daap3 jat1 cing4 baa1 si2): daap3 heard 1
+- 031ca5569853893a zh-HK-HiuMaanNeural 0% wordshk:73319#1: 三個蘋果 (saam1 go3 ping4 gwo2): go3 heard 1, gwo2 heard 4
+- 9b7634dfe03d45b5 zh-HK-HiuMaanNeural -25% wordshk:73319#1: 三個蘋果 (saam1 go3 ping4 gwo2): go3 heard 1
+- cd10026a6a47e654 zh-HK-HiuMaanNeural -25% wordshk:67036#2: 半個世紀 (bun3 go3 sai3 gei2): bun3 heard 1
+- e5fb1a2c98dd2bd6 zh-HK-HiuMaanNeural -25% wordshk:42434#3: 游過三次水 (jau4 gwo3 saam1 ci3 seoi2): ci3 heard 1
+- 633a19b99244c1f2 zh-HK-HiuMaanNeural -25% wordshk:13605#4: 你瘦咗又靚咗喎 (nei5 sau3 zo2 jau6 leng3 zo2 wo3): sau3 heard 1
+- 6d0b8567bb7810f6 zh-HK-HiuMaanNeural 0% wordshk:87739#5: 兩隻雀仔 (loeng5 zek3 zoek3 zai2): loeng5 heard 2
+- 040d155abc512931 zh-HK-HiuMaanNeural -25% wordshk:89061#1: 藝術作品 (ngai6 seot6 zok3 ban2): ngai6 heard 3
+- 46db006996948310 zh-HK-HiuMaanNeural -25% wordshk:96934#1: 佢好人嚟㗎 (keoi5 hou2 jan4 lai4 gaa3): jan4 heard 1
+- de6a58acd8ce7a2e zh-HK-HiuMaanNeural -25% wordshk:81129#2: 個門口喺邊呀 (go3 mun4 hau2 hai2 bin1 aa3): go3 heard 1
+- dd2e2a43209c8208 zh-HK-HiuMaanNeural -25% wordshk:39927#1: 間屋嘅主人 (gaan1 uk1 ge3 zyu2 jan4): uk1 heard 3
+- 6e2a3342fe0b6f53 zh-HK-HiuMaanNeural 0% wordshk:53190#2: 呢樣嗰樣 (ni1 joeng6 go2 joeng6): joeng6 heard 4
+- 51b0ebf82b7ba2a7 zh-HK-HiuMaanNeural -25% wordshk:89216#22: 天做被地做牀 (tin1 zou6 pei5 dei6 zou6 cong4): zou6 heard 3
+- 855b5f44fd02414e zh-HK-HiuMaanNeural -25% wordshk:45447#2: 一段時間 (jat1 dyun6 si4 gaan3): dyun6 heard 3
+- 984824639a2d972b zh-HK-HiuMaanNeural 0% wordshk:69222#2: 父親大人 (fu6 can1 daai6 jan4): fu6 heard 1
+- daba4e013f1914e9 zh-HK-HiuMaanNeural -25% wordshk:69222#2: 父親大人 (fu6 can1 daai6 jan4): fu6 heard 1
+- 2c61c784cc355f96 zh-HK-HiuMaanNeural -25% wordshk:110903#8: 呢個局好難拆 (ni1 go3 guk6 hou2 naan4 caak3): go3 heard 1
+- 6dcd388918721051 zh-HK-HiuMaanNeural -25% wordshk:96489#26: 我向嗰個方向開咗兩槍 (ngo5 hoeng3 go2 go3 fong1 hoeng3 hoi1 zo2 loeng5 coeng1): go3 heard 1, hoeng3 heard 1
+- b5225b808ae9754d zh-HK-HiuMaanNeural -25% wordshk:69618#1: 佢係特登噉做嘅 (keoi5 hai6 dak6 dang1 gam2 zou6 ge3): hai6 heard 3
+- dd17d7c756e13622 zh-HK-HiuMaanNeural -25% wordshk:62625#4: 一套郵票 (jat1 tou3 jau4 piu3): tou3 heard 1
+- 3c7e5e270f4aad2a zh-HK-HiuMaanNeural -25% wordshk:117228#1: 一份早餐 (jat1 fan6 zou2 caan1): fan6 heard 3
+- 1b15e2882b5843f9 zh-HK-HiuMaanNeural 0% wordshk:76998#2: 我以前去過 (ngo5 ji5 cin4 heoi3 gwo3): ji5 heard 3
+- 87779f5cd7d724d9 zh-HK-HiuMaanNeural 0% wordshk:82115#1: 排隊買飛 (paai4 deoi2 maai5 fei1): maai5 heard 2
+- 6fb197408291e9b4 zh-HK-HiuMaanNeural -25% wordshk:90338#4: 整臭個朵 (zing2 cau3 go3 do2): go3 heard 4
+- 066a6c6f5a760f77 zh-HK-HiuMaanNeural -25% wordshk:88227#1: 自殺傾向 (zi6 saat3 king1 hoeng3): saat3 heard 1
+- ee92c44313932495 zh-HK-HiuMaanNeural -25% wordshk:108183#2: 讓少少位畀我企得唔得 (joeng6 siu2 siu2 wai2 bei2 ngo5 kei5 dak1 m4 dak1): joeng6 heard 3, ngo5 heard 1
+- 37b8abe62edae2c0 zh-HK-HiuMaanNeural -25% wordshk:72046#2: 駕駛態度 (gaa3 sai2 taai3 dou6): dou6 heard 4
+- e492f11855167048 zh-HK-HiuMaanNeural -25% wordshk:56990#8: 記得鎖門 (gei3 dak1 so2 mun4): gei3 heard 1
+- c9a62bd23a7edf83 zh-HK-HiuMaanNeural 0% wordshk:54924#1: 旅遊保險 (leoi5 jau4 bou2 him2): bou2 heard 4
+- 23cdae91274eb561 zh-HK-HiuMaanNeural -25% wordshk:54924#1: 旅遊保險 (leoi5 jau4 bou2 him2): leoi5 heard 2
+- 2888fc1aded68a97 zh-HK-HiuMaanNeural -25% wordshk:86446#4: 校長、各位老師、各位同學早晨 (haau6 zoeng2 gok3 wai2 lou5 si1 gok3 wai2 tung4 hok6 zou2 san4): haau6 heard 3
+- 94c5780f7005f8a9 zh-HK-HiuMaanNeural 0% wordshk:73397#1: 世界各地 (sai3 gaai3 gok3 dei6): sai3 heard 1, gaai3 heard 1
+- 6221803d3747e567 zh-HK-HiuMaanNeural -25% wordshk:73397#1: 世界各地 (sai3 gaai3 gok3 dei6): sai3 heard 1
+- ac3fe866c09724bb zh-HK-HiuMaanNeural 0% wordshk:97343#4: 政治明星 (zing3 zi6 ming4 sing1): zing3 heard 1
+- d2cb939d842da99a zh-HK-HiuMaanNeural -25% wordshk:97343#4: 政治明星 (zing3 zi6 ming4 sing1): zing3 heard 1
+- 84ef9e4154fe4c5c zh-HK-HiuMaanNeural 0% wordshk:88613#3: 政府部門 (zing3 fu2 bou6 mun4): zing3 heard 1
+- 17ba9f7da4642912 zh-HK-HiuMaanNeural -25% wordshk:90278#5: 你仲好講 (nei5 zung6 hou2 gong2): zung6 heard 3
+- 6632d3bb61319502 zh-HK-HiuMaanNeural 0% wordshk:42281#3: 呢個作家出過好多本書 (ni1 go3 zok3 gaa1 ceot1 gwo3 hou2 do1 bun2 syu1): go3 heard 1
+- 9345790904ee864c zh-HK-HiuMaanNeural -25% wordshk:42281#3: 呢個作家出過好多本書 (ni1 go3 zok3 gaa1 ceot1 gwo3 hou2 do1 bun2 syu1): go3 heard 1
+- fa49b0c6d6f0169d zh-HK-HiuMaanNeural 0% wordshk:69818#1: 世界地圖 (sai3 gaai3 dei6 tou4): sai3 heard 1, gaai3 heard 1
+- 63c75a47d8a111ad zh-HK-HiuMaanNeural -25% wordshk:69818#1: 世界地圖 (sai3 gaai3 dei6 tou4): sai3 heard 1
+- b152dec8970e4c9b zh-HK-HiuMaanNeural -25% wordshk:40719#1: 比賽正式開始 (bei2 coi3 zing3 sik1 hoi1 ci2): coi3 heard 1
+- 20581f35a5cfd8c1 zh-HK-HiuMaanNeural -25% wordshk:40724#2: 人比人，比死人。 唔好成日同人比較 (jan4 bei2 jan4 bei2 sei2 jan4 m4 hou2 seng4 jat6 tung4 jan4 bei2 gaau3): bei2 heard 4, hou2 heard 4, jat6 heard 3
+- 8147ec053874435e zh-HK-HiuMaanNeural 0% wordshk:77742#2: 等我哋同心祈禱 (dang2 ngo5 dei6 tung4 sam1 kei4 tou2): ngo5 heard 1
+- 843656a03a4773a2 zh-HK-HiuMaanNeural -25% wordshk:50446#6: 佢攞咗啲錢去買嘢 (keoi5 lo2 zo2 di1 cin2 heoi3 maai5 je5): keoi5 heard 3, maai5 heard 4
+- 1646b5e68a6f9041 zh-HK-HiuMaanNeural -25% wordshk:87304#2: 佢學嘅嘢好雜，乜都識啲 (keoi5 hok6 ge3 je5 hou2 zaap6 mat1 dou1 sik1 di1): hok6 heard 3
+- c11af522718ad45f zh-HK-HiuMaanNeural 0% wordshk:73918#4: 公共圖書館 (gung1 gung6 tou4 syu1 gun2): gung6 heard 3
+- 8516039d2c849cc5 zh-HK-HiuMaanNeural -25% wordshk:73918#4: 公共圖書館 (gung1 gung6 tou4 syu1 gun2): gung6 heard 3
+- 1e605f8a600cf395 zh-HK-HiuMaanNeural 0% wordshk:13515#3: 呢啲係好嘢嚟㗎 (ni1 di1 hai6 hou2 je5 lai4 gaa3): je5 heard 3
+- c673048ac3774dd0 zh-HK-HiuMaanNeural -25% wordshk:13515#3: 呢啲係好嘢嚟㗎 (ni1 di1 hai6 hou2 je5 lai4 gaa3): di1 heard 3, je5 heard 3
+- e73a7bd1c2e9703e zh-HK-HiuMaanNeural 0% wordshk:6879#3: 後生仔，捱吓啦 (hau6 saang1 zai2 ngaai4 haa2 laa1): hau6 heard 3
+- 4f01b1c762c7fe7e zh-HK-HiuMaanNeural -25% wordshk:6879#3: 後生仔，捱吓啦 (hau6 saang1 zai2 ngaai4 haa2 laa1): hau6 heard 3, haa2 heard 4
+- cc8eb8cd86ed021d zh-HK-HiuMaanNeural -25% wordshk:74716#2: 係噉打機 (hai6 gam2 daa2 gei1): hai6 heard 3
+- 58207dc1c1ba0075 zh-HK-HiuMaanNeural 0% wordshk:62764#1: 最新通知 (zeoi3 san1 tung1 zi1): zeoi3 heard 1
+- b1b3c01ed73b4556 zh-HK-HiuMaanNeural -25% wordshk:62764#1: 最新通知 (zeoi3 san1 tung1 zi1): zeoi3 heard 1
+- abdcaa2dfbf65078 zh-HK-HiuMaanNeural 0% wordshk:89990#1: 我好少飲酒 (ngo5 hou2 siu2 jam2 zau2): siu2 heard 3
+- 0abf6fb3b5d77ef5 zh-HK-HiuMaanNeural 0% wordshk:76949#2: 兒童圖書館 (ji4 tung4 tou4 syu1 gun2): ji4 heard 3
+- 2a8d45163591ac87 zh-HK-HiuMaanNeural -25% wordshk:76949#2: 兒童圖書館 (ji4 tung4 tou4 syu1 gun2): ji4 heard 3
+- 9c60b7b741850b67 zh-HK-HiuMaanNeural -25% wordshk:84629#6: 發展成熟 (faat3 zin2 sing4 suk6): faat3 heard 1
+- bf817a4ae23ba209 zh-HK-HiuMaanNeural -25% wordshk:47431#1: 佢係大學教授 (keoi5 hai6 daai6 hok6 gaau3 sau6): hai6 heard 3, hok6 heard 3
+- a4bca20f345b6598 zh-HK-HiuMaanNeural 0% wordshk:77019#6: 隻耳甩咗 (zek3 ji5 lat1 zo2): ji5 heard 3
+- d7607b7a8b9ff600 zh-HK-HiuMaanNeural -25% wordshk:77019#6: 隻耳甩咗 (zek3 ji5 lat1 zo2): zek3 heard 1, ji5 heard 3
+- f3baaf7f4d9170bc zh-HK-HiuMaanNeural -25% wordshk:59877#1: 錫佢一啖 (sek3 keoi5 jat1 daam6): sek3 heard 1, keoi5 heard 3
+- eeb424688091b819 zh-HK-HiuMaanNeural 0% wordshk:54356#3: 經濟困難 (ging1 zai3 kwan3 naan4): zai3 heard 1
+- b0aae6391428470c zh-HK-HiuMaanNeural -25% wordshk:54356#3: 經濟困難 (ging1 zai3 kwan3 naan4): zai3 heard 1
+- b3e2ef5e12cced36 zh-HK-HiuMaanNeural -25% wordshk:86690#1: 獨立委員會 (duk6 laap6 wai2 jyun4 wui2): laap6 heard 3, jyun4 heard 1, wui2 heard 4
+- d52eee770760ec74 zh-HK-HiuMaanNeural 0% wordshk:69222#4: 法官大人 (faat3 gun1 daai6 jan4): faat3 heard 1
+- 26982acc31cee324 zh-HK-HiuMaanNeural -25% wordshk:69222#4: 法官大人 (faat3 gun1 daai6 jan4): faat3 heard 1
+- b9ed28cfbdfa641a zh-HK-HiuMaanNeural -25% wordshk:49982#3: 佢表示肯定 (keoi5 biu2 si6 hang2 ding6): keoi5 heard 3
+- a43662ddfa915a63 zh-HK-HiuMaanNeural -25% wordshk:66694#1: 表達方式 (biu2 daat6 fong1 sik1): daat6 heard 3
+- bf9b59e0a9713b09 zh-HK-HiuMaanNeural 0% wordshk:69798#1: 地區資訊 (dei6 keoi1 zi1 seon3): dei6 heard 3
+- a90de62a0ffc4192 zh-HK-HiuMaanNeural -25% wordshk:69798#1: 地區資訊 (dei6 keoi1 zi1 seon3): dei6 heard 3
+- 6a88ae26a5e1fa1d zh-HK-HiuMaanNeural -25% wordshk:72774#6: 早買早享受，遲買平幾嚿 (zou2 maai5 zou2 hoeng2 sau6 ci4 maai5 peng4 gei2 gau6): maai5 heard 1, sau6 heard 2
+- d943674bcf7d15e6 zh-HK-HiuMaanNeural 0% wordshk:48976#1: 一罐汽水 (jat1 gun3 hei3 seoi2): gun3 heard 1
+- 002cb603abfe7666 zh-HK-HiuMaanNeural -25% wordshk:48976#1: 一罐汽水 (jat1 gun3 hei3 seoi2): gun3 heard 1
+- ebc0adce28d9a392 zh-HK-HiuMaanNeural -25% wordshk:86690#4: 選舉委員會 (syun2 geoi2 wai2 jyun4 wui2): geoi2 heard 1, jyun4 heard 1
+- 092d623e41a841fd zh-HK-HiuMaanNeural -25% wordshk:72935#1: 舉行婚禮 (geoi2 hang4 fan1 lai5): lai5 heard 4
+- de7acb273efb0809 zh-HK-HiuMaanNeural -25% wordshk:117347#4: 最佳選擇 (zeoi3 gaai1 syun2 zaak6): zeoi3 heard 1
+- a2447e64abeb69a8 zh-HK-HiuMaanNeural -25% wordshk:85269#2: 警察叔叔 (ging2 caat3 suk1 suk1): caat3 heard 1
+- 0de6a88f655ee495 zh-HK-HiuMaanNeural -25% wordshk:63209#1: 環境衞生 (waan4 ging2 wai6 sang1): wai6 heard 3
+- dc6adaf1f892e3f1 zh-HK-HiuMaanNeural 0% wordshk:89257#1: 有足夠嘅準備 (jau5 zuk1 gau3 ge3 zeon2 bei6): jau5 heard 2
+- cb420737d52df9a1 zh-HK-HiuMaanNeural -25% wordshk:89257#1: 有足夠嘅準備 (jau5 zuk1 gau3 ge3 zeon2 bei6): jau5 heard 2, gau3 heard 1
+- 8a5176e3ffcd05e4 zh-HK-HiuMaanNeural 0% wordshk:67719#3: 隨時過嚟啦 (ceoi4 si4 gwo3 lai4 laa1): gwo3 heard 1
+- a802dac1fb11df1b zh-HK-HiuMaanNeural -25% wordshk:67719#3: 隨時過嚟啦 (ceoi4 si4 gwo3 lai4 laa1): gwo3 heard 1
+- 92df3c15ab8d5b81 zh-HK-HiuMaanNeural -25% wordshk:49313#1: 你架車好貴 (nei5 gaa3 ce1 hou2 gwai3): gaa3 heard 1
+- d2435589404ac32a zh-HK-HiuMaanNeural -25% wordshk:85856#1: 我聽講你有咗喎 (ngo5 teng1 gong2 nei5 jau5 zo2 wo3): nei5 heard 1
+- bee491dcd8bc169b zh-HK-HiuMaanNeural 0% wordshk:71149#7: 犯罪分子 (faan6 zeoi6 fan6 zi2): faan6 heard 3, zeoi6 heard 3, fan6 heard 3
+- 102c8eb7ec6b90ce zh-HK-HiuMaanNeural -25% wordshk:71149#7: 犯罪分子 (faan6 zeoi6 fan6 zi2): faan6 heard 3, zeoi6 heard 3, fan6 heard 3
+- 0599d1faf2545767 zh-HK-HiuMaanNeural -25% wordshk:66997#5: 老一輩嘅人 (lou5 jat1 bui3 ge3 jan4): bui3 heard 1
+- 0fd778cc2ad99be8 zh-HK-HiuMaanNeural -25% wordshk:65829#1: 作文練習 (zok3 man2 lin6 zaap6): zok3 heard 1
+- c4095a11fcb9380d zh-HK-HiuMaanNeural -25% wordshk:76987#1: 畢業儀式 (bat1 jip6 ji4 sik1): jip6 heard 1
+- d8850da66527df7e zh-HK-HiuMaanNeural 0% wordshk:69450#1: 正確答案 (zing3 kok3 daap3 on3): zing3 heard 1, kok3 heard 1
+- c6cbf8f115ab520f zh-HK-HiuMaanNeural -25% wordshk:69450#1: 正確答案 (zing3 kok3 daap3 on3): zing3 heard 1, kok3 heard 1
+- 212d965a632ca6c9 zh-HK-HiuMaanNeural -25% wordshk:82675#1: 去沙灘玩 (heoi3 saa1 taan1 waan2): heoi3 heard 1
+- f199c38dc57b247b zh-HK-HiuMaanNeural -25% wordshk:70245#1: 當地時間 (dong1 dei6 si4 gaan3): dei6 heard 3
+- aeafd40717ac9071 zh-HK-HiuMaanNeural -25% wordshk:83424#28: 我收返我句説話 (ngo5 sau1 faan1 ngo5 geoi3 syut3 waa6): waa6 heard 4
+- d564b71d2f3eae07 zh-HK-HiuMaanNeural -25% wordshk:47000#2: 一架火車 (jat1 gaa3 fo2 ce1): fo2 heard 4
+- 2ece06187661b7e6 zh-HK-HiuMaanNeural -25% wordshk:104459#7: 少噉個位 (siu2 gam2 go3 wai2): go3 heard 1
+- 71a7647cb805c926 zh-HK-HiuMaanNeural -25% wordshk:61300#5: 弊，上錯車添 (bai6 soeng5 co3 ce1 tim1): soeng5 heard 2, co3 heard 1
+- d2d2ad387e7a06e4 zh-HK-HiuMaanNeural 0% wordshk:79781#1: 浪費時間 (long6 fai3 si4 gaan3): long6 heard 3
+- 793a9c2cae21335e zh-HK-HiuMaanNeural -25% wordshk:79781#1: 浪費時間 (long6 fai3 si4 gaan3): long6 heard 3
+- c029497299106388 zh-HK-HiuMaanNeural 0% wordshk:84348#2: 適應新環境 (sik1 jing3 san1 waan4 ging2): jing3 heard 1
+- def1cb50da96080d zh-HK-HiuMaanNeural -25% wordshk:84348#2: 適應新環境 (sik1 jing3 san1 waan4 ging2): jing3 heard 1
+- d3c0a3a258db9273 zh-HK-HiuMaanNeural -25% wordshk:88399#4: 長佔世界第一 (coeng4 zim3 sai3 gaai3 dai6 jat1): zim3 heard 1
+- c3ded316d7013ace zh-HK-HiuMaanNeural 0% wordshk:75398#8: 你可以嚟，我冇所謂 (nei5 ho2 ji5 lai4 ngo5 mou5 so2 wai6): ji5 heard 1, ngo5 heard 4
+- cd63c844255caf8f zh-HK-HiuMaanNeural -25% wordshk:71992#1: 特別嘉賓 (dak6 bit6 gaa1 ban1): bit6 heard 3
+- ca07541db3b8ea08 zh-HK-HiuMaanNeural 0% wordshk:82515#1: 路嘅旁邊 (lou6 ge3 pong4 bin1): lou6 heard 3
+- 7735bf5f28908f8c zh-HK-HiuMaanNeural -25% wordshk:82515#1: 路嘅旁邊 (lou6 ge3 pong4 bin1): lou6 heard 3
+- dfb2d4fc3f39cdde zh-HK-HiuMaanNeural -25% wordshk:62625#5: 一套西裝 (jat1 tou3 sai1 zong1): tou3 heard 1
+- 4610073ec01f8aad zh-HK-HiuMaanNeural 0% wordshk:74714#2: 語言學系 (jyu5 jin4 hok6 hai6): jyu5 heard 3
+- 28414672daea5244 zh-HK-HiuMaanNeural -25% wordshk:74714#2: 語言學系 (jyu5 jin4 hok6 hai6): jyu5 heard 3
+- f4a01ea33bae34b0 zh-HK-HiuMaanNeural -25% wordshk:111210#1: 可惜我嚟遲咗 (ho2 sik1 ngo5 lai4 ci4 zo2): zo2 heard 4
+- b5a8ddd00a97157b zh-HK-HiuMaanNeural -25% wordshk:85751#2: 吞晒啲藥佢 (tan1 saai3 di1 joek6 keoi5): saai3 heard 1
+- de8117d3b9e48b70 zh-HK-HiuMaanNeural -25% wordshk:73098#5: 一件小事 (jat1 gin6 siu2 si6): gin6 heard 3
+- a6580b0aed62b32b zh-HK-HiuMaanNeural 0% wordshk:41278#5: 我要去買本新嘅簿 (ngo5 jiu3 heoi3 maai5 bun2 san1 ge3 bou2): bun2 heard 1
+- 5a26698404a67eab zh-HK-HiuMaanNeural 0% wordshk:7952#2: 良好市民 (loeng4 hou2 si5 man4): si5 heard 3
+- b58419344ed43a9f zh-HK-HiuMaanNeural -25% wordshk:7952#2: 良好市民 (loeng4 hou2 si5 man4): si5 heard 3
+- e57fcc3e8184f2b8 zh-HK-HiuMaanNeural -25% wordshk:117260#1: 正版軟件 (zing3 baan2 jyun5 gin2): zing3 heard 1, baan2 heard 1
+- 273be3775a50f532 zh-HK-HiuMaanNeural -25% wordshk:50792#1: 開放時間 (hoi1 fong3 si4 gaan3): fong3 heard 1
+- 5d284710c39a0282 zh-HK-HiuMaanNeural 0% wordshk:70276#5: 檔案太大 (dong2 on3 taai3 daai6): on3 heard 1, daai6 heard 4
+- 415d9a3cff2d429f zh-HK-HiuMaanNeural -25% wordshk:70276#5: 檔案太大 (dong2 on3 taai3 daai6): on3 heard 1, daai6 heard 4
+- f775da280029bdc0 zh-HK-HiuMaanNeural -25% wordshk:78888#2: 拉小提琴 (laai1 siu2 tai4 kam4): siu2 heard 3
+- 178b35c575a1b9b8 zh-HK-HiuMaanNeural -25% wordshk:75603#1: 海洋生物 (hoi2 joeng4 sang1 mat6): joeng4 heard 1, sang1 heard 4, mat6 heard 1
+- a5b13bf7715e1801 zh-HK-HiuMaanNeural -25% wordshk:85435#3: 佢哋宣佈破產 (keoi5 dei6 syun1 bou3 po3 caan2): keoi5 heard 3
+- aebce25798eff388 zh-HK-HiuMaanNeural -25% wordshk:73918#3: 公共行政 (gung1 gung6 hang4 zing3): gung6 heard 3
+- b3fed9d637ac83d3 zh-HK-HiuMaanNeural -25% wordshk:87300#1: 貿易集團 (mau6 jik6 zaap6 tyun4): mau6 heard 3, zaap6 heard 3
+- 832f47ab932b2e86 zh-HK-HiuMaanNeural 0% wordshk:73156#1: 佢講嘅嘢令人驚訝 (keoi5 gong2 ge3 je5 ling6 jan4 ging1 ngaa5): keoi5 heard 3, ngaa5 heard 4
+- 7ff74a964d09fb9a zh-HK-HiuMaanNeural 0% wordshk:82929#9: 內心世界 (noi6 sam1 sai3 gaai3): noi6 heard 3
+- efe2cfc8397b4d2c zh-HK-HiuMaanNeural -25% wordshk:82929#9: 內心世界 (noi6 sam1 sai3 gaai3): noi6 heard 3
+- b6e32bb931a0b462 zh-HK-HiuMaanNeural 0% wordshk:114265#2: 管理團隊 (gun2 lei5 tyun4 deoi2): lei5 heard 3
+- d63806010215bf32 zh-HK-HiuMaanNeural -25% wordshk:114265#2: 管理團隊 (gun2 lei5 tyun4 deoi2): gun2 heard 3, lei5 heard 3
+- 351db31980907c47 zh-HK-HiuMaanNeural -25% wordshk:69350#1: 市民大眾 (si5 man4 daai6 zung3): si5 heard 3
+- d5cc24f55e07b9eb zh-HK-HiuMaanNeural -25% wordshk:83027#1: 心理學家 (sam1 lei5 hok6 gaa1): hok6 heard 3
+- 474f75082e6db5e3 zh-HK-HiuMaanNeural -25% wordshk:91475#1: 唔使驚，包喺我身上 (m4 sai2 geng1 baau1 hai2 ngo5 san1 soeng6): m4 heard 3, hai2 heard 3, soeng6 heard 4
+- 0d9d48e9299c40d0 zh-HK-HiuMaanNeural -25% wordshk:108761#1: 畀人打劫 (bei2 jan4 daa2 gip3): daa2 heard 4
+- 7995da6ff1e21d68 zh-HK-HiuMaanNeural 0% wordshk:81518#4: 眼神接觸 (ngaan5 san4 zip3 zuk1): ngaan5 heard 2
+- 52bd9b8fe8a396f3 zh-HK-HiuMaanNeural -25% wordshk:13630#5: 幫我睇睇佢吖 (bong1 ngo5 tai2 tai2 keoi5 aa1): keoi5 heard 3
+- bf82b256e36f6a5e zh-HK-HiuMaanNeural -25% wordshk:47404#6: 佢教識我點踩單車 (keoi5 gaau3 sik1 ngo5 dim2 caai2 daan1 ce1): keoi5 heard 3
+- 323d7f4c811313af zh-HK-HiuMaanNeural -25% wordshk:74218#1: 美國嘅軍隊認第二，冇人敢認第一 (mei5 gwok3 ge3 gwan1 deoi2 jing6 dai6 ji6 mou5 jan4 gam2 jing6 dai6 jat1): gwok3 heard 1, ge3 heard 1, jing6 heard 1
+- 289026871ca25bd6 zh-HK-HiuMaanNeural 0% wordshk:71031#2: 分類技巧 (fan1 leoi6 gei6 haau2): leoi6 heard 3
+- b4efe6495de52aee zh-HK-HiuMaanNeural -25% wordshk:83786#3: 呢度四圍都係樹 (ni1 dou6 sei3 wai4 dou1 hai6 syu6): dou6 heard 3
+- 567a23b87ad51067 zh-HK-HiuMaanNeural 0% wordshk:85275#2: 牛油粟米 (ngau4 jau4 suk1 mai5): mai5 heard 4
+- b0b938dc341f226b zh-HK-HiuMaanNeural 0% wordshk:67580#1: 嚴重車禍 (jim4 zung6 ce1 wo6): zung6 heard 3
+- 734e421683e6ee3c zh-HK-HiuMaanNeural -25% wordshk:67580#1: 嚴重車禍 (jim4 zung6 ce1 wo6): zung6 heard 3
+- b6331e4ff8f13d8c zh-HK-HiuMaanNeural 0% wordshk:80611#1: 面試技巧 (min6 si5 gei6 haau2): min6 heard 3
+- 63412c3876fabd13 zh-HK-HiuMaanNeural -25% wordshk:80611#1: 面試技巧 (min6 si5 gei6 haau2): min6 heard 3
+- 845d3e8682988520 zh-HK-HiuMaanNeural -25% wordshk:69545#1: 大清帝國 (daai6 cing1 dai3 gwok3): daai6 heard 3
+- 32527e75e0da046d zh-HK-HiuMaanNeural -25% wordshk:67330#4: 淨係摷同錫咋，冇做其他嘢 (zing6 hai6 caau3 tung4 sek3 zaa3 mou5 zou6 kei4 taa1 je5): zing6 heard 1, caau3 heard 1, je5 heard 4
+- 8baaccbddc92b4d4 zh-HK-HiuMaanNeural 0% wordshk:40179#3: 佢整親我 (keoi5 zing2 can1 ngo5): keoi5 heard 3
+- b00e2cb689e60ee7 zh-HK-HiuMaanNeural -25% wordshk:40179#3: 佢整親我 (keoi5 zing2 can1 ngo5): keoi5 heard 3
+- bdf802ef2454d638 zh-HK-HiuMaanNeural 0% wordshk:78301#3: 粵語方言 (jyut6 jyu5 fong1 jin4): jyut6 heard 3, jyu5 heard 3
+- 90389d74a218c40e zh-HK-HiuMaanNeural -25% wordshk:78301#3: 粵語方言 (jyut6 jyu5 fong1 jin4): jyu5 heard 3
+- 6f705c26522b20cc zh-HK-HiuMaanNeural -25% wordshk:75583#1: 日常開支 (jat6 soeng4 hoi1 zi1): jat6 heard 3
+- 53ae451c1d35a49b zh-HK-HiuMaanNeural 0% wordshk:119432#1: 公眾泳池 (gung1 zung3 wing6 ci4): zung3 heard 1
+- d347c4c8b8984b04 zh-HK-HiuMaanNeural 0% wordshk:78956#1: 隻杯爛咗 (zek3 bui1 laan6 zo2): zek3 heard 1
+- 695168c84eebb573 zh-HK-HiuMaanNeural -25% wordshk:82183#1: 今日沙田跑馬 (gam1 jat6 saa1 tin4 paau2 maa5): jat6 heard 1, saa1 heard 4
+- 089ff2a2ef96a3df zh-HK-HiuMaanNeural -25% wordshk:82180#1: 跑去車站 (paau2 heoi3 ce1 zaam6): heoi3 heard 1
+- 692d6bec18896fa8 zh-HK-HiuMaanNeural -25% wordshk:100387#1: 望佢一眼 (mong6 keoi5 jat1 ngaan5): mong6 heard 3, keoi5 heard 3
+- 4b0dd59300006281 zh-HK-HiuMaanNeural -25% wordshk:89848#1: 由呢度搭車去中環要幾耐 (jau4 ni1 dou6 daap3 ce1 heoi3 zung1 waan4 jiu3 gei2 noi6): dou6 heard 3, heoi3 heard 1, noi6 heard 4
+- 364370da11383d9b zh-HK-HiuMaanNeural -25% wordshk:85113#1: 好多內地股準備喺香港上市 (hou2 do1 noi6 dei6 gu2 zeon2 bei6 hai2 hoeng1 gong2 soeng5 si5): hou2 heard 1, do1 heard 3, dei6 heard 2, hai2 heard 1, si5 heard 4
+- 0c43275e0a9cd604 zh-HK-HiuMaanNeural -25% wordshk:79085#2: 畀你冧巴我 (bei2 nei5 lam1 baa2 ngo5): nei5 heard 1
+- caeeb78c687ec5f3 zh-HK-HiuMaanNeural -25% wordshk:56400#3: 一個人拎好似好勉強 (jat1 go3 jan4 ling1 hou2 ci5 hou2 min5 koeng5): go3 heard 1
+- f800ed9b9c23823b zh-HK-HiuMaanNeural -25% wordshk:70995#1: 吠得好大聲 (fai6 dak1 hou2 daai6 seng1): fai6 heard 3
+- 2d1f375cb6398ddf zh-HK-HiuMaanNeural -25% wordshk:120522#3: 喺理想嘅環境底下 (hai2 lei5 soeng2 ge3 waan4 ging2 dai2 haa6): ge3 heard 2, waan4 heard 3, ging2 heard 4, haa6 heard 4
+- f7621a2397705538 zh-HK-HiuMaanNeural 0% wordshk:84185#1: 大好時機 (daai6 hou2 si4 gei1): daai6 heard 3
+- 1e9b00b6d033959c zh-HK-HiuMaanNeural -25% wordshk:84185#1: 大好時機 (daai6 hou2 si4 gei1): daai6 heard 3
+- d92928ab4138f2d8 zh-HK-HiuMaanNeural -25% wordshk:96307#1: 你可以做得更好 (nei5 ho2 ji5 zou6 dak1 gang3 hou2): ho2 heard 3, ji5 heard 1, zou6 heard 3, dak1 heard 3
+- dbda03550efacd52 zh-HK-HiuMaanNeural -25% wordshk:63052#3: 佢好橫好高 (keoi5 hou2 waang4 hou2 gou1): hou2 heard 1
+- 938ae953c9589cc2 zh-HK-HiuMaanNeural -25% wordshk:85256#2: 統計數據 (tung2 gai3 sou3 geoi3): gai3 heard 1
+- db86bc3cb1137f88 zh-HK-HiuMaanNeural -25% wordshk:40660#2: 設備不足 (cit3 bei6 bat1 zuk1): bei6 heard 3
+- 2a8f998786e1c259 zh-HK-HiuMaanNeural 0% wordshk:71346#1: 貨車司機 (fo3 ce1 si1 gei1): fo3 heard 1
+- cc2181842bcb7cb0 zh-HK-HiuMaanNeural -25% wordshk:71346#1: 貨車司機 (fo3 ce1 si1 gei1): fo3 heard 1
+- bbe8303fc7a96456 zh-HK-HiuMaanNeural 0% wordshk:108986#1: 流動資金 (lau4 dung6 zi1 gam1): dung6 heard 3
+- 79093a5762682279 zh-HK-HiuMaanNeural -25% wordshk:108986#1: 流動資金 (lau4 dung6 zi1 gam1): dung6 heard 3
+- 333d9e1329b3ae18 zh-HK-HiuMaanNeural -25% wordshk:11109#1: 照顧他人 (ziu3 gu3 taa1 jan4): ziu3 heard 1, gu3 heard 1
+- 7c4a216d784bc55f zh-HK-HiuMaanNeural 0% wordshk:7342#1: 愛國詩人 (oi3 gwok3 si1 jan4): oi3 heard 1, gwok3 heard 1
+- a6ff06efd7e88bfe zh-HK-HiuMaanNeural -25% wordshk:7342#1: 愛國詩人 (oi3 gwok3 si1 jan4): oi3 heard 1, gwok3 heard 1
+- 43857f7b5c2927e2 zh-HK-HiuMaanNeural 0% wordshk:88950#1: 掌聲鼓勵 (zoeng2 sing1 gu2 lai6): lai6 heard 4
+- 912ded8c497d2940 zh-HK-HiuMaanNeural 0% wordshk:96628#2: 撩人講嘢 (liu4 jan4 gong2 je5): gong2 heard 1
+- 9da0344258a33622 zh-HK-HiuMaanNeural 0% wordshk:119432#5: 公眾諮詢 (gung1 zung3 zi1 seon1): zung3 heard 1
+- f64f8542cbad2399 zh-HK-HiuMaanNeural -25% wordshk:119432#5: 公眾諮詢 (gung1 zung3 zi1 seon1): zung3 heard 1
+- 8c09ca6d52e9b547 zh-HK-HiuMaanNeural -25% wordshk:82091#2: 趴喺張牀度 (paa1 hai2 zoeng1 cong4 dou6): hai2 heard 3
+- 0ea98eeeeb38b5e8 zh-HK-HiuMaanNeural -25% wordshk:48091#2: 佢兼職教琴 (keoi5 gim1 zik1 gaau3 kam4): keoi5 heard 3
+- d9fc40858742e37b zh-HK-HiuMaanNeural -25% wordshk:19543#2: 我數學分數好高 (ngo5 sou3 hok6 fan1 sou3 hou2 gou1): hok6 heard 3
+- 6158697cd7d79352 zh-HK-HiuMaanNeural 0% wordshk:45780#5: 我發現佢有啲古怪 (ngo5 faat3 jin6 keoi5 jau5 di1 gu2 gwaai3): jin6 heard 3
+- 08f0727e125edbc0 zh-HK-HiuMaanNeural -25% wordshk:77824#2: 多謝大家容許我喺呢度發言 (do1 ze6 daai6 gaa1 jung4 heoi2 ngo5 hai2 ni1 dou6 faat3 jin4): ze6 heard 1, daai6 heard 3, ngo5 heard 1
+- 69d0b061e5a0c71b zh-HK-HiuMaanNeural -25% wordshk:72900#1: 語言技能 (jyu5 jin4 gei6 nang4): jyu5 heard 3
+- d062f8e1cf9c3398 zh-HK-HiuMaanNeural 0% wordshk:104297#1: 揚威國際 (joeng4 wai1 gwok3 zai3): gwok3 heard 1
+- 67fad6c22f711883 zh-HK-HiuMaanNeural -25% wordshk:104297#1: 揚威國際 (joeng4 wai1 gwok3 zai3): gwok3 heard 1
+- 778034f2f5dcbacc zh-HK-HiuMaanNeural 0% wordshk:73093#6: 建立政權 (gin3 laap6 zing3 kyun4): gin3 heard 1
+- 1e426102573cf7ce zh-HK-HiuMaanNeural -25% wordshk:117723#1: 大學校隊 (daai6 hok6 haau6 deoi2): daai6 heard 3, hok6 heard 3
+- bc69da8b260f73be zh-HK-HiuMaanNeural -25% wordshk:73868#1: 汽車工廠 (hei3 ce1 gung1 cong2): hei3 heard 1
+- b8ba8ae52d687ce5 zh-HK-HiuMaanNeural -25% wordshk:70386#2: 渡過難關 (dou6 gwo3 naan4 gwaan1): dou6 heard 3
+- bd6024fe10b68539 zh-HK-HiuMaanNeural -25% wordshk:54595#2: 焫得滯等陣再飲 (naat3 dak1 zai6 dang2 zan6 zoi3 jam2): naat3 heard 1, zai6 heard 3
+- ddcfb28727d064aa zh-HK-HiuMaanNeural 0% wordshk:70927#2: 向天發誓 (hoeng3 tin1 faat3 sai6): hoeng3 heard 1
+- 26ddf78e52b66506 zh-HK-HiuMaanNeural -25% wordshk:70927#2: 向天發誓 (hoeng3 tin1 faat3 sai6): hoeng3 heard 1
+- 6269d8446d4927cd zh-HK-HiuMaanNeural -25% wordshk:71612#1: 符合所有要求 (fu4 hap6 so2 jau5 jiu1 kau4): fu4 heard 3
+- e3a023f17ac502ea zh-HK-HiuMaanNeural -25% wordshk:74153#2: 我老細係鬼佬嚟嘅 (ngo5 lou5 sai3 hai6 gwai2 lou2 lai4 ge3): lou5 heard 3, lou2 heard 3
+- 307013d3b49b1fd3 zh-HK-HiuMaanNeural 0% wordshk:40896#4: 啲豆腐變咗 (di1 dau6 fu6 bin3 zo2): dau6 heard 3
+- f1d019f9c498f8ef zh-HK-HiuMaanNeural 0% wordshk:69468#3: 向前踏一步 (hoeng3 cin4 daap6 jat1 bou6): hoeng3 heard 1
+- 82e07794cdd2c162 zh-HK-HiuMaanNeural -25% wordshk:69468#3: 向前踏一步 (hoeng3 cin4 daap6 jat1 bou6): hoeng3 heard 1
+- 0e72c1133028fe3f zh-HK-HiuMaanNeural 0% wordshk:73063#8: 好耐冇見 (hou2 noi6 mou5 gin3): noi6 heard 1
+- ac9ca3e312ffaece zh-HK-HiuMaanNeural -25% wordshk:63921#6: 佢側起個膊頭寫字 (keoi5 zak1 hei2 go3 bok3 tau4 se2 zi6): keoi5 heard 3, go3 heard 1, zi6 heard 4
+- 602a7b2b562bd3f5 zh-HK-HiuMaanNeural -25% wordshk:67910#1: 廁所冇廁紙呀 (ci3 so2 mou5 ci3 zi2 aa3): ci3 heard 1, mou5 heard 1
+- 177fa56abb1cde58 zh-HK-HiuMaanNeural -25% wordshk:82095#1: 唔好怕醜 (m4 hou2 paa3 cau2): paa3 heard 1
+- b3e6ea61d5bc7e1e zh-HK-HiuMaanNeural -25% wordshk:76391#1: 你一係就死，一係就投降 (nei5 jat1 hai6 zau6 sei2 jat1 hai6 zau6 tau4 hong4): hai6 heard 3
+- e960c84e85191512 zh-HK-HiuMaanNeural -25% wordshk:85593#1: 去非洲探險 (heoi3 fei1 zau1 taam3 him2): heoi3 heard 1
+- 70c05988693f384e zh-HK-HiuMaanNeural 0% wordshk:69818#3: 數碼地圖 (sou3 maa5 dei6 tou4): sou3 heard 1
+- 4b34db09b22b9dac zh-HK-HiuMaanNeural -25% wordshk:69818#3: 數碼地圖 (sou3 maa5 dei6 tou4): sou3 heard 1
+- 4c6ed6b0f7ae021a zh-HK-HiuMaanNeural -25% wordshk:89936#2: 嗰個書架爛咗 (go2 go3 syu1 gaa2 laan6 zo2): go3 heard 1
+- 7110c4b1c2db7ce7 zh-HK-HiuMaanNeural -25% wordshk:103308#1: 未經批准 (mei6 ging1 pai1 zeon2): mei6 heard 3
+- 30ae0e08b2ec3482 zh-HK-HiuMaanNeural 0% wordshk:40727#1: 打個比喻 (daa2 go3 bei2 jyu6): daa2 heard 1, bei2 heard 1
+- c2110ba2cf88cc95 zh-HK-HiuMaanNeural -25% wordshk:40727#1: 打個比喻 (daa2 go3 bei2 jyu6): daa2 heard 1, bei2 heard 1
+- f4265a40bbc6c263 zh-HK-HiuMaanNeural -25% wordshk:40818#1: 隔離病房 (gaak3 lei4 beng6 fong2): gaak3 heard 1
+- 10e821554e748ac7 zh-HK-HiuMaanNeural 0% wordshk:83114#2: 我痛到甚至想叫白車 (ngo5 tung3 dou3 sam6 zi3 soeng2 giu3 baak6 ce1): sam6 heard 3
+- 037f8c69868bf36e zh-HK-HiuMaanNeural -25% wordshk:82673#2: 秋天到，我啲皮膚好似沙漠噉 (cau1 tin1 dou3 ngo5 di1 pei4 fu1 hou2 ci5 saa1 mok6 gam2): dou3 heard 1
+- c854e706fe209f03 zh-HK-HiuMaanNeural 0% wordshk:84541#1: 發表聯合聲明 (faat3 biu2 lyun4 hap6 sing1 ming4): faat3 heard 1, lyun4 heard 1
+- c766365aff0ce6ca zh-HK-HiuMaanNeural -25% wordshk:84541#1: 發表聯合聲明 (faat3 biu2 lyun4 hap6 sing1 ming4): faat3 heard 1, biu2 heard 1
+- 2feefb596efff2b7 zh-HK-HiuMaanNeural 0% wordshk:90279#6: 各位聽眾，你哋好 (gok3 wai2 ting3 zung3 nei5 dei6 hou2): hou2 heard 4
+- 589a3fc9684114bc zh-HK-HiuMaanNeural -25% wordshk:84647#1: 城市規劃 (sing4 si5 kwai1 waak6): waak6 heard 1
+- 6affcafca31a86cc zh-HK-HiuMaanNeural -25% wordshk:81262#1: 頭先有個男仔跌親 (tau4 sin1 jau5 go3 naam4 zai2 dit3 can1): jau5 heard 3
+- fa16cdb95ffe5f11 zh-HK-HiuMaanNeural -25% wordshk:86314#1: 逃走路線 (tou4 zau2 lou6 sin3): zau2 heard 1, lou6 heard 3
+- f25ff459d3a467c8 zh-HK-HiuMaanNeural 0% wordshk:90920#3: 開大定開細 (hoi1 daai6 ding6 hoi1 sai3): daai6 heard 3, ding6 heard 3
+- 1d56dd9e6ce235b5 zh-HK-HiuMaanNeural -25% wordshk:90920#3: 開大定開細 (hoi1 daai6 ding6 hoi1 sai3): daai6 heard 3, ding6 heard 3
+- e4cabcd3a36aa67b zh-HK-HiuMaanNeural -25% wordshk:46755#4: 四封電郵 (sei3 fung1 din6 jau4): sei3 heard 1
+- 288e110b5af38f19 zh-HK-HiuMaanNeural -25% wordshk:85870#6: 推佢上位 (teoi1 keoi5 soeng5 wai2): keoi5 heard 3
+- b27a0d476849cae3 zh-HK-HiuMaanNeural -25% wordshk:40515#1: 如果你有時間，不妨去試下嗰間餐廳 (jyu4 gwo2 nei5 jau5 si4 gaan1 bat1 fong4 heoi3 si3 haa6 go2 gaan1 caan1 teng1): nei5 heard 1, go2 heard 4
+- ffb1e71d265d96ae zh-HK-HiuMaanNeural 0% wordshk:87705#1: 去圖書館借書 (heoi3 tou4 syu1 gun2 ze3 syu1): heoi3 heard 1
+- abcbedee76ecabe4 zh-HK-HiuMaanNeural -25% wordshk:87705#1: 去圖書館借書 (heoi3 tou4 syu1 gun2 ze3 syu1): heoi3 heard 1
+- e94e6b92d6b8a664 zh-HK-HiuMaanNeural 0% wordshk:69964#1: 畢業典禮 (bat1 jip6 din2 lai5): lai5 heard 4
+- 1764c4209fb50185 zh-HK-HiuMaanNeural -25% wordshk:68930#4: 我哋全球各地都有分店 (ngo5 dei6 cyun4 kau4 gok3 dei6 dou1 jau5 fan1 dim3): dei6 heard 3, dei6 heard 3
+- 0f6b436ebd3bade1 zh-HK-HiuMaanNeural -25% wordshk:87998#4: 分配資產 (fan1 pui3 zi1 caan2): pui3 heard 1
+- 58108da6ef915bf1 zh-HK-HiuMaanNeural 0% wordshk:41303#1: 佈置場地 (bou3 zi3 coeng4 dei6): bou3 heard 1
+- ea7cf213f0977acc zh-HK-HiuMaanNeural -25% wordshk:41303#1: 佈置場地 (bou3 zi3 coeng4 dei6): bou3 heard 1, zi3 heard 1
+- 8cd0ba7e82c6af18 zh-HK-HiuMaanNeural 0% wordshk:85075#1: 衞生常識 (wai6 sang1 soeng4 sik1): wai6 heard 3
+- 47293820b0685bac zh-HK-HiuMaanNeural -25% wordshk:85075#1: 衞生常識 (wai6 sang1 soeng4 sik1): wai6 heard 3
+- 713d478a1d5576c4 zh-HK-HiuMaanNeural -25% wordshk:83056#3: 中環係香港嘅心臟 (zung1 waan4 hai6 hoeng1 gong2 ge3 sam1 zong6): zong6 heard 4
+- 7d84f3c2f22c4c6f zh-HK-HiuMaanNeural -25% wordshk:84633#1: 成長過程 (sing4 zoeng2 gwo3 cing4): gwo3 heard 1
+- 02342335a8039cb3 zh-HK-HiuMaanNeural -25% wordshk:40200#1: 去廟度拜神 (heoi3 miu2 dou6 baai3 san4): heoi3 heard 1, dou6 heard 3
+- 50867202137b66c9 zh-HK-HiuMaanNeural 0% wordshk:78762#1: 文字框架 (man4 zi6 kwaang1 gaa2): zi6 heard 3
+- 02b0b3f4a8d95055 zh-HK-HiuMaanNeural -25% wordshk:78762#1: 文字框架 (man4 zi6 kwaang1 gaa2): zi6 heard 3, gaa2 heard 4
+- ff829d4350ca3718 zh-HK-HiuMaanNeural 0% wordshk:88577#1: 我哋傾緊正經嘢 (ngo5 dei6 king1 gan2 zing3 ging1 je5): je5 heard 4
+- 1234e0d9c08fd341 zh-HK-HiuMaanNeural 0% wordshk:96998#1: 潛在風險 (cim4 zoi6 fung1 him2): zoi6 heard 3
+- 54fe15db5dc2206d zh-HK-HiuMaanNeural -25% wordshk:96998#1: 潛在風險 (cim4 zoi6 fung1 him2): zoi6 heard 3
+- 26cbecc22527692c zh-HK-HiuMaanNeural 0% wordshk:73093#4: 建立自信 (gin3 laap6 zi6 seon3): gin3 heard 1
+- 422b75382db79b4b zh-HK-HiuMaanNeural -25% wordshk:73093#4: 建立自信 (gin3 laap6 zi6 seon3): gin3 heard 1, zi6 heard 3
+- 757272802f1da152 zh-HK-HiuMaanNeural -25% wordshk:67416#1: 我親眼睇到佢哋拖住手 (ngo5 can1 ngaan5 tai2 dou2 keoi5 dei6 to1 zyu6 sau2): keoi5 heard 3
+- 0950155bb05978f5 zh-HK-HiuMaanNeural -25% wordshk:44991#1: 我想親自多謝佢 (ngo5 soeng2 can1 zi6 do1 ze6 keoi5): keoi5 heard 4
+- fd8b0af769a791ce zh-HK-HiuMaanNeural -25% wordshk:64437#2: 一樽豉油 (jat1 zeon1 si6 jau4): si6 heard 3
+- 27ea160795158b32 zh-HK-HiuMaanNeural 0% wordshk:67570#1: 商用車輛 (soeng1 jung6 ce1 loeng2): jung6 heard 3
+- 787261dda0a388cf zh-HK-HiuMaanNeural -25% wordshk:67570#1: 商用車輛 (soeng1 jung6 ce1 loeng2): jung6 heard 3
+- 9a3cc0bd77a0f323 zh-HK-HiuMaanNeural 0% wordshk:89023#1: 再講一次 (zoi3 gong2 jat1 ci3): zoi3 heard 1
+- 5d9909b529eeda4a zh-HK-HiuMaanNeural -25% wordshk:92337#1: 你個人真係好多口水 (nei5 go3 jan4 zan1 hai6 hou2 do1 hau2 seoi2): hai6 heard 3
+- d19e582ae5e4abf6 zh-HK-HiuMaanNeural 0% wordshk:84995#1: 愛國商人 (oi3 gwok3 soeng1 jan4): oi3 heard 1, gwok3 heard 1
+- 797969720b6afd1b zh-HK-HiuMaanNeural -25% wordshk:43832#2: 你個客廳好大 (nei5 go3 haak3 teng1 hou2 daai6): go3 heard 1, haak3 heard 1, daai6 heard 4
+- 9983942b9dc97e5a zh-HK-HiuMaanNeural -25% wordshk:74579#1: 唔好客氣，隨便坐 (m4 hou2 haak3 hei3 ceoi4 bin2 co5): co5 heard 4
+- 7e38fa14f28fcdac zh-HK-HiuMaanNeural -25% wordshk:67026#2: 本能反應 (bun2 nang4 faan2 jing3): bun2 heard 3, faan2 heard 4
+- 80fe05a0a77af866 zh-HK-HiuMaanNeural -25% wordshk:82485#1: 水管破裂 (seoi2 gun2 po3 lit6): lit6 heard 3
+- 1b5b9bc4ce3c4188 zh-HK-HiuMaanNeural 0% wordshk:78910#3: 瀨濕塊片 (laai6 sap1 faai3 pin2): laai6 heard 3
+- 699281d3468e12c0 zh-HK-HiuMaanNeural -25% wordshk:78910#3: 瀨濕塊片 (laai6 sap1 faai3 pin2): laai6 heard 3
+- f809985a47d7bd37 zh-HK-HiuMaanNeural 0% wordshk:77534#1: 熱心市民 (jit6 sam1 si5 man4): jit6 heard 1
+- 6bd951dd7a9b30b9 zh-HK-HiuMaanNeural -25% wordshk:77534#1: 熱心市民 (jit6 sam1 si5 man4): jit6 heard 1, si5 heard 3
+- 7cf59dcb7d2164a2 zh-HK-HiuMaanNeural -25% wordshk:82150#1: 影相留念 (jing2 soeng2 lau4 nim6): lau4 heard 1, nim6 heard 4
+- fa03c44ae02aed07 zh-HK-HiuMaanNeural -25% wordshk:41213#3: 保險經紀 (bou2 him2 ging1 gei2): him2 heard 3
+- 5e278c5205321e66 zh-HK-HiuMaanNeural -25% wordshk:89464#1: 警察總部 (ging2 caat3 zung2 bou6): caat3 heard 1
+- 2062ecd766c03112 zh-HK-HiuMaanNeural 0% wordshk:74384#3: 國際視野 (gwok3 zai3 si6 je5): gwok3 heard 1, je5 heard 4
+- 36882025691b78c5 zh-HK-HiuMaanNeural 0% wordshk:72643#1: 近視好深 (gan6 si6 hou2 sam1): gan6 heard 3
+- f6282ba4993a0207 zh-HK-HiuMaanNeural -25% wordshk:72643#1: 近視好深 (gan6 si6 hou2 sam1): gan6 heard 3
+- 9f34e01242436377 zh-HK-HiuMaanNeural 0% wordshk:67516#1: 政治醜聞 (zing3 zi6 cau2 man4): zing3 heard 1
+- cd5298ea39e9e690 zh-HK-HiuMaanNeural -25% wordshk:67516#1: 政治醜聞 (zing3 zi6 cau2 man4): zing3 heard 1, zi6 heard 3
+- f470cd7d9895333d zh-HK-HiuMaanNeural 0% wordshk:115316#2: 開放式單位 (hoi1 fong3 sik1 daan1 wai2): fong3 heard 1
+- 8c2e9062497d077b zh-HK-HiuMaanNeural -25% wordshk:115316#2: 開放式單位 (hoi1 fong3 sik1 daan1 wai2): fong3 heard 1
+- a1d19d5481ce06f7 zh-HK-HiuMaanNeural -25% wordshk:13775#1: 佢哋喺條村度霸咗塊地 (keoi5 dei6 hai2 tiu4 cyun1 dou6 baa3 zo2 faai3 dei6): keoi5 heard 3, dei6 heard 3, dei6 heard 4
+- d5434068d0508db2 zh-HK-HiuMaanNeural 0% wordshk:78070#1: 預先通知 (jyu6 sin1 tung1 zi1): jyu6 heard 3
+- 8bde50f75256d0e1 zh-HK-HiuMaanNeural -25% wordshk:78070#1: 預先通知 (jyu6 sin1 tung1 zi1): jyu6 heard 3
+- a4dac03fc002e573 zh-HK-HiuMaanNeural -25% wordshk:39927#5: 呢位就係鸚鵡嘅主人 (ni1 wai2 zau6 hai6 jing1 mou5 ge3 zyu2 jan4): hai6 heard 3
+- 1de393d531ae8f11 zh-HK-HiuMaanNeural 0% wordshk:74357#2: 國家主權 (gwok3 gaa1 zyu2 kyun4): gwok3 heard 1
+- 2b98a9d350e888fb zh-HK-HiuMaanNeural -25% wordshk:74357#2: 國家主權 (gwok3 gaa1 zyu2 kyun4): gwok3 heard 1
+- c1940d1883d3e4a7 zh-HK-HiuMaanNeural -25% wordshk:11129#4: 我哋餐廳每個人頭計一百 (ngo5 dei6 caan1 teng1 mui5 go3 jan4 tau4 gai3 jat1 baak3): dei6 heard 3, mui5 heard 3, baak3 heard 6
+- 7084db4609455ee8 zh-HK-HiuMaanNeural 0% wordshk:83970#2: 電子信箱 (din6 zi2 seon3 soeng1): din6 heard 3
+- 0a324905c4bf8ee1 zh-HK-HiuMaanNeural -25% wordshk:83970#2: 電子信箱 (din6 zi2 seon3 soeng1): din6 heard 3
+- e954f6b3b33d76e5 zh-HK-HiuMaanNeural -25% wordshk:84500#1: 我哋決定即時將行動升級 (ngo5 dei6 kyut3 ding6 zik1 si4 zoeng1 hang4 dung6 sing1 kap1): dei6 heard 3, ding6 heard 3
+- efad0a7cdd787740 zh-HK-HiuMaanNeural 0% wordshk:106039#4: 咪住先，呢度有啲問題 (mai5 zyu6 sin1 ni1 dou6 jau5 di1 man6 tai4): dou6 heard 1, jau5 heard 3
+- 1b175ae2872a1444 zh-HK-HiuMaanNeural -25% wordshk:106039#4: 咪住先，呢度有啲問題 (mai5 zyu6 sin1 ni1 dou6 jau5 di1 man6 tai4): zyu6 heard 3, dou6 heard 3
+- 4e5d43f05ae45e57 zh-HK-HiuMaanNeural 0% wordshk:74796#1: 太陽系有八大行星 (taai3 joeng4 hai6 jau5 baat3 daai6 haang4 sing1): taai3 heard 1, hai6 heard 3
+- 1b4659cdf8962274 zh-HK-HiuMaanNeural -25% wordshk:74796#1: 太陽系有八大行星 (taai3 joeng4 hai6 jau5 baat3 daai6 haang4 sing1): taai3 heard 1, hai6 heard 3
+- f587d3de0ec1c2d4 zh-HK-HiuMaanNeural -25% wordshk:70159#7: 佢平時都係留喺屋企多 (keoi5 ping4 si4 dou1 hai6 lau4 hai2 uk1 kei2 do1): keoi5 heard 3, hai6 heard 3
+- 1ee97b0f13d7ae4f zh-HK-HiuMaanNeural -25% wordshk:50447#3: 佢喺圖書館借咗幾本書去 (keoi5 hai2 tou4 syu1 gun2 ze3 zo2 gei2 bun2 syu1 heoi3): keoi5 heard 3, tou4 heard 1
+- 28d3438e32cd2294 zh-HK-HiuMaanNeural 0% wordshk:71374#1: 粵語嘅方言 (jyut6 jyu5 ge3 fong1 jin4): jyu5 heard 3, ge3 heard 1
+- dfd5e541db3cfb7a zh-HK-HiuMaanNeural -25% wordshk:71374#1: 粵語嘅方言 (jyut6 jyu5 ge3 fong1 jin4): jyut6 heard 3, jyu5 heard 3, ge3 heard 1
+- 5729db6213d24e66 zh-HK-HiuMaanNeural -25% wordshk:73241#1: 大廈嘅結構 (daai6 haa6 ge3 git3 kau3): daai6 heard 3, haa6 heard 3
+- 558f9e248498d7d1 zh-HK-HiuMaanNeural 0% wordshk:84177#7: 最好嘅時代 (zeoi3 hou2 ge3 si4 doi6): zeoi3 heard 1
+- 451cf7445290fe0f zh-HK-HiuMaanNeural -25% wordshk:84177#7: 最好嘅時代 (zeoi3 hou2 ge3 si4 doi6): zeoi3 heard 1
+- adc3b0c0d56c3573 zh-HK-HiuMaanNeural -25% wordshk:86003#1: 廣闊嘅田野 (gwong2 fut3 ge3 tin4 je5): tin4 heard 3, je5 heard 4
+- e61262fab07a3f9c zh-HK-HiuMaanNeural -25% wordshk:43077#3: 佢嘅頭髮好長 (keoi5 ge3 tau4 faat3 hou2 coeng4): keoi5 heard 3
+- 0195898a7f716b91 zh-HK-HiuMaanNeural -25% wordshk:101239#2: 冇人左右到佢嘅決定 (mou5 jan4 zo2 jau6 dou2 keoi5 ge3 kyut3 ding6): zo2 heard 1, ding6 heard 4
+- a871767a142a24b1 zh-HK-HiuMaanNeural -25% wordshk:117459#2: 你唔服嘅話可以再打過 (nei5 m4 fuk6 ge3 waa2 ho2 ji5 zoi3 daa2 gwo3): fuk6 heard 3, waa2 heard 1, ji5 heard 3
+- 8ce74d311c364d6e zh-HK-HiuMaanNeural -25% wordshk:69350#8: 大眾嘅意見係好重要嘅 (daai6 zung3 ge3 ji3 gin3 hai6 hou2 zung6 jiu3 ge3): daai6 heard 3, zung3 heard 1, ge3 heard 1, hou2 heard 3
+- 459571ed636cab8d zh-HK-HiuMaanNeural -25% wordshk:83786#1: 呢座大廈四圍嘅環境好複雜 (ni1 zo6 daai6 haa6 sei3 wai4 ge3 waan4 ging2 hou2 fuk1 zaap6): zo6 heard 3, haa6 heard 3
+- 558689a0f9777ae6 zh-HK-HiuMaanNeural -25% wordshk:87596#1: 呢座大廈周圍嘅環境好複雜 (ni1 zo6 daai6 haa6 zau1 wai4 ge3 waan4 ging2 hou2 fuk1 zaap6): zo6 heard 3, daai6 heard 3, haa6 heard 3
+- e0c91e2b05a40005 zh-HK-HiuMaanNeural -25% hkcancor:FC-029_v#468: 六月嘅時候呢 (luk6 jyut6 ge3 si4 hau6 ne1): luk6 heard 3, jyut6 heard 3
+- d195a929c63eabf0 zh-HK-HiuMaanNeural -25% wordshk:91262#5: 乾咗佢 (gon1 zo2 keoi5): keoi5 heard 4
+- 40b3fa455caa8b2e zh-HK-HiuMaanNeural 0% wordshk:32490#4: 生咗喇，係女嚟 (saang1 zo2 laa3 hai6 neoi2 lai4): hai6 heard 3
+- 273d3f1f659606b5 zh-HK-HiuMaanNeural -25% wordshk:32490#4: 生咗喇，係女嚟 (saang1 zo2 laa3 hai6 neoi2 lai4): hai6 heard 3, lai4 heard 1
+- 247d7e14a0b19aa2 zh-HK-HiuMaanNeural -25% wordshk:55411#3: 佢跌咗落地下 (keoi5 dit3 zo2 lok6 dei6 haa2): keoi5 heard 3, haa2 heard 4
+- 75ad5fded343c5d6 zh-HK-HiuMaanNeural -25% wordshk:43699#1: 佢買咗一打蘋果 (keoi5 maai5 zo2 jat1 daa1 ping4 gwo2): keoi5 heard 3, daa1 heard 4
+- 7f959933ca159f46 zh-HK-HiuMaanNeural -25% wordshk:44549#1: 枝筆跌咗落地下 (zi1 bat1 dit3 zo2 lok6 dei6 haa2): haa2 heard 4
+- 88bc0910346a2b92 zh-HK-HiuMaanNeural -25% wordshk:78215#1: 你跌咗枝鉛筆落地下喎 (nei5 dit3 zo2 zi1 jyun4 bat1 lok6 dei6 haa2 wo3): haa2 heard 4
+- 4167398c3f14522c zh-HK-HiuMaanNeural -25% wordshk:67167#5: 政府拆咗嗰幾棟大廈嚟重建 (zing3 fu2 caak3 zo2 go2 gei2 dung6 daai6 haa6 lai4 cung4 gin3): zing3 heard 1
+- 04897c32411a04e4 zh-HK-HiuMaanNeural -25% hkcancor:FC-048_v2#235: 唔記得咗考 (m4 gei3 dak1 zo2 haau2): m4 heard 3
+- 8e81408ae3abc6ee zh-HK-HiuMaanNeural -25% hkcancor:FC-012_v#2: 有養咗兩隻狗 (jau5 joeng5 zo2 loeng5 zek3 gau2): zo2 heard 1
+- 42a2f7afa03dfb27 zh-HK-HiuMaanNeural 0% hkcancor:FC-027_v2#29: 去咗農場餐廳 (heoi3 zo2 nung4 coeng4 caan1 teng1): heoi3 heard 1
+- dac9ee85342d9af1 zh-HK-HiuMaanNeural -25% tatoeba:6467266: 我笑咗 (ngo5 siu3 zo2): zo2 heard 4
+- c696db1131f091b3 zh-HK-HiuMaanNeural -25% wordshk:42434#8: 我去過佢屋企幾次 (ngo5 heoi3 gwo3 keoi5 uk1 kei2 gei2 ci3): gwo3 heard 1, keoi5 heard 3
+- 082ac7b60ee55bd9 zh-HK-HiuMaanNeural -25% wordshk:73318#1: 嗰陣時我未識佢 (go2 zan6 si2 ngo5 mei6 sik1 keoi5): zan6 heard 3, ngo5 heard 1, mei6 heard 3, keoi5 heard 4
+- 69e132cc657547a0 zh-HK-HiuMaanNeural 0% wordshk:49981#1: 我肯定佢冇見到我 (ngo5 hang2 ding6 keoi5 mou5 gin3 dou2 ngo5): mou5 heard 3
+- 4d3b38fb69a61b68 zh-HK-HiuMaanNeural -25% hkcancor:FC-025_v#175: 咦有冇請嗰個 (ji2 jau5 mou5 ceng2 go2 go3): jau5 heard 3
+- 21513e4328dcda4a zh-HK-HiuMaanNeural -25% hkcancor:FC-046_v2#149: 但係唔係即係可以噉樣轉 (daan6 hai6 m4 hai6 zik1 hai6 ho2 ji5 gam2 joeng2 zyun3): daan6 heard 3, hai6 heard 3, m4 heard 3, ho2 heard 1
+- 941428fb56976acb zh-HK-HiuMaanNeural 0% wordshk:52293#2: 咦，點解會係噉嘅 (ji2 dim2 gaai2 wui5 hai6 gam2 ge2): wui5 heard 1
+- 9c1dde4de81a123a zh-HK-HiuMaanNeural -25% tatoeba:1555120: 點解 (dim2 gaai2): gaai2 heard 4
+- 4a3414341bd407f5 zh-HK-HiuMaanNeural -25% tatoeba:11071803: 點解你學廣東話 (dim2 gaai2 nei5 hok6 gwong2 dung1 waa2): waa2 heard 4
+- 90ba79d0b5e2886a zh-HK-HiuMaanNeural -25% wordshk:62118#3: 我返到嚟頭嗰幾日好唔慣 (ngo5 faan1 dou3 lai4 tau4 go2 gei2 jat6 hou2 m4 gwaan3): m4 heard 2
+- 104ec763ac7d031c zh-HK-HiuMaanNeural -25% hkcancor:FC-103_v2#9: 嘩都幾夜喎 (waa3 dou1 gei2 je6 wo3): waa3 heard 1, je6 heard 1
+- 124069ddfc0d644f zh-HK-HiuMaanNeural -25% hkcancor:FC-001_v2#107: 又可以試下喎 (jau6 ho2 ji5 si3 haa5 wo3): jau6 heard 3, ji5 heard 1
+- e09bd3d11a0f71db zh-HK-HiuMaanNeural -25% hkcancor:FC-001_v2#142: 嗰度買嘢抵啲喎 (go2 dou6 maai5 je5 dai2 di1 wo3): je5 heard 4, wo3 heard 1
+- 99a19f88a5dbb9c3 zh-HK-HiuMaanNeural 0% hkcancor:FC-022b_v#98: 係有八冊嘅 (hai6 jau5 baat3 caak3 ge3): jau5 heard 2
+- 45eb0d9db17e7a0f zh-HK-HiuMaanNeural -25% hkcancor:FC-055_v2#38: 即係肯定係賺嘅 (zik1 hai6 hang2 ding6 hai6 zaan6 ge3): hai6 heard 3, ding6 heard 3
