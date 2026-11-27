@@ -2,15 +2,51 @@
 
 Each clip is split into voiced runs; when the run count equals the syllable count, each run is classified against a profile fitted on the same voice's own Azure calibration clips (Cantone clips only if those are missing) and compared with the tones we sent. Clips whose run count differs are only counted. Natural speech has tone sandhi and neutral tones, so a mismatch is a prompt to listen, not proof of a wrong clip.
 
-- clips: 7489
+- clips: 8215
 - checked (run count = syllable count): 2354
 - matched: 609
 - unsure (no confident verdict on some syllable, none contradicted): 1199
 - mismatched: 546
 - unsegmented (not checked): 5135
-- not checked, voice could not be calibrated: 0
+- not checked, voice could not be calibrated: 726
 
 - zh-HK-HiuMaanNeural: profile from Azure calibration clips
+- zh-HK-HiuGaaiNeural: profile from Azure calibration clips, INVALID (profile invalid, redo ji3)
+
+## Voice zh-HK-HiuGaaiNeural could not be calibrated
+
+Nothing from this voice is published until you listen to the 30 clips below (random, fixed seed, from 726) and add the line `voice:zh-HK-HiuGaaiNeural` to data/yue/tts_ok.txt.
+
+- 30c727df8a61cdf7 0% 瞓: 瞓 (fan3)
+- 269b7b84c5674343 0% 東: 東 (dung1)
+- 543839d965b6c991 0% 月: 月 (jyut6)
+- 77b898b55f3062bf 0% 豬: 豬 (zyu1)
+- 905fda871f1cc41c 0% 辣: 辣 (laat6)
+- 9c0f8d51c9982868 0% 傻: 傻 (so4)
+- 08e194cdc395a3c8 0% 游: 游 (jau4)
+- 837379ad0993ae69 0% 寄: 寄 (gei3)
+- 88d90c47ae5c75a3 0% 本: 本 (bun2)
+- ac52ca9a79e4ce32 0% 折: 折 (zit3)
+- e525a1a568e703d9 0% 遠: 遠 (jyun5)
+- 82f45ccfe179fff9 0% 勁: 勁 (ging6)
+- 0d752211e69a7af1 0% 款: 款 (fun2)
+- 9a12eab3e22c11b1 0% 餸: 餸 (sung3)
+- 4acf82ff80187208 0% 甩: 甩 (lat1)
+- da6ba551f2c10b3b 0% 前: 前 (cin4)
+- b1d31b738493b72f 0% 粒: 粒 (lap1)
+- b2a87ed84e2a5640 0% 醒: 醒 (seng2)
+- 9a35255b812d8e1c 0% 樽: 樽 (zeon1)
+- 7fd84b506278f4cd 0% 紅: 紅 (hung4)
+- bdb3034602cd9f6b 0% 眼: 眼 (ngaan5)
+- 9656a562bcd4091c 0% 親: 親 (can1)
+- 59058ec6491dbed0 0% 黨: 黨 (dong2)
+- 2d6aa65003451c09 0% 置: 置 (zi3)
+- 3337184fec47d8e8 0% 鎖: 鎖 (so2)
+- 019222294e522291 0% 焗: 焗 (guk6)
+- 59cd5f68a2462547 0% 廿: 廿 (jaa6)
+- 0bbce3a80d51257d 0% 衰: 衰 (seoi1)
+- 18eb349a450a3408 0% 但: 但 (daan6)
+- 119b36740bbe50f3 0% 搽: 搽 (caa4)
 
 ## Mismatched, for a listen-through
 

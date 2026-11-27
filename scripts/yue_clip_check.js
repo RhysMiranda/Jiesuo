@@ -35,8 +35,8 @@ function azureCalibration(dir, azureVoice) {
     An invalid profile is reported, never loosened. */
 function voiceProfile(azureVoice, dir) {
   const cv = CANTONE_VOICE[azureVoice];
-  if (!cv) throw new Error("no Cantone recordings for voice " + azureVoice);
   const az = dir ? azureCalibration(dir, azureVoice) : null;
+  if (!az && !cv) throw new Error("no calibration clips or Cantone recordings for voice " + azureVoice);
   const p = profileOf(az || voiceClips(cv));
   const source = az ? "Azure calibration clips" : "Cantone clips";
   return p.ok ? { ok: true, profile: p.profile, source } : { ok: false, why: p.why, source };

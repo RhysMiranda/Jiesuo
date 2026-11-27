@@ -1,5 +1,5 @@
 {
-"licence": "Generated with Azure Speech (zh-HK neural voice HiuMaan) from our own Jyutping readings. The sentence texts keep their own licences (see sentences.json).",
+"licence": "Generated with Azure Speech (zh-HK neural voices HiuMaan, and HiuGaai for some one-syllable words) from our own Jyutping readings. The sentence texts keep their own licences (see sentences.json).",
 "clips": {
 "002b295be889637f": {
 "f": "wordshk:66106#8",
@@ -98,11 +98,6 @@
 },
 "00e09bc6c4627052": {
 "f": "wordshk:84931#3",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"00ead59bc905efff": {
-"f": "獎",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -831,6 +826,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"069e2920d0949366": {
+"f": "偈",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "069e5f5180450769": {
 "f": "wordshk:77742#2",
 "r": "-25%",
@@ -970,6 +970,11 @@
 "f": "wordshk:39927#6",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"07ac00c6a6fb6385": {
+"f": "喺",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "07b3b9d7bf6efaf4": {
 "f": "wordshk:85551#4",
@@ -1910,6 +1915,11 @@
 "f": "wordshk:41249#6",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"0ea48c257fed9715": {
+"f": "吓",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "0ea4e599839a0149": {
 "f": "wordshk:41544#1",
@@ -3101,6 +3111,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"17fcb10d399b5dcc": {
+"f": "底",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "180412c23d96a218": {
 "f": "嚟自",
 "r": "0%",
@@ -3398,11 +3413,6 @@
 },
 "1a1db023a827c398": {
 "f": "之間",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"1a201344f28d9fa8": {
-"f": "企",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -4291,6 +4301,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"20f38d8962896670": {
+"f": "五",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "20ffc54b93887087": {
 "f": "wordshk:44231#7",
 "r": "-25%",
@@ -4626,11 +4641,6 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"23e695c47a55a4c4": {
-"f": "餅",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "23f3bd95ca99dea7": {
 "f": "巴士",
 "r": "0%",
@@ -4799,11 +4809,6 @@
 "24bb6fec8b75ac46": {
 "f": "wordshk:40969#3",
 "r": "-25%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"24c7de346eae3602": {
-"f": "喺",
-"r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
 "24e4860cead835f6": {
@@ -5631,6 +5636,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"2b2be818e4a5f2b9": {
+"f": "餅",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "2b2c5a11ff1a73a3": {
 "f": "wordshk:83786#1",
 "r": "0%",
@@ -5891,10 +5901,20 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"2cd9a07676ac1864": {
+"f": "樓",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "2ce15f2a086a9283": {
 "f": "wordshk:67836#8",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"2ce836d742567cbc": {
+"f": "嗰",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "2cf96680ea6d0398": {
 "f": "wordshk:54475#3",
@@ -5913,11 +5933,6 @@
 },
 "2d043f0ad096bc38": {
 "f": "wordshk:68561#1",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"2d173cc6b433c81c": {
-"f": "小",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -6115,6 +6130,11 @@
 "f": "wordshk:85435#3",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"2ee026c1b003ea0e": {
+"f": "睇",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "2ef3026520138fab": {
 "f": "質素",
@@ -6471,11 +6491,6 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"3141de84f9fbdb3c": {
-"f": "肯",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "31442b2d5ddb710a": {
 "f": "wordshk:13549#11",
 "r": "0%",
@@ -6490,6 +6505,11 @@
 "f": "改變",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"318202413d088953": {
+"f": "畀",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "318a188b9dbdc779": {
 "f": "wordshk:86533#2",
@@ -6541,13 +6561,13 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"322e81fc36ab06e3": {
+"f": "減",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "322ff1b681d3d4ee": {
 "f": "wordshk:71290#4",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"3239734185d3d243": {
-"f": "抵",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -6701,11 +6721,6 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"332739baa84a1065": {
-"f": "醒",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "3329f2ec22eac134": {
 "f": "wordshk:63209#1",
 "r": "0%",
@@ -6713,11 +6728,6 @@
 },
 "332d22b09e4c3c9f": {
 "f": "wordshk:96429#2",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"332f6de67cf96fe1": {
-"f": "慘",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -6840,6 +6850,11 @@
 "f": "hkcancor:FC-001_v2#136",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"342e5d00fc5c16e9": {
+"f": "等",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "3448c82f1c17b3e6": {
 "f": "wordshk:76359#1",
@@ -7816,11 +7831,6 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"3bb8bab33b898652": {
-"f": "卷",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "3bca190fb88af6e3": {
 "f": "wordshk:81076#4",
 "r": "-25%",
@@ -8276,6 +8286,11 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"3f537d9e628acf38": {
+"f": "袋",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "3f540855eac123fa": {
 "f": "wordshk:58359#2",
 "r": "-25%",
@@ -8419,11 +8434,6 @@
 "403ca918f1437f2b": {
 "f": "wordshk:79348#1",
 "r": "-25%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"403fbf2baa5e6273": {
-"f": "影",
-"r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
 "4044bdfeef58a56b": {
@@ -8786,6 +8796,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"42d921a9dc3b1ee2": {
+"f": "版",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "42dc5054fac2d71a": {
 "f": "wordshk:71985#1",
 "r": "0%",
@@ -8800,6 +8815,11 @@
 "f": "wordshk:69220#2",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"4304df89914e43b2": {
+"f": "死",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "4316dcca2e2c13c0": {
 "f": "wordshk:75563#1",
@@ -9231,6 +9251,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"460d487a5b71746b": {
+"f": "位",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "460db4f3e3fc9394": {
 "f": "少少",
 "r": "0%",
@@ -9643,11 +9668,6 @@
 },
 "48c0e1c2732f266c": {
 "f": "wordshk:66694#1",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"48d1f0f4cb90d26c": {
-"f": "剪",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -10656,6 +10676,11 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"503b8ac17bf1bd4c": {
+"f": "腸",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "503c91e49021f17f": {
 "f": "wordshk:90006#1",
 "r": "-25%",
@@ -11301,6 +11326,11 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"55ee74fc67c74ecb": {
+"f": "洗",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "55f0a307e9bda3af": {
 "f": "hkcancor:FC-044_v2#5",
 "r": "0%",
@@ -11791,11 +11821,6 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"593e3819f0a6cdc4": {
-"f": "房",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "594d7a97c785ea8d": {
 "f": "wordshk:77013#1",
 "r": "0%",
@@ -11830,6 +11855,11 @@
 "f": "嚟緊",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"59a1c1dee7dfb44d": {
+"f": "養",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "59a9d969a7257670": {
 "f": "wordshk:86594#1",
@@ -11899,11 +11929,6 @@
 "59e3471efbc5e0ca": {
 "f": "wordshk:91361#1",
 "r": "-25%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"59f0f04030768dc3": {
-"f": "板",
-"r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
 "59fce02762c02797": {
@@ -12363,11 +12388,6 @@
 },
 "5d6084383f31fd02": {
 "f": "wordshk:73719#1",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"5d659f614c82beab": {
-"f": "片",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -13061,6 +13081,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"62ba1ce5c1780c20": {
+"f": "抵",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "62ba42c9f2ea506c": {
 "f": "wordshk:72186#1",
 "r": "-25%",
@@ -13275,6 +13300,11 @@
 "f": "就噉",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"63e4704dafd4a003": {
+"f": "炒",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "63e78b380e491e26": {
 "f": "wordshk:84632#1",
@@ -13595,6 +13625,11 @@
 "f": "hkcancor:FC-R013a_v#27",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"660e2b9f7f40f087": {
+"f": "響",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "66269c7bc07b52b7": {
 "f": "hkcancor:FC-045_v2#58",
@@ -14075,6 +14110,11 @@
 "f": "wordshk:70176#1",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"69232a50a539cad3": {
+"f": "頂",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "6928ad90a7402487": {
 "f": "乾淨",
@@ -14616,6 +14656,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"6ccfb98000ac94bd": {
+"f": "房",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "6cd3966091e5516c": {
 "f": "wordshk:28762#8",
 "r": "0%",
@@ -14670,6 +14715,11 @@
 "f": "wordshk:85851#1",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"6d2b9942366a810f": {
+"f": "煮",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "6d32e27126e6d172": {
 "f": "wordshk:90576#3",
@@ -14729,11 +14779,6 @@
 "6e05724a652dabb0": {
 "f": "wordshk:24555#1",
 "r": "-25%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"6e11118a57a94652": {
-"f": "玩",
-"r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
 "6e160c631519bcd7": {
@@ -15009,11 +15054,6 @@
 "6fb197408291e9b4": {
 "f": "wordshk:90338#4",
 "r": "-25%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"6fb4ee76134743d2": {
-"f": "底",
-"r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
 "6fca251c210ee224": {
@@ -15791,11 +15831,6 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"7562a3042aa17cf5": {
-"f": "請",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "757272802f1da152": {
 "f": "wordshk:67416#1",
 "r": "-25%",
@@ -15876,6 +15911,11 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"761a877489d15a79": {
+"f": "起",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "762b749867f63dc6": {
 "f": "wordshk:81009#2",
 "r": "-25%",
@@ -15925,6 +15965,11 @@
 "f": "wordshk:76286#2",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"76824a0bddf83e12": {
+"f": "爬",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "768a851edf04c725": {
 "f": "wordshk:79184#1",
@@ -16116,11 +16161,6 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"78193663ae69cedc": {
-"f": "滾",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "781a55cb408943d1": {
 "f": "wordshk:69350#8",
 "r": "0%",
@@ -16275,6 +16315,11 @@
 "f": "打電話",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"792519099be38f2b": {
+"f": "寫",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "792beb11162cc63a": {
 "f": "工業",
@@ -16771,11 +16816,6 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"7cd4b1297060de04": {
-"f": "蛋",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "7ce7d2ef5aae9257": {
 "f": "wordshk:46339#2",
 "r": "-25%",
@@ -16795,6 +16835,11 @@
 "f": "wordshk:80021#8",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"7cfce71c53a97898": {
+"f": "首",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "7d0325609d5607ce": {
 "f": "wordshk:73063#2",
@@ -16920,6 +16965,11 @@
 "f": "wordshk:47663#3",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"7db527e7cbf4a302": {
+"f": "比",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "7dd42dcd2e05ee16": {
 "f": "理由",
@@ -17105,6 +17155,11 @@
 "f": "wordshk:44989#2",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"7f37059f726460b6": {
+"f": "少",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "7f4f7f71eec7e2c2": {
 "f": "wordshk:30887#1",
@@ -17318,11 +17373,6 @@
 },
 "80c54fd8fbe9606c": {
 "f": "廣告",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"80d65b5ca2e95f57": {
-"f": "袋",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -18056,6 +18106,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"85f6cea04bdbc544": {
+"f": "獎",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "860d784a9bb99903": {
 "f": "wordshk:60581#4",
 "r": "0%",
@@ -18401,6 +18456,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"88c5391a0458ba89": {
+"f": "滾",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "88c9184d8511894e": {
 "f": "wordshk:100000#15",
 "r": "-25%",
@@ -18504,11 +18564,6 @@
 "897cfde71d56d0b8": {
 "f": "wordshk:102543#1",
 "r": "-25%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"897db199ef89c8c2": {
-"f": "揀",
-"r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
 "89983c1c72474277": {
@@ -19146,11 +19201,6 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"8e93187f0f303651": {
-"f": "飽",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "8ebe898d78ae002e": {
 "f": "wordshk:89184#1",
 "r": "0%",
@@ -19780,6 +19830,11 @@
 "f": "wordshk:88197#10",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"93c11b0c10913d89": {
+"f": "打",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "93c7ceb4639cfa0a": {
 "f": "wordshk:52366#1",
@@ -20569,11 +20624,6 @@
 "9921d77c962a26f6": {
 "f": "wordshk:35797#1",
 "r": "-25%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"9922ef139af588e4": {
-"f": "位",
-"r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
 "992f818eb5e8994b": {
@@ -21506,11 +21556,6 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"a029dbb744b2c02c": {
-"f": "響",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "a0309d3513413179": {
 "f": "wordshk:100323#4",
 "r": "0%",
@@ -21819,11 +21864,6 @@
 "a29d710313916302": {
 "f": "wordshk:110942#1",
 "r": "-25%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"a2a17c233d6934c0": {
-"f": "版",
-"r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
 "a2afdfd3ce4974b5": {
@@ -22255,6 +22295,11 @@
 "f": "wordshk:70482#4",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"a58ff8f0e5e762a8": {
+"f": "上",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "a595f6d271a1d55f": {
 "f": "wordshk:73540#1",
@@ -23276,6 +23321,11 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"adbec9c619f75359": {
+"f": "卷",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "adc3b0c0d56c3573": {
 "f": "wordshk:86003#1",
 "r": "-25%",
@@ -23901,11 +23951,6 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"b22ad9cfb688eb67": {
-"f": "橙",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "b22e47c4d8a019c1": {
 "f": "wordshk:79154#1",
 "r": "0%",
@@ -23950,6 +23995,11 @@
 "f": "wordshk:72593#1",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"b2a87ed84e2a5640": {
+"f": "醒",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "b2aa0ea9b08e6bec": {
 "f": "wordshk:23204#2",
@@ -24118,11 +24168,6 @@
 },
 "b41acda23b584547": {
 "f": "wordshk:80021#5",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"b41b5c5ff7515f1d": {
-"f": "等",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -24726,6 +24771,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"b8f00af5a2f785c7": {
+"f": "企",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "b8f2720deffde856": {
 "f": "後生",
 "r": "0%",
@@ -24820,6 +24870,11 @@
 "f": "wordshk:81129#1",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"b9b4a2745d733183": {
+"f": "理",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "b9b880d7ea466342": {
 "f": "hkcancor:FC-029_v#474",
@@ -24966,15 +25021,15 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"bb196500bde5f4c3": {
-"f": "左",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "bb1b40911f40143c": {
 "f": "wordshk:85150#3",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"bb1ba68229527647": {
+"f": "慘",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "bb1ca1681b929448": {
 "f": "wordshk:87624#1",
@@ -25161,10 +25216,10 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"bc4bff374aad3024": {
-"f": "梗",
+"bc4c051b5a9fdd5d": {
+"f": "左",
 "r": "0%",
-"v": "zh-HK-HiuMaanNeural"
+"v": "zh-HK-HiuGaaiNeural"
 },
 "bc5031bdd8fbd666": {
 "f": "wordshk:13816#5",
@@ -25200,6 +25255,11 @@
 "f": "屋企",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"bc7d40506f100c18": {
+"f": "嘔",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "bc7d7ddb51c01c18": {
 "f": "廁所",
@@ -25385,6 +25445,11 @@
 "f": "wordshk:81964#1",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"bdfbceb0306b3759": {
+"f": "飽",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "be082389b4434335": {
 "f": "wordshk:44989#1",
@@ -25880,6 +25945,11 @@
 "f": "醫療",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"c1d3035d32c88087": {
+"f": "被",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "c1dd8c912c25de96": {
 "f": "wordshk:83268#2",
@@ -26686,6 +26756,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"c7f9199330afb2ca": {
+"f": "假",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "c807fa4a2a9c7d81": {
 "f": "wordshk:98798#3",
 "r": "0%",
@@ -26790,6 +26865,11 @@
 "f": "wordshk:84120#3",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"c8cd5def3552f336": {
+"f": "梗",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "c8d3cf42f26ee108": {
 "f": "wordshk:61025#5",
@@ -27030,6 +27110,11 @@
 "f": "人手",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"caac262124b0dcb2": {
+"f": "鬼",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "cadba467e24d6dd8": {
 "f": "現場",
@@ -27346,11 +27431,6 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"cd50a303b78cb128": {
-"f": "頂",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "cd50b3f78e38fabc": {
 "f": "wordshk:47608#2",
 "r": "0%",
@@ -27448,11 +27528,6 @@
 },
 "cddbd05017946491": {
 "f": "wordshk:81213#1",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"cde0ce279e143e56": {
-"f": "整",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -27578,11 +27653,6 @@
 },
 "ced17d1943fc6a08": {
 "f": "wordshk:100692#1",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"ced37e4592722de0": {
-"f": "減",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -28596,6 +28666,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"d699ad20f6dd2c00": {
+"f": "玩",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "d699edfdbaf653ca": {
 "f": "wordshk:89439#1",
 "r": "0%",
@@ -28726,11 +28801,6 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"d7e654db56500c43": {
-"f": "腸",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "d7e8f7716b60defa": {
 "f": "wordshk:84700#1",
 "r": "0%",
@@ -28745,6 +28815,11 @@
 "f": "同樣",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"d7f3c044e84f4fa8": {
+"f": "仔",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "d7f646d28589d238": {
 "f": "滿意",
@@ -29516,6 +29591,11 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"de56d4a2969678d5": {
+"f": "咓",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "de59dc0916ee0e4a": {
 "f": "wordshk:8635#1",
 "r": "0%",
@@ -29931,6 +30011,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"e19ca130013b0b42": {
+"f": "板",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "e1a597f29b32dd9f": {
 "f": "原本",
 "r": "0%",
@@ -30060,6 +30145,11 @@
 "f": "wordshk:74365#4",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"e2c0b66aae4de471": {
+"f": "小",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "e2d850809439a70c": {
 "f": "仲好",
@@ -30860,6 +30950,11 @@
 "f": "wordshk:41983#1",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"e820461aa89fc329": {
+"f": "蛋",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "e824849d09074432": {
 "f": "hkcancor:FC-009b_v#63",
@@ -31911,6 +32006,11 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"efcdfa4a0113dd95": {
+"f": "擺",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "efcf9d34759a4eaf": {
 "f": "wordshk:76453#1",
 "r": "0%",
@@ -31925,6 +32025,11 @@
 "f": "wordshk:82929#9",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"efedb53a251920f1": {
+"f": "咗",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "eff0fc8c4567a5b5": {
 "f": "考慮",
@@ -32121,6 +32226,11 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"f1339f64aed2399d": {
+"f": "梨",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "f15f6f1bde11341e": {
 "f": "生命",
 "r": "0%",
@@ -32223,11 +32333,6 @@
 },
 "f1ffcd28419cd001": {
 "f": "吖嘛",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
-"f2014172828dc624": {
-"f": "樣",
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
@@ -33401,11 +33506,6 @@
 "r": "0%",
 "v": "zh-HK-HiuMaanNeural"
 },
-"fb16dfdbc7dd3eac": {
-"f": "少",
-"r": "0%",
-"v": "zh-HK-HiuMaanNeural"
-},
 "fb18e807ad7a053e": {
 "f": "hkcancor:FC-108d_v2#22",
 "r": "-25%",
@@ -33436,10 +33536,20 @@
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
 },
+"fb438dfcd1701e72": {
+"f": "手",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
+},
 "fb5bff02cfd396eb": {
 "f": "wordshk:85956#3",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"fb65b8017dca3067": {
+"f": "揀",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "fb67ce477aa30b31": {
 "f": "wordshk:104459#10",
@@ -33630,6 +33740,11 @@
 "f": "wordshk:40720#2",
 "r": "-25%",
 "v": "zh-HK-HiuMaanNeural"
+},
+"fcb4bb8e8f42fc5a": {
+"f": "幾",
+"r": "0%",
+"v": "zh-HK-HiuGaaiNeural"
 },
 "fcb7350f1df24594": {
 "f": "wordshk:43033#1",

@@ -41,7 +41,7 @@ def test_clip_key():
 
 
 def _plan(tmp_path, n, **k):
-    return tts.plan(n, speech_dir=tmp_path, calib_dir=tmp_path / "calib", **k)
+    return tts.plan(n, speech_dir=tmp_path, calib_dir=tmp_path / "calib", raw_dir=tmp_path / "raw", **k)
 
 
 def test_plan_skips_existing(tmp_path):
@@ -295,3 +295,15 @@ def test_publish_holds_one_syllable_clips(tmp_path):
     c = tts.publish(man, tmp_path / "s.json", tmp_path, stats=stats, onesyl_pass=set(), **kw)
     assert set(c) == {"a"} and stats["held"]["one syllable"] == 1
     assert set(tts.publish(man, tmp_path / "s.json", tmp_path, onesyl_pass={"b"}, **kw)) == {"a", "b"}  # passed the strict check
+    kw.update(uncalibrated={HIU}, checked=set())  # the strict check stands in for the voice profile, for one syllable only
+    assert set(tts.publish(man, tmp_path / "s.json", tmp_path, onesyl_pass={"b"}, **kw)) == {"b"}
+
+
+def test_plan_skips_clips_made_but_not_shipped_and_can_do_one_syllable_words_only(tmp_path):
+    all_jobs = [j for j in _plan(tmp_path, 50) if j.kind != "calib"]
+    one = [j for j in _plan(tmp_path, 50, one_syllable=True) if j.kind != "calib"]
+    assert one and all(len(j.jp.split()) == 1 and j.kind == "word" for j in one)
+    assert {j.key for j in one} < {j.key for j in all_jobs}
+    (tmp_path / "raw").mkdir()
+    (tmp_path / "raw" / f"{one[0].key}.wav").write_bytes(b"x")  # made earlier, held back from the app
+    assert one[0].key not in {j.key for j in _plan(tmp_path, 50)}

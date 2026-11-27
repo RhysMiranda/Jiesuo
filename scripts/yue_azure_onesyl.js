@@ -16,32 +16,53 @@ const S = require("./yue_audio_strict.js");
 
 const ONE = /^[a-z]+[1-6]$/;
 
+const PREFER = ["zh-HK-HiuMaanNeural", "zh-HK-HiuGaaiNeural"]; // the word voice first, then HiuGaai (it keeps more rises)
+
+/* Azure flattens the rising tones of a lone syllable, so its rises must be as big as those of the syllable recordings that
+   ship: the 10th percentile of the checked googleB rises (tone 2: 6.3 st, tone 5: 2.5 st), close to the EduHK human
+   recordings (about 6 and 3 st). The voice-relative test above alone lets a 4 st tone 2 through. */
+const MIN_RISE = { 2: 6, 5: 2.5 };
+function tooFlat(seg, tone) {
+  if (!MIN_RISE[tone]) return null;
+  const m = S.measure(seg);
+  return m.move >= MIN_RISE[tone] ? null : `rise ${m.move.toFixed(1)} st is below ${MIN_RISE[tone]}`;
+}
+
 function main(dir) {
   const manifest = JSON.parse(fs.readFileSync(path.join(dir, "manifest.json"), "utf8"));
-  const segs = {}, syl = {};
+  const byVoice = {};
   for (const [k, v] of Object.entries(manifest)) {
     const jp = String(v.jp || "").trim();
-    if (!ONE.test(jp)) continue;
+    if (!ONE.test(jp) || v.r !== "0%") continue;
     const wav = path.join(dir, k + ".wav");
     if (!fs.existsSync(wav)) continue;
     const { samples, rate } = readWav(wav);
-    segs[k] = Y.segmentsHz(Tone.pitchTrack(samples, rate), 1)[0] || [];
-    syl[k] = jp;
+    (byVoice[v.voice] = byVoice[v.voice] || {})[k] = { seg: Y.segmentsHz(Tone.pitchTrack(samples, rate), 1)[0] || [], jp, f: v.f };
   }
-  // references() keys clips by a name ending in the tone digit
-  const ref = S.references(Object.fromEntries(Object.keys(segs).map((k) => [k + syl[k].slice(-1), segs[k]])));
   const recorded = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "app/yue/data/audio.json"), "utf8")).clips || {};
-  const out = { pass: [], covered: [], fail: {} };
-  for (const k of Object.keys(segs).sort()) {
-    let checked;
-    try { checked = J.isChecked(syl[k]); } catch (e) { out.fail[k] = "not a syllable"; continue; }
-    const why = S.shapeProblem(segs[k], Number(syl[k].slice(-1)), ref, checked);
-    if (why) out.fail[k] = `${syl[k]}: ${why}`;
-    else if (recorded[syl[k]] && recorded[syl[k]].length) out.covered.push(k);
-    else out.pass.push(k);
+  const out = { pass: [], covered: [], fail: {} }, good = {}; // good: {form: {voice: key}}
+  for (const [voice, clips] of Object.entries(byVoice)) {
+    // each voice against its own typical heights (references() keys clips by a name ending in the tone digit)
+    const ref = S.references(Object.fromEntries(Object.entries(clips).map(([k, c]) => [k + c.jp.slice(-1), c.seg])));
+    for (const k of Object.keys(clips).sort()) {
+      const c = clips[k];
+      let checked;
+      try { checked = J.isChecked(c.jp); } catch (e) { out.fail[k] = "not a syllable"; continue; }
+      const tone = Number(c.jp.slice(-1));
+      const why = S.shapeProblem(c.seg, tone, ref, checked) || tooFlat(c.seg, tone);
+      if (why) out.fail[k] = `${voice} ${c.jp}: ${why}`;
+      else if (recorded[c.jp] && recorded[c.jp].length) out.covered.push(k);
+      else (good[c.f] = good[c.f] || {})[voice] = k;
+    }
   }
+  // one clip per word: the first voice in PREFER that passed
+  for (const f of Object.keys(good).sort()) {
+    const v = PREFER.find((x) => good[f][x]) || Object.keys(good[f]).sort()[0];
+    out.pass.push(good[f][v]);
+  }
+  out.pass.sort(); out.covered.sort();
   fs.writeFileSync(path.join(__dirname, "..", "data/yue/tts_onesyl.json"), JSON.stringify(out, null, 1) + "\n");
-  console.log(`one-syllable clips: ${out.pass.length} pass and fill a gap, ${out.covered.length} pass but have a recording, ${Object.keys(out.fail).length} fail`);
+  console.log(`one-syllable clips: ${out.pass.length} words get a checked clip, ${out.covered.length} pass but have a recording, ${Object.keys(out.fail).length} fail`);
 }
 
 if (require.main === module) {

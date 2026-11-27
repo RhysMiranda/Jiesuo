@@ -1,7 +1,7 @@
 # Azure clips publish
 
 - withheld, stale reading: 0
-- withheld, one syllable: 678
+- withheld, one syllable: 1381
 - withheld, mismatched: 0
 - withheld, uncalibrated voice: 0
 - withheld, not checked: 0

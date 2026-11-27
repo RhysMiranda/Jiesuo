@@ -37,12 +37,12 @@ REPORT_PUBLISH = ROOT / "reports" / "yue_tts_publish.md"
 ONESYL = ROOT / "data" / "yue" / "tts_onesyl.json"  # written by scripts/yue_azure_onesyl.js: {"pass": [key...], "fail": {...}}
 TTS_OK = ROOT / "data" / "yue" / "tts_ok.txt"  # keys, or "voice:<name>" lines, the learner listened to and accepted
 
-VOICES = ["zh-HK-HiuMaanNeural", "zh-HK-WanLungNeural"]
+VOICES = ["zh-HK-HiuMaanNeural", "zh-HK-WanLungNeural", "zh-HK-HiuGaaiNeural"]  # HiuGaai: one-syllable words (see README)
 DEFAULT_VOICE = VOICES[0]
 SENTENCE_RATES = ["0%", "-25%"]
 WAV_RATE = 24000
 OUTPUT_FORMAT = "riff-24khz-16bit-mono-pcm"
-LICENCE = ("Generated with Azure Speech (zh-HK neural voice HiuMaan) from our own Jyutping readings. "
+LICENCE = ("Generated with Azure Speech (zh-HK neural voices HiuMaan, and HiuGaai for some one-syllable words) from our own Jyutping readings. "
            "The sentence texts keep their own licences (see sentences.json).")
 MAX_TRIES = 5
 
@@ -115,9 +115,12 @@ def calib_syllables():
     return [f"{x}{t}" for x in CALIB_SETS for t in range(1, 7)]
 
 
-def plan(limit_words=2000, voice=DEFAULT_VOICE, speech_dir=None, data_dir=DATA, calib_dir=None):
-    """Jobs for the first `limit_words` course words, Stage 1, lesson sentences and grammar examples, minus existing clips."""
+def plan(limit_words=2000, voice=DEFAULT_VOICE, speech_dir=None, data_dir=DATA, calib_dir=None, raw_dir=None, one_syllable=False):
+    """Jobs for the first `limit_words` course words, Stage 1, lesson sentences and grammar examples, minus existing clips
+    (an MP3 in the app, or a WAV in the raw folder: a clip that was made but not shipped is not made again).
+    `one_syllable`: only the one-syllable words (no sentences)."""
     data_dir, speech_dir = Path(data_dir), Path(speech_dir or SPEECH_DIR)
+    raw_dir = Path(raw_dir or RAW_TTS)
     calib_dir = Path(calib_dir or CALIB_DIR)
     course = _load(data_dir / "course.json")
     jp_of = {}
@@ -144,15 +147,15 @@ def plan(limit_words=2000, voice=DEFAULT_VOICE, speech_dir=None, data_dir=DATA, 
 
     def add(kind, f, text, jp, rate):
         key = clip_key(text, jp, voice, rate)
-        if key in seen or (speech_dir / f"{key}.mp3").exists():
+        if key in seen or (speech_dir / f"{key}.mp3").exists() or (raw_dir / f"{key}.wav").exists():
             return
         seen.add(key)
         jobs.append(Job(key, text, jp, voice, rate, kind, f))
 
     for form in dict.fromkeys(words):
-        if form in jp_of:
+        if form in jp_of and (not one_syllable or _SYL.match(jp_of[form].strip())):
             add("word", form, form, jp_of[form], "0%")
-    for i in ids:
+    for i in [] if one_syllable else ids:
         if i in ex and ex[i][1]:
             for rate in SENTENCE_RATES:
                 add("sentence", i, ex[i][0], ex[i][1], rate)
@@ -268,9 +271,10 @@ def publish(manifest=None, speech_json=None, speech_dir=None, mismatched=None, u
             held["one syllable"] += 1  # a lone syllable often comes out with a flattened tone; only clips that pass the strict shape check ship
         elif k in bad:
             held["mismatched"] += 1
-        elif v["voice"] in uncalibrated and v["voice"] not in voice_ok:
+        # a one-syllable clip that passed the strict shape check needs no voice profile (that is for longer clips)
+        elif v["voice"] in uncalibrated and v["voice"] not in voice_ok and k not in onesyl_pass:
             held["uncalibrated voice"] += 1
-        elif k not in checked and v["voice"] not in voice_ok:
+        elif k not in checked and v["voice"] not in voice_ok and k not in onesyl_pass:
             held["not checked"] += 1  # generated after the check, a voice added later, or its WAV was missing
         elif not (speech_dir / f"{k}.mp3").exists():
             held["no mp3"] += 1
@@ -351,6 +355,7 @@ def main(argv=None, env=None, session=None, out=print):
     ap.add_argument("--limit", type=int, default=None, help="at most N clips this run")
     ap.add_argument("--words", type=int, default=2000, help="how many course words to cover")
     ap.add_argument("--voice", default=DEFAULT_VOICE, choices=VOICES)
+    ap.add_argument("--one-syllable", action="store_true", help="only the one-syllable words (no sentences)")
     ap.add_argument("--minutes", type=float, default=None, help="stop cleanly after this many minutes")
     ap.add_argument("--pace", type=float, default=0.0, help="seconds between requests (3.1 keeps the free tier's 20 a minute)")
     a = ap.parse_args(argv)
@@ -374,7 +379,7 @@ def main(argv=None, env=None, session=None, out=print):
                                   + nl + "MP3s in app/yue/audio/speech/ not referenced by speech.json (do not commit):" + nl + nl
                                   + "".join(f"- {u}" + nl for u in stats["unreferenced"]), encoding="utf8")
         return 0
-    jobs = plan(a.words, a.voice)
+    jobs = plan(a.words, a.voice, one_syllable=a.one_syllable)
     if a.dry_run:
         out(f"{len(jobs)} jobs ({sum(j.kind == 'calib' for j in jobs)} calibration), {sum(len(j.text) for j in jobs)} characters")
         return 0
